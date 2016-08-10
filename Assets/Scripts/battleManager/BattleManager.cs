@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
-using HexWar;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using xy3d.tstd.lib.superTween;
 using System;
+using FinalWar;
 
 public class BattleManager : MonoBehaviour {
 
@@ -121,13 +121,13 @@ public class BattleManager : MonoBehaviour {
 		}
 	}
 
-	private Dictionary<int,int> moveDic {
-
-		get {
-
-			return battle.clientIsMine ? battle.mMoveAction : battle.oMoveAction;
-		}
-	}
+//	private Dictionary<int,int> moveDic {
+//
+//		get {
+//
+//			return battle.clientIsMine ? battle.mAction : battle.oAction;
+//		}
+//	}
 
 	private void WriteLog(string _str){
 
@@ -146,8 +146,6 @@ public class BattleManager : MonoBehaviour {
 		StaticData.Load<MapSDS>("map");
 		
 		Map.Init();
-		
-		StaticData.Load<HeroTypeClientSDS>("heroType");
 		
 		StaticData.Load<HeroSDS>("hero");
 		
@@ -304,7 +302,7 @@ public class BattleManager : MonoBehaviour {
 				
 				unit.SetOffVisible(true);
 
-				if(battle.mapDic[index] == battle.clientIsMine){
+				if(battle.mapData.dic[index] == battle.clientIsMine){
 
 					unit.SetMainColor(Color.green);
 
@@ -403,195 +401,195 @@ public class BattleManager : MonoBehaviour {
 
 	private void CreateMoves(){
 
-		movingIsOK = true;
-
-		Dictionary<int,int>.Enumerator enumerator = moveDic.GetEnumerator ();
-
-		while (enumerator.MoveNext()) {
-
-			int pos = enumerator.Current.Key;
-
-			int direction = enumerator.Current.Value;
-
-			GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
-
-			Arrow arrow = go.GetComponent<Arrow>();
-
-			go.transform.SetParent(arrowContainer,false);
-
-			go.transform.localPosition = new Vector3( mapUnitDic[pos].transform.localPosition.x, mapUnitDic[pos].transform.localPosition.y,arrowZFix);
-
-			go.transform.localScale = new Vector3(mapUnitScale,mapUnitScale,mapUnitScale);
-
-			go.transform.eulerAngles = new Vector3(0,0,60 - direction * 60);
-
-			arrowDic.Add(pos, arrow);
-
-			bool result = true;
-
-			List<int> tmpList = new List<int>();
-
-			tmpList.Add(pos);
-
-			int targetPos = battle.mapData.neighbourPosMap[pos][direction];
-
-			while(true){
-
-				if(battle.heroMapDic.ContainsKey(targetPos)){
-					
-					if(moveDic.ContainsKey(targetPos)){
-
-						int index = tmpList.IndexOf(targetPos);
-
-						if(index == -1){
-
-							tmpList.Add(targetPos);
-
-						}else{
-
-							if(index != 0){
-
-								result = false;
-							}
-
-							break;
-						}
-
-						int tmpDirection = moveDic[targetPos];
-
-						targetPos = battle.mapData.neighbourPosMap[targetPos][tmpDirection];
-
-					}else{
-
-						result = false;
-						
-						break;
-					}
-
-				}else if(summonDic.ContainsValue(targetPos)){
-
-					result = false;
-
-					break;
-
-				}else{
-
-					break;
-				}
-			}
-
-			if(!result){
-
-				movingIsOK = false;
-
-				arrow.SetColor(Color.blue);
-
-			}else{
-
-				arrow.SetColor(Color.yellow);
-			}
-		}
+//		movingIsOK = true;
+//
+//		Dictionary<int,int>.Enumerator enumerator = moveDic.GetEnumerator ();
+//
+//		while (enumerator.MoveNext()) {
+//
+//			int pos = enumerator.Current.Key;
+//
+//			int direction = enumerator.Current.Value;
+//
+//			GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
+//
+//			Arrow arrow = go.GetComponent<Arrow>();
+//
+//			go.transform.SetParent(arrowContainer,false);
+//
+//			go.transform.localPosition = new Vector3( mapUnitDic[pos].transform.localPosition.x, mapUnitDic[pos].transform.localPosition.y,arrowZFix);
+//
+//			go.transform.localScale = new Vector3(mapUnitScale,mapUnitScale,mapUnitScale);
+//
+//			go.transform.eulerAngles = new Vector3(0,0,60 - direction * 60);
+//
+//			arrowDic.Add(pos, arrow);
+//
+//			bool result = true;
+//
+//			List<int> tmpList = new List<int>();
+//
+//			tmpList.Add(pos);
+//
+//			int targetPos = battle.mapData.neighbourPosMap[pos][direction];
+//
+//			while(true){
+//
+//				if(battle.heroMapDic.ContainsKey(targetPos)){
+//					
+//					if(moveDic.ContainsKey(targetPos)){
+//
+//						int index = tmpList.IndexOf(targetPos);
+//
+//						if(index == -1){
+//
+//							tmpList.Add(targetPos);
+//
+//						}else{
+//
+//							if(index != 0){
+//
+//								result = false;
+//							}
+//
+//							break;
+//						}
+//
+//						int tmpDirection = moveDic[targetPos];
+//
+//						targetPos = battle.mapData.neighbourPosMap[targetPos][tmpDirection];
+//
+//					}else{
+//
+//						result = false;
+//						
+//						break;
+//					}
+//
+//				}else if(summonDic.ContainsValue(targetPos)){
+//
+//					result = false;
+//
+//					break;
+//
+//				}else{
+//
+//					break;
+//				}
+//			}
+//
+//			if(!result){
+//
+//				movingIsOK = false;
+//
+//				arrow.SetColor(Color.blue);
+//
+//			}else{
+//
+//				arrow.SetColor(Color.yellow);
+//			}
+//		}
 	}
 
 	public void MapUnitDown(MapUnit _mapUnit){
 
-		if (battle.mapDic[_mapUnit.index] == battle.clientIsMine && heroDic.ContainsKey (_mapUnit.index)) {
+		if (battle.mapData.dic[_mapUnit.index] == battle.clientIsMine && heroDic.ContainsKey (_mapUnit.index)) {
 
-			HeroCard heroCard = heroDic[_mapUnit.index];
-
-			if(nowChooseHero == heroCard){
-
-				Hero hero = battle.heroMapDic[_mapUnit.index];
-
-				if(hero.canMove){
-
-					movingHeroPos = hero.pos;
-
-					if(moveDic.ContainsKey(movingHeroPos)){
-
-						battle.ClientRequestUnmove(movingHeroPos);
-
-						ClearMoves();
-
-						CreateMoves();
-					}
-				}
-			}
+//			HeroCard heroCard = heroDic[_mapUnit.index];
+//
+//			if(nowChooseHero == heroCard){
+//
+//				Hero hero = battle.heroMapDic[_mapUnit.index];
+//
+//				if(hero.canMove){
+//
+//					movingHeroPos = hero.pos;
+//
+//					if(moveDic.ContainsKey(movingHeroPos)){
+//
+//						battle.ClientRequestUnmove(movingHeroPos);
+//
+//						ClearMoves();
+//
+//						CreateMoves();
+//					}
+//				}
+//			}
 		}
 	}
 
 	public void MapUnitEnter(MapUnit _mapUnit){
-
-		if (movingHeroPos != -1) {
-
-			if((battle.mapDic[_mapUnit.index] == battle.clientIsMine && !battle.mapBelongDic.ContainsKey(_mapUnit.index)) || (battle.mapDic[_mapUnit.index] != battle.clientIsMine && battle.mapBelongDic.ContainsKey(_mapUnit.index))){
-
-				if(battle.heroMapDic.ContainsKey(_mapUnit.index)){
-
-					Hero tmpHero = battle.heroMapDic[_mapUnit.index];
-
-					if(!tmpHero.canMove){
-
-						return;
-					}
-				}
-
-				Hero hero = battle.heroMapDic[movingHeroPos];
-
-				int dis = _mapUnit.index - hero.pos;
-
-				int direction = -1;
-
-				if(dis == 1){
-
-					direction = 1;
-
-				}else if(dis == battle.mapData.mapWidth){
-
-					direction = 2;
-
-				}else if(dis == battle.mapData.mapWidth - 1){
-
-					direction = 3;
-
-				}else if(dis == -1){
-
-					direction = 4;
-
-				}else if(dis == -battle.mapData.mapWidth){
-
-					direction = 5;
-
-				}else if(dis == -battle.mapData.mapWidth + 1){
-
-					direction = 0;
-				}
-
-				if(direction != -1){
-
-					battle.ClientRequestMove(movingHeroPos,direction);
-
-					ClearMoves();
-					
-					CreateMoves();
-				}
-			}
-		}
+//
+//		if (movingHeroPos != -1) {
+//
+//			if((battle.mapData.dic[_mapUnit.index] == battle.clientIsMine && !battle.mapBelongDic.ContainsKey(_mapUnit.index)) || (battle.mapDic[_mapUnit.index] != battle.clientIsMine && battle.mapBelongDic.ContainsKey(_mapUnit.index))){
+//
+//				if(battle.heroMapDic.ContainsKey(_mapUnit.index)){
+//
+//					Hero tmpHero = battle.heroMapDic[_mapUnit.index];
+//
+//					if(!tmpHero.canMove){
+//
+//						return;
+//					}
+//				}
+//
+//				Hero hero = battle.heroMapDic[movingHeroPos];
+//
+//				int dis = _mapUnit.index - hero.pos;
+//
+//				int direction = -1;
+//
+//				if(dis == 1){
+//
+//					direction = 1;
+//
+//				}else if(dis == battle.mapData.mapWidth){
+//
+//					direction = 2;
+//
+//				}else if(dis == battle.mapData.mapWidth - 1){
+//
+//					direction = 3;
+//
+//				}else if(dis == -1){
+//
+//					direction = 4;
+//
+//				}else if(dis == -battle.mapData.mapWidth){
+//
+//					direction = 5;
+//
+//				}else if(dis == -battle.mapData.mapWidth + 1){
+//
+//					direction = 0;
+//				}
+//
+//				if(direction != -1){
+//
+//					battle.ClientRequestMove(movingHeroPos,direction);
+//
+//					ClearMoves();
+//					
+//					CreateMoves();
+//				}
+//			}
+//		}
 	}
 
 	public void MapUnitExit(MapUnit _mapUnit){
 
-		if (movingHeroPos != -1) {
-			
-			if(moveDic.ContainsKey(movingHeroPos)){
-				
-				battle.ClientRequestUnmove(movingHeroPos);
-				
-				ClearMoves();
-				
-				CreateMoves();
-			}
-		}
+//		if (movingHeroPos != -1) {
+//			
+//			if(moveDic.ContainsKey(movingHeroPos)){
+//				
+//				battle.ClientRequestUnmove(movingHeroPos);
+//				
+//				ClearMoves();
+//				
+//				CreateMoves();
+//			}
+//		}
 	}
 
 	public void MapUnitUp(MapUnit _mapUnit){
@@ -604,69 +602,69 @@ public class BattleManager : MonoBehaviour {
 
 	public void MapUnitUpAsButton(MapUnit _mapUnit){
 
-		if (summonDic.ContainsValue (_mapUnit.index)) {
-
-			HeroCard summonHero = summonHeroDic [_mapUnit.index];
-
-			if (nowChooseHero == null) {
-
-				nowChooseHero = summonHero;
-
-				nowChooseHero.SetFrameVisible (true);
-
-			} else {
-
-				if (nowChooseHero == summonHero) {
-
-					nowChooseHero = null;
-
-					UnsummonHero (summonHero.cardUid);
-
-				} else {
-
-					ClearNowChooseHero();
-
-					nowChooseHero = summonHero;
-
-					nowChooseHero.SetFrameVisible (true);
-				}
-			}
-			
-		} else if (battle.heroMapDic.ContainsKey (_mapUnit.index)) {
-
-			HeroCard nowHero = heroDic [_mapUnit.index];
-			
-			if (nowChooseHero == null) {
-				
-				nowChooseHero = nowHero;
-				
-				nowChooseHero.SetFrameVisible (true);
-				
-			} else {
-				
-				if (nowChooseHero != nowHero) {
-
-					ClearNowChooseHero();
-					
-					nowChooseHero = nowHero;
-					
-					nowChooseHero.SetFrameVisible (true);
-				}
-			}
-
-		} else if(nowChooseCard != null) {
-
-			if (battle.mapDic [_mapUnit.index] == battle.clientIsMine && !battle.mapBelongDic.ContainsKey (_mapUnit.index) && nowChooseCard.sds.cost <= GetMoney ()) {
-				
-				SummonHero (nowChooseCard.cardUid, _mapUnit.index);
-			}
-
-		}else {
-
-			ClearNowChooseHero();
-		}
-
-		ClearNowChooseCard ();
+//		if (summonDic.ContainsValue (_mapUnit.index)) {
+//
+//			HeroCard summonHero = summonHeroDic [_mapUnit.index];
+//
+//			if (nowChooseHero == null) {
+//
+//				nowChooseHero = summonHero;
+//
+//				nowChooseHero.SetFrameVisible (true);
+//
+//			} else {
+//
+//				if (nowChooseHero == summonHero) {
+//
+//					nowChooseHero = null;
+//
+//					UnsummonHero (summonHero.cardUid);
+//
+//				} else {
+//
+//					ClearNowChooseHero();
+//
+//					nowChooseHero = summonHero;
+//
+//					nowChooseHero.SetFrameVisible (true);
+//				}
+//			}
+//			
+//		} else if (battle.heroMapDic.ContainsKey (_mapUnit.index)) {
+//
+//			HeroCard nowHero = heroDic [_mapUnit.index];
+//			
+//			if (nowChooseHero == null) {
+//				
+//				nowChooseHero = nowHero;
+//				
+//				nowChooseHero.SetFrameVisible (true);
+//				
+//			} else {
+//				
+//				if (nowChooseHero != nowHero) {
+//
+//					ClearNowChooseHero();
+//					
+//					nowChooseHero = nowHero;
+//					
+//					nowChooseHero.SetFrameVisible (true);
+//				}
+//			}
+//
+//		} else if(nowChooseCard != null) {
+//
+//			if (battle.mapDic [_mapUnit.index] == battle.clientIsMine && !battle.mapBelongDic.ContainsKey (_mapUnit.index) && nowChooseCard.sds.cost <= GetMoney ()) {
+//				
+//				SummonHero (nowChooseCard.cardUid, _mapUnit.index);
+//			}
+//
+//		}else {
+//
+//			ClearNowChooseHero();
+//		}
+//
+//		ClearNowChooseCard ();
 	}
 
 	public void HeroClick(HeroCard _hero){
@@ -743,20 +741,20 @@ public class BattleManager : MonoBehaviour {
 
 	private void AddHeroToMap(Hero _hero){
 
-		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hero"));
-		
-		HeroCard hero = go.GetComponent<HeroCard>();
-
-		if (!_hero.canMove) {
-
-			hero.body.color = Color.gray;
-		}
-
-		heroDic.Add (_hero.pos, hero);
-		
-		hero.Init (_hero.id, _hero.nowHp, _hero.nowPower);
-		
-		AddHeroToMapReal (hero, _hero.pos);
+//		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hero"));
+//		
+//		HeroCard hero = go.GetComponent<HeroCard>();
+//
+//		if (!_hero.canMove) {
+//
+//			hero.body.color = Color.gray;
+//		}
+//
+//		heroDic.Add (_hero.pos, hero);
+//		
+//		hero.Init (_hero.id, _hero.nowHp, _hero.nowPower);
+//		
+//		AddHeroToMapReal (hero, _hero.pos);
 	}
 
 	private void AddCardToMap(int _cardUid,int _pos){
@@ -911,66 +909,66 @@ public class BattleManager : MonoBehaviour {
 
 	private void DoMove(BinaryReader _br){
 
-		Dictionary<int,int> moveDic = battle.ClientDoMove (_br);
-
-		if (moveDic.Count > 0) {
-
-			ClearMoves ();
-
-			Dictionary<int,int>.Enumerator enumerator = moveDic.GetEnumerator ();
-
-			bool hasCallBack = false;
-
-			while (enumerator.MoveNext()) {
-
-				int oldPos = enumerator.Current.Key;
-
-				int newPos = enumerator.Current.Value;
-
-				HeroCard hero = heroDic [oldPos];
-
-				Action<float> delX = delegate(float obj) {
-
-					hero.transform.localPosition = new Vector3 (obj, hero.transform.localPosition.y, hero.transform.localPosition.z);
-				};
-
-				Action<float> delY = delegate(float obj) {
-					
-					hero.transform.localPosition = new Vector3 (hero.transform.localPosition.x, obj, hero.transform.localPosition.z);
-				};
-
-				if(!hasCallBack){
-
-					hasCallBack = true;
-					
-					Action over = delegate() {
-
-						RefreshData();
-						
-						DoAttack(_br);
-					};
-
-					SuperTween.Instance.To (hero.transform.localPosition.x, mapUnitDic [newPos].transform.localPosition.x, 1, delX, over);
-					
-				}else{
-
-					SuperTween.Instance.To (hero.transform.localPosition.x, mapUnitDic [newPos].transform.localPosition.x, 1, delX, null);
-				}
-
-				SuperTween.Instance.To (hero.transform.localPosition.y, mapUnitDic [newPos].transform.localPosition.y, 1, delY, null);
-			}
-
-		} else {
-
-			DoAttack(_br);
-		}
+//		Dictionary<int,int> moveDic = battle.ClientDoMove (_br);
+//
+//		if (moveDic.Count > 0) {
+//
+//			ClearMoves ();
+//
+//			Dictionary<int,int>.Enumerator enumerator = moveDic.GetEnumerator ();
+//
+//			bool hasCallBack = false;
+//
+//			while (enumerator.MoveNext()) {
+//
+//				int oldPos = enumerator.Current.Key;
+//
+//				int newPos = enumerator.Current.Value;
+//
+//				HeroCard hero = heroDic [oldPos];
+//
+//				Action<float> delX = delegate(float obj) {
+//
+//					hero.transform.localPosition = new Vector3 (obj, hero.transform.localPosition.y, hero.transform.localPosition.z);
+//				};
+//
+//				Action<float> delY = delegate(float obj) {
+//					
+//					hero.transform.localPosition = new Vector3 (hero.transform.localPosition.x, obj, hero.transform.localPosition.z);
+//				};
+//
+//				if(!hasCallBack){
+//
+//					hasCallBack = true;
+//					
+//					Action over = delegate() {
+//
+//						RefreshData();
+//						
+//						DoAttack(_br);
+//					};
+//
+//					SuperTween.Instance.To (hero.transform.localPosition.x, mapUnitDic [newPos].transform.localPosition.x, 1, delX, over);
+//					
+//				}else{
+//
+//					SuperTween.Instance.To (hero.transform.localPosition.x, mapUnitDic [newPos].transform.localPosition.x, 1, delX, null);
+//				}
+//
+//				SuperTween.Instance.To (hero.transform.localPosition.y, mapUnitDic [newPos].transform.localPosition.y, 1, delY, null);
+//			}
+//
+//		} else {
+//
+//			DoAttack(_br);
+//		}
 	}
 
 	private void DoAttack(BinaryReader _br){
 
-		IEnumerator enumerator = battle.ClientDoAttack (_br);
-
-		DoAttackReal (enumerator, _br);
+//		IEnumerator enumerator = battle.ClientDoAttack (_br);
+//
+//		DoAttackReal (enumerator, _br);
 	}
 
 	private void DoAttackReal(IEnumerator _enumerator,BinaryReader _br){
@@ -1007,49 +1005,49 @@ public class BattleManager : MonoBehaviour {
 
 	private void DoRush(IEnumerator _enumerator,BinaryReader _br){
 
-		KeyValuePair<int,int> pair = (KeyValuePair<int,int>)_enumerator.Current;
-
-		GameObject go = GameObject.Instantiate<GameObject> (Resources.Load<GameObject> ("Attack"));
-
-		go.GetComponent<SpriteRenderer> ().color = Color.magenta;
-
-		go.transform.SetParent (arrowContainer, false);
-
-		go.transform.localPosition = new Vector3(mapUnitDic [pair.Key].transform.localPosition.x,mapUnitDic [pair.Key].transform.localPosition.y,arrowZFix);
-
-		go.transform.localScale = new Vector3 (mapUnitScale, mapUnitScale, mapUnitScale);
-
-		Action doNext = delegate() {
-
-			DoAttackReal(_enumerator,_br);
-		};
-
-		Action over = delegate() {
-
-			GameObject.Destroy(go);
-
-			heroDic[pair.Value].SetPower(battle.heroMapDic[pair.Value].nowPower);
-
-			SuperTween.Instance.DelayCall(1,doNext);
-		};
-
-		Action<float> delX = delegate(float obj) {
-
-			go.transform.localPosition = new Vector3(obj,go.transform.localPosition.y,go.transform.localPosition.z);
-		};
-
-		Action<float> delY = delegate(float obj) {
-			
-			go.transform.localPosition = new Vector3(go.transform.localPosition.x,obj,go.transform.localPosition.z);
-		};
-
-		Vector3 targetPos = mapUnitDic [pair.Value].transform.localPosition;
-
-		go.transform.eulerAngles = new Vector3(0,0,Mathf.Atan2(targetPos.y - go.transform.localPosition.y,targetPos.x - go.transform.localPosition.x) * 180 / Mathf.PI);
-
-		SuperTween.Instance.To (go.transform.localPosition.x, targetPos.x, 1, delX, over);
-
-		SuperTween.Instance.To (go.transform.localPosition.y, targetPos.y, 1, delY, null);
+//		KeyValuePair<int,int> pair = (KeyValuePair<int,int>)_enumerator.Current;
+//
+//		GameObject go = GameObject.Instantiate<GameObject> (Resources.Load<GameObject> ("Attack"));
+//
+//		go.GetComponent<SpriteRenderer> ().color = Color.magenta;
+//
+//		go.transform.SetParent (arrowContainer, false);
+//
+//		go.transform.localPosition = new Vector3(mapUnitDic [pair.Key].transform.localPosition.x,mapUnitDic [pair.Key].transform.localPosition.y,arrowZFix);
+//
+//		go.transform.localScale = new Vector3 (mapUnitScale, mapUnitScale, mapUnitScale);
+//
+//		Action doNext = delegate() {
+//
+//			DoAttackReal(_enumerator,_br);
+//		};
+//
+//		Action over = delegate() {
+//
+//			GameObject.Destroy(go);
+//
+//			heroDic[pair.Value].SetPower(battle.heroMapDic[pair.Value].nowPower);
+//
+//			SuperTween.Instance.DelayCall(1,doNext);
+//		};
+//
+//		Action<float> delX = delegate(float obj) {
+//
+//			go.transform.localPosition = new Vector3(obj,go.transform.localPosition.y,go.transform.localPosition.z);
+//		};
+//
+//		Action<float> delY = delegate(float obj) {
+//			
+//			go.transform.localPosition = new Vector3(go.transform.localPosition.x,obj,go.transform.localPosition.z);
+//		};
+//
+//		Vector3 targetPos = mapUnitDic [pair.Value].transform.localPosition;
+//
+//		go.transform.eulerAngles = new Vector3(0,0,Mathf.Atan2(targetPos.y - go.transform.localPosition.y,targetPos.x - go.transform.localPosition.x) * 180 / Mathf.PI);
+//
+//		SuperTween.Instance.To (go.transform.localPosition.x, targetPos.x, 1, delX, over);
+//
+//		SuperTween.Instance.To (go.transform.localPosition.y, targetPos.y, 1, delY, null);
 	}
 
 	private void DoDamage(IEnumerator _enumerator,BinaryReader _br){

@@ -12,15 +12,6 @@ public class HeroCard : MonoBehaviour,IPointerClickHandler {
 	public Image body;
 
 	[SerializeField]
-	private Text heroType;
-
-	[SerializeField]
-	private Text power;
-
-	[SerializeField]
-	private Text damage;
-
-	[SerializeField]
 	private Text hp;
 
 	public int cardUid;
@@ -33,12 +24,6 @@ public class HeroCard : MonoBehaviour,IPointerClickHandler {
 
 		sds = StaticData.GetData<HeroSDS> (_id);
 
-		heroType.text = sds.heroTypeSDS.name;
-
-		power.text = sds.power.ToString ();
-
-		damage.text = sds.damage.ToString ();
-
 		hp.text = sds.hp.ToString ();
 	}
 
@@ -47,24 +32,13 @@ public class HeroCard : MonoBehaviour,IPointerClickHandler {
 		cardUid = -1;
 
 		sds = StaticData.GetData<HeroSDS> (_id);
-		
-		heroType.text = sds.heroTypeSDS.name;
-		
-		damage.text = sds.damage.ToString ();
-		
-		hp.text = _hp.ToString ();
 
-		power.text = _power.ToString ();
+		hp.text = _hp.ToString ();
 	}
 
 	public void SetHp(int _hp){
 
 		hp.text = _hp.ToString ();
-	}
-
-	public void SetPower(int _power){
-
-		power.text = _power.ToString ();
 	}
 
 	public void SetMouseEnable(bool _b){

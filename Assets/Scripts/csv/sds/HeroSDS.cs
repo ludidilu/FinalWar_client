@@ -1,51 +1,34 @@
 ﻿public class HeroSDS : CsvBase,IHeroSDS
 {
 	public int hp;
-	public int attackTimes;
-	public int damage;
-	public int power;
 	public int cost;
-	public int heroType;
-	public int[] skills;
+	public int atk;
+	public int shoot;
+	public int def;
 	
-	public HeroTypeClientSDS heroTypeSDS;
-	
-	public override void Fix()
+	public int GetID()
 	{
-		heroTypeSDS = StaticData.GetData<HeroTypeClientSDS>(heroType);
+		return ID;
 	}
-	
 	public int GetHp()
 	{
 		return hp;
-	}
-	public int GetAttackTimes()
-	{
-		return attackTimes;
-	}
-	public int GetDamage()
-	{
-		return damage;
-	}
-	public int GetPower()
-	{
-		return power;
 	}
 	public int GetCost()
 	{
 		return cost;
 	}
-	public int GetHeroType()
+	public int GetAtk()
 	{
-		return heroType;
+		return atk;
 	}
-	public IHeroTypeSDS GetHeroTypeSDS()
+	public int GetShoot()
 	{
-		return heroTypeSDS;
+		return shoot;
 	}
-	public int[] GetSkills()
+	public int GetDef()
 	{
-		return skills;
+		return def;
 	}
 }
 

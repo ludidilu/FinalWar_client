@@ -25,12 +25,6 @@ public class HeroDetail : MonoBehaviour {
 
 		hp.text = _hero.sds.hp.ToString ();
 
-		power.text = _hero.sds.power.ToString ();
-
-		damage.text = _hero.sds.damage.ToString ();
-
-		attackTimes.text = _hero.sds.attackTimes.ToString ();
-
 		gameObject.SetActive (true);
 	}
 
