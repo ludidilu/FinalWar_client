@@ -18,6 +18,10 @@ public class HeroCard : MonoBehaviour,IPointerClickHandler {
 
 	public HeroSDS sds;
 
+	public int pos = -1;
+
+	public bool isMine;
+
 	public void Init(int _cardUid,int _id){
 
 		cardUid = _cardUid;
@@ -27,13 +31,15 @@ public class HeroCard : MonoBehaviour,IPointerClickHandler {
 		hp.text = sds.hp.ToString ();
 	}
 
-	public void Init(int _id,int _hp,int _power){
-
-		cardUid = -1;
+	public void Init(int _id,int _hp,int _pos,bool _isMine){
 
 		sds = StaticData.GetData<HeroSDS> (_id);
 
 		hp.text = _hp.ToString ();
+
+		pos = _pos;
+
+		isMine = _isMine;
 	}
 
 	public void SetHp(int _hp){

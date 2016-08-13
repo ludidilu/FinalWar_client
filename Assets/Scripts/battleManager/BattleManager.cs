@@ -111,24 +111,6 @@ public class BattleManager : MonoBehaviour {
 
 	private int movingHeroPos = -1;
 
-	private bool movingIsOK = true;
-
-	private Dictionary<int,int> summonDic{
-
-		get{
-
-			return battle.clientIsMine ? battle.mSummonAction : battle.oSummonAction;
-		}
-	}
-
-//	private Dictionary<int,int> moveDic {
-//
-//		get {
-//
-//			return battle.clientIsMine ? battle.mAction : battle.oAction;
-//		}
-//	}
-
 	private void WriteLog(string _str){
 
 		Debug.Log (_str);
@@ -302,31 +284,17 @@ public class BattleManager : MonoBehaviour {
 				
 				unit.SetOffVisible(true);
 
-				if(battle.mapData.dic[index] == battle.clientIsMine){
+				if((battle.mapData.dic[index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(index)){
 
 					unit.SetMainColor(Color.green);
 
-					if(battle.mapBelongDic.ContainsKey(index)){
-						
-						unit.SetOffColor(Color.red);
-
-					}else{
-
-						unit.SetOffColor(Color.green);
-					}
+					unit.SetOffColor(Color.green);
 					
 				}else{
 					
 					unit.SetMainColor(Color.red);
 
-					if(battle.mapBelongDic.ContainsKey(index)){
-						
-						unit.SetOffColor(Color.green);
-						
-					}else{
-						
-						unit.SetOffColor(Color.red);
-					}
+					unit.SetOffColor(Color.red);
 				}
 					
 				index++;
@@ -348,7 +316,7 @@ public class BattleManager : MonoBehaviour {
 
 		while (enumerator.MoveNext()) {
 
-			if(summonDic.ContainsKey(enumerator.Current.Key)){
+			if(battle.summon.ContainsKey(enumerator.Current.Key)){
 
 				continue;
 			}
@@ -376,7 +344,7 @@ public class BattleManager : MonoBehaviour {
 
 	private void CreateSummonHeros(){
 
-		Dictionary<int,int>.Enumerator enumerator2 = summonDic.GetEnumerator ();
+		Dictionary<int,int>.Enumerator enumerator2 = battle.summon.GetEnumerator ();
 		
 		while (enumerator2.MoveNext()) {
 			
@@ -401,195 +369,88 @@ public class BattleManager : MonoBehaviour {
 
 	private void CreateMoves(){
 
-//		movingIsOK = true;
-//
-//		Dictionary<int,int>.Enumerator enumerator = moveDic.GetEnumerator ();
-//
-//		while (enumerator.MoveNext()) {
-//
-//			int pos = enumerator.Current.Key;
-//
-//			int direction = enumerator.Current.Value;
-//
-//			GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
-//
-//			Arrow arrow = go.GetComponent<Arrow>();
-//
-//			go.transform.SetParent(arrowContainer,false);
-//
-//			go.transform.localPosition = new Vector3( mapUnitDic[pos].transform.localPosition.x, mapUnitDic[pos].transform.localPosition.y,arrowZFix);
-//
-//			go.transform.localScale = new Vector3(mapUnitScale,mapUnitScale,mapUnitScale);
-//
-//			go.transform.eulerAngles = new Vector3(0,0,60 - direction * 60);
-//
-//			arrowDic.Add(pos, arrow);
-//
-//			bool result = true;
-//
-//			List<int> tmpList = new List<int>();
-//
-//			tmpList.Add(pos);
-//
-//			int targetPos = battle.mapData.neighbourPosMap[pos][direction];
-//
-//			while(true){
-//
-//				if(battle.heroMapDic.ContainsKey(targetPos)){
-//					
-//					if(moveDic.ContainsKey(targetPos)){
-//
-//						int index = tmpList.IndexOf(targetPos);
-//
-//						if(index == -1){
-//
-//							tmpList.Add(targetPos);
-//
-//						}else{
-//
-//							if(index != 0){
-//
-//								result = false;
-//							}
-//
-//							break;
-//						}
-//
-//						int tmpDirection = moveDic[targetPos];
-//
-//						targetPos = battle.mapData.neighbourPosMap[targetPos][tmpDirection];
-//
-//					}else{
-//
-//						result = false;
-//						
-//						break;
-//					}
-//
-//				}else if(summonDic.ContainsValue(targetPos)){
-//
-//					result = false;
-//
-//					break;
-//
-//				}else{
-//
-//					break;
-//				}
-//			}
-//
-//			if(!result){
-//
-//				movingIsOK = false;
-//
-//				arrow.SetColor(Color.blue);
-//
-//			}else{
-//
-//				arrow.SetColor(Color.yellow);
-//			}
-//		}
+
 	}
 
 	public void MapUnitDown(MapUnit _mapUnit){
 
-		if (battle.mapData.dic[_mapUnit.index] == battle.clientIsMine && heroDic.ContainsKey (_mapUnit.index)) {
+		if(nowChooseHero != null && nowChooseHero.pos != -1 && nowChooseHero.isMine == battle.clientIsMine){
 
-//			HeroCard heroCard = heroDic[_mapUnit.index];
-//
-//			if(nowChooseHero == heroCard){
-//
-//				Hero hero = battle.heroMapDic[_mapUnit.index];
-//
-//				if(hero.canMove){
-//
-//					movingHeroPos = hero.pos;
-//
-//					if(moveDic.ContainsKey(movingHeroPos)){
-//
-//						battle.ClientRequestUnmove(movingHeroPos);
-//
-//						ClearMoves();
-//
-//						CreateMoves();
-//					}
-//				}
-//			}
+			for(int i = 0 ; i < battle.action.Count ; i++){
+
+				KeyValuePair<int,int> pair = battle.action[i];
+
+				if(pair.Key == nowChooseHero.pos){
+
+					if(pair.Value == _mapUnit.index){
+
+						movingHeroPos = nowChooseHero.pos;
+					}
+
+					return;
+				}
+			}
+
+			if(_mapUnit.index == nowChooseHero.pos){
+
+				movingHeroPos = nowChooseHero.pos;
+			}
 		}
 	}
 
 	public void MapUnitEnter(MapUnit _mapUnit){
-//
-//		if (movingHeroPos != -1) {
-//
-//			if((battle.mapData.dic[_mapUnit.index] == battle.clientIsMine && !battle.mapBelongDic.ContainsKey(_mapUnit.index)) || (battle.mapDic[_mapUnit.index] != battle.clientIsMine && battle.mapBelongDic.ContainsKey(_mapUnit.index))){
-//
-//				if(battle.heroMapDic.ContainsKey(_mapUnit.index)){
-//
-//					Hero tmpHero = battle.heroMapDic[_mapUnit.index];
-//
-//					if(!tmpHero.canMove){
-//
-//						return;
-//					}
-//				}
-//
-//				Hero hero = battle.heroMapDic[movingHeroPos];
-//
-//				int dis = _mapUnit.index - hero.pos;
-//
-//				int direction = -1;
-//
-//				if(dis == 1){
-//
-//					direction = 1;
-//
-//				}else if(dis == battle.mapData.mapWidth){
-//
-//					direction = 2;
-//
-//				}else if(dis == battle.mapData.mapWidth - 1){
-//
-//					direction = 3;
-//
-//				}else if(dis == -1){
-//
-//					direction = 4;
-//
-//				}else if(dis == -battle.mapData.mapWidth){
-//
-//					direction = 5;
-//
-//				}else if(dis == -battle.mapData.mapWidth + 1){
-//
-//					direction = 0;
-//				}
-//
-//				if(direction != -1){
-//
-//					battle.ClientRequestMove(movingHeroPos,direction);
-//
-//					ClearMoves();
-//					
-//					CreateMoves();
-//				}
-//			}
-//		}
+
+		if (movingHeroPos != -1) {
+
+			List<int> tmpList = BattlePublicTools.GetNeighbourPos(battle.mapData.neighbourPosMap,movingHeroPos);
+
+			if(tmpList.Contains(_mapUnit.index)){
+
+				battle.ClientRequestAction(movingHeroPos,_mapUnit.index);
+				
+				ClearMoves();
+				
+				CreateMoves();
+
+			}else{
+
+				if((battle.mapData.dic[_mapUnit.index] == battle.clientIsMine) == battle.mapBelongDic.ContainsKey(_mapUnit.index)){
+
+					tmpList = BattlePublicTools.GetNeighbourPos2(battle.mapData.neighbourPosMap,movingHeroPos);
+
+					if(tmpList.Contains(_mapUnit.index)){
+
+						battle.ClientRequestAction(movingHeroPos,_mapUnit.index);
+						
+						ClearMoves();
+						
+						CreateMoves();
+					}
+				}
+			}
+		}
 	}
 
 	public void MapUnitExit(MapUnit _mapUnit){
 
-//		if (movingHeroPos != -1) {
-//			
-//			if(moveDic.ContainsKey(movingHeroPos)){
-//				
-//				battle.ClientRequestUnmove(movingHeroPos);
-//				
-//				ClearMoves();
-//				
-//				CreateMoves();
-//			}
-//		}
+		if (movingHeroPos != -1) {
+
+			for(int i = 0 ; i < battle.action.Count ; i++){
+				
+				KeyValuePair<int,int> pair = battle.action[i];
+				
+				if(pair.Key == movingHeroPos){
+
+					battle.ClientRequestUnaction(movingHeroPos);
+
+					ClearMoves();
+
+					CreateMoves();
+					
+					return;
+				}
+			}
+		}
 	}
 
 	public void MapUnitUp(MapUnit _mapUnit){
@@ -602,69 +463,69 @@ public class BattleManager : MonoBehaviour {
 
 	public void MapUnitUpAsButton(MapUnit _mapUnit){
 
-//		if (summonDic.ContainsValue (_mapUnit.index)) {
-//
-//			HeroCard summonHero = summonHeroDic [_mapUnit.index];
-//
-//			if (nowChooseHero == null) {
-//
-//				nowChooseHero = summonHero;
-//
-//				nowChooseHero.SetFrameVisible (true);
-//
-//			} else {
-//
-//				if (nowChooseHero == summonHero) {
-//
-//					nowChooseHero = null;
-//
-//					UnsummonHero (summonHero.cardUid);
-//
-//				} else {
-//
-//					ClearNowChooseHero();
-//
-//					nowChooseHero = summonHero;
-//
-//					nowChooseHero.SetFrameVisible (true);
-//				}
-//			}
-//			
-//		} else if (battle.heroMapDic.ContainsKey (_mapUnit.index)) {
-//
-//			HeroCard nowHero = heroDic [_mapUnit.index];
-//			
-//			if (nowChooseHero == null) {
-//				
-//				nowChooseHero = nowHero;
-//				
-//				nowChooseHero.SetFrameVisible (true);
-//				
-//			} else {
-//				
-//				if (nowChooseHero != nowHero) {
-//
-//					ClearNowChooseHero();
-//					
-//					nowChooseHero = nowHero;
-//					
-//					nowChooseHero.SetFrameVisible (true);
-//				}
-//			}
-//
-//		} else if(nowChooseCard != null) {
-//
-//			if (battle.mapDic [_mapUnit.index] == battle.clientIsMine && !battle.mapBelongDic.ContainsKey (_mapUnit.index) && nowChooseCard.sds.cost <= GetMoney ()) {
-//				
-//				SummonHero (nowChooseCard.cardUid, _mapUnit.index);
-//			}
-//
-//		}else {
-//
-//			ClearNowChooseHero();
-//		}
-//
-//		ClearNowChooseCard ();
+		if (battle.summon.ContainsValue (_mapUnit.index)) {
+
+			HeroCard summonHero = summonHeroDic [_mapUnit.index];
+
+			if (nowChooseHero == null) {
+
+				nowChooseHero = summonHero;
+
+				nowChooseHero.SetFrameVisible (true);
+
+			} else {
+
+				if (nowChooseHero == summonHero) {
+
+					nowChooseHero = null;
+
+					UnsummonHero (summonHero.cardUid);
+
+				} else {
+
+					ClearNowChooseHero();
+
+					nowChooseHero = summonHero;
+
+					nowChooseHero.SetFrameVisible (true);
+				}
+			}
+			
+		} else if (battle.heroMapDic.ContainsKey (_mapUnit.index)) {
+
+			HeroCard nowHero = heroDic [_mapUnit.index];
+			
+			if (nowChooseHero == null) {
+				
+				nowChooseHero = nowHero;
+				
+				nowChooseHero.SetFrameVisible (true);
+				
+			} else {
+				
+				if (nowChooseHero != nowHero) {
+
+					ClearNowChooseHero();
+					
+					nowChooseHero = nowHero;
+					
+					nowChooseHero.SetFrameVisible (true);
+				}
+			}
+
+		} else if(nowChooseCard != null) {
+
+			if ((battle.mapData.dic [_mapUnit.index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(_mapUnit.index) && nowChooseCard.sds.cost <= GetMoney ()) {
+				
+				SummonHero (nowChooseCard.cardUid, _mapUnit.index);
+			}
+
+		}else {
+
+			ClearNowChooseHero();
+		}
+
+		ClearNowChooseCard ();
 	}
 
 	public void HeroClick(HeroCard _hero){
@@ -741,20 +602,15 @@ public class BattleManager : MonoBehaviour {
 
 	private void AddHeroToMap(Hero _hero){
 
-//		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hero"));
-//		
-//		HeroCard hero = go.GetComponent<HeroCard>();
-//
-//		if (!_hero.canMove) {
-//
-//			hero.body.color = Color.gray;
-//		}
-//
-//		heroDic.Add (_hero.pos, hero);
-//		
-//		hero.Init (_hero.id, _hero.nowHp, _hero.nowPower);
-//		
-//		AddHeroToMapReal (hero, _hero.pos);
+		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hero"));
+		
+		HeroCard hero = go.GetComponent<HeroCard>();
+
+		heroDic.Add (_hero.pos, hero);
+		
+		hero.Init (_hero.sds.GetID(), _hero.nowHp, _hero.pos, _hero.isMine);
+		
+		AddHeroToMapReal (hero, _hero.pos);
 	}
 
 	private void AddCardToMap(int _cardUid,int _pos){
@@ -769,7 +625,7 @@ public class BattleManager : MonoBehaviour {
 
 		hero.body.color = summonColor;
 		
-		hero.Init(_cardUid,cardID);
+		hero.Init(_cardUid, cardID);
 
 		AddHeroToMapReal (hero, _pos);
 	}
@@ -797,7 +653,7 @@ public class BattleManager : MonoBehaviour {
 
 		Dictionary<int,int> cards = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
-		Dictionary<int,int>.KeyCollection.Enumerator enumerator = summonDic.Keys.GetEnumerator ();
+		Dictionary<int,int>.KeyCollection.Enumerator enumerator = battle.summon.Keys.GetEnumerator ();
 
 		while (enumerator.MoveNext()) {
 
@@ -812,11 +668,6 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	public void ActionBtClick(){
-
-		if (!movingIsOK) {
-
-			return;
-		}
 
 		ClearNowChooseCard ();
 

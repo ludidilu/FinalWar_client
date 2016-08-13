@@ -11,13 +11,13 @@ public class HeroDetail : MonoBehaviour {
 	private Text hp;
 
 	[SerializeField]
-	private Text power;
+	private Text atk;
 
 	[SerializeField]
-	private Text damage;
+	private Text shoot;
 
 	[SerializeField]
-	private Text attackTimes;
+	private Text def;
 
 	public void Init(HeroCard _hero){
 
@@ -25,21 +25,17 @@ public class HeroDetail : MonoBehaviour {
 
 		hp.text = _hero.sds.hp.ToString ();
 
+		atk.text = _hero.sds.atk.ToString ();
+
+		shoot.text = _hero.sds.shoot.ToString ();
+
+		def.text = _hero.sds.def.ToString ();
+
 		gameObject.SetActive (true);
 	}
 
 	public void Hide(){
 
 		gameObject.SetActive (false);
-	}
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 }
