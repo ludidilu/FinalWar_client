@@ -718,7 +718,11 @@ public class BattleManager : MonoBehaviour {
 
 	private void DoSummonMyHero(BinaryReader _br){
 
+		Debug.Log ("DoSummonMyHero!");
+
 		int summonNum = battle.ClientDoSummonMyHero (_br);
+
+		Debug.Log ("summonNum:" + summonNum);
 
 		if (summonNum > 0) {
 
@@ -738,6 +742,8 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	private void DoSummonOppHero(BinaryReader _br){
+
+		Debug.Log ("DoSummonOppHero!");
 
 		int summonNum = battle.ClientDoSummonOppHero (_br);
 
@@ -759,6 +765,8 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	private void DoMove(BinaryReader _br){
+
+		battle.ClientDoRecover (_br);
 
 //		Dictionary<int,int> moveDic = battle.ClientDoMove (_br);
 //
