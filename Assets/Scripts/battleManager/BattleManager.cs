@@ -853,6 +853,8 @@ public class BattleManager : MonoBehaviour {
 
 		battle.ClientDoRecover (_br);
 
+		battle.ClientRequestRefreshData ();
+
 //		Dictionary<int,int> moveDic = battle.ClientDoMove (_br);
 //
 //		if (moveDic.Count > 0) {
