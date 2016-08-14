@@ -9,12 +9,6 @@ public class MapUnit : MonoBehaviour {
 	[SerializeField]
 	private MeshRenderer mainMr;
 
-	[SerializeField]
-	private MeshRenderer offMr;
-
-	[SerializeField]
-	private GameObject offGo;
-
 	public int index;
 
 	// Use this for initialization
@@ -25,16 +19,6 @@ public class MapUnit : MonoBehaviour {
 	public void SetMainColor(Color _color){
 
 		mainMr.material.SetColor ("_Color", _color);
-	}
-
-	public void SetOffColor(Color _color){
-
-		offMr.material.SetColor ("_Color", _color);
-	}
-
-	public void SetOffVisible(bool _value){
-
-		offGo.SetActive (_value);
 	}
 
 	public void OnMouseDown(){

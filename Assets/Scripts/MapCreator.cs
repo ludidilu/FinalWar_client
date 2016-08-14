@@ -114,8 +114,6 @@ public class MapCreator : MonoBehaviour {
 
 				unit.index = index;
 				
-				unit.SetOffVisible(false);
-
 				if(mapData.dic.ContainsKey(index)){
 
 					if(mapData.dic[index]){

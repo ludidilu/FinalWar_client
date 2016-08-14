@@ -14,10 +14,16 @@ public class BattleManager : MonoBehaviour {
 	private const float arrowZFix = -5;
 
 	private const float mapUnitWidth = 30;
-	private const float mapUnitScale = 50;
+	private const float mapUnitScale = 55;
 	private const float heroScale = 0.5f;
 	private const float mapContainerYFix = 60;
 	private static readonly float sqrt3 = Mathf.Sqrt (3);
+
+	[SerializeField]
+	private Color myMapUnitColor;
+
+	[SerializeField]
+	private Color oppMapUnitColor;
 
 	[SerializeField]
 	private GraphicRaycaster graphicRayCaster;
@@ -282,19 +288,13 @@ public class BattleManager : MonoBehaviour {
 
 				unit.index = index;
 				
-				unit.SetOffVisible(true);
-
 				if((battle.mapData.dic[index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(index)){
 
-					unit.SetMainColor(Color.green);
+					unit.SetMainColor(myMapUnitColor);
 
-					unit.SetOffColor(Color.green);
-					
 				}else{
 					
-					unit.SetMainColor(Color.red);
-
-					unit.SetOffColor(Color.red);
+					unit.SetMainColor(oppMapUnitColor);
 				}
 					
 				index++;
