@@ -65,7 +65,7 @@ public class BattleManager : MonoBehaviour {
 
 	private Dictionary<int,HeroCard> summonHeroDic = new Dictionary<int, HeroCard>();
 
-	private Dictionary<int,Arrow> arrowDic = new Dictionary<int, Arrow>();
+	private List<GameObject> arrowList = new List<GameObject> ();
 
 	private HeroCard m_nowChooseCard;
 
@@ -244,14 +244,12 @@ public class BattleManager : MonoBehaviour {
 
 	private void ClearMoves(){
 
-		Dictionary<int,Arrow>.ValueCollection.Enumerator enumerator = arrowDic.Values.GetEnumerator ();
+		for(int i = 0 ; i < arrowList.Count ; i++){
 
-		while (enumerator.MoveNext()) {
-
-			GameObject.Destroy(enumerator.Current.gameObject);
+			GameObject.Destroy(arrowList[i]);
 		}
 
-		arrowDic.Clear ();
+		arrowList.Clear ();
 	}
 
 	private void CreateMapPanel(){
@@ -369,7 +367,94 @@ public class BattleManager : MonoBehaviour {
 
 	private void CreateMoves(){
 
+		BattleData battleData = battle.GetBattleData ();
 
+		Dictionary<int,int>.Enumerator enumerator = battleData.moveDic.GetEnumerator ();
+
+		while (enumerator.MoveNext()) {
+
+			CreateArrow(enumerator.Current.Key,enumerator.Current.Value,Color.green,0);
+		}
+
+		Dictionary<int,BattleCellData>.Enumerator enumerator2 = battleData.actionDic.GetEnumerator ();
+
+		while (enumerator2.MoveNext()) {
+
+			int pos = enumerator2.Current.Key;
+
+			BattleCellData cellData = enumerator2.Current.Value;
+
+			for(int i = 0 ; i < cellData.attackers.Count ; i++){
+
+				CreateArrow(cellData.attackers[i].pos,pos,Color.red,i);
+			}
+
+			for(int i = 0 ; i < cellData.supporters.Count ; i++){
+
+				CreateArrow(cellData.supporters[i].pos,pos,Color.blue,i);
+			}
+
+			for(int i = 0 ; i < cellData.shooters.Count ; i++){
+				
+				CreateShootArrow(cellData.shooters[i].pos,pos,Color.yellow);
+			}
+		}
+	}
+
+	private void CreateArrow(int _start,int _end,Color _color,int _index){
+
+		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
+		
+		Arrow arrow = go.GetComponent<Arrow>();
+		
+		go.transform.SetParent(arrowContainer,false);
+		
+		MapUnit start = mapUnitDic[_start];
+		
+		MapUnit end = mapUnitDic[_end];
+		
+		go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
+		
+		float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y,end.transform.position.x - start.transform.position.x);
+		
+		Quaternion q = new Quaternion();
+		
+		q.eulerAngles = new Vector3(0,0,angle * 180 / Mathf.PI);
+		
+		go.transform.localRotation = q;
+		
+		arrow.SetColor (_color);
+
+		arrow.SetIndex (_index);
+		
+		arrowList.Add(go);
+	}
+
+	private void CreateShootArrow(int _start,int _end,Color _color){
+
+		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("ShootArrow"));
+		
+		ShootArrow arrow = go.GetComponent<ShootArrow>();
+		
+		go.transform.SetParent(arrowContainer,false);
+		
+		MapUnit start = mapUnitDic[_start];
+		
+		MapUnit end = mapUnitDic[_end];
+		
+		go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
+		
+		float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y,end.transform.position.x - start.transform.position.x);
+		
+		Quaternion q = new Quaternion();
+		
+		q.eulerAngles = new Vector3(0,0,angle * 180 / Mathf.PI);
+		
+		go.transform.localRotation = q;
+		
+		arrow.SetColor (_color);
+		
+		arrowList.Add(go);
 	}
 
 	public void MapUnitDown(MapUnit _mapUnit){

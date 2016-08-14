@@ -7,16 +7,10 @@ public class Arrow : MonoBehaviour {
 	[SerializeField]
 	private Image img;
 
-	[SerializeField]
-	private bool replaceMat;
-
 	// Use this for initialization
 	void Awake () {
-
-		if (replaceMat) {
 	
-			img.material = GameObject.Instantiate<Material> (img.material);
-		}
+		img.material = GameObject.Instantiate<Material> (img.material);
 	}
 	
 	public void SetIndex(int _index){
