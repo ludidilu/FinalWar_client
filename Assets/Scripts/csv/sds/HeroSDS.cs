@@ -2,9 +2,10 @@
 {
 	public int hp;
 	public int cost;
-	public int atk;
+	public int attack;
 	public int shoot;
-	public int def;
+	public int defense;
+	public int support;
 	
 	public int GetID()
 	{
@@ -18,17 +19,21 @@
 	{
 		return cost;
 	}
-	public int GetAtk()
+	public int GetAttack()
 	{
-		return atk;
+		return attack;
 	}
 	public int GetShoot()
 	{
 		return shoot;
 	}
-	public int GetDef()
+	public int GetDefense()
 	{
-		return def;
+		return defense;
+	}
+	public int GetSupport()
+	{
+		return support;
 	}
 }
 

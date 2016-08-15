@@ -11,13 +11,16 @@ public class HeroDetail : MonoBehaviour {
 	private Text hp;
 
 	[SerializeField]
-	private Text atk;
+	private Text attack;
 
 	[SerializeField]
 	private Text shoot;
 
 	[SerializeField]
-	private Text def;
+	private Text defense;
+
+	[SerializeField]
+	private Text support;
 
 	public void Init(HeroCard _hero){
 
@@ -25,11 +28,13 @@ public class HeroDetail : MonoBehaviour {
 
 		hp.text = _hero.sds.hp.ToString ();
 
-		atk.text = _hero.sds.atk.ToString ();
+		attack.text = _hero.sds.attack.ToString ();
 
 		shoot.text = _hero.sds.shoot.ToString ();
 
-		def.text = _hero.sds.def.ToString ();
+		defense.text = _hero.sds.defense.ToString ();
+
+		support.text = _hero.sds.support.ToString ();
 
 		gameObject.SetActive (true);
 	}
