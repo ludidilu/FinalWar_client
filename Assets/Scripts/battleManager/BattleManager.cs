@@ -57,13 +57,13 @@ public class BattleManager : MonoBehaviour {
 
 	private Battle battle;
 
-	private Dictionary<int,MapUnit> mapUnitDic = new Dictionary<int, MapUnit> ();
+	private Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit> ();
 
-	private Dictionary<int,HeroCard> cardDic = new Dictionary<int, HeroCard>();
+	private Dictionary<int, HeroCard> cardDic = new Dictionary<int, HeroCard>();
 
-	private Dictionary<int,HeroCard> heroDic = new Dictionary<int, HeroCard>();
+	private Dictionary<int, HeroBattle> heroDic = new Dictionary<int, HeroBattle>();
 
-	private Dictionary<int,HeroCard> summonHeroDic = new Dictionary<int, HeroCard>();
+	private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
 
 	private List<GameObject> arrowList = new List<GameObject> ();
 
@@ -91,9 +91,9 @@ public class BattleManager : MonoBehaviour {
 		}
 	}
 
-	private HeroCard m_nowChooseHero;
+	private HeroBattle m_nowChooseHero;
 
-	private HeroCard nowChooseHero{
+	private HeroBattle nowChooseHero{
 
 		get{
 
@@ -220,7 +220,7 @@ public class BattleManager : MonoBehaviour {
 
 	private void ClearSummonHeros(){
 
-		Dictionary<int,HeroCard>.ValueCollection.Enumerator enumerator2 = summonHeroDic.Values.GetEnumerator ();
+		Dictionary<int,HeroBattle>.ValueCollection.Enumerator enumerator2 = summonHeroDic.Values.GetEnumerator ();
 		
 		while (enumerator2.MoveNext()) {
 			
@@ -232,7 +232,7 @@ public class BattleManager : MonoBehaviour {
 
 	private void ClearHeros(){
 
-		Dictionary<int,HeroCard>.ValueCollection.Enumerator enumerator2 = heroDic.Values.GetEnumerator ();
+		Dictionary<int,HeroBattle>.ValueCollection.Enumerator enumerator2 = heroDic.Values.GetEnumerator ();
 		
 		while (enumerator2.MoveNext()) {
 			
@@ -319,7 +319,7 @@ public class BattleManager : MonoBehaviour {
 				continue;
 			}
 
-			GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hero"));
+			GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroCard"));
 
 			HeroCard hero = go.GetComponent<HeroCard>();
 
@@ -550,7 +550,7 @@ public class BattleManager : MonoBehaviour {
 
 		if (battle.summon.ContainsValue (_mapUnit.index)) {
 
-			HeroCard summonHero = summonHeroDic [_mapUnit.index];
+			HeroBattle summonHero = summonHeroDic [_mapUnit.index];
 
 			if (nowChooseHero == null) {
 
@@ -578,7 +578,7 @@ public class BattleManager : MonoBehaviour {
 			
 		} else if (battle.heroMapDic.ContainsKey (_mapUnit.index)) {
 
-			HeroCard nowHero = heroDic [_mapUnit.index];
+			HeroBattle nowHero = heroDic [_mapUnit.index];
 			
 			if (nowChooseHero == null) {
 				
@@ -687,9 +687,9 @@ public class BattleManager : MonoBehaviour {
 
 	private void AddHeroToMap(Hero _hero){
 
-		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hero"));
+		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 		
-		HeroCard hero = go.GetComponent<HeroCard>();
+		HeroBattle hero = go.GetComponent<HeroBattle>();
 
 		heroDic.Add (_hero.pos, hero);
 		
@@ -702,20 +702,24 @@ public class BattleManager : MonoBehaviour {
 
 		int cardID = (battle.clientIsMine ? battle.mHandCards : battle.oHandCards) [_cardUid];
 
-		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hero"));
+		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 		
-		HeroCard hero = go.GetComponent<HeroCard>();
+		HeroBattle hero = go.GetComponent<HeroBattle>();
 
 		summonHeroDic.Add (_pos, hero);
 
 		hero.body.color = summonColor;
+
+		HeroSDS sds = StaticData.GetData<HeroSDS> (cardID);
 		
-		hero.Init(_cardUid, cardID);
+		hero.Init(cardID, sds.hp, _pos, true);
+
+		hero.cardUid = _cardUid;
 
 		AddHeroToMapReal (hero, _pos);
 	}
 
-	private void AddHeroToMapReal(HeroCard _heroCard,int _pos){
+	private void AddHeroToMapReal(HeroBattle _heroCard,int _pos){
 
 		MapUnit mapUnit = mapUnitDic [_pos];
 		
@@ -728,8 +732,6 @@ public class BattleManager : MonoBehaviour {
 //		_heroCard.transform.localPosition = Vector3.zero;
 		
 		_heroCard.transform.localScale = new Vector3 (heroScale, heroScale, heroScale);
-		
-		_heroCard.SetMouseEnable (false);
 	}
 
 	private int GetMoney(){

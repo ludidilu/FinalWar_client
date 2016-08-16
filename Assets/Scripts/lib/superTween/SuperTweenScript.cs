@@ -14,6 +14,7 @@ namespace xy3d.tstd.lib.superTween{
 		private int index;
 
 		private List<SuperTweenUnit> endList = new List<SuperTweenUnit>();
+		private List<KeyValuePair<SuperTweenUnit,float>> toList = new List<KeyValuePair<SuperTweenUnit, float>> ();
 
 		public int To(float _startValue,float _endValue,float _time,Action<float> _delegate,Action _endCallBack, bool isFixed){
 
@@ -239,6 +240,7 @@ namespace xy3d.tstd.lib.superTween{
 						}
 
 						if (tempTime > unit.startTime + unit.time) {
+
 							if (unit.dele != null) {
 
 								unit.dele (unit.endValue);
@@ -251,8 +253,22 @@ namespace xy3d.tstd.lib.superTween{
 						} else if (unit.dele != null) {
 
 							float value = unit.startValue + (unit.endValue - unit.startValue) * (tempTime - unit.startTime) / unit.time;
-							unit.dele (value);
+//							unit.dele (value);
+
+							toList.Add(new KeyValuePair<SuperTweenUnit, float>(unit,value));
 						}
+					}
+					
+					if(toList.Count > 0){
+						
+						for (int i = 0; i < toList.Count; i ++) {
+							
+							KeyValuePair<SuperTweenUnit,float> pair = toList[i];
+							
+							pair.Key.dele(pair.Value);
+						}
+						
+						toList.Clear ();
 					}
 
 					if (endList.Count > 0) {

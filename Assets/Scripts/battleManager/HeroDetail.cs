@@ -22,7 +22,7 @@ public class HeroDetail : MonoBehaviour {
 	[SerializeField]
 	private Text support;
 
-	public void Init(HeroCard _hero){
+	public void Init(HeroBase _hero){
 
 		cost.text = _hero.sds.cost.ToString ();
 
