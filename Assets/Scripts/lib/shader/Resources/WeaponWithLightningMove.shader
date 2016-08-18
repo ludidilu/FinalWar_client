@@ -7,6 +7,11 @@
 		_LightningTex("Lightning Texture", 2D) = ""{}
 		_StrongFix("Strong Fix", Float) = 1
 		
+		_UScale("_UScalex", Float) = 1
+		_VScale("_VScale", Float) = 1
+		_UFix("_UFix", Float) = 0
+		_VFix("_VFix", Float) = 0
+		
 		_AlphaXXX("Alpha", Float) = 1
 		_ZWrite("ZWrite",Float) = 1
 		

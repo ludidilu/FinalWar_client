@@ -12,7 +12,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         get {
 
             if (_appIsQuit) {
-                SuperDebug.LogWarning("Singleton instance["+typeof(T)+"] is destoryed on application quite,won't create again,return null");
+                SuperDebug.LogWarning("Singleton instance["+typeof(T)+"] is destoryed on application quit,won't create again,return null");
                 return null;
             }
 

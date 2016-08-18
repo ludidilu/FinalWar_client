@@ -11,11 +11,11 @@ namespace xy3d.tstd.lib.superList{
 		protected object data;
 		protected bool selected;
 
-		public CanvasGroup canvasGroup;
+		[HideInInspector]public CanvasGroup canvasGroup;
 
 		[HideInInspector]public int index;
 
-		public void OnPointerClick (PointerEventData eventData)
+		public virtual void OnPointerClick (PointerEventData eventData)
 		{
             if(data != null)
 			SendMessageUpwards("CellClick",this);

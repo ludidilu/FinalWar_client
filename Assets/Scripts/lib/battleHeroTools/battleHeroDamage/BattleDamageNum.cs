@@ -18,7 +18,7 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         public const int damageUnitNum = 80;
 
-        public const int damageGroupNum = 10;
+        public const int damageGroupNum = 20;
 
         private const int damageDrawNum = 3;
         

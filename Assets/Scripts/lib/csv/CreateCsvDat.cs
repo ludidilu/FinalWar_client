@@ -117,6 +117,18 @@ public class CreateCsvDat
 					sw.WriteLine("        _csv." + fi.Name + " = _br.ReadSingle();");
 					
 					break;
+
+				case "Double":
+
+					sw.WriteLine("        _csv." + fi.Name + " = _br.ReadDouble();");
+
+					break;
+
+				case "Int16":
+
+					sw.WriteLine("        _csv." + fi.Name + " = _br.ReadInt16();");
+					
+					break;
 					
 				case "Int32[]":
 					
@@ -173,6 +185,34 @@ public class CreateCsvDat
 					sw.WriteLine("        }");
 					
 					break;
+
+				case "Double[]":
+					
+					sw.WriteLine("        int length" + fi.Name + " = _br.ReadInt32();");
+					
+					sw.WriteLine("        _csv." + fi.Name + " = new double[length" + fi.Name + "];");
+					
+					sw.WriteLine("        for(int i = 0 ; i < length" + fi.Name + " ; i++){");
+					
+					sw.WriteLine("            _csv." + fi.Name + "[i] = _br.ReadDouble();");
+					
+					sw.WriteLine("        }");
+					
+					break;
+
+				case "Int16[]":
+					
+					sw.WriteLine("        int length" + fi.Name + " = _br.ReadInt32();");
+					
+					sw.WriteLine("        _csv." + fi.Name + " = new short[length" + fi.Name + "];");
+					
+					sw.WriteLine("        for(int i = 0 ; i < length" + fi.Name + " ; i++){");
+					
+					sw.WriteLine("            _csv." + fi.Name + "[i] = _br.ReadInt16();");
+					
+					sw.WriteLine("        }");
+					
+					break;
 					
 				default:
 					
@@ -201,6 +241,8 @@ public class CreateCsvDat
 			sww.WriteLine("            " + fileName + " unit = new " + fileName + "();");
 			
 			sww.WriteLine("            " + fileName + "_c.Init(unit,br);");
+
+			sww.WriteLine("            unit.Fix();");
 			
 			sww.WriteLine("            " + fileName + "Dic.Add(unit.ID,unit);");
 			
@@ -235,6 +277,18 @@ public class CreateCsvDat
 					case "Single":
 						
 						bw.Write((float)fi.GetValue(obj));
+						
+						break;
+
+					case "Double":
+
+						bw.Write((double)fi.GetValue(obj));
+
+						break;
+
+					case "Int16":
+						
+						bw.Write((short)fi.GetValue(obj));
 						
 						break;
 						
@@ -317,10 +371,50 @@ public class CreateCsvDat
 						}
 						
 						break;
+
+					case "Double[]":
+						
+						double[] t4 = fi.GetValue(obj) as double[];
+						
+						if(t4 == null){
+							
+							bw.Write(0);
+							
+						}else{
+							
+							bw.Write(t4.Length);
+							
+							foreach(double ll in t4){
+								
+								bw.Write(ll);
+							}
+						}
+						
+						break;
+
+					case "Int16[]":
+						
+						short[] t5 = fi.GetValue(obj) as short[];
+						
+						if(t5 == null){
+							
+							bw.Write(0);
+							
+						}else{
+							
+							bw.Write(t5.Length);
+							
+							foreach(short ll in t5){
+								
+								bw.Write(ll);
+							}
+						}
+						
+						break;
 						
 					default:
 						
-						//						Debug.LogError("error2  class:" + fileName + "   field:" + fi.Name);
+						Debug.LogError("error2  class:" + fileName + "   field:" + fi.Name);
 						
 						break;
 					}

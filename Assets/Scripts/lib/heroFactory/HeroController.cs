@@ -8,12 +8,15 @@ using System.Collections.Generic;
 using UnityEngine.Rendering;
 using xy3d.tstd.lib.superFunction;
 using xy3d.tstd.lib.animatorFactoty;
+using xy3d.tstd.lib.localData;
 
 namespace xy3d.tstd.lib.heroFactory{
 
 	//这个组件是绑在英雄身上的
 	public class HeroController : MonoBehaviour
 	{
+		private const string CENTER_BONE_NAME = "Bip01";
+
 		private Animator[] animators;
 
 		public GameObject body;
@@ -40,6 +43,8 @@ namespace xy3d.tstd.lib.heroFactory{
 
         private GameObject shadow;
         private Material shadowMat;
+
+		private Transform centerBone;
 
         public GameObject Shadow
         {
@@ -152,7 +157,97 @@ namespace xy3d.tstd.lib.heroFactory{
 			}
 		}
 
+		private const string showOutlineKey = "CharOutline";
+
+		//0:关，1：开，-1：未知
+		static int s_outlineOpen = -1;
+
+		public static int OutlineOpen{
+
+			get{
+
+				if(s_outlineOpen == -1){
+
+					if(LocalSettingData.HasKey(showOutlineKey)){
+
+						s_outlineOpen = 1;
+
+						LocalSettingData.SetInt(showOutlineKey,s_outlineOpen);
+
+					}else{
+
+						s_outlineOpen = LocalSettingData.GetInt(showOutlineKey);
+					}
+				}
+
+				return s_outlineOpen;
+			}
+
+			set{
+
+				s_outlineOpen = value;
+
+				LocalSettingData.SetInt(showOutlineKey,s_outlineOpen);
+			}
+		}
+
+		static Shader shaderHero;
+		static Shader shaderHero2;
+		static Shader shaderWeapon;
+		static Shader shaderWeapon2;
+
+		public void SetOutlineToggle(bool show){
+			//TODO 删除本行
+			show = false;
+
+			Material[] mats = new Material[5];
+			mats [0] = bodyMaterial;
+			mats [1] = horseMaterial;
+			mats [2] = wingMaterial;
+			mats [3] = mainHandWeaponMaterial;
+			mats [4] = offHandWeaponMaterial;
+			for (int i = 0; i < mats.Length; i++) {
+				if(mats[i] == null)
+					continue;
+
+				if(show){
+					if(mats[i].shader.name == "Custom/Hero"){
+						if(shaderHero2 == null)
+							shaderHero2 = Shader.Find ("Custom/Hero2");
+						mats[i].shader = shaderHero2;
+					}
+					else if(mats[i].shader.name == "Custom/WeaponWithLightningMove"){
+						if(shaderWeapon2 == null)
+							shaderWeapon2 = Shader.Find ("Custom/WeaponWithLightningMove2");
+						mats[i].shader = shaderWeapon2;
+					}
+				}
+				else{
+					if(mats[i].shader.name == "Custom/Hero2"){
+						if(shaderHero == null)
+							shaderHero = Shader.Find ("Custom/Hero");
+						mats[i].shader = shaderHero;
+					}
+					else if(mats[i].shader.name == "Custom/WeaponWithLightningMove2"){
+						if(shaderWeapon == null)
+							shaderWeapon = Shader.Find ("Custom/WeaponWithLightningMove");
+						mats[i].shader = shaderWeapon;
+					}
+				}
+			}
+		}
+
 		private void SetMaterialAlpha(Material _material,float _alpha){
+
+			if (_material.shader.name == "Custom/Hero2") {
+				if (shaderHero == null)
+					shaderHero = Shader.Find ("Custom/Hero");
+				_material.shader = shaderHero;
+			} else if (_material.shader.name == "Custom/WeaponWithLightningMove2") {
+				if (shaderWeapon == null)
+					shaderWeapon = Shader.Find ("Custom/WeaponWithLightningMove");
+				_material.shader = shaderWeapon;
+			}
 
 			_material.SetFloat("_AlphaXXX", _alpha);
 			
@@ -185,6 +280,17 @@ namespace xy3d.tstd.lib.heroFactory{
 		}
 		
 		public void Init(){
+
+			GameObject tmpGo = PublicTools.FindChildForce(gameObject,CENTER_BONE_NAME);
+
+			if(tmpGo != null){
+
+				centerBone = tmpGo.transform;
+
+			}else{
+
+				SuperDebug.Log("HeroController can not find " + CENTER_BONE_NAME + ".   GameObject name:" + gameObject.name);
+			}
 			
 			animators = gameObject.GetComponentsInChildren<Animator>();
 			
@@ -215,6 +321,8 @@ namespace xy3d.tstd.lib.heroFactory{
 			SetWeaponVisible(true);
 
 			AddShadow();
+
+			SetOutlineToggle (OutlineOpen == 1);
 		}
 		
 		public void AddShadow()
@@ -227,6 +335,8 @@ namespace xy3d.tstd.lib.heroFactory{
 			Shadow = _shadow;
 			Shadow.transform.eulerAngles = new Vector3(90, 0, 0);
 			Shadow.transform.SetParent(gameObject.transform, false);
+
+			shadow.layer = gameObject.layer;
 			//Shadow.layer = LayerMask.NameToLayer("UI");
 		}
 
@@ -303,6 +413,8 @@ namespace xy3d.tstd.lib.heroFactory{
 
 		public void PlayAnim(string _state,bool _notPlayWaitWhenPoseEnd)
 	    {
+			ResetAllTrigger();
+
 			state = _state;
 
             if (!stateList.Contains(state))
@@ -312,7 +424,7 @@ namespace xy3d.tstd.lib.heroFactory{
 
 			foreach (Animator animator in animators) {
 
-				animator.SetTrigger(state.ToString());
+				animator.SetTrigger(state);
 			}
 
 			notPlayWaitWhenPoseEnd = _notPlayWaitWhenPoseEnd;
@@ -409,6 +521,14 @@ namespace xy3d.tstd.lib.heroFactory{
 			}
 			
 			SuperFunction.Instance.DispatchEvent (gameObject, superEvent);
+		}
+
+		void Update(){
+
+			if(shadow != null && centerBone != null){
+
+				shadow.transform.position = new Vector3(centerBone.position.x,shadow.transform.position.y,centerBone.position.z);
+			}
 		}
 
 		void OnDestroy(){

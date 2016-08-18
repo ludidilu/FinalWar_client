@@ -9,7 +9,7 @@ namespace xy3d.tstd.lib.gameObjectFactory{
 
 	public class GameObjectTools{
 
-		private static List<Transform> getTransforms(GameObject _obj){
+		public static List<Transform> GetTransforms(GameObject _obj){
 			
 			List<Transform> list = new List<Transform> ();
 
@@ -27,7 +27,7 @@ namespace xy3d.tstd.lib.gameObjectFactory{
 				
 				GameObject obj = _obj.transform.GetChild(i).gameObject;
 
-				List<Transform> tmpList = getTransforms(obj);
+				List<Transform> tmpList = GetTransforms(obj);
 				
 				foreach(Transform transform in tmpList){
 					
@@ -69,9 +69,9 @@ namespace xy3d.tstd.lib.gameObjectFactory{
 //			return list;
 //		}
 		
-		public static void CombineMeshs(ref GameObject _skeleton,List<GameObject> _parts,List<GameObject> _replaceParts,RuntimeAnimatorController _animatorController,float _outline,out Mesh _resultMesh,out Material _resultMaterial,bool _addCollider,bool _fixNormals){
+		public static void CombineMeshs(Shader _shader,ref GameObject _skeleton,List<GameObject> _parts,List<GameObject> _replaceParts,RuntimeAnimatorController _animatorController,float _outline,out Mesh _resultMesh,out Material _resultMaterial,bool _addCollider,bool _fixNormals,UnityEngine.Rendering.ShadowCastingMode _shadwoCastintMode){
 			
-			List<Transform> transforms = getTransforms (_skeleton);
+			List<Transform> transforms = GetTransforms (_skeleton);
 
 			_resultMesh = new Mesh ();
 			
@@ -358,15 +358,17 @@ namespace xy3d.tstd.lib.gameObjectFactory{
 			
 			SkinnedMeshRenderer renderer = obj.GetComponent<SkinnedMeshRenderer>();
 			
-			renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+			renderer.shadowCastingMode = _shadwoCastintMode;
 			
 			renderer.receiveShadows = false;
 			
 			renderer.useLightProbes = false;
 			
 			renderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-			
-			_resultMaterial = new Material (Shader.Find ("Custom/Hero"));
+
+			_resultMaterial = new Material (_shader);
+
+//			_resultMaterial = new Material (Shader.Find ("Custom/Hero"));
 			
 			_resultMaterial.mainTexture = _parts [0].GetComponent<SkinnedMeshRenderer> ().sharedMaterial.mainTexture;
 

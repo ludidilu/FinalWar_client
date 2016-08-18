@@ -1,7 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class AnimationBindCamera : MonoBehaviour {
+	
+	private static Action bindCallBack;
+	
+	private static Action unbindCallBack;
+	
+	public static void Init(Action _bindCallBack,Action _unbindCallBack){
+
+		bindCallBack = _bindCallBack;
+
+		unbindCallBack = _unbindCallBack;
+	}
 
 	private Transform recTrans;
 
@@ -22,6 +34,11 @@ public class AnimationBindCamera : MonoBehaviour {
 		Camera.main.transform.localPosition = Vector3.zero;
 
 		Camera.main.transform.localRotation = Quaternion.identity;
+
+		if(bindCallBack != null){
+
+			bindCallBack();
+		}
 	}
 
 	public void UnbindCamera(){
@@ -31,5 +48,10 @@ public class AnimationBindCamera : MonoBehaviour {
 		Camera.main.transform.localPosition = recPos;
 
 		Camera.main.transform.localRotation = recRotation;
+
+		if(unbindCallBack != null){
+
+			unbindCallBack();
+		}
 	}
 }

@@ -2,20 +2,9 @@
 using System.Collections;
 using xy3d.tstd.lib.superTween;
 using System;
+using System.Collections.Generic;
 
 public class HeroBattle : HeroBase {
-
-	[SerializeField]
-	private float hitPercent;
-
-	[SerializeField]
-	private float shockDis;
-
-	[SerializeField]
-	private AnimationCurve curve;
-
-	[SerializeField]
-	private AnimationCurve shockCurve;
 
 	[SerializeField]
 	private Transform moveTrans;
@@ -43,49 +32,37 @@ public class HeroBattle : HeroBase {
 		hp.text = _hp.ToString ();
 	}
 
-	public void Attack(HeroBattle _target, int _damage, int _damageSelf){
-
-		bool getHit = false;
-
-		Action<float> MoveToDel = delegate(float obj) {
-
-			float value = curve.Evaluate(obj);
+	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis){
+		
+		Vector3 shockVector = Vector3.zero;
+		
+		for(int i = 0 ; i < _targets.Count ; i++){
 			
-			moveTrans.position = transform.position + (_target.transform.position - transform.position) * value;
-
-			if(!getHit){
-
-				if(obj > hitPercent){
-
-					getHit = true;
-
-					if(_damage > 0){
-
-						_target.Shock(transform);
-					}
-
-					if(_damageSelf > 0){
-
-						Shock(_target.transform);
-					}
-				}
-			}
-		};
-
-		SuperTween.Instance.To(0,1,1,MoveToDel,null);
-	}
-
-	private void Shock(Transform _target){
-
-		Vector3 shockVector = (_target.transform.position - transform.position).normalized * shockDis;
-
-		Action<float> ShockToDel = delegate(float obj) {
-
-			float value = shockCurve.Evaluate(obj);
+			shockVector += (transform.position - _targets[i]).normalized;
+		}
+		
+		if(shockVector == Vector3.zero){
+			
+			Vector3 v2 = transform.position - _targets[0];
+			
+			float angle = Mathf.Atan2(v2.y,v2.x);
+			
+			angle += Mathf.PI * 0.5f;
+			
+			shockVector = new Vector3(Mathf.Cos(angle),Mathf.Sin(angle),0) * _shockDis;
+			
+		}else{
+			
+			shockVector = shockVector.normalized * _shockDis;
+		}
+		
+		Action<float> shockToDel = delegate(float obj) {
+			
+			float value = _curve.Evaluate(obj);
 			
 			shockTrans.position = moveTrans.position - shockVector * value;
 		};
 		
-		SuperTween.Instance.To(0,1,1,ShockToDel,null);
+		SuperTween.Instance.To(0,1,1,shockToDel,null);
 	}
 }

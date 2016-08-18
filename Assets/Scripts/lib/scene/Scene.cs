@@ -19,6 +19,8 @@ namespace xy3d.tstd.lib.scene{
 		[SerializeField] public float fogStartDistance;
 		[SerializeField] public float fogEndDistance;
 
+		[HideInInspector] public bool resetWhenDisable = true;
+
 		void OnEnable(){
 
 			LightmapData[] lightmaps = new LightmapData[farTextures.Length];
@@ -32,19 +34,6 @@ namespace xy3d.tstd.lib.scene{
 			}
 
 			LightmapSettings.lightmaps = lightmaps;
-
-			GameObject cameraGameObject = PublicTools.FindChildForce(gameObject,"CameraGameObject");
-
-			if(Camera.main != null){
-
-				Camera.main.fieldOfView = fieldOfView;
-
-				if(cameraGameObject != null){
-
-					Camera.main.transform.position = cameraGameObject.transform.position;
-					Camera.main.transform.rotation = cameraGameObject.transform.rotation;
-				}
-			}
 
 			RenderSettings.ambientLight = ambientLight;
 			RenderSettings.ambientIntensity = ambientIntensity;
@@ -60,13 +49,16 @@ namespace xy3d.tstd.lib.scene{
 		}
 
 		void OnDisable(){
+
+			if(resetWhenDisable){
 			
-			LightmapSettings.lightmaps = new LightmapData[0];
+				LightmapSettings.lightmaps = new LightmapData[0];
 
-			RenderSettings.ambientLight = Color.white;
-			RenderSettings.ambientIntensity = 1;
+				RenderSettings.ambientLight = Color.white;
+				RenderSettings.ambientIntensity = 1;
 
-			RenderSettings.fog = false;
+				RenderSettings.fog = false;
+			}
 		}
 	}
 }

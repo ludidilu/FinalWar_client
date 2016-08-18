@@ -29,10 +29,8 @@ namespace xy3d.tstd.lib.textureFactory{
 				
 				callBackList.Add (_callBack);
 				
-				AssetManager.Instance.GetAsset<T> (name,GetAsset);
+				return AssetManager.Instance.GetAsset<T> (name,GetAsset);
 
-				return default(T);
-				
 			} else if (type == 0) {
 				
 				callBackList.Add (_callBack);

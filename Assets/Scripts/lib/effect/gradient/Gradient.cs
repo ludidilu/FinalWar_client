@@ -11,10 +11,10 @@ namespace xy3d.tstd.lib.effect{
 	public class Gradient : BaseMeshEffect
 	{
 		[SerializeField]
-		private Color32 topColor = Color.white;
+		public Color32 topColor = Color.white;
 
 		[SerializeField]
-		private Color32	bottomColor = Color.black;
+		public Color32	bottomColor = Color.black;
 
 #if UNITY_5_2_2 || UNITY_5_2_3 || UNITY_5_3
 		public override void ModifyMesh (VertexHelper vh){

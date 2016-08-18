@@ -2,10 +2,17 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using xy3d.tstd.lib.superFunction;
 
 namespace xy3d.tstd.lib.superList{
 	
 	public class SuperScrollRect : ScrollRect,IPointerExitHandler {
+
+		public static GameObject eventDispatcher;
+
+		public const string CLOSE_MOVE = "SuperListCloseMove";
+		
+		public const string OPEN_MOVE = "SuperListOpenMove";
 
 		public static bool canDrag{
 
@@ -71,6 +78,47 @@ namespace xy3d.tstd.lib.superList{
 				
 				isRestrainDrag = false;
 			}
+		}
+
+        public void DirectContentAnchoredPosition(Vector2 anchoredPosition)
+        {
+            SetContentAnchoredPosition(anchoredPosition);
+        }
+
+		protected override void Awake ()
+		{
+			base.Awake();
+
+			if (movementType == ScrollRect.MovementType.Elastic) {
+
+				if (eventDispatcher == null) {
+					
+					eventDispatcher = new GameObject ("SuperListEventDispatcher");
+					
+					GameObject.DontDestroyOnLoad (eventDispatcher);
+				}
+
+				SuperFunction.Instance.AddEventListener (eventDispatcher, OPEN_MOVE, OpenMove);
+				
+				SuperFunction.Instance.AddEventListener (eventDispatcher, CLOSE_MOVE, CloseMove);
+			}
+		}
+
+		protected override void OnDestroy (){
+				
+			SuperFunction.Instance.RemoveEventListener(eventDispatcher,OPEN_MOVE,OpenMove);
+			
+			SuperFunction.Instance.RemoveEventListener(eventDispatcher,CLOSE_MOVE,CloseMove);
+		}
+
+		public void CloseMove(SuperEvent e){
+			
+			movementType = ScrollRect.MovementType.Clamped;
+		}
+		
+		public void OpenMove(SuperEvent e){
+			
+			movementType = ScrollRect.MovementType.Elastic;
 		}
 	}
 }

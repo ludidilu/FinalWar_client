@@ -17,8 +17,10 @@ public class SuperPageScrollRect : SuperScrollRect {
 
 	private float halfStep;
 
-	void Awake(){
-		
+	protected override void Awake (){
+
+		base.Awake();
+
 		step = 1f / (num - 1);
 		
 		halfStep = step * 0.5f;

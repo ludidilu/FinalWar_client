@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEditor.Events;
+using xy3d.tstd.lib.superList;
 
 public class CodeHotFixTools{
 
@@ -106,7 +107,13 @@ public class CodeHotFixTools{
 
 		AddButtonListener(_go,ref _hasChange);
 
-		FixGo(_go,ref _hasChange,true);
+		Dictionary<int,GameObject> dic0 = new Dictionary<int, GameObject>();
+
+		Dictionary<int,MonoBehaviour> dic1 = new Dictionary<int, MonoBehaviour>();
+
+		Dictionary<int,AddScript> dic2 = new Dictionary<int, AddScript>();
+
+		FixGo(_go,ref _hasChange,true,dic0,dic1,dic2);
 	}
 
 	private static void AddButtonListener(GameObject _go,ref bool _hasChange){
@@ -163,7 +170,7 @@ public class CodeHotFixTools{
 		}
 	}
 
-	private static void FixGo(GameObject _go,ref bool _hasChange,bool _isRoot){
+	private static void FixGo(GameObject _go,ref bool _hasChange,bool _isRoot,Dictionary<int,GameObject> _dic0,Dictionary<int,MonoBehaviour> _dic1,Dictionary<int,AddScript> _dic2){
 
 		MonoBehaviour[] b = _go.GetComponents<MonoBehaviour>();
 
@@ -182,84 +189,194 @@ public class CodeHotFixTools{
 
 				ss.scriptName = typeName;
 
-				List<AddAtt> list = new List<AddAtt>();
+				int id = bb.GetInstanceID();
 
-				FieldInfo[] ff = bb.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+				ss.monoBehaviourInstanceID = id;
+				
+				_dic0.Add(id,_go);
 
-				foreach(FieldInfo fff in ff){
-					
-					object[] yu = fff.GetCustomAttributes(false);
-					
-					foreach(object ob in yu){
-						
-						if(ob is SerializeField){
+				_dic1.Add(id,bb);
 
-							object vv = fff.GetValue(bb);
+				_dic2.Add(id,ss);
 
-							if(vv != null){
-
-								if(vv.GetType().BaseType == typeof(MonoBehaviour)){
-
-									Debug.LogError("SerializeField is a MonoBehaviour! go.name:" + _go.name + "   root.name:" + _go.transform.root.gameObject.name + "   FieldInfo.name:" + fff.Name);
-								}
-
-								AddAtt att = null;
-
-								try{
-
-									att = new AddAtt(fff.Name,vv);
-
-								}catch(Exception e){
-
-									throw new Exception("error:" + e.ToString() + "   go:" + _go.name);
-								}
-
-								list.Add(att);
-							}
-						}
-					}
-				}
-
-				ss.atts = list.ToArray();
-
-				AddButtonListener[] buttonListeners = _go.GetComponents<AddButtonListener>();
-
-				List<AddButtonListener> list2 = new List<AddButtonListener>();
-
-				for(int i = 0 ; i < buttonListeners.Length ; i++){
-
-					if(buttonListeners[i].scriptName == bb.name){
-
-						list2.Add(buttonListeners[i]);
-					}
-				}
-
-				ss.buttons = new Button[list2.Count];
-
-				ss.buttonMethodNames = new string[list2.Count];
-
-				for(int i = 0 ; i < list2.Count ; i++){
-
-					ss.buttons[i] = list2[i].button;
-
-					ss.buttonMethodNames[i] = list2[i].methodName;
-
-					GameObject.DestroyImmediate(list2[i],true);
-				}
-
-				GameObject.DestroyImmediate(bb,true);
 				_hasChange = true;
+
+//				FixGoAtt(_go,bb,ss,
+
+//				List<AddAtt> list = new List<AddAtt>();
+//
+//				FieldInfo[] ff = bb.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+//
+//				foreach(FieldInfo fff in ff){
+//					
+//					object[] yu = fff.GetCustomAttributes(false);
+//					
+//					foreach(object ob in yu){
+//						
+//						if(ob is SerializeField){
+//
+//							object vv = fff.GetValue(bb);
+//
+//							if(vv != null){
+//
+//								if(vv.GetType().BaseType == typeof(MonoBehaviour)){
+//
+//									Debug.LogError("SerializeField is a MonoBehaviour! go.name:" + _go.name + "   root.name:" + _go.transform.root.gameObject.name + "   FieldInfo.name:" + fff.Name);
+//								}
+//
+//								AddAtt att = null;
+//
+//								try{
+//
+//									att = new AddAtt(fff.Name,vv);
+//
+//								}catch(Exception e){
+//
+//									throw new Exception("error:" + e.ToString() + "   go:" + _go.name);
+//								}
+//
+//								list.Add(att);
+//							}
+//						}
+//					}
+//				}
+//
+//				ss.atts = list.ToArray();
+//
+//				AddButtonListener[] buttonListeners = _go.GetComponents<AddButtonListener>();
+//
+//				List<AddButtonListener> list2 = new List<AddButtonListener>();
+//
+//				for(int i = 0 ; i < buttonListeners.Length ; i++){
+//
+//					if(buttonListeners[i].scriptName == bb.name){
+//
+//						list2.Add(buttonListeners[i]);
+//					}
+//				}
+//
+//				ss.buttons = new Button[list2.Count];
+//
+//				ss.buttonMethodNames = new string[list2.Count];
+//
+//				for(int i = 0 ; i < list2.Count ; i++){
+//
+//					ss.buttons[i] = list2[i].button;
+//
+//					ss.buttonMethodNames[i] = list2[i].methodName;
+//
+//					GameObject.DestroyImmediate(list2[i],true);
+//				}
+//
+//				if(bb is SuperScrollRect){
+//
+//					SuperScrollRect scroll = bb as SuperScrollRect;
+//
+//					ss.superScrollRectContent = scroll.content;
+//
+//					ss.superScrollRectIsHorizontal = scroll.horizontal;
+//
+//					ss.superScrollRectIsVertical = scroll.vertical;
+//
+//					ss.superScrollRectMovementType = scroll.movementType;
+//				}
+//
+//				GameObject.DestroyImmediate(bb,true);
+//				_hasChange = true;
 			}
 		}
 
 		for(int i = 0 ; i < _go.transform.childCount ; i++){
 
-			FixGo(_go.transform.GetChild(i).gameObject,ref _hasChange,false);
+			FixGo(_go.transform.GetChild(i).gameObject,ref _hasChange,false,_dic0,_dic1,_dic2);
 		}
 
 		if(_isRoot && _hasChange){
 
+			foreach(int id in _dic0.Keys){
+
+				FixGoAtt(_dic0[id],_dic1[id],_dic2[id],_dic1);
+			}
+
 			_go.AddComponent<AddScriptRoot>();
 		}
+	}
+
+	private static void FixGoAtt(GameObject _go,MonoBehaviour _mono,AddScript _script,Dictionary<int,MonoBehaviour> _dic){
+
+		List<AddAtt> list = new List<AddAtt>();
+		
+		FieldInfo[] ff = _mono.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+		
+		foreach(FieldInfo fff in ff){
+			
+			object[] yu = fff.GetCustomAttributes(false);
+			
+			foreach(object ob in yu){
+				
+				if(ob is SerializeField){
+					
+					object vv = fff.GetValue(_mono);
+					
+					if(vv != null){
+
+						AddAtt att = null;
+						
+						try{
+							
+							att = new AddAtt(fff.Name,vv,_dic);
+							
+						}catch(Exception e){
+							
+							throw new Exception("error:" + e.ToString() + "   go:" + _go.name);
+						}
+						
+						list.Add(att);
+					}
+				}
+			}
+		}
+		
+		_script.atts = list.ToArray();
+		
+		AddButtonListener[] buttonListeners = _go.GetComponents<AddButtonListener>();
+		
+		List<AddButtonListener> list2 = new List<AddButtonListener>();
+		
+		for(int i = 0 ; i < buttonListeners.Length ; i++){
+			
+			if(buttonListeners[i].scriptName == _mono.name){
+				
+				list2.Add(buttonListeners[i]);
+			}
+		}
+		
+		_script.buttons = new Button[list2.Count];
+		
+		_script.buttonMethodNames = new string[list2.Count];
+		
+		for(int i = 0 ; i < list2.Count ; i++){
+			
+			_script.buttons[i] = list2[i].button;
+			
+			_script.buttonMethodNames[i] = list2[i].methodName;
+			
+			GameObject.DestroyImmediate(list2[i],true);
+		}
+		
+		if(_mono is SuperScrollRect){
+			
+			SuperScrollRect scroll = _mono as SuperScrollRect;
+			
+			_script.superScrollRectContent = scroll.content;
+			
+			_script.superScrollRectIsHorizontal = scroll.horizontal;
+			
+			_script.superScrollRectIsVertical = scroll.vertical;
+			
+			_script.superScrollRectMovementType = scroll.movementType;
+		}
+		
+		GameObject.DestroyImmediate(_mono,true);
 	}
 }

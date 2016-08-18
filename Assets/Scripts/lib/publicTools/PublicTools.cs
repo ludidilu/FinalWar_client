@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using xy3d.tstd.lib.superTween;
 
 
 namespace xy3d.tstd.lib.publicTools
@@ -134,9 +135,9 @@ namespace xy3d.tstd.lib.publicTools
 
 			Renderer[] renderers = _go.GetComponentsInChildren<Renderer> ();
 
-			foreach (Renderer ren in renderers) {
+			for(int i = 0 ; i < renderers.Length ; i++){
 
-				ren.enabled = _visible;
+				renderers[i].enabled = _visible;
 			}
 		}
 
@@ -188,18 +189,18 @@ namespace xy3d.tstd.lib.publicTools
 			}
 		}
 
-		public static Vector2 WorldPositionToCanvasPosition(Camera _worldCamera,RectTransform _canvasRect,Vector3 _worldPosition){
+		public static Vector3 WorldPositionToCanvasPosition(Camera _worldCamera,RectTransform _canvasRect,Vector3 _worldPosition){
 
 			Vector3 screenPos = _worldCamera.WorldToViewportPoint(_worldPosition);
 			
-			return new Vector2((screenPos.x * _canvasRect.sizeDelta.x) - (_canvasRect.sizeDelta.x * 0.5f),(screenPos.y * _canvasRect.sizeDelta.y) - (_canvasRect.sizeDelta.y * 0.5f));
+			return new Vector3((screenPos.x * _canvasRect.sizeDelta.x) - (_canvasRect.sizeDelta.x * 0.5f),(screenPos.y * _canvasRect.sizeDelta.y) - (_canvasRect.sizeDelta.y * 0.5f),screenPos.z);
 		}
 
-		public static Vector2 MousePositionToCanvasPosition(Camera _worldCamera,RectTransform _canvasRect,Vector3 _mousePosition){
+		public static Vector3 MousePositionToCanvasPosition(Camera _worldCamera,RectTransform _canvasRect,Vector3 _mousePosition){
 
 			Vector3 screenPos = _worldCamera.ScreenToViewportPoint(_mousePosition);
 			
-			return new Vector2((screenPos.x * _canvasRect.sizeDelta.x) - (_canvasRect.sizeDelta.x * 0.5f),(screenPos.y * _canvasRect.sizeDelta.y) - (_canvasRect.sizeDelta.y * 0.5f));
+			return new Vector3((screenPos.x * _canvasRect.sizeDelta.x) - (_canvasRect.sizeDelta.x * 0.5f),(screenPos.y * _canvasRect.sizeDelta.y) - (_canvasRect.sizeDelta.y * 0.5f),screenPos.z);
 		}
 
 		//场景被卸载时，如果场景上有GameObject从来没有active过，那GameObject所引用的贴图就会残留在内存里了  这个方法就是确保场景上所有GameObject都曾经被active过
@@ -218,6 +219,169 @@ namespace xy3d.tstd.lib.publicTools
 			}
 		}
 
+		public static UInt16 ReverseBytes(UInt16 value)
+		{
+			return (UInt16)((value & 0xFFU) << 8 | (value & 0xFF00U) >> 8);
+		}
+		
+		public static Int16 ReverseBytes(Int16 value)
+		{
+			return (Int16)((value & 0xFFU) << 8 | (value & 0xFF00U) >> 8);
+		}
+		
+		public static UInt32 ReverseBytes(UInt32 value)
+		{
+			return (value & 0x000000FFU) << 24 | (value & 0x0000FF00U) << 8 |
+				(value & 0x00FF0000U) >> 8 | (value & 0xFF000000U) >> 24;
+		}
+		
+		public static Int32 ReverseBytes(Int32 value)
+		{
+			return (Int32)((value & 0x000000FFU) << 24 | (value & 0x0000FF00U) << 8 |
+			               (value & 0x00FF0000U) >> 8 | (value & 0xFF000000U) >> 24);
+		}
+		
+		public static UInt64 ReverseBytes(UInt64 value)
+		{
+			return (value & 0x00000000000000FFUL) << 56 | (value & 0x000000000000FF00UL) << 40 |
+				(value & 0x0000000000FF0000UL) << 24 | (value & 0x00000000FF000000UL) << 8 |
+					(value & 0x000000FF00000000UL) >> 8 | (value & 0x0000FF0000000000UL) >> 24 |
+					(value & 0x00FF000000000000UL) >> 40 | (value & 0xFF00000000000000UL) >> 56;
+		}
+
+		public static void FlipParticleMeshWithAxisX(GameObject _go,float _zPos){
+
+			ParticleSystemRenderer[] particleRenders = _go.GetComponentsInChildren<ParticleSystemRenderer>();
+			
+			for(int i = 0 ; i < particleRenders.Length ; i++){
+
+				ParticleSystemRenderer particleRender = particleRenders[i];
+				
+				Material mat = particleRender.material;
+				
+				if(mat != null && particleRender.renderMode == ParticleSystemRenderMode.Mesh){
+					
+					mat.SetFloat("_Flip",-1);
+				}
+			}
+
+			FlipGameObjectWithAxisX(_go.transform,_zPos);
+		}
+
+		private static void FlipGameObjectWithAxisX(Transform _trans,float _zPos){
+
+			Vector3 position = new Vector3(_trans.position.x,_trans.position.y,_zPos * 2 - _trans.position.z);
+			
+			Vector3 up = _trans.up;
+			
+			Vector3 upFix = new Vector3(up.x,up.y,-up.z);
+			
+			Vector3 forward = _trans.position + _trans.forward;
+			
+			Vector3 forwardFix = new Vector3(forward.x,forward.y,_zPos * 2 - forward.z);
+
+			_trans.position = position;
+			
+			_trans.LookAt(forwardFix,upFix);
+
+			for(int i = 0 ; i < _trans.childCount ; i++){
+
+				FlipGameObjectWithAxisX(_trans.GetChild(i),_zPos);
+			}
+		}
+
+		public static void FlashOut(GameObject _go,float _time,int _times,Action _callBack){
+
+			Renderer[] renders = _go.GetComponentsInChildren<Renderer>();
+			
+			float oneTime = _time / _times;
+			
+			Action<float> toDel = delegate(float obj) {
+				
+				int index = (int)(obj / oneTime);
+				
+				float fix = (obj - index * oneTime) / oneTime;
+				
+				if(fix > (float)index / _times){
+					
+					for(int i = 0 ; i < renders.Length ; i++){
+
+						renders[i].enabled = true;
+					}
+					
+				}else{
+					
+					for(int i = 0 ; i < renders.Length ; i++){
+						
+						renders[i].enabled = false;
+					}
+				}
+			};
+			
+			Action endDel = delegate() {
+				
+				for(int i = 0 ; i < renders.Length ; i++){
+					
+					renders[i].enabled = false;
+				}
+				
+				if(_callBack != null){
+					
+					_callBack();
+				}
+			};
+			
+			SuperTween.Instance.To(0,_time,_time,toDel,endDel);
+		}
+		
+		public static void FlashIn(GameObject _go,float _time,int _times,Action _callBack){
+			
+			Renderer[] renders = _go.GetComponentsInChildren<Renderer>();
+
+			for(int i = 0 ; i < renders.Length ; i++){
+				
+				renders[i].enabled = false;
+			}
+			
+			float oneTime = _time / _times;
+			
+			Action<float> toDel = delegate(float obj) {
+				
+				int index = (int)(obj / oneTime);
+				
+				float fix = (obj - index * oneTime) / oneTime;
+				
+				if(fix < (float)index / _times){
+					
+					for(int i = 0 ; i < renders.Length ; i++){
+						
+						renders[i].enabled = true;
+					}
+					
+				}else{
+					
+					for(int i = 0 ; i < renders.Length ; i++){
+						
+						renders[i].enabled = false;
+					}
+				}
+			};
+			
+			Action endDel = delegate() {
+				
+				for(int i = 0 ; i < renders.Length ; i++){
+					
+					renders[i].enabled = true;
+				}
+				
+				if(_callBack != null){
+					
+					_callBack();
+				}
+			};
+			
+			SuperTween.Instance.To(0,_time,_time,toDel,endDel);
+		}
 	}
 }
 

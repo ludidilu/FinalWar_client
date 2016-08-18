@@ -8,38 +8,68 @@ namespace xy3d.tstd.lib.scene{
 
 	public class SceneContinueStart : MonoBehaviour {
 
+		public const string COPY_NAME = "SceneContinueCopy";
+
+		private Action<SceneContinue> callBack;
+
+		public void SetCallBack(Action<SceneContinue> _callBack){
+
+			callBack = _callBack;
+		}
+
 		// Use this for initialization
-		void Awake () {
+		void Start () {
 
-			SuperTween.Instance.DelayCall(0,GetCallBack(gameObject));
+			GameObject tmpGo = gameObject;
 
-			GameObject.Destroy(this);
-		}
+			Action<SceneContinue> tmpCb = callBack;
 
-		// Update is called once per frame
-		void Update () {
-		
-		}
+			Action initCb = delegate() {
+				
+				GameObject go = GameObject.Instantiate(tmpGo);
 
-		private static Action GetCallBack(GameObject _go){
+				Scene scene = go.GetComponent<Scene>();
 
-			Action callBack = delegate() {
+				if(scene != null){
 
-				GameObject go = GameObject.Instantiate(_go);
+					scene.resetWhenDisable = false;
 
-				GameObjectControl control = go.GetComponent<GameObjectControl>();
-
-				if(control != null && control.delUseNum != null){
-
-					control.delUseNum = null;
+					GameObject.Destroy(scene);
 				}
 
-				SceneContinue sceneContinue = _go.AddComponent<SceneContinue>();
+				Light light = go.GetComponentInChildren<Light>();
 
-				sceneContinue.Init(go);
+				if(light != null){
+
+					GameObject.Destroy(light);
+				}
+
+				go.name = COPY_NAME;
+				
+				go.transform.SetParent(tmpGo.transform.parent,false);
+				
+				GameObjectControl control = go.GetComponent<GameObjectControl>();
+				
+				if(control != null && control.delUseNum != null){
+					
+					control.delUseNum = null;
+				}
+				
+				SceneContinue sceneContinue = tmpGo.AddComponent<SceneContinue>();
+				
+				sceneContinue.SetCopy(go);
+
+				go.SetActive(false);
+
+				if(tmpCb != null){
+
+					tmpCb(sceneContinue);
+				}
 			};
 
-			return callBack;
+			SuperTween.Instance.DelayCall(0,initCb);
+
+			GameObject.Destroy(this);
 		}
 	}
 }

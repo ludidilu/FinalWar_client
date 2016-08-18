@@ -1,41 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
-using xy3d.tstd.lib.superTween;
-using xy3d.tstd.lib.systemIO;
-using DamienG.Security.Cryptography;
 using System;
-using System.ComponentModel;
-using xy3d.tstd.lib.assetManager;
-using xy3d.tstd.lib.gameObjectFactory;
-using xy3d.tstd.lib.superFunction;
 
 namespace xy3d.tstd.lib.scene{
 
 	public class SceneContinue : MonoBehaviour {
 
-		Bounds[] bounds = new Bounds[3];
+		private Camera renderCamera;
+
+		private Bounds[] bounds = new Bounds[3];
 
 		private GameObject copy;
 
-		public void Init(GameObject _go){
+		private Vector3 recPos;
+
+		public void SetCopy(GameObject _go){
 
 			copy = _go;
 		}
 
+		public void SetCamera(Camera _camera){
+
+			renderCamera = _camera;
+		}
+
 		// Use this for initialization
-		void Awake () {
-
-			RefreshBounds();
-		}
-
-		private void CopySelf(){
-
-			copy = GameObject.Instantiate<GameObject>(gameObject);
-
-			copy.SetActive(false);
-		}
-
-		void RefreshBounds(){
+		void Awake(){
 
 			Renderer[] rs = gameObject.GetComponentsInChildren<Renderer>();
 
@@ -51,60 +41,62 @@ namespace xy3d.tstd.lib.scene{
 			bounds[1] = new Bounds(new Vector3(b.center.x + b.size.x,b.center.y,b.center.z),b.size);
 			
 			bounds[2] = new Bounds(new Vector3(b.center.x - b.size.x,b.center.y,b.center.z),b.size);
+
+			recPos = transform.position;
 		}
 
 		void Update() {
 
-			Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+			Plane[] planes = GeometryUtility.CalculateFrustumPlanes(renderCamera);
 
-			if(!GeometryUtility.TestPlanesAABB(planes, bounds[0])){
+			if(!GeometryUtility.TestPlanesAABB(planes, GetBounds(bounds[0]))){//看不到中间那个了
 
-				if (GeometryUtility.TestPlanesAABB(planes, bounds[1])){
-					
-					gameObject.transform.Translate(gameObject.transform.right * bounds[0].size.x);
+				if (GeometryUtility.TestPlanesAABB(planes, GetBounds(bounds[1]))){//看得到右面那个  那我把中间那个移动到右面 把右面那个隐藏
+
+					transform.position = transform.position + new Vector3(bounds[0].size.x,0,0);
 
 					copy.SetActive(false);
 
-					RefreshBounds();
-					
-				}else if (GeometryUtility.TestPlanesAABB(planes, bounds[2])){
-					
-					gameObject.transform.Translate(gameObject.transform.right * -bounds[0].size.x);
-					
+				}else if (GeometryUtility.TestPlanesAABB(planes, GetBounds(bounds[2]))){//看得到左面那个  那我把中间那个移动到左面 把左面那个隐藏
+
+					transform.position = transform.position - new Vector3(bounds[0].size.x,0,0);
+
 					copy.SetActive(false);
 
-					RefreshBounds();
+				}else{//左右都看不到了  怎么玩
 
-				}else{
-
-					SuperDebug.LogError("error!!!");
+					SuperDebug.LogError("See nothing!");
 				}
 
-			}else{
+			}else{//看得到中间那个
 
-				if (GeometryUtility.TestPlanesAABB(planes, bounds[1])){
+				bool getRight = GeometryUtility.TestPlanesAABB(planes, GetBounds(bounds[1]));
+
+				bool getLeft = GeometryUtility.TestPlanesAABB(planes, GetBounds(bounds[2]));
+
+				if(getRight && getLeft){
+
+					SuperDebug.LogError("See both left and right!");
+
+				}else if (getRight){//看得到右面那个
 
 					if(!copy.activeSelf){
 
-						copy.transform.position = gameObject.transform.position;
+						copy.transform.position = transform.position + new Vector3(bounds[0].size.x,0,0);
 
-						copy.transform.Translate(copy.transform.right * bounds[0].size.x);
-						
 						copy.SetActive(true);
 					}
 					
-				}else if (GeometryUtility.TestPlanesAABB(planes, bounds[2])){
-					
+				}else if (getLeft){//看得到左面那个
+
 					if(!copy.activeSelf){
-						
-						copy.transform.position = gameObject.transform.position;
-						
-						copy.transform.Translate(copy.transform.right * -bounds[0].size.x);
+
+						copy.transform.position = transform.position - new Vector3(bounds[0].size.x,0,0);
 						
 						copy.SetActive(true);
 					}
 
-				}else{
+				}else{//左右都看不到
 
 					if(copy.activeSelf){
 
@@ -117,6 +109,19 @@ namespace xy3d.tstd.lib.scene{
 		void OnDestroy(){
 
 			GameObject.Destroy(copy);
+		}
+
+		private Bounds GetBounds(Bounds _bounds){
+
+			return new Bounds(_bounds.center + transform.position - recPos,_bounds.size);
+		}
+
+		public float mapWidth{
+
+			get{
+
+				return bounds[0].size.x;
+			}
 		}
 	}
 }

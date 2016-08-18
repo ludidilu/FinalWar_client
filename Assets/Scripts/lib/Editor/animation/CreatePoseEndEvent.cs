@@ -235,5 +235,43 @@ public class CreatePoseEndEvent{
         }
     }
 
-
+	[MenuItem("Animation/在动作最后一帧抛出PoseEndPoint")]
+	public static void Start6()
+	{
+		UnityEngine.Object[] gos = Selection.objects;
+		
+		foreach (UnityEngine.Object go in gos)
+		{
+			if (go is AnimationClip)
+			{
+				AnimationClip clip = (AnimationClip)go;
+				
+				AnimationEvent[] events = AnimationUtility.GetAnimationEvents(clip);
+				
+				List<AnimationEvent> evtList = new List<AnimationEvent>(events);
+				
+				AnimationEvent end = null;
+				
+				if (events.Length > 0)
+				{
+					end = events[events.Length - 1];
+				}
+				
+				if (end == null || end.functionName != "PoseEndPoint")
+				{
+					end = new AnimationEvent();
+					
+					end.functionName = "PoseEndPoint";
+					
+					end.time = clip.length;
+					
+					evtList.Add(end);
+				}
+				
+				events = evtList.ToArray();
+				
+				AnimationUtility.SetAnimationEvents(clip, events);
+			}
+		}
+	}
 }

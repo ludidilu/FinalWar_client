@@ -30,9 +30,7 @@ namespace xy3d.tstd.lib.animatorFactoty{
 
 				callBackList.Add(_callBack);
 
-				AssetManager.Instance.GetAsset<RuntimeAnimatorController>(name,GetAsset);
-
-				return null;
+				return AssetManager.Instance.GetAsset<RuntimeAnimatorController>(name,GetAsset);
 
 			}else if(type == 0){
 

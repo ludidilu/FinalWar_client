@@ -41,13 +41,13 @@
 
 			sampler2D _MainTex;
 			
-			float4 positions[10];
+			float4 positions[20];
 			float4 fix[80];
 			float4 state[80];
 //			float index;
 //			float matrixIndex;
 			//float4x4 myMatrix[10];
-			float4 scaleFix[10];
+			float4 scaleFix[20];
 
 			
 			v2f vert(appdata v){

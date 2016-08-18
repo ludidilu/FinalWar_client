@@ -16,11 +16,26 @@ public class AudioPlayScript : MonoBehaviour {
 
 		source.pitch = pitch;
 
+        source.volume = xy3d.tstd.lib.audio.AudioPlay.Instance.PlayEffectVol;
 		source.Play();
-
 		effectSources.Add(source);
 	}
-
+    public float SetPlayEffectVol
+    {
+        get
+        {
+            if (effectSources.Count <= 0) return 0;
+            return effectSources[0].volume;
+        }
+        set
+        {
+            value = Mathf.Clamp(value, 0, 1);
+            foreach (var item in effectSources)
+            {
+                item.volume = value;
+            }
+        }
+    }
 	public void SetPlayEffectSpeed(float _speed){
 
 		pitch = _speed;

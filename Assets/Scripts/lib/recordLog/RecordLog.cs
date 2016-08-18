@@ -87,9 +87,9 @@ public class RecordLog{
 
         MsMultiPartFormData form = new MsMultiPartFormData(postStream);
         //form.AddFormField("token", "UmyhgwyTCXazlqnBh6sypTbxuCrH0VUQ8vjNoPzT:lf4Kcq7RrRrg508o25YxdusZyTU=:eyJzY29wZSI6InRzdGRkdW1wIiwiZGVhZGxpbmUiOjE0NTQzNTMyNTZ9");
-        form.AddFormField("token", "UmyhgwyTCXazlqnBh6sypTbxuCrH0VUQ8vjNoPzT:nMp6tOdlV9jz4fsGvju-Kv2vvik=:eyJzY29wZSI6InRzdGRkdW1wIiwiZGVhZGxpbmUiOjE3NzExNDY5NjN9");
+		form.AddFormField("token", "UmyhgwyTCXazlqnBh6sypTbxuCrH0VUQ8vjNoPzT:EHu4cZi6Dbky2bAfgHLupWTmcx4=:eyJzY29wZSI6InRzdGRkdW1wIiwiY2FsbGJhY2tVcmwiOiJodHRwOi8vY3Jhc2gueHkzZC5tb2JpL3VwbG9hZC90c3RkX2NsaWVudCIsImNhbGxiYWNrQm9keSI6ImtleT0kKGtleSkiLCJkZWFkbGluZSI6MTgyMjUyNjc0Mn0=");
         
-        form.AddFormField("key", path);
+		form.AddFormField("key", "tstd_error_" + fileName);
 
         form.AddStreamFile("file", fileName, bArr);
         form.PrepareFormData();
@@ -179,7 +179,7 @@ public class RecordLog{
 
 					FileInfo fi = new FileInfo(Application.persistentDataPath + "/" + LOG_FILE_NAME);
 
-					fi.CopyTo(Application.persistentDataPath + ERROR_PATH + "/" + (DateTime.Now.ToFileTime().ToString()) + ".error");
+					fi.CopyTo(Application.persistentDataPath + ERROR_PATH + "/" + string.Format("{0:yyyy-MM-dd-HH-mm-ss-ffffff}", DateTime.Now) + ".error");
 
 //                    errorStr = string.Format("{0}, {1}", condition, stackTrace);
 //                    StreamWriter errorSW = new StreamWriter(Application.persistentDataPath + ERROR_PATH + "/" + (DateTime.Now.ToFileTime().ToString()) + ".error");

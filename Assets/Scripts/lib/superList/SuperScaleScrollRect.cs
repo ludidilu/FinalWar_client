@@ -36,6 +36,10 @@ namespace xy3d.tstd.lib.superList{
 
 			scrollRect.movementType = ScrollRect.MovementType.Clamped;
 
+			SuperFunction.Instance.RemoveEventListener (SuperScrollRect.eventDispatcher, SuperScrollRect.CLOSE_MOVE, scrollRect.CloseMove);
+
+			SuperFunction.Instance.RemoveEventListener (SuperScrollRect.eventDispatcher, SuperScrollRect.OPEN_MOVE, scrollRect.OpenMove);
+
 			containerHalfRect = (transform as RectTransform).rect.size / 2;
 
 			SuperFunction.Instance.AddEventListener(ScreenScale.Instance.gameObject,ScreenScale.SCALE_CHANGE,ScaleChange);

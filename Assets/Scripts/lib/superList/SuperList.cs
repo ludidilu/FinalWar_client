@@ -5,11 +5,14 @@ using UnityEngine.UI;
 
 using System;
 using xy3d.tstd.lib.superTween;
+using xy3d.tstd.lib.superFunction;
 
 namespace xy3d.tstd.lib.superList
 {
 	public class SuperList : MonoBehaviour
 	{
+
+
 		[SerializeField]
 		private bool autoStart = true;
 		[SerializeField]
@@ -86,7 +89,7 @@ namespace xy3d.tstd.lib.superList
 
 					for(int i = 0 ; i < showPool.Count ; i++){
 
-						showPool[i].transform.SetParent(pool.transform);
+						showPool[i].transform.SetParent(pool.transform, false);
 
 						hidePool.Add(showPool[i]);
 					}
@@ -100,7 +103,9 @@ namespace xy3d.tstd.lib.superList
 				data.Clear ();
 			}
 
-			foreach (T unit in _data) {
+			for(int i = 0 ; i < _data.Count ; i++){
+
+				T unit = _data[i];
 
 				data.Add (unit);
 			}
@@ -349,6 +354,8 @@ namespace xy3d.tstd.lib.superList
 		// Use this for initialization
 		void Awake ()
 		{
+
+
 			scrollRect = gameObject.AddComponent<SuperScrollRect> ();
 
 			scrollRect.vertical = isVertical;
@@ -670,7 +677,9 @@ namespace xy3d.tstd.lib.superList
 						showPool.Add (newShowPool [i]);
 					}
 
-					foreach (SuperListCell unit in replacePool) {
+					for(int i = 0 ; i < replacePool.Count ; i++){
+
+						SuperListCell unit = replacePool[i];
 
 						unit.transform.SetParent (pool.transform, false);
 
@@ -814,9 +823,11 @@ namespace xy3d.tstd.lib.superList
 						
 						showPool.Add (newShowPool [i]);
 					}
+
+					for(int i = 0 ; i < replacePool.Count ; i++){
+
+						SuperListCell unit = replacePool[i];
 					
-					foreach (SuperListCell unit in replacePool) {
-						
 						unit.transform.SetParent (pool.transform, false);
 						
 						hidePool.Add (unit);
@@ -1010,7 +1021,9 @@ namespace xy3d.tstd.lib.superList
 
 			if (needSelectedIndex) {
 
-				foreach (SuperListCell cell in showPool) {
+				for(int i = 0 ; i < showPool.Count ; i++){
+
+					SuperListCell cell = showPool[i];
 
 					if (cell.index == _index) {
 						
@@ -1139,7 +1152,9 @@ namespace xy3d.tstd.lib.superList
 		{
 			data [_index] = _data;
 
-			foreach (SuperListCell cell in showPool) {
+			for(int i = 0 ; i < showPool.Count ; i++){
+
+				SuperListCell cell = showPool[i];
 
 				if (cell.index == _index) {
 					
@@ -1211,6 +1226,9 @@ namespace xy3d.tstd.lib.superList
 		void OnDestroy(){
 
 			go = null;
+
 		}
+
+
 	}
 }

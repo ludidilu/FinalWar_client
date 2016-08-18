@@ -33,9 +33,7 @@ namespace xy3d.tstd.lib.audio{
 				
 				callBackList.Add (_callBack);
 				
-				AssetManager.Instance.GetAsset<AudioClip> (name,GetAsset);
-				
-				return null;
+				return AssetManager.Instance.GetAsset<AudioClip> (name,GetAsset);
 				
 			} else if (type == 0) {
 				

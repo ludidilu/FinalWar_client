@@ -7,8 +7,8 @@ namespace xy3d.tstd.lib.battleHeroTools
 {
     public class BattleHeroBuff
     {
-        public const float ASSET_WIDTH = 1024f / 256f;
-        public const float ASSET_HEIGHT = 512f / 256f;
+        public const float ASSET_WIDTH = 1024f / 256f;//这个值其实一点用没有  mesh里的uv其实没用  运行时会去改写
+		public const float ASSET_HEIGHT = 512f / 256f;//这个值其实一点用没有  mesh里的uv其实没用  运行时会去改写
 
         public const float FONT_WIDTH = 104f / 256f;
         public const float FONT_HEIGHT = 104f / 256f;
@@ -148,9 +148,9 @@ namespace xy3d.tstd.lib.battleHeroTools
 
                         mesh.uv = uvs;
 
-                        unit.uFix = _texture.textureRect.x / _texture.texture.width;
-                        unit.vFix = _texture.textureRect.y / _texture.texture.height;
-                        unit.alpha = 1;
+//                        unit.uFix = _texture.textureRect.x / _texture.texture.width;
+//                        unit.vFix = _texture.textureRect.y / _texture.texture.height;
+//                        unit.alpha = 1;
                     };
 
                     TextureFactory.Instance.GetTexture("Assets/Arts/ui/skillIcon/" + _name + ".png", callBack, true);
@@ -184,10 +184,10 @@ namespace xy3d.tstd.lib.battleHeroTools
                     else
                     {
                         Vector2[] uvs = mesh.uv;
-                        uvs[i * 4 + 4] = Vector2.zero;
-                        uvs[i * 4 + 5] = Vector2.zero;
-                        uvs[i * 4 + 6] = Vector2.zero;
-                        uvs[i * 4 + 7] = Vector2.zero;
+						uvs[tempindex * 2 * 4 + 4] = Vector2.zero;
+						uvs[tempindex * 2 * 4 + 5] = Vector2.zero;
+						uvs[tempindex * 2 * 4 + 6] = Vector2.zero;
+						uvs[tempindex * 2 * 4 + 7] = Vector2.zero;
                         mesh.uv = uvs;
                     }
                     return unit;

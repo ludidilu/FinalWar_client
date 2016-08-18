@@ -5,10 +5,13 @@ using System;
 using System.Reflection;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using xy3d.tstd.lib.superList;
 
 public class AddScript : MonoBehaviour {
 
 	public string scriptName;
+
+	public int monoBehaviourInstanceID;
 
 	[HideInInspector] public AddAtt[] atts;
 
@@ -16,16 +19,23 @@ public class AddScript : MonoBehaviour {
 
 	[HideInInspector] public string[] buttonMethodNames;
 
-	public void Init(){
+	[HideInInspector] public RectTransform superScrollRectContent;
+
+	[HideInInspector] public bool superScrollRectIsVertical;
+
+	[HideInInspector] public bool superScrollRectIsHorizontal;
+
+	[HideInInspector] public ScrollRect.MovementType superScrollRectMovementType;
+
+	private Component script;
+
+	private Type type;
+
+	public Component Init(){
 		
-		Type type = AssemblyManager.Instance.assembly.GetType(scriptName);
+		type = AssemblyManager.Instance.assembly.GetType(scriptName);
 
-		Component script = gameObject.AddComponent(type);
-
-		foreach(AddAtt addAtt in atts){
-
-			addAtt.Init(script,type);
-		}
+		script = gameObject.AddComponent(type) as MonoBehaviour;
 
 		if(scriptName == "xy3d.tstd.lib.effect.Gradient"){
 
@@ -72,6 +82,29 @@ public class AddScript : MonoBehaviour {
 				
 				buttons[i].onClick.AddListener(callBack);
 			}
+		}
+
+		if(superScrollRectContent != null){
+
+			SuperScrollRect scrollRect = script as SuperScrollRect;
+
+			scrollRect.content = superScrollRectContent;
+
+			scrollRect.vertical = superScrollRectIsVertical;
+
+			scrollRect.horizontal = superScrollRectIsHorizontal;
+
+			scrollRect.movementType = superScrollRectMovementType;
+		}
+
+		return script;
+	}
+
+	public void InitAtt(Dictionary<int,Component> _dic){
+		
+		for(int i = 0 ; i < atts.Length ; i++){
+			
+			atts[i].Init(script,type,_dic);
 		}
 
 		GameObject.Destroy(this);

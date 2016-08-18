@@ -10,6 +10,8 @@ namespace xy3d.tstd.lib.heroFactory{
 
 	public class HeroFactoryTools{
 
+		public const bool CALLBACK_WHEN_ANIMATOR_LOADED = true;//是否等到animator加载完毕后再回调
+
 		public const bool MERGE_WEAPON = false;
 
 		private const string WING_DUMMY_NAME = "chibang";
@@ -30,7 +32,7 @@ namespace xy3d.tstd.lib.heroFactory{
 			GameObject[] offHandWeaponParticles = null;
 			GameObject wing = null;
 
-			int loadNum = 2;//预先加的1  主体皮肤
+			int loadNum = CALLBACK_WHEN_ANIMATOR_LOADED ? 3 : 2;//预先加的1  主体皮肤
 			
 			//加载AnimatorController
 			Action<RuntimeAnimatorController> callBack2 = delegate(RuntimeAnimatorController result) {
@@ -39,7 +41,10 @@ namespace xy3d.tstd.lib.heroFactory{
 
 				AnimatorLoadOK(hero,result,_addHeroControl);
 
-//                OneLoadOK<T>(ref loadNum, _mainHandWeaponJoint, _offHandWeaponJoint, _weaponScale, _horseScale, _particleJoints, hero, animatorController, mainHandWeapon, offHandWeapon, horse, particles, mainHandWeaponParticles, offHandWeaponParticles, wing, _callBack, _addHeroControl, isDownHouse);
+				if(CALLBACK_WHEN_ANIMATOR_LOADED){
+
+                	OneLoadOK<T>(ref loadNum, _mainHandWeaponJoint, _offHandWeaponJoint, _weaponScale, _horseScale, _particleJoints, hero, animatorController, mainHandWeapon, offHandWeapon, horse, particles, mainHandWeaponParticles, offHandWeaponParticles, wing, _callBack, _addHeroControl, isDownHouse);
+				}
 			};
 
 			AnimatorFactory.Instance.GetAnimator(_animatorControllerPath, callBack2);

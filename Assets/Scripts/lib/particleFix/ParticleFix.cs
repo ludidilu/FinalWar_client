@@ -5,11 +5,11 @@ public class ParticleFix : MonoBehaviour {
 
 	private ParticleSystemRenderer particleRenderer;
 
-	private Camera camera;
+	private Camera renderCamera;
 
 	public void Init(Camera _camera){
 
-		camera = _camera;
+		renderCamera = _camera;
 	}
 
 	void Start(){
@@ -20,16 +20,16 @@ public class ParticleFix : MonoBehaviour {
 	// Use this for initialization
 	void Update () {
 
-		particleRenderer.material.SetVector("_Scaling",transform.localScale);
+		particleRenderer.material.SetVector("_Scaling",transform.lossyScale);
 			
 		if(particleRenderer.renderMode == ParticleSystemRenderMode.Billboard || particleRenderer.renderMode == ParticleSystemRenderMode.Stretch){
 				
 			particleRenderer.material.SetVector("_Center", GetComponent<Renderer>().gameObject.transform.position); 
 
-			if(camera != null){
+			if(renderCamera != null){
 
-				particleRenderer.material.SetMatrix("_Camera", camera.worldToCameraMatrix);  
-				particleRenderer.material.SetMatrix("_CameraInv", camera.worldToCameraMatrix.inverse);  
+				particleRenderer.material.SetMatrix("_Camera", renderCamera.worldToCameraMatrix);  
+				particleRenderer.material.SetMatrix("_CameraInv", renderCamera.worldToCameraMatrix.inverse);  
 			}
 		}
 	}

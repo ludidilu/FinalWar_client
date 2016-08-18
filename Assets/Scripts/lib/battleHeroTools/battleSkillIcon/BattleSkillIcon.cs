@@ -9,7 +9,7 @@ namespace xy3d.tstd.lib.battleHeroTools
     public class BattleSkillIcon
     {
         public const float ASSET_WIDTH = 512f / 128f;
-        public const float ASSET_HEIGHT = 256f / 128f;
+        public const float ASSET_HEIGHT = 512f / 128f;
 
         public const float FONT_WIDTH = 52f / 128f;
         public const float FONT_HEIGHT = 52f / 128f;
@@ -133,8 +133,8 @@ namespace xy3d.tstd.lib.battleHeroTools
                         unit.endBack = endBack;
                         unit.callBack = _callBack;
 
-                        unit.uFix = _texture.textureRect.x / 512;
-                        unit.vFix = _texture.textureRect.y / 256;
+						unit.uFix = _texture.textureRect.x / _texture.texture.width;
+						unit.vFix = _texture.textureRect.y / _texture.texture.height;
                         unit.alpha = 1;
 
                         Action delayCall = delegate()

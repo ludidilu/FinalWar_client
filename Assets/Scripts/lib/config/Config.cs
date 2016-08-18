@@ -127,6 +127,12 @@ public class Config
 	{
 		switch (_field.FieldType.Name)
 		{
+		case "Int16":
+
+			_field.SetValue(this, Int16.Parse(_data));
+
+			break;
+
 		case "Int32":
 			
 			_field.SetValue(this, int.Parse(_data));
@@ -163,6 +169,12 @@ public class Config
 	{
 		switch (_property.PropertyType.Name)
 		{
+		case "Int16":
+			
+			_property.SetValue(this, Int16.Parse(_data), null);
+			
+			break;
+
 		case "Int32":
 			
 			_property.SetValue(this, int.Parse(_data), null);

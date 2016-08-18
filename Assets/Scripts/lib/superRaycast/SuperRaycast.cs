@@ -13,28 +13,30 @@ namespace xy3d.tstd.lib.superRaycast{
 		public const string GetMouseButtonUp = "GetMouseButtonUp";
 		public const string GetMouseEnter = "GetMouseEnter";
 		public const string GetMouseExit = "GetMouseExit";
+		public const string GetMouseClick = "GetMouseClick";
 
 		private const string CHECK_LAYER_NAME = "Default";
 
 		private static SuperRaycast _Instance;
 
-		private Dictionary<string,int> dic = new Dictionary<string, int>();
+		public Dictionary<string,int> dic = new Dictionary<string, int>();
 
-		public static void Init(){
+		public static void Init(Camera _camera){
 
 			GameObject go = new GameObject("SuperRaycastGameObject");
 			
 			_Instance = go.AddComponent<SuperRaycast>();
+
+			_Instance.renderCamera = _camera;
 		}
 
 		public static void SetIsOpen(bool _isOpen, string _str){
+
 			if(_Instance == null){
-				//SuperDebug.Log("SuperRaycast _Instance is null!  value:" + _isOpen + "   str:" + _str + "    " + _Instance);
+
 				return;
 			}
 
-			//SuperDebug.Log("SuperRaycastReal  value:" + _isOpen + "   str:" + _str + "    " + _Instance);
-			
 			_Instance.m_isOpen = _Instance.m_isOpen + (_isOpen ? 1 : -1);
 			
 			if(_Instance.m_isOpen == 0){
@@ -48,19 +50,15 @@ namespace xy3d.tstd.lib.superRaycast{
 					_Instance.needClearObjs = true;
 				}
 				
-			}else if(_Instance.m_isOpen > 1){
+			}else if(_Instance.m_isOpen > 1)
+            {
+                PrintLog();
 
-				SuperDebug.Log("SuperRaycast error!!!!!!!!!!!!!");
+                SuperDebug.Log("SuperRaycast error!!!!!!!!!!!!!");
 
-				foreach(KeyValuePair<string,int> pair in _Instance.dic){
+            }
 
-					SuperDebug.Log("key:" + pair.Key + "  value:" + pair.Value);
-				}
-				
-				SuperDebug.LogError("3D SuperRaycast SetOpen error!");
-			}
-
-			if(_Instance.dic.ContainsKey(_str)){
+            if (_Instance.dic.ContainsKey(_str)){
 
 				if(_isOpen){
 
@@ -89,7 +87,18 @@ namespace xy3d.tstd.lib.superRaycast{
 			}
 		}
 
-		public static string filterTag{
+        public static void PrintLog()
+        {
+            if (_Instance.needClearObjs)
+            {
+                foreach (KeyValuePair<string, int> pair in _Instance.dic)
+                {
+                    SuperDebug.Log("SuperRaycast key:" + pair.Key + "  value:" + pair.Value);
+                }
+            }
+        }
+
+        public static string filterTag{
 
 			get{
 
@@ -156,11 +165,15 @@ namespace xy3d.tstd.lib.superRaycast{
 		
 		private string m_filterTag;
 
+		private List<GameObject> downObjs = new List<GameObject>();
+
 		private List<GameObject> objs = new List<GameObject>();
 
 		private bool isProcessingUpdate = false;
 
 		private bool needClearObjs = false;
+
+		private Camera renderCamera;
 
 		void Update(){
 			
@@ -172,7 +185,7 @@ namespace xy3d.tstd.lib.superRaycast{
 
 				if(Input.GetMouseButtonDown(0)){
 
-					Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+					Ray ray = renderCamera.ScreenPointToRay(Input.mousePosition);
 					
 					hits = Physics.RaycastAll(ray,float.MaxValue,layerIndex);
 
@@ -186,6 +199,8 @@ namespace xy3d.tstd.lib.superRaycast{
 						}
 						
 						objs.Add(hit.collider.gameObject);
+
+						downObjs.Add(hit.collider.gameObject);
 
 						SuperEvent enterEvent = new SuperEvent(GetMouseEnter);
 							
@@ -206,7 +221,7 @@ namespace xy3d.tstd.lib.superRaycast{
 
 					if(hits == null){
 
-						Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+						Ray ray = renderCamera.ScreenPointToRay(Input.mousePosition);
 						
 						hits = Physics.RaycastAll(ray,float.MaxValue,layerIndex);
 					}
@@ -270,7 +285,7 @@ namespace xy3d.tstd.lib.superRaycast{
 
 					if(hits == null){
 
-						Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+						Ray ray = renderCamera.ScreenPointToRay(Input.mousePosition);
 						
 						hits = Physics.RaycastAll(ray,float.MaxValue,layerIndex);
 					}
@@ -289,6 +304,15 @@ namespace xy3d.tstd.lib.superRaycast{
 						e.data = new object[]{hit,i};
 						
 						SuperFunction.Instance.DispatchEvent(hit.collider.gameObject,e);
+
+						if(downObjs.Contains(hit.collider.gameObject)){
+
+							e = new SuperEvent(GetMouseClick);
+
+							e.data = new object[]{hit,i};
+
+							SuperFunction.Instance.DispatchEvent(hit.collider.gameObject,e);
+						}
 						
 						i++;
 					}
@@ -299,6 +323,8 @@ namespace xy3d.tstd.lib.superRaycast{
 //						
 //						SuperFunction.Instance.DispatchEvent(go,exitEvent);
 //					}
+
+					downObjs.Clear();
 					
 					objs.Clear();
 				}
@@ -308,6 +334,8 @@ namespace xy3d.tstd.lib.superRaycast{
 					needClearObjs = false;
 
 					objs.Clear();
+
+					downObjs.Clear();
 				}
 				
 				isProcessingUpdate = false;

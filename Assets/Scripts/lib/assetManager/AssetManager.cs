@@ -124,7 +124,7 @@ namespace xy3d.tstd.lib.assetManager
 		}
 #endif
 
-		public void GetAsset<T> (string _name, Action<T> _callBack) where T:UnityEngine.Object
+		public T GetAsset<T> (string _name, Action<T> _callBack) where T:UnityEngine.Object
 		{
 
 #if USE_ASSETBUNDLE
@@ -144,6 +144,8 @@ namespace xy3d.tstd.lib.assetManager
 			
 			unit.Load (_callBack);
 
+			return null;
+
 #else
 
 			T data = AssetDatabase.LoadAssetAtPath<T> (_name);
@@ -154,6 +156,8 @@ namespace xy3d.tstd.lib.assetManager
 			}
 
 			_callBack (data);
+
+			return data;
 #endif
 		}
 	}

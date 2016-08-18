@@ -75,8 +75,8 @@ namespace xy3d.tstd.lib.battleHeroTools
 		{
 			if (go != null)
 			{
-				posVec.x = go.transform.position.x;
-				posVec.y = go.transform.position.y + height;
+				posVec.x = go.transform.position.x - 0.68f;
+				posVec.y = go.transform.position.y + height + 0.4f;
 				posVec.z = go.transform.position.z;
 				posVec.w = 1;
 			}

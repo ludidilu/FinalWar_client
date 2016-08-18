@@ -16,6 +16,8 @@ public class HeroCreaterPanel : ScriptableWizard {
 	public float outline = 0.01f;
 	public bool fixNormals = false;
 
+	public Shader shader;
+
 	[MenuItem ("小Q/角色主体文件生成")]
 	static void CreateWizard () {
 
@@ -83,7 +85,7 @@ public class HeroCreaterPanel : ScriptableWizard {
 
 		resultObj.name = skeleton.name;//这行代码不能删  否则骨骼运动就停止了
 
-		GameObjectTools.CombineMeshs (ref resultObj, importParts, importReplaceParts, animatorController, outline, out resultMesh, out resultMaterial, addCollider, fixNormals);
+		GameObjectTools.CombineMeshs (shader, ref resultObj, importParts, importReplaceParts, animatorController, outline, out resultMesh, out resultMaterial, addCollider, fixNormals, UnityEngine.Rendering.ShadowCastingMode.Off);
 
 		string path = EditorUtility.SaveFilePanelInProject ("保存文件", "", "prefab", "aaaa");
 

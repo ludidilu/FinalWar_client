@@ -96,13 +96,7 @@ namespace xy3d.tstd.lib.superFunction{
 
 					if(tmpDic.Count == 0){
 
-						SuperFunctionControl control = unit.target.GetComponent<SuperFunctionControl>();
-
-						control.isDestroy = true;
-
-						GameObject.Destroy(control);
-
-						dic2.Remove(unit.target);
+						DestroyControl(unit.target);
 					}
 				}
 			}
@@ -112,21 +106,19 @@ namespace xy3d.tstd.lib.superFunction{
 
 			if(dic2.ContainsKey(_target)){
 
-				SuperFunctionControl control = _target.GetComponent<SuperFunctionControl>();
-				
-				control.isDestroy = true;
-				
-				GameObject.Destroy(control);
-
 				Dictionary<string,List<SuperFunctionUnit>> tmpDic = dic2[_target];
+				
+				DestroyControl(_target);
 
-				dic2.Remove(_target);
+				Dictionary<string,List<SuperFunctionUnit>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
 
-				foreach(List<SuperFunctionUnit> list in tmpDic.Values){
+				while(enumerator.MoveNext()){
 
-					foreach(SuperFunctionUnit unit in list){
+					List<SuperFunctionUnit> tmpList = enumerator.Current;
 
-						dic.Remove(unit.index);
+					for(int i = 0 ; i < tmpList.Count ; i++){
+
+						dic.Remove(tmpList[i].index);
 					}
 				}
 			}
@@ -142,22 +134,16 @@ namespace xy3d.tstd.lib.superFunction{
 
 					List<SuperFunctionUnit> list = tmpDic[_eventName];
 
-					foreach(SuperFunctionUnit unit in list){
-						
-						dic.Remove(unit.index);
+					for(int i = 0 ; i < list.Count ; i++){
+
+						dic.Remove(list[i].index);
 					}
 
 					tmpDic.Remove(_eventName);
 
 					if(tmpDic.Count == 0){
 
-						SuperFunctionControl control = _target.GetComponent<SuperFunctionControl>();
-						
-						control.isDestroy = true;
-						
-						GameObject.Destroy(control);
-
-						dic2.Remove(_target);
+						DestroyControl(_target);
 					}
 				}
 			}
@@ -191,13 +177,7 @@ namespace xy3d.tstd.lib.superFunction{
 
 						if(tmpDic.Count == 0){
 
-							SuperFunctionControl control = _target.GetComponent<SuperFunctionControl>();
-							
-							control.isDestroy = true;
-							
-							GameObject.Destroy(control);
-							
-							dic2.Remove(_target);
+							DestroyControl(_target);
 						}
 					}
 				}
@@ -248,14 +228,37 @@ namespace xy3d.tstd.lib.superFunction{
 			Dictionary<string,List<SuperFunctionUnit>> tmpDic = dic2[_target];
 			
 			dic2.Remove(_target);
+
+			Dictionary<string,List<SuperFunctionUnit>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
 			
-			foreach(List<SuperFunctionUnit> list in tmpDic.Values){
+			while(enumerator.MoveNext()){
 				
-				foreach(SuperFunctionUnit unit in list){
+				List<SuperFunctionUnit> tmpList = enumerator.Current;
+				
+				for(int i = 0 ; i < tmpList.Count ; i++){
 					
-					dic.Remove(unit.index);
+					dic.Remove(tmpList[i].index);
 				}
 			}
+		}
+
+		private void DestroyControl(GameObject _target){
+
+			SuperFunctionControl[] controls = _target.GetComponents<SuperFunctionControl>();
+
+			for(int i = 0 ; i < controls.Length ; i++){
+			
+				SuperFunctionControl control = controls[i];
+
+				if(!control.isDestroy){
+
+					control.isDestroy = true;
+					
+					GameObject.Destroy(control);
+				}
+			}
+
+			dic2.Remove(_target);
 		}
 
 		private int GetIndex(){

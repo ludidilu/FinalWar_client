@@ -1,7 +1,8 @@
-﻿Shader "Custom/HeroSurf" {
+﻿Shader "Custom/Hero" {
 	Properties {
+	
 		_Color ("Color", Color) = (1,1,1,1)
-		_MainTex ("Albedo (RGB)", 2D) = "white" {}
+		_MainTex("Main Texture", 2D) = ""{}
 		_OutlineColor("Outline Color",Color) = (0,0,0,1)
 		_PartIndex("Part Index", Float) = 0.0
 		_WeaponIndex("Weapon Index", Float) = 0.0
@@ -11,14 +12,13 @@
 		
 		_SrcAlpha("SrcAlpha",Float) = 1
 		_TarAlpha("TarAlpha",Float) = 0
-		_RimPower("RimPower",Range(1,10)) = 5
-		_InnerColor("InnerColor", Color) = (1,1,1,1)
 	}
 	SubShader {
-		Tags { "RenderType"="Transparent" }
-		
+	
 		Blend [_SrcAlpha] [_TarAlpha]  
 		ZWrite [_ZWrite]
+	
+		Tags { "RenderType"="Transparent"  "Queue" = "Transparent" }
 		
 		
 	// ------------------------------------------------------------
@@ -67,38 +67,40 @@ CGPROGRAM
 #define WorldNormalVector(data,normal) normal
 
 // Original surface shader snippet:
-#line 21 ""
+#line 19 ""
 #ifdef DUMMY_PREPROCESSOR_TO_WORK_AROUND_HLSL_COMPILER_LINE_HANDLING
 #endif
 
 		// Physically based Standard lighting model, and enable shadows on all light types
-		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:mycolor
+		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:myColor
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		//#pragma target 3.0
 
-		sampler2D _MainTex;
 		int _PartIndex;
 		int _WeaponIndex;
+		sampler2D _MainTex;
 		half4 _OutlineColor;
 		float _AlphaXXX;
 		fixed4 _Color;
-		float _RimPower;
-		half4 _InnerColor;
 
 		struct Input {
 		
 			float2 uv_MainTex;
 			float isOutline;
-			half4 color;
 		};
 
+		void surf (Input IN, inout SurfaceOutput o) {
+			
+			o.Albedo = tex2D(_MainTex, IN.uv_MainTex).rgb;
+//			o.Alpha = _AlphaXXX;
+		}
 		
-		void vert (inout appdata_full v, out Input o) {
+		void vert(inout appdata_full v,out Input data){
 		
-            UNITY_INITIALIZE_OUTPUT(Input,o);
-            
-            if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
+			UNITY_INITIALIZE_OUTPUT(Input,data);
+
+			if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
 			
 				v.vertex.x = 0;
 				v.vertex.y = 0;
@@ -112,28 +114,17 @@ CGPROGRAM
 				
 			}else{
 			
-				o.isOutline = v.texcoord1.y;
-				
-				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
-				float dotProduct = 1 - dot(v.normal, viewDir);
-                o.color = _InnerColor * pow(dotProduct,_RimPower);//  _RimColor;
+				data.isOutline = v.texcoord1.y;
 			}
-        }
-
-		void surf (Input IN, inout SurfaceOutput o) {
-
-			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
 		}
 		
-		void mycolor (Input IN, SurfaceOutput o, inout fixed4 color)
+		void myColor (Input IN, SurfaceOutput o, inout fixed4 color)
 	    {
-	    	color = _OutlineColor * IN.isOutline + (1 - IN.isOutline) * color * _Color;
+	        color = _OutlineColor * IN.isOutline + (1 - IN.isOutline) * color * _Color;
 	        
 	        color.a = _AlphaXXX;
-	        
-	        color.rgb += IN.color;
 	    }
-		
+	    
 		
 
 // vertex-to-fragment interpolation data
@@ -145,13 +136,12 @@ struct v2f_surf {
   half3 worldNormal : TEXCOORD1;
   float3 worldPos : TEXCOORD2;
   float custompack0 : TEXCOORD3; // isOutline
-  half4 custompack1 : TEXCOORD4; // color
   #if UNITY_SHOULD_SAMPLE_SH
-  half3 sh : TEXCOORD5; // SH
+  half3 sh : TEXCOORD4; // SH
   #endif
-  SHADOW_COORDS(6)
+  SHADOW_COORDS(5)
   #if SHADER_TARGET >= 30
-  float4 lmap : TEXCOORD7;
+  float4 lmap : TEXCOORD6;
   #endif
 };
 #endif
@@ -163,13 +153,12 @@ struct v2f_surf {
   half3 worldNormal : TEXCOORD1;
   float3 worldPos : TEXCOORD2;
   float custompack0 : TEXCOORD3; // isOutline
-  half4 custompack1 : TEXCOORD4; // color
-  float4 lmap : TEXCOORD5;
-  SHADOW_COORDS(6)
+  float4 lmap : TEXCOORD4;
+  SHADOW_COORDS(5)
   #ifdef DIRLIGHTMAP_COMBINED
-  fixed3 tSpace0 : TEXCOORD7;
-  fixed3 tSpace1 : TEXCOORD8;
-  fixed3 tSpace2 : TEXCOORD9;
+  fixed3 tSpace0 : TEXCOORD6;
+  fixed3 tSpace1 : TEXCOORD7;
+  fixed3 tSpace2 : TEXCOORD8;
   #endif
 };
 #endif
@@ -182,7 +171,6 @@ v2f_surf vert_surf (appdata_full v) {
   Input customInputData;
   vert (v, customInputData);
   o.custompack0.x = customInputData.isOutline;
-  o.custompack1.xyzw = customInputData.color;
   o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
   o.pack0.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
   float3 worldPos = mul(_Object2World, v.vertex).xyz;
@@ -237,10 +225,8 @@ fixed4 frag_surf (v2f_surf IN) : SV_Target {
   UNITY_INITIALIZE_OUTPUT(Input,surfIN);
   surfIN.uv_MainTex.x = 1.0;
   surfIN.isOutline.x = 1.0;
-  surfIN.color.x = 1.0;
   surfIN.uv_MainTex = IN.pack0.xy;
   surfIN.isOutline = IN.custompack0.x;
-  surfIN.color = IN.custompack1.xyzw;
   float3 worldPos = IN.worldPos;
   #ifndef USING_DIRECTIONAL_LIGHT
     fixed3 lightDir = normalize(UnityWorldSpaceLightDir(worldPos));
@@ -310,7 +296,7 @@ fixed4 frag_surf (v2f_surf IN) : SV_Target {
 
   // realtime lighting: call lighting function
   c += LightingLambert (o, gi);
-  mycolor (surfIN, o, c);
+  myColor (surfIN, o, c);
 //  UNITY_OPAQUE_ALPHA(c.a);
   return c;
 }
@@ -359,38 +345,40 @@ CGPROGRAM
 #define WorldNormalVector(data,normal) normal
 
 // Original surface shader snippet:
-#line 21 ""
+#line 19 ""
 #ifdef DUMMY_PREPROCESSOR_TO_WORK_AROUND_HLSL_COMPILER_LINE_HANDLING
 #endif
 
 		// Physically based Standard lighting model, and enable shadows on all light types
-		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:mycolor
+		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:myColor
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		//#pragma target 3.0
 
-		sampler2D _MainTex;
 		int _PartIndex;
 		int _WeaponIndex;
+		sampler2D _MainTex;
 		half4 _OutlineColor;
 		float _AlphaXXX;
 		fixed4 _Color;
-		float _RimPower;
-		half4 _InnerColor;
 
 		struct Input {
 		
 			float2 uv_MainTex;
 			float isOutline;
-			half4 color;
 		};
 
+		void surf (Input IN, inout SurfaceOutput o) {
+			
+			o.Albedo = tex2D(_MainTex, IN.uv_MainTex).rgb;
+//			o.Alpha = _AlphaXXX;
+		}
 		
-		void vert (inout appdata_full v, out Input o) {
+		void vert(inout appdata_full v,out Input data){
 		
-            UNITY_INITIALIZE_OUTPUT(Input,o);
-            
-            if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
+			UNITY_INITIALIZE_OUTPUT(Input,data);
+
+			if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
 			
 				v.vertex.x = 0;
 				v.vertex.y = 0;
@@ -404,28 +392,17 @@ CGPROGRAM
 				
 			}else{
 			
-				o.isOutline = v.texcoord1.y;
-				
-				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
-				float dotProduct = 1 - dot(v.normal, viewDir);
-                o.color = _InnerColor * pow(dotProduct,_RimPower);//  _RimColor;
+				data.isOutline = v.texcoord1.y;
 			}
-        }
-
-		void surf (Input IN, inout SurfaceOutput o) {
-
-			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
 		}
 		
-		void mycolor (Input IN, SurfaceOutput o, inout fixed4 color)
+		void myColor (Input IN, SurfaceOutput o, inout fixed4 color)
 	    {
-	    	color = _OutlineColor * IN.isOutline + (1 - IN.isOutline) * color * _Color;
+	        color = _OutlineColor * IN.isOutline + (1 - IN.isOutline) * color * _Color;
 	        
 	        color.a = _AlphaXXX;
-	        
-	        color.rgb += IN.color;
 	    }
-		
+	    
 		
 
 // vertex-to-fragment interpolation data
@@ -434,7 +411,6 @@ struct v2f_surf {
   half3 worldNormal : TEXCOORD0;
   float3 worldPos : TEXCOORD1;
   float custompack0 : TEXCOORD2; // isOutline
-  half4 custompack1 : TEXCOORD3; // color
 };
 
 // vertex shader
@@ -444,7 +420,6 @@ v2f_surf vert_surf (appdata_full v) {
   Input customInputData;
   vert (v, customInputData);
   o.custompack0.x = customInputData.isOutline;
-  o.custompack1.xyzw = customInputData.color;
   o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
   float3 worldPos = mul(_Object2World, v.vertex).xyz;
   fixed3 worldNormal = UnityObjectToWorldNormal(v.normal);
@@ -460,9 +435,7 @@ fixed4 frag_surf (v2f_surf IN) : SV_Target {
   UNITY_INITIALIZE_OUTPUT(Input,surfIN);
   surfIN.uv_MainTex.x = 1.0;
   surfIN.isOutline.x = 1.0;
-  surfIN.color.x = 1.0;
   surfIN.isOutline = IN.custompack0.x;
-  surfIN.color = IN.custompack1.xyzw;
   float3 worldPos = IN.worldPos;
   #ifndef USING_DIRECTIONAL_LIGHT
     fixed3 lightDir = normalize(UnityWorldSpaceLightDir(worldPos));
@@ -539,38 +512,40 @@ CGPROGRAM
 #define WorldNormalVector(data,normal) normal
 
 // Original surface shader snippet:
-#line 21 ""
+#line 19 ""
 #ifdef DUMMY_PREPROCESSOR_TO_WORK_AROUND_HLSL_COMPILER_LINE_HANDLING
 #endif
 
 		// Physically based Standard lighting model, and enable shadows on all light types
-		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:mycolor
+		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:myColor
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		//#pragma target 3.0
 
-		sampler2D _MainTex;
 		int _PartIndex;
 		int _WeaponIndex;
+		sampler2D _MainTex;
 		half4 _OutlineColor;
 		float _AlphaXXX;
 		fixed4 _Color;
-		float _RimPower;
-		half4 _InnerColor;
 
 		struct Input {
 		
 			float2 uv_MainTex;
 			float isOutline;
-			half4 color;
 		};
 
+		void surf (Input IN, inout SurfaceOutput o) {
+			
+			o.Albedo = tex2D(_MainTex, IN.uv_MainTex).rgb;
+//			o.Alpha = _AlphaXXX;
+		}
 		
-		void vert (inout appdata_full v, out Input o) {
+		void vert(inout appdata_full v,out Input data){
 		
-            UNITY_INITIALIZE_OUTPUT(Input,o);
-            
-            if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
+			UNITY_INITIALIZE_OUTPUT(Input,data);
+
+			if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
 			
 				v.vertex.x = 0;
 				v.vertex.y = 0;
@@ -584,28 +559,17 @@ CGPROGRAM
 				
 			}else{
 			
-				o.isOutline = v.texcoord1.y;
-				
-				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
-				float dotProduct = 1 - dot(v.normal, viewDir);
-                o.color = _InnerColor * pow(dotProduct,_RimPower);//  _RimColor;
+				data.isOutline = v.texcoord1.y;
 			}
-        }
-
-		void surf (Input IN, inout SurfaceOutput o) {
-
-			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
 		}
 		
-		void mycolor (Input IN, SurfaceOutput o, inout fixed4 color)
+		void myColor (Input IN, SurfaceOutput o, inout fixed4 color)
 	    {
 	    	color = _OutlineColor * IN.isOutline + (1 - IN.isOutline) * color * _Color;
-	        
-	        color.a = _AlphaXXX;
-	        
-	        color.rgb += IN.color;
+	    	
+	    	color.a = _AlphaXXX;
 	    }
-		
+	    
 		
 
 // vertex-to-fragment interpolation data
@@ -614,20 +578,19 @@ struct v2f_surf {
   float2 pack0 : TEXCOORD0; // _MainTex
   float3 worldPos : TEXCOORD1;
   float custompack0 : TEXCOORD2; // isOutline
-  half4 custompack1 : TEXCOORD3; // color
-  float4 screen : TEXCOORD4;
-  float4 lmap : TEXCOORD5;
+  float4 screen : TEXCOORD3;
+  float4 lmap : TEXCOORD4;
 #ifdef LIGHTMAP_OFF
-  float3 vlight : TEXCOORD6;
+  float3 vlight : TEXCOORD5;
 #else
 #ifdef DIRLIGHTMAP_OFF
-  float4 lmapFadePos : TEXCOORD6;
+  float4 lmapFadePos : TEXCOORD5;
 #endif
 #endif
   #if !defined(LIGHTMAP_OFF) && defined(DIRLIGHTMAP_COMBINED)
-  fixed3 tSpace0 : TEXCOORD7;
-  fixed3 tSpace1 : TEXCOORD8;
-  fixed3 tSpace2 : TEXCOORD9;
+  fixed3 tSpace0 : TEXCOORD6;
+  fixed3 tSpace1 : TEXCOORD7;
+  fixed3 tSpace2 : TEXCOORD8;
   #endif
 };
 float4 _MainTex_ST;
@@ -639,7 +602,6 @@ v2f_surf vert_surf (appdata_full v) {
   Input customInputData;
   vert (v, customInputData);
   o.custompack0.x = customInputData.isOutline;
-  o.custompack1.xyzw = customInputData.color;
   o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
   o.pack0.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
   float3 worldPos = mul(_Object2World, v.vertex).xyz;
@@ -690,10 +652,8 @@ fixed4 frag_surf (v2f_surf IN) : SV_Target {
   UNITY_INITIALIZE_OUTPUT(Input,surfIN);
   surfIN.uv_MainTex.x = 1.0;
   surfIN.isOutline.x = 1.0;
-  surfIN.color.x = 1.0;
   surfIN.uv_MainTex = IN.pack0.xy;
   surfIN.isOutline = IN.custompack0.x;
-  surfIN.color = IN.custompack1.xyzw;
   float3 worldPos = IN.worldPos;
   #ifndef USING_DIRECTIONAL_LIGHT
     fixed3 lightDir = normalize(UnityWorldSpaceLightDir(worldPos));
@@ -748,7 +708,7 @@ fixed4 frag_surf (v2f_surf IN) : SV_Target {
   #endif
 
   half4 c = LightingLambert_PrePass (o, light);
-  mycolor (surfIN, o, c);
+  myColor (surfIN, o, c);
 //  UNITY_OPAQUE_ALPHA(c.a);
   return c;
 }
@@ -800,38 +760,40 @@ CGPROGRAM
 #define WorldNormalVector(data,normal) normal
 
 // Original surface shader snippet:
-#line 21 ""
+#line 19 ""
 #ifdef DUMMY_PREPROCESSOR_TO_WORK_AROUND_HLSL_COMPILER_LINE_HANDLING
 #endif
 
 		// Physically based Standard lighting model, and enable shadows on all light types
-		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:mycolor
+		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:myColor
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		//#pragma target 3.0
 
-		sampler2D _MainTex;
 		int _PartIndex;
 		int _WeaponIndex;
+		sampler2D _MainTex;
 		half4 _OutlineColor;
 		float _AlphaXXX;
 		fixed4 _Color;
-		float _RimPower;
-		half4 _InnerColor;
 
 		struct Input {
 		
 			float2 uv_MainTex;
 			float isOutline;
-			half4 color;
 		};
 
+		void surf (Input IN, inout SurfaceOutput o) {
+			
+			o.Albedo = tex2D(_MainTex, IN.uv_MainTex).rgb;
+//			o.Alpha = _AlphaXXX;
+		}
 		
-		void vert (inout appdata_full v, out Input o) {
+		void vert(inout appdata_full v,out Input data){
 		
-            UNITY_INITIALIZE_OUTPUT(Input,o);
-            
-            if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
+			UNITY_INITIALIZE_OUTPUT(Input,data);
+
+			if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
 			
 				v.vertex.x = 0;
 				v.vertex.y = 0;
@@ -845,28 +807,17 @@ CGPROGRAM
 				
 			}else{
 			
-				o.isOutline = v.texcoord1.y;
-				
-				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
-				float dotProduct = 1 - dot(v.normal, viewDir);
-                o.color = _InnerColor * pow(dotProduct,_RimPower);//  _RimColor;
+				data.isOutline = v.texcoord1.y;
 			}
-        }
-
-		void surf (Input IN, inout SurfaceOutput o) {
-
-			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
 		}
 		
-		void mycolor (Input IN, SurfaceOutput o, inout fixed4 color)
+		void myColor (Input IN, SurfaceOutput o, inout fixed4 color)
 	    {
-	    	color = _OutlineColor * IN.isOutline + (1 - IN.isOutline) * color * _Color;
+	        color = _OutlineColor * IN.isOutline + (1 - IN.isOutline) * color * _Color;
 	        
-	        color.a = _AlphaXXX;
-	        
-	        color.rgb += IN.color;
+	    	color.a = _AlphaXXX;
 	    }
-		
+	    
 		
 
 // vertex-to-fragment interpolation data
@@ -876,15 +827,14 @@ struct v2f_surf {
   half3 worldNormal : TEXCOORD1;
   float3 worldPos : TEXCOORD2;
   float custompack0 : TEXCOORD3; // isOutline
-  half4 custompack1 : TEXCOORD4; // color
-  float4 lmap : TEXCOORD5;
+  float4 lmap : TEXCOORD4;
 #ifdef LIGHTMAP_OFF
   #if UNITY_SHOULD_SAMPLE_SH
-    half3 sh : TEXCOORD6; // SH
+    half3 sh : TEXCOORD5; // SH
   #endif
 #else
   #ifdef DIRLIGHTMAP_OFF
-    float4 lmapFadePos : TEXCOORD7;
+    float4 lmapFadePos : TEXCOORD6;
   #endif
 #endif
 };
@@ -897,7 +847,6 @@ v2f_surf vert_surf (appdata_full v) {
   Input customInputData;
   vert (v, customInputData);
   o.custompack0.x = customInputData.isOutline;
-  o.custompack1.xyzw = customInputData.color;
   o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
   o.pack0.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
   float3 worldPos = mul(_Object2World, v.vertex).xyz;
@@ -945,10 +894,8 @@ void frag_surf (v2f_surf IN,
   UNITY_INITIALIZE_OUTPUT(Input,surfIN);
   surfIN.uv_MainTex.x = 1.0;
   surfIN.isOutline.x = 1.0;
-  surfIN.color.x = 1.0;
   surfIN.uv_MainTex = IN.pack0.xy;
   surfIN.isOutline = IN.custompack0.x;
-  surfIN.color = IN.custompack1.xyzw;
   float3 worldPos = IN.worldPos;
   #ifndef USING_DIRECTIONAL_LIGHT
     fixed3 lightDir = normalize(UnityWorldSpaceLightDir(worldPos));
@@ -1066,38 +1013,40 @@ CGPROGRAM
 #define WorldNormalVector(data,normal) normal
 
 // Original surface shader snippet:
-#line 21 ""
+#line 19 ""
 #ifdef DUMMY_PREPROCESSOR_TO_WORK_AROUND_HLSL_COMPILER_LINE_HANDLING
 #endif
 
 		// Physically based Standard lighting model, and enable shadows on all light types
-		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:mycolor
+		//#pragma surface surf Lambert noforwardadd vertex:vert finalcolor:myColor
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		//#pragma target 3.0
 
-		sampler2D _MainTex;
 		int _PartIndex;
 		int _WeaponIndex;
+		sampler2D _MainTex;
 		half4 _OutlineColor;
 		float _AlphaXXX;
 		fixed4 _Color;
-		float _RimPower;
-		half4 _InnerColor;
 
 		struct Input {
 		
 			float2 uv_MainTex;
 			float isOutline;
-			half4 color;
 		};
 
+		void surf (Input IN, inout SurfaceOutput o) {
+			
+			o.Albedo = tex2D(_MainTex, IN.uv_MainTex).rgb;
+//			o.Alpha = _AlphaXXX;
+		}
 		
-		void vert (inout appdata_full v, out Input o) {
+		void vert(inout appdata_full v,out Input data){
 		
-            UNITY_INITIALIZE_OUTPUT(Input,o);
-            
-            if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
+			UNITY_INITIALIZE_OUTPUT(Input,data);
+
+			if(v.texcoord1.x > 0 && v.texcoord1.x != _PartIndex){
 			
 				v.vertex.x = 0;
 				v.vertex.y = 0;
@@ -1111,28 +1060,17 @@ CGPROGRAM
 				
 			}else{
 			
-				o.isOutline = v.texcoord1.y;
-				
-				float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
-				float dotProduct = 1 - dot(v.normal, viewDir);
-                o.color = _InnerColor * pow(dotProduct,_RimPower);//  _RimColor;
+				data.isOutline = v.texcoord1.y;
 			}
-        }
-
-		void surf (Input IN, inout SurfaceOutput o) {
-
-			o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
 		}
 		
-		void mycolor (Input IN, SurfaceOutput o, inout fixed4 color)
+		void myColor (Input IN, SurfaceOutput o, inout fixed4 color)
 	    {
-	    	color = _OutlineColor * IN.isOutline + (1 - IN.isOutline) * color * _Color;
+	        color = _OutlineColor * IN.isOutline + (1 - IN.isOutline) * color * _Color;
 	        
 	        color.a = _AlphaXXX;
-	        
-	        color.rgb += IN.color;
 	    }
-		
+	    
 		
 #include "UnityMetaPass.cginc"
 
@@ -1142,7 +1080,6 @@ struct v2f_surf {
   float2 pack0 : TEXCOORD0; // _MainTex
   float3 worldPos : TEXCOORD1;
   float custompack0 : TEXCOORD2; // isOutline
-  half4 custompack1 : TEXCOORD3; // color
 };
 float4 _MainTex_ST;
 
@@ -1153,7 +1090,6 @@ v2f_surf vert_surf (appdata_full v) {
   Input customInputData;
   vert (v, customInputData);
   o.custompack0.x = customInputData.isOutline;
-  o.custompack1.xyzw = customInputData.color;
   o.pos = UnityMetaVertexPosition(v.vertex, v.texcoord1.xy, v.texcoord2.xy, unity_LightmapST, unity_DynamicLightmapST);
   o.pack0.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
   float3 worldPos = mul(_Object2World, v.vertex).xyz;
@@ -1169,10 +1105,8 @@ fixed4 frag_surf (v2f_surf IN) : SV_Target {
   UNITY_INITIALIZE_OUTPUT(Input,surfIN);
   surfIN.uv_MainTex.x = 1.0;
   surfIN.isOutline.x = 1.0;
-  surfIN.color.x = 1.0;
   surfIN.uv_MainTex = IN.pack0.xy;
   surfIN.isOutline = IN.custompack0.x;
-  surfIN.color = IN.custompack1.xyzw;
   float3 worldPos = IN.worldPos;
   #ifndef USING_DIRECTIONAL_LIGHT
     fixed3 lightDir = normalize(UnityWorldSpaceLightDir(worldPos));
@@ -1206,8 +1140,9 @@ ENDCG
 
 	// ---- end of surface shader generated code
 
-#LINE 87
+#LINE 75
 
 	} 
-	FallBack "Diffuse"
+	
+	FallBack "Mobile/Diffuse"
 }

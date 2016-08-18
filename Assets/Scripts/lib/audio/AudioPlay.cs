@@ -32,15 +32,51 @@ namespace xy3d.tstd.lib.audio
 
 		private AudioSource musicSource;
 
-		private const float musicVolumn = 0.6f;
+        private float musicVolumn = 0.6f;
+        private float musicEffVolumn = 0.5f;
 
-		private const string MUSIC_PLAY_KEY = "MUSIC_PLAY_KEY";
+        private const string MUSIC_PLAY_KEY = "MUSIC_PLAY_KEY";
+        private const string MUSIC_PLAY_KEY_VOL = "MUSIC_PLAY_KEY_VOL";
 
 		public bool isMusicPlay = true;
 
-		private const string EFFECT_PLAY_KEY = "EFFECT_PLAY_KEY";
+        private const string EFFECT_PLAY_KEY = "EFFECT_PLAY_KEY";
+        private const string EFFECT_PLAY_KEY_VOL = "EFFECT_PLAY_KEY_VOL";
 
 		public bool isEffectPlay = true;
+
+        public float AudioVol
+        {
+            get
+            {
+                return musicVolumn;
+            }
+            set
+            {
+                value = Mathf.Clamp(value, 0, 1);
+                if (value != musicVolumn)
+                {
+                    LocalSettingData.SetFloat(MUSIC_PLAY_KEY_VOL,value);
+                    musicVolumn=musicSource.volume = value;
+                }
+            }
+        }
+        public float PlayEffectVol
+        {
+            get
+            {
+                return musicEffVolumn;
+            }
+            set
+            {
+                value = Mathf.Clamp(value, 0, 1);
+                if (value != musicEffVolumn)
+                {
+                    LocalSettingData.SetFloat(EFFECT_PLAY_KEY_VOL, value);
+                    musicEffVolumn = script.SetPlayEffectVol = value;
+                }
+            }
+        }
 
 		void Awake()
 		{
@@ -55,12 +91,19 @@ namespace xy3d.tstd.lib.audio
 			if(LocalSettingData.HasKey(MUSIC_PLAY_KEY)){
 
 				isMusicPlay = LocalSettingData.GetInt(MUSIC_PLAY_KEY) == 1;
-			}
+            }
 
-			if(LocalSettingData.HasKey(EFFECT_PLAY_KEY)){
+            if (LocalSettingData.HasKey(MUSIC_PLAY_KEY_VOL))
+            {
 
-				isEffectPlay = LocalSettingData.GetInt(EFFECT_PLAY_KEY) == 1;
-			}
+                AudioVol = LocalSettingData.GetFloat(MUSIC_PLAY_KEY_VOL);
+            }
+
+            if (LocalSettingData.HasKey(EFFECT_PLAY_KEY_VOL))
+            {
+
+                PlayEffectVol = LocalSettingData.GetFloat(EFFECT_PLAY_KEY_VOL);
+            }
 		}
 
 		public void PlayMusic (string _path)

@@ -36,6 +36,17 @@ namespace xy3d.tstd.lib.textureFactory
 			}
 		}
 
+		void OnEnable(){
+#if USE_ASSETBUNDLE
+
+#else
+			if(eventGo != null){
+				
+				LoadOver();
+			}
+#endif
+		}
+
 		private void LoadOver () {
 
 			SuperEvent e = new SuperEvent (LOAD_OVER_EVENT);

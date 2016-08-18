@@ -1,106 +1,164 @@
 ﻿using UnityEngine;
 using System.Collections;
-using xy3d.tstd.lib.gameObjectFactory;
-using xy3d.tstd.lib.heroFactory;
-using UnityEngine.UI;
-using xy3d.tstd.lib;
-using System;
-using xy3d.tstd.lib.superFunction;
 
+public class CameraControl : MonoBehaviour {
 
-namespace xy3d.tstd.lib.cameraControl{ 
+	[SerializeField]
+	private Transform renderCamera;
 
-	public class CameraControl : MonoBehaviour {
+	[SerializeField]
+	private Transform target;
 
-		private float maxAngle = 45;
+	[SerializeField]
+	private float moveSpeed = 1f;
 
-		private float minAngle = 10;
+	[SerializeField]
+	private float rotateSpeed = 2f;
 
-		GameObject directLight;
+	[SerializeField]
+	private float scrollSpeed = 0.1f;
 
-		// Use this for initialization
-		void Start () {
+	[SerializeField]
+	private float maxAngle = 45;
+
+	[SerializeField]
+	private float minAngle = 10;
+
+	[SerializeField]
+	private float distance = 3;
+
+	// Use this for initialization
+	void Start () {
+	
+		RefreshCameraAngle();
+
+		RefreshCameraDistance();
+
+		RefreshCameraPosition();
+	}
+	
+	// Update is called once per frame
+	void Update () {
+
+		Vector3 p = Vector3.zero;
+
+		if(Input.GetKey(KeyCode.UpArrow)){
+
+			Vector3 forward = renderCamera.forward;
+			
+			forward.y = 0;
+			
+			p = p + forward.normalized;
+		}
+
+		if(Input.GetKey(KeyCode.DownArrow)){
+
+			Vector3 forward = renderCamera.forward;
+			
+			forward.y = 0;
+			
+			p = p - forward.normalized;
+		}
+
+		if(Input.GetKey(KeyCode.LeftArrow)){
+
+			Vector3 right = renderCamera.right;
+			
+			right.y = 0;
+			
+			p = p - right.normalized;
+		}
+
+		if(Input.GetKey(KeyCode.RightArrow)){
+
+			Vector3 right = renderCamera.right;
+			
+			right.y = 0;
+			
+			p = p + right.normalized;
+		}
+
+		if(p != Vector3.zero){
+
+			transform.position += p.normalized * Time.deltaTime * moveSpeed;
+		}
+
+		bool hasChange = false;
+
+		if(!Input.GetKey(KeyCode.LeftAlt) && Input.GetMouseButton(0)){
+
+			RefreshCameraAngle();
+
+			hasChange = true;
+		}
+
+		if(Input.mouseScrollDelta.y != 0){
+
+			RefreshCameraDistance();
+
+			hasChange = true;
+		}
+
+		if(hasChange){
+
+			RefreshCameraPosition();
+		}
+	}
+
+	private void RefreshCameraAngle(){
+
+		Vector3 q = target.localEulerAngles;
+
+		q.x += GetInputDeltaX() * rotateSpeed;
+		q.y += GetInputDeltaY() * rotateSpeed;
 		
-			transform.LookAt (Vector3.zero);
-
-			distance = Vector3.Distance (transform.position, Vector3.zero);
-
-			go = new GameObject ();
-
-			go.name = "XiaoQCameraControl";
-
-			go.transform.LookAt (transform);
+		if(q.x > 360 - minAngle){
+			
+			q.x = 360 - minAngle;
+			
+		}else if(q.x < 360 - maxAngle){
+			
+			q.x = 360 - maxAngle;
 		}
+		
+		target.localEulerAngles = q;
+	}
 
-		private GameObject go;
-		private Vector3 q;
-		private float distance;
+	private void RefreshCameraDistance(){
 
-		// Update is called once per frame
-		void Update () {
+		distance -= Input.mouseScrollDelta.y * scrollSpeed;
+	}
 
-			bool change = false;
+	private void RefreshCameraPosition(){
 
-			if (Input.GetMouseButton (0)) {
+		renderCamera.localPosition = target.forward * distance;
 
-				if(!Input.GetKey(KeyCode.LeftAlt)){
+		renderCamera.LookAt (target);
+	}
 
-					q = go.transform.localRotation.eulerAngles;
+	private float GetInputDeltaX(){
 
-#if PLATFORM_PC
+		#if PLATFORM_PC
+		
+		return Input.GetAxis("Mouse Y");
+		
+		#else
+		
+		return Input.GetTouch(0).deltaPosition.y;
+		
+		#endif
+	}
 
-					q.x += Input.GetAxis("Mouse Y") * 2f;
-					q.y += Input.GetAxis("Mouse X") * 2f;
+	private float GetInputDeltaY(){
+		
+		#if PLATFORM_PC
+		
+		return Input.GetAxis("Mouse X");
+		
+		#else
 
-#else
-					q.x += Input.GetTouch(0).deltaPosition.y;
-					q.y += Input.GetTouch(0).deltaPosition.x;
-#endif
-
-					if(q.x > 360 - minAngle){
-
-						q.x = 360 - minAngle;
-
-					}else if(q.x < 360 - maxAngle){
-
-						q.x = 360 - maxAngle;
-					}
-
-					go.transform.eulerAngles = q;
-
-					change = true;
-
-				}else{
-
-					if(directLight == null){
-
-						directLight = GameObject.Find ("Directional Light");
-					}
-
-					q = directLight.transform.localRotation.eulerAngles;
-
-#if PLATFORM_PC
-					
-					q.x += Input.GetAxis("Mouse Y") * 2f;
-					q.y += Input.GetAxis("Mouse X") * 2f;
-
-#else
-					q.x += Input.GetTouch(0).deltaPosition.y;
-					q.y += Input.GetTouch(0).deltaPosition.x;
-#endif
-					
-					directLight.transform.eulerAngles = q;
-				}
-			}
-
-			if (change || Input.mouseScrollDelta.y != 0) {
-
-				distance -= Input.mouseScrollDelta.y * 0.1f;
-
-				transform.position = go.transform.forward * distance;
-				
-				transform.LookAt (Vector3.zero);
-			}
-		}
+		return Input.GetTouch(0).deltaPosition.x;
+		
+		#endif
 	}
 }
