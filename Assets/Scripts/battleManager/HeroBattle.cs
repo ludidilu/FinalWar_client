@@ -7,10 +7,10 @@ using System.Collections.Generic;
 public class HeroBattle : HeroBase {
 
 	[SerializeField]
-	private Transform moveTrans;
+	public Transform moveTrans;
 
 	[SerializeField]
-	private Transform shockTrans;
+	public Transform shockTrans;
 
 	public int pos = -1;
 	
