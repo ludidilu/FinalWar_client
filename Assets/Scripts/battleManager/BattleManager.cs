@@ -783,10 +783,45 @@ public class BattleManager : MonoBehaviour {
 
 	private void DoAction(IEnumerator<ValueType> _enumerator){
 
-		while (_enumerator.MoveNext()) {
+		RefreshData ();
 
+		DoActionReal (_enumerator);
+	}
 
+	private void DoActionReal(IEnumerator<ValueType> _enumerator){
+		
+		Action del = delegate() {
+			
+			DoActionReal(_enumerator);
+		};
+
+		if (_enumerator.MoveNext ()) {
+
+			ValueType vo = _enumerator.Current;
+
+			if(vo is BattleShootVO){
+
+				BattleShootVO shoot = (BattleShootVO)vo;
+
+				List<HeroBattle> shooters = new List<HeroBattle>();
+
+				List<int> damages = new List<int>();
+
+				for(int i = 0 ; i < shoot.shooters.Count ; i++){
+
+					KeyValuePair<int,int> pair = shoot.shooters[i];
+
+					shooters.Add(heroDic[pair.Key]);
+
+					damages.Add(pair.Value);
+				}
+
+				BattleControl.Instance.Shoot(shooters,heroDic[shoot.stander],damages,del);
+
+			}else{
+
+				del();
+			}
 		}
-
 	}
 }
