@@ -244,8 +244,6 @@ public class BattleManager : MonoBehaviour {
 
 	private void ClearMoves(){
 
-		SuperDebug.Log ("ClearMoves");
-
 		for(int i = 0 ; i < arrowList.Count ; i++){
 
 			GameObject.Destroy(arrowList[i]);
@@ -367,15 +365,11 @@ public class BattleManager : MonoBehaviour {
 
 	private void CreateMoves(){
 
-		SuperDebug.Log ("CreateMoves");
-
 		BattleData battleData = battle.GetBattleData ();
 
 		Dictionary<int,int>.Enumerator enumerator = battleData.moveDic.GetEnumerator ();
 
 		while (enumerator.MoveNext()) {
-
-			SuperDebug.Log ("CreateArrow");
 
 			CreateArrow(enumerator.Current.Key,enumerator.Current.Value,Color.green,0);
 		}
@@ -400,8 +394,6 @@ public class BattleManager : MonoBehaviour {
 
 			for(int i = 0 ; i < cellData.shooters.Count ; i++){
 
-				SuperDebug.Log ("CreateShootArrow");
-				
 				CreateShootArrow(cellData.shooters[i].pos,pos,Color.yellow);
 			}
 		}
@@ -790,8 +782,6 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	private void DoAction(IEnumerator<ValueType> _enumerator){
-
-		SuperDebug.Log ("DoAction");
 
 		while (_enumerator.MoveNext()) {
 
