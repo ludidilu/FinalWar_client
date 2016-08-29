@@ -16,14 +16,16 @@ public class HeroBattle : HeroBase {
 	private CanvasGroup canvasGroup;
 
 	public int pos = -1;
+
+	private int nowHp;
 	
 	public bool isMine;
 	
 	public void Init(int _id,int _hp,int _pos,bool _isMine){
 		
 		sds = StaticData.GetData<HeroSDS> (_id);
-		
-		hp.text = _hp.ToString ();
+
+		SetHp (_hp);
 		
 		pos = _pos;
 		
@@ -31,11 +33,13 @@ public class HeroBattle : HeroBase {
 	}
 	
 	public void SetHp(int _hp){
+
+		nowHp = _hp;
 		
 		hp.text = _hp.ToString ();
 	}
 
-	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis){
+	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis,List<int> _damages){
 		
 		Vector3 shockVector = Vector3.zero;
 		
@@ -67,6 +71,30 @@ public class HeroBattle : HeroBase {
 		};
 		
 		SuperTween.Instance.To(0,1,1,shockToDel,null);
+
+		int num = 0;
+		
+		for(int m = 0 ; m < _damages.Count ; m++){
+			
+			if(_damages[m] > 0){
+				
+				GameObject go = GameObject.Instantiate<GameObject>(BattleControl.Instance.damageNumResources);
+				
+				go.transform.SetParent(transform.parent,false);
+				
+				go.transform.position = transform.position - new Vector3(0,num * 30,0);
+				
+				DamageNum damageNum = go.GetComponent<DamageNum>();
+				
+				damageNum.Init(-_damages[m],null);
+				
+				num++;
+
+				nowHp -= _damages[m];
+			}
+		}
+
+		SetHp (nowHp);
 	}
 
 	public void Die(Action _del){

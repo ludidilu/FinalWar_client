@@ -30,6 +30,9 @@ public class BattleControl : MonoBehaviour {
 	[SerializeField]
 	private GameObject arrowResources;
 
+	[SerializeField]
+	public GameObject damageNumResources;
+
 	public static BattleControl Instance{get;private set;}
 
 	void Awake(){
@@ -65,7 +68,7 @@ public class BattleControl : MonoBehaviour {
 				
 				attacker.moveTrans.position = Vector3.LerpUnclamped(attacker.transform.position,_stander.transform.position,value);
 				
-				if(beShock && index == 0 && !getHit && obj > hitPercent){
+				if(beShock && !getHit && obj > hitPercent && index == 0){
 
 					List<Vector3> vList = new List<Vector3>();
 
@@ -74,7 +77,7 @@ public class BattleControl : MonoBehaviour {
 						vList.Add(_attackers[m].transform.position);
 					}
 
-					_stander.Shock(vList,shockCurve,shockDis);
+					_stander.Shock(vList,shockCurve,shockDis,_damages);
 				}
 			};
 			
@@ -154,7 +157,7 @@ public class BattleControl : MonoBehaviour {
 						vList.Add(_shooters[m].transform.position);
 					}
 					
-					_stander.Shock(vList,shockCurve,shockDis);
+					_stander.Shock(vList,shockCurve,shockDis,_damages);
 				}
 			};
 
@@ -182,29 +185,31 @@ public class BattleControl : MonoBehaviour {
 			_attacker.moveTrans.position = Vector3.LerpUnclamped(_attacker.transform.position,_targetPos,value);
 			
 			if(!getHit && obj > hitPercent){
+
+				getHit = true;
 				
 				if(_supporter != null){
 					
 					if(_damage > 0){
 						
-						_supporter.Shock(new List<Vector3>(){_attacker.transform.position},shockCurve,shockDis);
+						_supporter.Shock(new List<Vector3>(){_attacker.transform.position},shockCurve,shockDis,new List<int>(){_damage});
 					}
 
 					if(_damageSelf > 0){
 						
-						_attacker.Shock(new List<Vector3>(){_supporter.transform.position},shockCurve,shockDis);
+						_attacker.Shock(new List<Vector3>(){_supporter.transform.position},shockCurve,shockDis,new List<int>(){_damageSelf});
 					}
 					
 				}else{
 					
 					if(_damage > 0){
 						
-						_defender.Shock(new List<Vector3>(){_attacker.transform.position},shockCurve,shockDis);
+						_defender.Shock(new List<Vector3>(){_attacker.transform.position},shockCurve,shockDis,new List<int>(){_damage});
 					}
 					
 					if(_damageSelf > 0){
 						
-						_attacker.Shock(new List<Vector3>(){_defender.transform.position},shockCurve,shockDis);
+						_attacker.Shock(new List<Vector3>(){_defender.transform.position},shockCurve,shockDis,new List<int>(){_damageSelf});
 					}
 				}
 			}
