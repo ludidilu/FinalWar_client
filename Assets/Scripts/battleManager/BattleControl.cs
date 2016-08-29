@@ -67,17 +67,22 @@ public class BattleControl : MonoBehaviour {
 				float value = attackCurve.Evaluate(obj);
 				
 				attacker.moveTrans.position = Vector3.LerpUnclamped(attacker.transform.position,_stander.transform.position,value);
-				
-				if(beShock && !getHit && obj > hitPercent && index == 0){
 
-					List<Vector3> vList = new List<Vector3>();
+				if(!getHit && obj > hitPercent){
 
-					for(int m = 0 ; m < _attackers.Count ; m++){
+					getHit = true;
+					
+					if(beShock && index == 0){
 
-						vList.Add(_attackers[m].transform.position);
+						List<Vector3> vList = new List<Vector3>();
+
+						for(int m = 0 ; m < _attackers.Count ; m++){
+
+							vList.Add(_attackers[m].transform.position);
+						}
+
+						_stander.Shock(vList,shockCurve,shockDis,_damages);
 					}
-
-					_stander.Shock(vList,shockCurve,shockDis,_damages);
 				}
 			};
 			
