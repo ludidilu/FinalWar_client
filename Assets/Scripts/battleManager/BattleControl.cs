@@ -16,6 +16,9 @@ public class BattleControl : MonoBehaviour {
 	private float shockDis;
 
 	[SerializeField]
+	public float damageNumGap;
+
+	[SerializeField]
 	private AnimationCurve shootCurve;
 
 	[SerializeField]

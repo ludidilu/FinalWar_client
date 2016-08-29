@@ -82,7 +82,7 @@ public class HeroBattle : HeroBase {
 				
 				go.transform.SetParent(transform.parent,false);
 				
-				go.transform.position = transform.position - new Vector3(0,num * 30,0);
+				go.transform.position = transform.position - new Vector3(0,num * BattleControl.Instance.damageNumGap,0);
 				
 				DamageNum damageNum = go.GetComponent<DamageNum>();
 				
