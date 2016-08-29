@@ -789,13 +789,13 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	private void DoActionReal(IEnumerator<ValueType> _enumerator){
-		
-		Action del = delegate() {
-			
-			DoActionReal(_enumerator);
-		};
 
 		if (_enumerator.MoveNext ()) {
+			
+			Action del = delegate() {
+				
+				DoActionReal(_enumerator);
+			};
 
 			ValueType vo = _enumerator.Current;
 
@@ -819,11 +819,32 @@ public class BattleManager : MonoBehaviour {
 
 				DoDie((BattleDeathVO)vo,del);
 
-			}else{
+			}else if (vo is BattleSummonVO){
 
-				del();
+				DoSummon((BattleSummonVO)vo,del);
 			}
 		}
+	}
+
+	private void DoSummon(BattleSummonVO _vo,Action _del){
+
+		RefreshData ();
+
+		HeroBattle hero = heroDic [_vo.pos];
+
+		Action<float> toDel = delegate(float obj) {
+
+			float scale = heroScale * obj;
+
+			hero.transform.localScale = new Vector3(scale,scale,scale);
+		};
+
+		Action endDel = delegate() {
+
+			SuperTween.Instance.DelayCall(0.5f,_del);
+		};
+
+		SuperTween.Instance.To (10, 1, 0.5f, toDel, endDel);
 	}
 
 	private void DoShoot(BattleShootVO _vo,Action _del){
@@ -847,11 +868,6 @@ public class BattleManager : MonoBehaviour {
 	private void DoMove(BattleMoveVO _vo,Action _del){
 
 		if (_vo.moves.Count > 0) {
-
-			Action del = delegate() {
-
-				DoMove(_vo,_del);
-			};
 
 			List<KeyValuePair<int,int>> tmpList = new List<KeyValuePair<int,int>>();
 
@@ -910,6 +926,27 @@ public class BattleManager : MonoBehaviour {
 				};
 
 				if(i == 0){
+					
+					Action del = delegate() {
+
+						for(int l = 0 ; l < tmpList2.Count ; l++){
+
+							int index = tmpList2[l].Value;
+
+							MapUnit unit = mapUnitDic[index];
+
+							if((battle.mapData.dic[index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(index)){
+								
+								unit.SetMainColor(myMapUnitColor);
+								
+							}else{
+								
+								unit.SetMainColor(oppMapUnitColor);
+							}
+						}
+						
+						DoMove(_vo,_del);
+					};
 
 					SuperTween.Instance.To(0,1,1,toDel,del);
 
