@@ -12,6 +12,9 @@ public class HeroBattle : HeroBase {
 	[SerializeField]
 	public Transform shockTrans;
 
+	[SerializeField]
+	private CanvasGroup canvasGroup;
+
 	public int pos = -1;
 	
 	public bool isMine;
@@ -64,5 +67,25 @@ public class HeroBattle : HeroBase {
 		};
 		
 		SuperTween.Instance.To(0,1,1,shockToDel,null);
+	}
+
+	public void Die(Action _del){
+
+		Action dieOver = delegate() {
+
+			GameObject.Destroy(gameObject);
+
+			if(_del != null){
+
+				_del();
+			}
+		};
+
+		SuperTween.Instance.To (1, 0, 2, DieTo, dieOver);
+	}
+
+	private void DieTo(float _v){
+
+		canvasGroup.alpha = _v;
 	}
 }

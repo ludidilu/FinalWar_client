@@ -801,21 +801,21 @@ public class BattleManager : MonoBehaviour {
 
 			if(vo is BattleShootVO){
 
-				BattleShootVO shoot = (BattleShootVO)vo;
-
-				DoShoot(shoot,del);
+				DoShoot((BattleShootVO)(vo),del);
 
 			}else if(vo is BattleMoveVO){
 
-				BattleMoveVO move = (BattleMoveVO)vo;
+				DoMove((BattleMoveVO)vo,del);
 
-				DoMove(move,del);
+			}else if(vo is BattleRushVO){
 
-			}
+				DoAttack((BattleAttackVO)vo,del);
 
+			}else if(vo is BattleDeathVO){
 
+				DoDie((BattleDeathVO)vo,del);
 
-			else{
+			}else{
 
 				del();
 			}
@@ -918,6 +918,69 @@ public class BattleManager : MonoBehaviour {
 		} else {
 
 			_del();
+		}
+	}
+
+	private void DoRush(BattleRushVO _vo,Action _del){
+
+		List<HeroBattle> attackers = new List<HeroBattle> ();
+
+		List<int> damages = new List<int> ();
+
+		HeroBattle stander = heroDic [_vo.stander];
+
+		for(int i = 0 ; i < _vo.attackers.Count ; i++){
+
+			KeyValuePair<int,int> pair = _vo.attackers[i];
+
+			attackers.Add(heroDic[pair.Key]);
+
+			damages.Add(pair.Value);
+		}
+
+		BattleControl.Instance.Rush (attackers, stander, damages, _del);
+	}
+
+	private void DoAttack(BattleAttackVO _vo,Action _del){
+
+		Vector3 pos = mapUnitDic [_vo.defender].transform.position;
+
+		HeroBattle attacker = heroDic [_vo.attacker];
+
+		HeroBattle defender = null;
+
+		HeroBattle supporter = null;
+
+		if (_vo.supporter == -1) {
+
+			defender = heroDic [_vo.defender];
+
+		} else {
+
+			supporter = heroDic[_vo.supporter];
+		}
+
+		BattleControl.Instance.Attack (attacker, pos, defender, supporter, _vo.damage, _vo.damageSelf, _del);
+	}
+
+	private void DoDie(BattleDeathVO _vo,Action _del){
+
+		for(int i = 0 ; i < _vo.deads.Count ; i++){
+
+			int pos = _vo.deads[i];
+
+			HeroBattle hero = heroDic[pos];
+
+			heroDic.Remove(pos);
+
+			if(i == 0){
+
+				hero.Die(_del);
+
+			}else{
+
+				hero.Die(null);
+			}
 		}
 	}
 }
