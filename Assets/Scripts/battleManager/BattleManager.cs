@@ -803,25 +803,121 @@ public class BattleManager : MonoBehaviour {
 
 				BattleShootVO shoot = (BattleShootVO)vo;
 
-				List<HeroBattle> shooters = new List<HeroBattle>();
+				DoShoot(shoot,del);
 
-				List<int> damages = new List<int>();
+			}else if(vo is BattleMoveVO){
 
-				for(int i = 0 ; i < shoot.shooters.Count ; i++){
+				BattleMoveVO move = (BattleMoveVO)vo;
 
-					KeyValuePair<int,int> pair = shoot.shooters[i];
+				DoMove(move,del);
 
-					shooters.Add(heroDic[pair.Key]);
+			}
 
-					damages.Add(pair.Value);
-				}
 
-				BattleControl.Instance.Shoot(shooters,heroDic[shoot.stander],damages,del);
 
-			}else{
+			else{
 
 				del();
 			}
+		}
+	}
+
+	private void DoShoot(BattleShootVO _vo,Action _del){
+
+		List<HeroBattle> shooters = new List<HeroBattle>();
+		
+		List<int> damages = new List<int>();
+		
+		for(int i = 0 ; i < _vo.shooters.Count ; i++){
+			
+			KeyValuePair<int,int> pair = _vo.shooters[i];
+			
+			shooters.Add(heroDic[pair.Key]);
+			
+			damages.Add(pair.Value);
+		}
+		
+		BattleControl.Instance.Shoot(shooters,heroDic[_vo.stander],damages,_del);
+	}
+
+	private void DoMove(BattleMoveVO _vo,Action _del){
+
+		if (_vo.moves.Count > 0) {
+
+			Action del = delegate() {
+
+				DoMove(_vo,_del);
+			};
+
+			List<KeyValuePair<int,int>> tmpList = new List<KeyValuePair<int,int>>();
+
+			List<KeyValuePair<int,int>> tmpList2 = new List<KeyValuePair<int,int>>();
+
+			Dictionary<int,int>.Enumerator enumerator = _vo.moves.GetEnumerator();
+
+			enumerator.MoveNext();
+
+			tmpList.Add(enumerator.Current);
+
+			while(tmpList.Count > 0){
+
+				KeyValuePair<int,int> pair = tmpList[0];
+
+				_vo.moves.Remove(pair.Key);
+
+				tmpList.RemoveAt(0);
+
+				tmpList2.Add(pair);
+
+				if(_vo.moves.ContainsKey(pair.Value)){
+
+					tmpList.Add(new KeyValuePair<int, int>(pair.Value,_vo.moves[pair.Value]));
+				}
+
+				if(_vo.moves.ContainsValue(pair.Key)){
+
+					enumerator = _vo.moves.GetEnumerator();
+
+					while(enumerator.MoveNext()){
+
+						if(enumerator.Current.Value == pair.Key){
+
+							tmpList.Add(enumerator.Current);
+
+							break;
+						}
+					}
+				}
+			}
+
+			for(int i = 0 ; i < tmpList2.Count ; i++){
+
+				KeyValuePair<int,int> pair = tmpList2[i];
+
+				HeroBattle hero = heroDic[pair.Key];
+
+				Vector3 startPos = mapUnitDic[pair.Key].transform.position;
+
+				Vector3 endPos = mapUnitDic[pair.Value].transform.position;
+
+				Action<float> toDel = delegate(float obj) {
+
+					hero.transform.position = Vector3.Lerp(startPos,endPos,obj);
+				};
+
+				if(i == 0){
+
+					SuperTween.Instance.To(0,1,1,toDel,del);
+
+				}else{
+
+					SuperTween.Instance.To(0,1,1,toDel,null);
+				}
+			}
+
+		} else {
+
+			_del();
 		}
 	}
 }
