@@ -988,17 +988,26 @@ public class BattleManager : MonoBehaviour {
 
 		HeroBattle attacker = heroDic [_vo.attacker];
 
-		HeroBattle defender = null;
+		HeroBattle defender;
 
-		HeroBattle supporter = null;
-
-		if (_vo.supporter == -1) {
+		if (heroDic.ContainsKey (_vo.defender)) {
 
 			defender = heroDic [_vo.defender];
 
 		} else {
 
-			supporter = heroDic[_vo.supporter];
+			defender = null;
+		}
+
+		HeroBattle supporter;
+
+		if (_vo.supporter != -1) {
+
+			supporter = heroDic [_vo.supporter];
+
+		} else {
+
+			supporter = null;
 		}
 
 		BattleControl.Instance.Attack (attacker, pos, defender, supporter, _vo.damage, _vo.damageSelf, _del);
