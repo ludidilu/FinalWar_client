@@ -109,7 +109,7 @@ public class HeroBattle : HeroBase {
 			}
 		};
 
-		SuperTween.Instance.To (1, 0, 2, DieTo, dieOver);
+		SuperTween.Instance.To (1, 0, BattleControl.Instance.dieTime, DieTo, dieOver);
 	}
 
 	private void DieTo(float _v){
