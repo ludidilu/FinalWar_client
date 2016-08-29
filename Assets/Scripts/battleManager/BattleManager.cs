@@ -809,6 +809,10 @@ public class BattleManager : MonoBehaviour {
 
 			}else if(vo is BattleRushVO){
 
+				DoRush((BattleRushVO)vo,del);
+
+			}else if(vo is BattleAttackVO){
+
 				DoAttack((BattleAttackVO)vo,del);
 
 			}else if(vo is BattleDeathVO){
