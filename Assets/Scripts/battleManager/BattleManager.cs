@@ -117,6 +117,8 @@ public class BattleManager : MonoBehaviour {
 
 	private int movingHeroPos = -1;
 
+	private bool mouseHasExited = false;
+
 	private void WriteLog(string _str){
 
 		Debug.Log (_str);
@@ -518,6 +520,8 @@ public class BattleManager : MonoBehaviour {
 
 		if (movingHeroPos != -1) {
 
+			mouseHasExited = true;
+
 			for(int i = 0 ; i < battle.action.Count ; i++){
 				
 				KeyValuePair<int,int> pair = battle.action[i];
@@ -541,10 +545,20 @@ public class BattleManager : MonoBehaviour {
 		if (movingHeroPos != -1) {
 
 			movingHeroPos = -1;
+
+			if(mouseHasExited){
+
+				mouseHasExited = false;
+			}
 		}
 	}
 
 	public void MapUnitUpAsButton(MapUnit _mapUnit){
+
+		if (mouseHasExited) {
+
+			return;
+		}
 
 		if (battle.summon.ContainsValue (_mapUnit.index)) {
 
