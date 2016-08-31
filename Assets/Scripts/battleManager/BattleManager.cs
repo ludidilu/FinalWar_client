@@ -625,6 +625,13 @@ public class BattleManager : MonoBehaviour {
 		ClearNowChooseCard ();
 	}
 
+	public void BackgroundClick(){
+
+		ClearNowChooseHero ();
+
+		ClearNowChooseCard ();
+	}
+
 	public void HeroClick(HeroCard _hero){
 
 		ClearNowChooseHero();
