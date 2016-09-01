@@ -41,7 +41,7 @@ public class Connection : MonoBehaviour {
 
 	private bool isConnect = false;
 
-	public void Init(string _ip, int _port, Action<byte[]> _receiveCallBack){
+	public void Init(string _ip, int _port, Action<byte[]> _receiveCallBack, int _uid){
 
 		receiveCallBack = _receiveCallBack;
 
@@ -52,11 +52,22 @@ public class Connection : MonoBehaviour {
 		socket.Connect(ipe);
 
 		isConnect = true;
+
+		socket.BeginSend (BitConverter.GetBytes (_uid), 0, 4, SocketFlags.None, SendCallBack, null);
 	}
 
 	void Update(){
 
 		if (!isConnect) {
+
+			return;
+		}
+
+		if (socket.Poll (10, SelectMode.SelectRead) && socket.Available == 0) {
+
+			SuperDebug.Log("Disconnect!");
+
+			isConnect = false;
 
 			return;
 		}

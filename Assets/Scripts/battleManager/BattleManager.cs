@@ -154,7 +154,7 @@ public class BattleManager : MonoBehaviour {
 
 		battle.ClientSetCallBack (SendData, RefreshData, DoAction);
 		
-		Connection.Instance.Init ("127.0.0.1", 1983, ReceiveData);
+		Connection.Instance.Init ("127.0.0.1", 1983, ReceiveData, ConfigDictionary.Instance.uid);
 	}
 	
 	private void ReceiveData(byte[] _bytes){
