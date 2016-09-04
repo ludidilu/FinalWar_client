@@ -1007,7 +1007,31 @@ public class BattleManager : MonoBehaviour {
 
 		Vector3 pos = mapUnitDic [_vo.defender].transform.position;
 
-		HeroBattle attacker = heroDic [_vo.attacker];
+		List<HeroBattle> attackers = new List<HeroBattle> ();
+
+		List<HeroBattle> supporters = new List<HeroBattle> ();
+
+		List<int> attackersDamage = new List<int> ();
+
+		List<int> supportersDamage = new List<int> ();
+
+		for (int i = 0; i < _vo.attackers.Count; i++) {
+
+			KeyValuePair<int,int> pair = _vo.attackers[i];
+
+			attackers.Add(heroDic[pair.Key]);
+
+			attackersDamage.Add(pair.Value);
+		}
+
+		for (int i = 0; i < _vo.supporters.Count; i++) {
+
+			KeyValuePair<int,int> pair = _vo.supporters[i];
+			
+			supporters.Add(heroDic[pair.Key]);
+			
+			supportersDamage.Add(pair.Value);
+		}
 
 		HeroBattle defender;
 
@@ -1020,18 +1044,7 @@ public class BattleManager : MonoBehaviour {
 			defender = null;
 		}
 
-		HeroBattle supporter;
-
-		if (_vo.supporter != -1) {
-
-			supporter = heroDic [_vo.supporter];
-
-		} else {
-
-			supporter = null;
-		}
-
-		BattleControl.Instance.Attack (attacker, pos, defender, supporter, _vo.damage, _vo.damageSelf, _del);
+		BattleControl.Instance.Attack2 (attackers, pos, defender, supporters, _vo.defenderDamage, supportersDamage, attackersDamage, _del);
 	}
 
 	private void DoDie(BattleDeathVO _vo,Action _del){

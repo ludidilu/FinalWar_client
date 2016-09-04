@@ -185,6 +185,102 @@ public class BattleControl : MonoBehaviour {
 		}
 	}
 
+	public void Attack2(List<HeroBattle> _attackers,Vector3 _targetPos,HeroBattle _defender,List<HeroBattle> _supporters,int _defenderDamage,List<int> _supportersDamage,List<int> _attackersDamage,Action _callBack){
+
+		Action resetDel;
+
+		if(_supporters.Count > 0){
+			
+			Vector3[] supportPos = new Vector3[_supporters.Count];
+			
+			for(int i = 0 ; i < _supporters.Count ; i++){
+				
+				supportPos[i] = _supporters[i].transform.position;
+			}
+			
+			Action<float> supportToDel = delegate(float obj) {
+				
+				for(int i = 0 ; i < _supporters.Count ; i++){
+					
+					_supporters[i].transform.position = Vector3.Lerp(supportPos[i],_targetPos,obj);
+				}
+			};
+			
+			SuperTween.Instance.To(0,0.5f,0.5f,supportToDel,null);
+			
+			Action<float> resetToDel = delegate(float obj) {
+				
+				for(int i = 0 ; i < _supporters.Count ; i++){
+					
+					_supporters[i].transform.position = Vector3.Lerp(_targetPos,supportPos[i],obj);
+				}
+			};
+			
+			resetDel = delegate() {
+				
+				SuperTween.Instance.To(0.5f,1,0.5f,resetToDel,null);
+
+				SuperTween.Instance.DelayCall(2,_callBack);
+			};
+
+		}else{
+
+			resetDel = delegate() {
+			
+				SuperTween.Instance.DelayCall(1.5f,_callBack);
+			};
+		}
+
+		List<Vector3> vList = new List<Vector3>();
+		
+		for(int m = 0 ; m < _attackers.Count ; m++){
+			
+			vList.Add(_attackers[m].transform.position);
+		}
+
+		bool getHit = false;
+
+		Action<float> moveToDel = delegate(float obj) {
+				
+			float value = attackCurve.Evaluate (obj);
+
+			for(int i = 0 ; i < _attackers.Count ; i++){
+			
+				HeroBattle attacker = _attackers[i];
+
+				attacker.moveTrans.position = Vector3.LerpUnclamped (attacker.transform.position, _targetPos, value);
+			}
+			
+			if (!getHit && obj > hitPercent) {
+				
+				getHit = true;
+
+				if(_defender != null && _defenderDamage > 0){
+
+					_defender.Shock(vList,shockCurve,shockDis,new List<int>(){_defenderDamage});
+				}
+				
+				for(int i = 0 ; i < _attackers.Count ; i++){
+
+					if(_attackersDamage[i] > 0){
+
+						_attackers[i].Shock(new List<Vector3>(){_targetPos},shockCurve,shockDis,new List<int>(){_attackersDamage[i]});
+					}
+				}
+
+				for(int i = 0 ; i < _supporters.Count ; i++){
+					
+					if(_supportersDamage[i] > 0){
+						
+						_supporters[i].Shock(vList,shockCurve,shockDis,new List<int>(){_supportersDamage[i]});
+					}
+				}
+			}
+		};
+		
+		SuperTween.Instance.To (0, 1, 1, moveToDel, resetDel);
+	}
+
 	public void Attack(HeroBattle _attacker,Vector3 _targetPos,HeroBattle _defender,HeroBattle _supporter,int _damage,int _damageSelf,Action _callBack){
 
 		bool getHit = false;
