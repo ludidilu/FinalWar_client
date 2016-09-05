@@ -15,12 +15,15 @@ public class HeroDetail : MonoBehaviour {
 
 	[SerializeField]
 	private Text shoot;
+	
+	[SerializeField]
+	private Text counter;
 
 	[SerializeField]
 	private Text defense;
 
 	[SerializeField]
-	private Text support;
+	private Text leader;
 
 	public void Init(HeroBase _hero){
 
@@ -32,9 +35,11 @@ public class HeroDetail : MonoBehaviour {
 
 		shoot.text = _hero.sds.shoot.ToString ();
 
+		counter.text = _hero.sds.counter.ToString ();
+		
 		defense.text = _hero.sds.defense.ToString ();
 
-		support.text = _hero.sds.support.ToString ();
+		leader.text = _hero.sds.leader.ToString ();
 
 		gameObject.SetActive (true);
 	}

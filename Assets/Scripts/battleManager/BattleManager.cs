@@ -369,13 +369,6 @@ public class BattleManager : MonoBehaviour {
 
 		BattleData battleData = battle.GetBattleData ();
 
-		Dictionary<int,int>.Enumerator enumerator = battleData.moveDic.GetEnumerator ();
-
-		while (enumerator.MoveNext()) {
-
-			CreateArrow(enumerator.Current.Key,enumerator.Current.Value,Color.green,0);
-		}
-
 		Dictionary<int,BattleCellData>.Enumerator enumerator2 = battleData.actionDic.GetEnumerator ();
 
 		while (enumerator2.MoveNext()) {
@@ -391,7 +384,7 @@ public class BattleManager : MonoBehaviour {
 
 			for(int i = 0 ; i < cellData.supporters.Count ; i++){
 
-				CreateArrow(cellData.supporters[i].pos,pos,Color.blue,i);
+				CreateArrow(cellData.supporters[i].pos,pos,Color.green,i);
 			}
 
 			for(int i = 0 ; i < cellData.shooters.Count ; i++){
@@ -499,7 +492,7 @@ public class BattleManager : MonoBehaviour {
 
 			}else{
 
-				if((battle.mapData.dic[_mapUnit.index] == battle.clientIsMine) == battle.mapBelongDic.ContainsKey(_mapUnit.index)){
+				if((battle.mapData.dic[_mapUnit.index] == battle.clientIsMine) == battle.mapBelongDic.ContainsKey(_mapUnit.index) && heroDic.ContainsKey(_mapUnit.index)){
 
 					tmpList = BattlePublicTools.GetNeighbourPos2(battle.mapData.neighbourPosMap,movingHeroPos);
 
@@ -872,18 +865,12 @@ public class BattleManager : MonoBehaviour {
 
 		List<HeroBattle> shooters = new List<HeroBattle>();
 		
-		List<int> damages = new List<int>();
-		
 		for(int i = 0 ; i < _vo.shooters.Count ; i++){
 			
-			KeyValuePair<int,int> pair = _vo.shooters[i];
-			
-			shooters.Add(heroDic[pair.Key]);
-			
-			damages.Add(pair.Value);
+			shooters.Add(heroDic[_vo.shooters[i]]);
 		}
 		
-		BattleControl.Instance.Shoot(shooters,heroDic[_vo.stander],damages,_del);
+		BattleControl.Instance.Shoot(shooters,heroDic[_vo.stander],_vo.damage,_del);
 	}
 
 	private void DoMove(BattleMoveVO _vo,Action _del){
@@ -987,20 +974,14 @@ public class BattleManager : MonoBehaviour {
 
 		List<HeroBattle> attackers = new List<HeroBattle> ();
 
-		List<int> damages = new List<int> ();
-
 		HeroBattle stander = heroDic [_vo.stander];
 
 		for(int i = 0 ; i < _vo.attackers.Count ; i++){
 
-			KeyValuePair<int,int> pair = _vo.attackers[i];
-
-			attackers.Add(heroDic[pair.Key]);
-
-			damages.Add(pair.Value);
+			attackers.Add(heroDic[_vo.attackers[i]]);
 		}
 
-		BattleControl.Instance.Rush (attackers, stander, damages, _del);
+		BattleControl.Instance.Rush (attackers, stander, _vo.damage, _del);
 	}
 
 	private void DoAttack(BattleAttackVO _vo,Action _del){
@@ -1017,20 +998,16 @@ public class BattleManager : MonoBehaviour {
 
 		for (int i = 0; i < _vo.attackers.Count; i++) {
 
-			KeyValuePair<int,int> pair = _vo.attackers[i];
+			attackers.Add(heroDic[_vo.attackers[i]]);
 
-			attackers.Add(heroDic[pair.Key]);
-
-			attackersDamage.Add(pair.Value);
+			attackersDamage.Add(_vo.attackersDamage[i]);
 		}
 
 		for (int i = 0; i < _vo.supporters.Count; i++) {
 
-			KeyValuePair<int,int> pair = _vo.supporters[i];
+			supporters.Add(heroDic[_vo.supporters[i]]);
 			
-			supporters.Add(heroDic[pair.Key]);
-			
-			supportersDamage.Add(pair.Value);
+			supportersDamage.Add(_vo.supportersDamage[i]);
 		}
 
 		HeroBattle defender;
@@ -1044,7 +1021,7 @@ public class BattleManager : MonoBehaviour {
 			defender = null;
 		}
 
-		BattleControl.Instance.Attack2 (attackers, pos, defender, supporters, _vo.defenderDamage, supportersDamage, attackersDamage, _del);
+		BattleControl.Instance.Attack (attackers, pos, defender, supporters, _vo.defenderDamage, supportersDamage, attackersDamage, _del);
 	}
 
 	private void DoDie(BattleDeathVO _vo,Action _del){

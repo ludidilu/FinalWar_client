@@ -4,8 +4,9 @@
 	public int cost;
 	public int attack;
 	public int shoot;
+	public int counter;
 	public int defense;
-	public int support;
+	public int leader;
 	
 	public int GetID()
 	{
@@ -27,13 +28,17 @@
 	{
 		return shoot;
 	}
+	public int GetCounter()
+	{
+		return counter;
+	}
 	public int GetDefense()
 	{
 		return defense;
 	}
-	public int GetSupport()
+	public int GetLeader()
 	{
-		return support;
+		return leader;
 	}
 }
 

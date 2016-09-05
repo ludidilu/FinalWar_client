@@ -39,7 +39,7 @@ public class HeroBattle : HeroBase {
 		hp.text = _hp.ToString ();
 	}
 
-	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis,List<int> _damages){
+	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis,int _damage){
 		
 		Vector3 shockVector = Vector3.zero;
 		
@@ -72,27 +72,17 @@ public class HeroBattle : HeroBase {
 		
 		SuperTween.Instance.To(0,1,1,shockToDel,null);
 
-		int num = 0;
+		GameObject go = GameObject.Instantiate<GameObject>(BattleControl.Instance.damageNumResources);
 		
-		for(int m = 0 ; m < _damages.Count ; m++){
-			
-			if(_damages[m] > 0){
-				
-				GameObject go = GameObject.Instantiate<GameObject>(BattleControl.Instance.damageNumResources);
-				
-				go.transform.SetParent(transform.parent,false);
-				
-				go.transform.position = transform.position - new Vector3(0,num * BattleControl.Instance.damageNumGap,0);
-				
-				DamageNum damageNum = go.GetComponent<DamageNum>();
-				
-				damageNum.Init(-_damages[m],null);
-				
-				num++;
-
-				nowHp -= _damages[m];
-			}
-		}
+		go.transform.SetParent(transform.parent,false);
+		
+		go.transform.position = transform.position;
+		
+		DamageNum damageNum = go.GetComponent<DamageNum>();
+		
+		damageNum.Init(-_damage,null);
+		
+		nowHp -= _damage;
 
 		SetHp (nowHp);
 	}
