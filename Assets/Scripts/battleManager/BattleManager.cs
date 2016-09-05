@@ -80,11 +80,11 @@ public class BattleManager : MonoBehaviour {
 
 			if(value == null){
 
-				heroDetail.Hide();
+				heroDetail.Hide(m_nowChooseCard);
 
 			}else{
 
-				heroDetail.Init(value);
+				heroDetail.Show(value);
 			}
 
 			m_nowChooseCard = value;
@@ -104,11 +104,11 @@ public class BattleManager : MonoBehaviour {
 
 			if(value == null){
 				
-				heroDetail.Hide();
+				heroDetail.Hide(m_nowChooseHero);
 				
 			}else{
 				
-				heroDetail.Init(value);
+				heroDetail.Show(value);
 			}
 
 			m_nowChooseHero = value;

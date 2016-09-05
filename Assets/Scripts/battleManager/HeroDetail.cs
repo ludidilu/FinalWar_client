@@ -25,27 +25,52 @@ public class HeroDetail : MonoBehaviour {
 	[SerializeField]
 	private Text leader;
 
-	public void Init(HeroBase _hero){
+	private HeroBase hero;
 
-		cost.text = _hero.sds.cost.ToString ();
+	public void Show(HeroBase _hero){
 
-		hp.text = _hero.sds.hp.ToString ();
+		hero = _hero;
 
-		attack.text = _hero.sds.attack.ToString ();
+		cost.text = hero.sds.cost.ToString ();
 
-		shoot.text = _hero.sds.shoot.ToString ();
+		hp.text = hero.sds.hp.ToString ();
 
-		counter.text = _hero.sds.counter.ToString ();
+		attack.text = hero.sds.attack.ToString ();
+
+		shoot.text = hero.sds.shoot.ToString ();
+
+		counter.text = hero.sds.counter.ToString ();
 		
-		defense.text = _hero.sds.defense.ToString ();
+		defense.text = hero.sds.defense.ToString ();
 
-		leader.text = _hero.sds.leader.ToString ();
+		leader.text = hero.sds.leader.ToString ();
 
-		gameObject.SetActive (true);
+		if (!gameObject.activeSelf) {
+
+			gameObject.SetActive (true);
+		}
+	}
+
+	public void Hide(HeroBase _hero){
+
+		if (hero == _hero) {
+
+			hero = null;
+
+			if (gameObject.activeSelf) {
+
+				gameObject.SetActive (false);
+			}
+		}
 	}
 
 	public void Hide(){
-
-		gameObject.SetActive (false);
+			
+		hero = null;
+		
+		if (gameObject.activeSelf) {
+			
+			gameObject.SetActive (false);
+		}
 	}
 }
