@@ -816,6 +816,10 @@ public class BattleManager : MonoBehaviour {
 			}else if (vo is BattleSummonVO){
 
 				DoSummon((BattleSummonVO)vo,del);
+
+			}else if(vo is BattlePowerChangeVO){
+
+				del();
 			}
 		}
 	}
