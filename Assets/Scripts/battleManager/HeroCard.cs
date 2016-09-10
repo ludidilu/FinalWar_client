@@ -5,13 +5,16 @@ using UnityEngine.EventSystems;
 
 public class HeroCard : HeroBase,IPointerClickHandler {
 
+	[SerializeField]
+	protected Text cost;
+
 	public void Init(int _cardUid,int _id){
 
 		cardUid = _cardUid;
 
 		sds = StaticData.GetData<HeroSDS> (_id);
 
-		hp.text = sds.hp.ToString ();
+		cost.text = sds.cost.ToString ();
 	}
 
 	public void OnPointerClick(PointerEventData _data){

@@ -5,12 +5,6 @@ using UnityEngine.UI;
 public class HeroBase : MonoBehaviour {
 
 	[SerializeField]
-	public Image body;
-	
-	[SerializeField]
-	protected Text hp;
-	
-	[SerializeField]
 	protected Image frame;
 
 	public HeroSDS sds;

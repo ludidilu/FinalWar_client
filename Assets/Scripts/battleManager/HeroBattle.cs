@@ -3,6 +3,7 @@ using System.Collections;
 using xy3d.tstd.lib.superTween;
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class HeroBattle : HeroBase {
 
@@ -15,18 +16,31 @@ public class HeroBattle : HeroBase {
 	[SerializeField]
 	private CanvasGroup canvasGroup;
 
+	[SerializeField]
+	public Image body;
+	
+	[SerializeField]
+	protected Text hp;
+
+	[SerializeField]
+	protected Text power;
+
 	public int pos = -1;
 
 	private int nowHp;
+
+	private int nowPower;
 	
 	public bool isMine;
 	
-	public void Init(int _id,int _hp,int _pos,bool _isMine){
+	public void Init(int _id,int _hp,int _power,int _pos,bool _isMine){
 		
 		sds = StaticData.GetData<HeroSDS> (_id);
 
 		SetHp (_hp);
-		
+
+		SetPower (_power);
+
 		pos = _pos;
 		
 		isMine = _isMine;
@@ -36,7 +50,14 @@ public class HeroBattle : HeroBase {
 
 		nowHp = _hp;
 		
-		hp.text = _hp.ToString ();
+		hp.text = nowHp.ToString ();
+	}
+
+	public void SetPower(int _power){
+
+		nowPower = _power;
+
+		power.text = nowPower.ToString ();
 	}
 
 	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis,int _damage){

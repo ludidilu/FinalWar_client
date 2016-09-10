@@ -685,7 +685,7 @@ public class BattleManager : MonoBehaviour {
 
 		heroDic.Add (_hero.pos, hero);
 		
-		hero.Init (_hero.sds.GetID(), _hero.nowHp, _hero.pos, _hero.isMine);
+		hero.Init (_hero.sds.GetID(), _hero.nowHp, _hero.nowPower, _hero.pos, _hero.isMine);
 		
 		AddHeroToMapReal (hero, _hero.pos);
 	}
@@ -704,7 +704,7 @@ public class BattleManager : MonoBehaviour {
 
 		HeroSDS sds = StaticData.GetData<HeroSDS> (cardID);
 		
-		hero.Init(cardID, sds.hp, _pos, true);
+		hero.Init(cardID, sds.hp, sds.power, _pos, true);
 
 		hero.cardUid = _cardUid;
 
@@ -819,7 +819,7 @@ public class BattleManager : MonoBehaviour {
 
 			}else if(vo is BattlePowerChangeVO){
 
-				del();
+				DoPowerChange((BattlePowerChangeVO)vo,del);
 			}
 		}
 	}
@@ -1027,5 +1027,19 @@ public class BattleManager : MonoBehaviour {
 				hero.Die(null);
 			}
 		}
+	}
+
+	private void DoPowerChange(BattlePowerChangeVO _vo,Action _del){
+
+		for(int i = 0 ; i < _vo.pos.Count ; i++){
+
+			int pos = _vo.pos[i];
+
+			HeroBattle hero = heroDic[pos];
+
+			hero.SetPower(battle.heroMapDic[pos].nowPower);
+		}
+
+		_del ();
 	}
 }
