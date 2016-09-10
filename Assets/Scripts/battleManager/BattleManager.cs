@@ -480,31 +480,11 @@ public class BattleManager : MonoBehaviour {
 
 		if (movingHeroPos != -1) {
 
-			List<int> tmpList = BattlePublicTools.GetNeighbourPos(battle.mapData.neighbourPosMap,movingHeroPos);
+			if(battle.ClientRequestAction(movingHeroPos,_mapUnit.index)){
 
-			if(tmpList.Contains(_mapUnit.index)){
-
-				battle.ClientRequestAction(movingHeroPos,_mapUnit.index);
-				
 				ClearMoves();
 				
 				CreateMoves();
-
-			}else{
-
-				if((battle.mapData.dic[_mapUnit.index] == battle.clientIsMine) == battle.mapBelongDic.ContainsKey(_mapUnit.index) && heroDic.ContainsKey(_mapUnit.index)){
-
-					tmpList = BattlePublicTools.GetNeighbourPos2(battle.mapData.neighbourPosMap,movingHeroPos);
-
-					if(tmpList.Contains(_mapUnit.index)){
-
-						battle.ClientRequestAction(movingHeroPos,_mapUnit.index);
-						
-						ClearMoves();
-						
-						CreateMoves();
-					}
-				}
 			}
 		}
 	}

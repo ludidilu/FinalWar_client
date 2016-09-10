@@ -1,6 +1,7 @@
 ﻿public class HeroSDS : CsvBase,IHeroSDS
 {
 	public int hp;
+	public int power;
 	public int cost;
 	public int attack;
 	public int shoot;
@@ -15,6 +16,10 @@
 	public int GetHp()
 	{
 		return hp;
+	}
+	public int GetPower()
+	{
+		return power;
 	}
 	public int GetCost()
 	{
