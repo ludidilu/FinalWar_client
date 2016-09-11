@@ -26,11 +26,13 @@ public class DamageNum : MonoBehaviour {
 
 	private Action callBack;
 
-	public void Init(int _num,Action _callBack){
+	public void Init(string _str,Color _color,Action _callBack){
 
 		startTime = Time.time;
 
-		text.text = _num.ToString ();
+		text.text = _str;
+
+		text.color = _color;
 
 		callBack = _callBack;
 

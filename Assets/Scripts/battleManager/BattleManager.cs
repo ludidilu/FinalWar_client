@@ -677,7 +677,7 @@ public class BattleManager : MonoBehaviour {
 		CreateMoves ();
 	}
 
-	private void AddHeroToMap(Hero _hero){
+	private HeroBattle AddHeroToMap(Hero _hero){
 
 		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 		
@@ -685,12 +685,14 @@ public class BattleManager : MonoBehaviour {
 
 		heroDic.Add (_hero.pos, hero);
 		
-		hero.Init (_hero.sds.GetID(), _hero.nowHp, _hero.nowPower, _hero.pos, _hero.isMine);
+		hero.Init (_hero);
 		
 		AddHeroToMapReal (hero, _hero.pos);
+
+		return hero;
 	}
 
-	private void AddCardToMap(int _cardUid,int _pos){
+	private HeroBattle AddCardToMap(int _cardUid,int _pos){
 
 		int cardID = (battle.clientIsMine ? battle.mHandCards : battle.oHandCards) [_cardUid];
 
@@ -704,11 +706,13 @@ public class BattleManager : MonoBehaviour {
 
 		HeroSDS sds = StaticData.GetData<HeroSDS> (cardID);
 		
-		hero.Init(cardID, sds.hp, sds.power, _pos, true);
+		hero.Init(cardID);
 
 		hero.cardUid = _cardUid;
 
 		AddHeroToMapReal (hero, _pos);
+
+		return hero;
 	}
 
 	private void AddHeroToMapReal(HeroBattle _heroCard,int _pos){
@@ -720,8 +724,6 @@ public class BattleManager : MonoBehaviour {
 		_heroCard.transform.SetParent (heroContainer, false);
 
 		_heroCard.transform.localPosition = mapUnit.transform.localPosition;
-		
-//		_heroCard.transform.localPosition = Vector3.zero;
 		
 		_heroCard.transform.localScale = new Vector3 (heroScale, heroScale, heroScale);
 	}
@@ -826,15 +828,15 @@ public class BattleManager : MonoBehaviour {
 
 	private void DoSummon(BattleSummonVO _vo,Action _del){
 
-		RefreshData ();
+		Hero hero = battle.heroMapDic [_vo.pos];
 
-		HeroBattle hero = heroDic [_vo.pos];
+		HeroBattle heroBattle = AddHeroToMap (hero);
 
 		Action<float> toDel = delegate(float obj) {
 
 			float scale = heroScale * obj;
 
-			hero.transform.localScale = new Vector3(scale,scale,scale);
+			heroBattle.transform.localScale = new Vector3(scale,scale,scale);
 		};
 
 		Action endDel = delegate() {
@@ -1035,11 +1037,48 @@ public class BattleManager : MonoBehaviour {
 
 			int pos = _vo.pos[i];
 
+			int powerChange = _vo.powerChange[i];
+
+			bool isDizz = _vo.isDizz[i];
+
 			HeroBattle hero = heroDic[pos];
 
-			hero.SetPower(battle.heroMapDic[pos].nowPower);
+			hero.RefreshPower();
+
+			string str;
+
+			Color color;
+
+			if(powerChange > 0){
+
+				str = "+" + powerChange;
+
+				color = Color.blue;
+
+			}else{
+
+				if(isDizz){
+
+					str = powerChange + "  混乱";
+
+				}else{
+
+					str = powerChange.ToString();
+				}
+
+				color = Color.yellow;
+			}
+
+			if(i == 0){
+
+				hero.ShowHud(str,color,_del);
+
+			}else{
+
+				hero.ShowHud(str,color,null);
+			}
 		}
 
-		_del ();
+//		_del ();
 	}
 }

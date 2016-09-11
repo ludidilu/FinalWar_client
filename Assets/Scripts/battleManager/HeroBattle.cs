@@ -4,6 +4,7 @@ using xy3d.tstd.lib.superTween;
 using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using FinalWar;
 
 public class HeroBattle : HeroBase {
 
@@ -25,39 +26,62 @@ public class HeroBattle : HeroBase {
 	[SerializeField]
 	protected Text power;
 
-	public int pos = -1;
+	private Hero hero;
 
-	private int nowHp;
+	public int pos{
 
-	private int nowPower;
-	
-	public bool isMine;
-	
-	public void Init(int _id,int _hp,int _power,int _pos,bool _isMine){
+		get{
+
+			return hero.pos;
+		}
+	}
+
+	public bool isMine{
+
+		get{
+
+			return hero.isMine;
+		}
+	}
+
+	public void Init(int _id){
 		
 		sds = StaticData.GetData<HeroSDS> (_id);
 
-		SetHp (_hp);
+		SetHp (sds.hp);
 
-		SetPower (_power);
+		SetPower (sds.power);
+	}
 
-		pos = _pos;
-		
-		isMine = _isMine;
+	public void Init(Hero _hero){
+
+		hero = _hero;
+
+		sds = hero.sds as HeroSDS;
+
+		RefreshHp ();
+
+		RefreshPower ();
+	}
+
+	public void RefreshHp(){
+
+		SetHp (hero.nowHp);
+	}
+
+	public void RefreshPower(){
+
+		SetPower (hero.nowPower);
 	}
 	
-	public void SetHp(int _hp){
+	private void SetHp(int _hp){
 
-		nowHp = _hp;
-		
-		hp.text = nowHp.ToString ();
+		hp.text = _hp.ToString ();
 	}
 
-	public void SetPower(int _power){
+	private void SetPower(int _power){
 
-		nowPower = _power;
-
-		power.text = nowPower.ToString ();
+		power.text = _power.ToString ();
 	}
 
 	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis,int _damage){
@@ -93,6 +117,13 @@ public class HeroBattle : HeroBase {
 		
 		SuperTween.Instance.To(0,1,1,shockToDel,null);
 
+		ShowHud ((-_damage).ToString (), Color.red, null);
+		
+		RefreshHp ();
+	}
+
+	public void ShowHud(string _str,Color _color,Action _callBack){
+
 		GameObject go = GameObject.Instantiate<GameObject>(BattleControl.Instance.damageNumResources);
 		
 		go.transform.SetParent(transform.parent,false);
@@ -101,11 +132,7 @@ public class HeroBattle : HeroBase {
 		
 		DamageNum damageNum = go.GetComponent<DamageNum>();
 		
-		damageNum.Init(-_damage,null);
-		
-		nowHp -= _damage;
-
-		SetHp (nowHp);
+		damageNum.Init(_str,_color,_callBack);
 	}
 
 	public void Die(Action _del){
