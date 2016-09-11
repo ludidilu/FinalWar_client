@@ -828,6 +828,8 @@ public class BattleManager : MonoBehaviour {
 
 	private void DoSummon(BattleSummonVO _vo,Action _del){
 
+		CreateMoneyTf ();
+
 		Hero hero = battle.heroMapDic [_vo.pos];
 
 		HeroBattle heroBattle = AddHeroToMap (hero);
