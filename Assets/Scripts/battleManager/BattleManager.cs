@@ -706,7 +706,7 @@ public class BattleManager : MonoBehaviour {
 
 		HeroSDS sds = StaticData.GetData<HeroSDS> (cardID);
 		
-		hero.Init(cardID);
+		hero.Init(cardID, _pos);
 
 		hero.cardUid = _cardUid;
 
