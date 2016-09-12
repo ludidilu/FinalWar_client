@@ -452,7 +452,7 @@ public class BattleManager : MonoBehaviour {
 
 	public void MapUnitDown(MapUnit _mapUnit){
 
-		if(nowChooseHero != null && nowChooseHero.pos != -1 && nowChooseHero.isMine == battle.clientIsMine){
+		if(nowChooseHero != null && nowChooseHero.isMine == battle.clientIsMine){
 
 			for(int i = 0 ; i < battle.action.Count ; i++){
 
@@ -706,7 +706,7 @@ public class BattleManager : MonoBehaviour {
 
 		HeroSDS sds = StaticData.GetData<HeroSDS> (cardID);
 		
-		hero.Init(cardID, _pos);
+		hero.Init(cardID, _pos, battle.clientIsMine);
 
 		hero.cardUid = _cardUid;
 
