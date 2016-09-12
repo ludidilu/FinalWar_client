@@ -8,6 +8,14 @@ using FinalWar;
 
 public class HeroBattle : HeroBase {
 
+	private static readonly Color[] POWER_COLORS = new Color[]{
+
+		Color.red,
+		Color.yellow,
+		Color.blue,
+		Color.green
+	};
+
 	[SerializeField]
 	public Transform moveTrans;
 
@@ -81,7 +89,9 @@ public class HeroBattle : HeroBase {
 
 	private void SetPower(int _power){
 
-		power.text = _power.ToString ();
+		power.color = POWER_COLORS[Hero.GetPowerLevel (_power)];
+
+		power.text = ((int)(_power / 100)).ToString ();
 	}
 
 	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis,int _damage){
