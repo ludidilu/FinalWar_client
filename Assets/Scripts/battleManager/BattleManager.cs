@@ -906,11 +906,17 @@ public class BattleManager : MonoBehaviour {
 				}
 			}
 
+			Dictionary<int,HeroBattle> tmpDic = new Dictionary<int, HeroBattle>();
+
 			for(int i = 0 ; i < tmpList2.Count ; i++){
 
 				KeyValuePair<int,int> pair = tmpList2[i];
 
 				HeroBattle hero = heroDic[pair.Key];
+
+				tmpDic.Add(pair.Key,hero);
+
+				heroDic.Remove(pair.Key);
 
 				Vector3 startPos = mapUnitDic[pair.Key].transform.position;
 
@@ -927,7 +933,11 @@ public class BattleManager : MonoBehaviour {
 
 						for(int l = 0 ; l < tmpList2.Count ; l++){
 
-							int index = tmpList2[l].Value;
+							pair = tmpList2[l];
+
+							heroDic.Add(pair.Value,tmpDic[pair.Key]);
+
+							int index = pair.Value;
 
 							MapUnit unit = mapUnitDic[index];
 
