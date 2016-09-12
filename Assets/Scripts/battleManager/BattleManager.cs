@@ -1053,7 +1053,7 @@ public class BattleManager : MonoBehaviour {
 
 			if(powerChange > 0){
 
-				str = "+" + powerChange;
+				str = "+" + ((int)(powerChange / 100)).ToString();
 
 				color = Color.blue;
 
@@ -1061,11 +1061,11 @@ public class BattleManager : MonoBehaviour {
 
 				if(isDizz){
 
-					str = powerChange + "  混乱";
+					str = ((int)(powerChange / 100)).ToString() + "  混乱";
 
 				}else{
 
-					str = powerChange.ToString();
+					str = ((int)(powerChange / 100)).ToString();
 				}
 
 				color = Color.yellow;
