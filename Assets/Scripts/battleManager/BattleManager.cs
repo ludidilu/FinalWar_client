@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using xy3d.tstd.lib.superTween;
 using System;
 using FinalWar;
+using xy3d.tstd.lib.superRaycast;
 
 public class BattleManager : MonoBehaviour {
 
@@ -18,6 +19,9 @@ public class BattleManager : MonoBehaviour {
 	private const float heroScale = 0.5f;
 	private const float mapContainerYFix = 60;
 	private static readonly float sqrt3 = Mathf.Sqrt (3);
+
+	[SerializeField]
+	private Camera mainCamera;
 
 	[SerializeField]
 	private Color myMapUnitColor;
@@ -125,6 +129,12 @@ public class BattleManager : MonoBehaviour {
 	void Start () {
 
 		Log.Init (WriteLog);
+
+		SuperRaycast.Init (mainCamera);
+
+		SuperRaycast.SetIsOpen (true, "a");
+
+		SuperRaycast.checkBlockByUi = true;
 
 		ConfigDictionary.Instance.LoadLocalConfig(Application.streamingAssetsPath + "/local.xml");
 		
@@ -770,7 +780,14 @@ public class BattleManager : MonoBehaviour {
 		bool touchable = !(battle.clientIsMine ? battle.mOver : battle.oOver);
 
 		graphicRayCaster.enabled = touchable;
-		MapUnit.touchable = touchable;
+
+		if (SuperRaycast.GetIsOpen () != touchable) {
+
+			SuperRaycast.SetIsOpen (touchable, "a");
+		}
+
+
+//		MapUnit.touchable = touchable;
 		actionBt.SetActive (touchable);
 	}
 

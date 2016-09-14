@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using xy3d.tstd.lib.superRaycast;
+using xy3d.tstd.lib.superFunction;
 
 namespace xy3d.tstd.lib.superGraphicRaycast
 {
@@ -98,6 +100,9 @@ namespace xy3d.tstd.lib.superGraphicRaycast
             }
         }
 
+		[SerializeField]
+		private bool checkBlock3DRayCast;
+
         private int touchCount = 0;
 
         void LateUpdate()
@@ -143,6 +148,14 @@ namespace xy3d.tstd.lib.superGraphicRaycast
                     }
                 }
             }
+
+			if (checkBlock3DRayCast && SuperRaycast.Instance != null && resultAppendList.Count > 0) {
+
+				SuperEvent e = new SuperEvent(SuperRaycast.GetBlockByUi);
+
+				SuperFunction.Instance.DispatchEvent(SuperRaycast.Instance.gameObject,e);
+			}
+
             //			}
         }
     }

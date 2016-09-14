@@ -15,6 +15,8 @@ namespace xy3d.tstd.lib.superRaycast{
 		public const string GetMouseExit = "GetMouseExit";
 		public const string GetMouseClick = "GetMouseClick";
 
+		public const string GetBlockByUi = "GetBlockByUi";
+
 		private const string CHECK_LAYER_NAME = "Default";
 
 		private static SuperRaycast _Instance;
@@ -28,6 +30,26 @@ namespace xy3d.tstd.lib.superRaycast{
 			_Instance = go.AddComponent<SuperRaycast>();
 
 			_Instance.renderCamera = _camera;
+		}
+
+		public static SuperRaycast Instance{
+
+			get{
+
+				return _Instance;
+			}
+		}
+
+		public static bool GetIsOpen(){
+
+			if (_Instance == null) {
+				
+				return false;
+
+			} else {
+
+				return _Instance.m_isOpen > 0;
+			}
 		}
 
 		public static void SetIsOpen(bool _isOpen, string _str){
@@ -114,12 +136,8 @@ namespace xy3d.tstd.lib.superRaycast{
 
 			set{
 
-				if(_Instance == null){
+				if(_Instance != null){
 					
-					return;
-
-				}else{
-
 					_Instance.m_filterTag = value;
 				}
 			}
@@ -141,13 +159,44 @@ namespace xy3d.tstd.lib.superRaycast{
 
 			set{
 
+				if(_Instance != null){
+					
+					_Instance.m_filter = value;
+				}
+			}
+		}
+
+		public static bool checkBlockByUi{
+			
+			get{
+				
 				if(_Instance == null){
 					
-					return;
+					return false;
 					
 				}else{
 					
-					_Instance.m_filter = value;
+					return _Instance.m_checkBlockByUi;
+				}
+			}
+			
+			set{
+				
+				if(_Instance != null){
+
+					if(_Instance.m_checkBlockByUi != value){
+					
+						_Instance.m_checkBlockByUi = value;
+
+						if(_Instance.m_checkBlockByUi){
+
+							SuperFunction.Instance.AddEventListener(_Instance.gameObject,GetBlockByUi,_Instance.CheckBlockByUiHandler);
+
+						}else{
+
+							SuperFunction.Instance.RemoveEventListener(_Instance.gameObject,GetBlockByUi,_Instance.CheckBlockByUiHandler);
+						}
+					}
 				}
 			}
 		}
@@ -173,9 +222,25 @@ namespace xy3d.tstd.lib.superRaycast{
 
 		private bool needClearObjs = false;
 
+		private bool m_checkBlockByUi = false;
+
+		private bool isBlockByUi = false;
+
 		private Camera renderCamera;
 
+		private void CheckBlockByUiHandler(SuperEvent e){
+
+			isBlockByUi = true;
+		}
+
 		void Update(){
+
+			if (m_checkBlockByUi && isBlockByUi) {
+
+				isBlockByUi = false;
+
+				return;
+			}
 			
 			if(m_isOpen > 0){
 
@@ -191,7 +256,9 @@ namespace xy3d.tstd.lib.superRaycast{
 
 					int i = 0;
 					
-					foreach(RaycastHit hit in hits){
+					for(int m = 0 ; m < hits.Length ; m++){
+						
+						RaycastHit hit = hits[m];
 						
 						if(m_filter && !hit.collider.gameObject.CompareTag(m_filterTag)){
 							
@@ -232,7 +299,9 @@ namespace xy3d.tstd.lib.superRaycast{
 					
 					int i = 0;
 					
-					foreach(RaycastHit hit in hits){
+					for(int m = 0 ; m < hits.Length ; m++){
+
+						RaycastHit hit = hits[m];
 						
 						if(m_filter && !hit.collider.gameObject.CompareTag(m_filterTag)){
 							
@@ -244,11 +313,7 @@ namespace xy3d.tstd.lib.superRaycast{
 						if(!objs.Contains(hit.collider.gameObject)){
 
 							enterObjs.Add(hit.collider.gameObject);
-							
-//							SuperEvent enterEvent = new SuperEvent(GetMouseEnter);
-//							
-//							SuperFunction.Instance.DispatchEvent(hit.collider.gameObject,enterEvent);
-							
+
 						}else{
 							
 							objs.Remove(hit.collider.gameObject);
@@ -262,23 +327,22 @@ namespace xy3d.tstd.lib.superRaycast{
 						
 						i++;
 					}
-					
-					foreach(GameObject go in objs){
-						
+
+					for(i = 0 ; i < objs.Count ; i++){
+
 						SuperEvent exitEvent = new SuperEvent(GetMouseExit);
 						
-						SuperFunction.Instance.DispatchEvent(go,exitEvent);
+						SuperFunction.Instance.DispatchEvent(objs[i],exitEvent);
 					}
 					
 					objs = newObjs;
 
-					foreach(GameObject go in enterObjs){
+					for(i = 0 ; i < enterObjs.Count ; i++){
 						
 						SuperEvent enterEvent = new SuperEvent(GetMouseEnter);
 						
-						SuperFunction.Instance.DispatchEvent(go,enterEvent);
+						SuperFunction.Instance.DispatchEvent(enterObjs[i],enterEvent);
 					}
-
 				}
 
 				if(Input.GetMouseButtonUp(0)){
@@ -292,7 +356,9 @@ namespace xy3d.tstd.lib.superRaycast{
 
 					int i = 0;
 					
-					foreach(RaycastHit hit in hits){
+					for(int m = 0 ; m < hits.Length ; m++){
+						
+						RaycastHit hit = hits[m];
 						
 						if(m_filter && !hit.collider.gameObject.CompareTag(m_filterTag)){
 							
@@ -316,13 +382,6 @@ namespace xy3d.tstd.lib.superRaycast{
 						
 						i++;
 					}
-					
-//					foreach(GameObject go in objs){
-//						
-//						SuperEvent exitEvent = new SuperEvent(GetMouseExit);
-//						
-//						SuperFunction.Instance.DispatchEvent(go,exitEvent);
-//					}
 
 					downObjs.Clear();
 					
