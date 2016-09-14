@@ -12,7 +12,10 @@ public class DamageNum : MonoBehaviour {
 	private CanvasGroup group;
 
 	[SerializeField]
-	private AnimationCurve curve;
+	private AnimationCurve posCurve;
+
+	[SerializeField]
+	private AnimationCurve alphaCurve;
 
 	[SerializeField]
 	private float moveTime;
@@ -62,11 +65,13 @@ public class DamageNum : MonoBehaviour {
 			
 		} else {
 			
-			float value = curve.Evaluate (percent);
+			float value = posCurve.Evaluate (percent);
 			
 			(transform as RectTransform).anchoredPosition = new Vector2((transform as RectTransform).anchoredPosition.x,startY + value * height);
 
-			group.alpha = 1 - value;
+			value = alphaCurve.Evaluate(percent);
+
+			group.alpha = value;
 		}
 	}
 }
