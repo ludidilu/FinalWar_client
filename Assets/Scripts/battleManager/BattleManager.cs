@@ -52,9 +52,6 @@ public class BattleManager : MonoBehaviour {
 	[SerializeField]
 	private HeroDetail heroDetail;
 
-	[SerializeField]
-	private RoundNum roundNum;
-
 	private Battle battle;
 
 	private Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit> ();
