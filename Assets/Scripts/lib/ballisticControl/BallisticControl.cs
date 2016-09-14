@@ -4,7 +4,7 @@ using System;
 using xy3d.tstd.lib.superTween;
 using xy3d.tstd.lib.publicTools;
 
-public class BallisticControl : EffectControl {
+public class BallisticControl : MonoBehaviour {
 
 	[SerializeField]
 	private AnimationCurve curve;
