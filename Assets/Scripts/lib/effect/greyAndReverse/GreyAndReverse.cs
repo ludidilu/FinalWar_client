@@ -21,11 +21,11 @@ public class GreyAndReverse : MonoBehaviour
 
 	[SerializeField]
 	Color
-		greyShadowColor = new Color (0, 0, 0, 0.5f);
+		greyShadowColor = new Color(0f, 0f, 0f, 1f);
 
 	[SerializeField]
 	Color
-		greyTextColor = new Color (1f, 1f, 1f, 0.75f);
+		greyTextColor = new Color (0x72/255f, 0x72 / 255f, 0x72 / 255f, 1f);
 
 	[HideInInspector]
 	public bool

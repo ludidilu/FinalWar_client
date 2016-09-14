@@ -382,6 +382,84 @@ namespace xy3d.tstd.lib.publicTools
 			
 			SuperTween.Instance.To(0,_time,_time,toDel,endDel);
 		}
+
+		public static Mesh CombineMeshs(GameObject[] _gos){
+			
+			int num = _gos.Length;
+			
+			Mesh mesh = new Mesh();
+			
+			CombineInstance[] cis = new CombineInstance[num];
+			
+			for(int i = 0 ; i < num ; i++){
+				
+				MeshFilter mf = _gos[i].GetComponent<MeshFilter>();
+				
+				Mesh tmpMesh = mf.mesh;
+				
+				Vector4[] ts = new Vector4[tmpMesh.vertexCount];
+				
+				for(int m = 0 ; m < tmpMesh.vertexCount ; m++){
+					
+					ts[m] = new Vector4(i,0,0,0);
+				}
+				
+				tmpMesh.tangents = ts;
+				
+				cis[i].mesh = tmpMesh;
+				cis[i].transform = _gos[i].transform.localToWorldMatrix;
+				
+				SetGameObjectVisible(_gos[i],false);
+			}
+			
+			mesh.CombineMeshes(cis);
+			
+			return mesh;
+		}
+
+		public static int[] SplitInt(int _data,int _num,float _range){
+
+			int[] result = new int[_num];
+
+			int numRec = _num;
+
+			for(int i = 0 ; i < numRec - 1 ; i++){
+
+				int data = (int)((float)_data / _num * (1 + (UnityEngine.Random.value * 2 - 1) * _range));
+
+				result[i] = data;
+
+				_data -= data;
+
+				_num--;
+			}
+
+			result[numRec - 1] = _data;
+
+			return result;
+		}
+
+		public static float[] SplitFloat(float _data,int _num,float _range){
+			
+			float[] result = new float[_num];
+			
+			int numRec = _num;
+			
+			for(int i = 0 ; i < numRec - 1 ; i++){
+				
+				float data = (float)_data / _num * (1 + (UnityEngine.Random.value * 2 - 1) * _range);
+				
+				result[i] = data;
+				
+				_data -= data;
+				
+				_num--;
+			}
+			
+			result[numRec - 1] = _data;
+			
+			return result;
+		}
 	}
 }
 

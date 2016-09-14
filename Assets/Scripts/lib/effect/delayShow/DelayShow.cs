@@ -6,29 +6,24 @@ namespace xy3d.tstd.lib.effect{
 
 	public class DelayShow : MonoBehaviour {
 		
-		[SerializeField]private float delayTime = 1.0f;
-
-		private bool isDelayActive = false;	//用来标记当前显示该对象是否是因为延迟显示功能显示的
+		[SerializeField]
+		private float delayTime = 1.0f;
 
         private int index = -1;
 
 		// Use this for initialization
-		void OnEnable () {		
+		void Start () {		
 
-			if (!isDelayActive) {
+			gameObject.SetActive(false);
 
-				gameObject.SetActive(false);
-
-                index = SuperTween.Instance.DelayCall(delayTime, DelayFunc);
-			}
+            index = SuperTween.Instance.DelayCall(delayTime, DelayFunc);
 		}
-
-		void OnDisable()
+		
+		void DelayFunc()
 		{
-			if (isDelayActive) {
+			index = -1;
 
-				isDelayActive = false;		
-			}
+			gameObject.SetActive(true);
 		}
 
         void OnDestroy()
@@ -38,11 +33,5 @@ namespace xy3d.tstd.lib.effect{
                 SuperTween.Instance.Remove(index);
             }
         }
-
-		void DelayFunc()
-		{
-			isDelayActive = true;
-            gameObject.SetActive(true);
-		}
 	}
 }

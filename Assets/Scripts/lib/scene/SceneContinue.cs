@@ -27,7 +27,7 @@ namespace xy3d.tstd.lib.scene{
 		// Use this for initialization
 		void Awake(){
 
-			Renderer[] rs = gameObject.GetComponentsInChildren<Renderer>();
+			MeshRenderer[] rs = gameObject.GetComponentsInChildren<MeshRenderer>();
 
 			Bounds b = rs[0].bounds;
 

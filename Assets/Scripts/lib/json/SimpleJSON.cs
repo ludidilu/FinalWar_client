@@ -177,37 +177,24 @@ namespace LitJson
         #region operators
         public static implicit operator JSONNode(string s)
         {
-			bool boolResult;
-
-			if(bool.TryParse(s,out boolResult)){
-
-				return new JSONData(boolResult);
-
-			}else{
-
-				int intResult;
-
-				if(int.TryParse(s,out intResult)){
-
-					return new JSONData(intResult);
-
-				}else{
-
-					float floatResult;
-
-					if(float.TryParse(s,out floatResult)){
-
-						return new JSONData(floatResult);
-
-					}else{
-
-						return new JSONData(s);
-					}
-				}
-			}
-
-//            return new JSONData(s);
+			return new JSONData(s);
         }
+		public static implicit operator JSONNode(int s)
+		{
+			return new JSONData(s);
+		}
+		public static implicit operator JSONNode(float s)
+		{
+			return new JSONData(s);
+		}
+		public static implicit operator JSONNode(double s)
+		{
+			return new JSONData(s);
+		}
+		public static implicit operator JSONNode(bool s)
+		{
+			return new JSONData(s);
+		}
         public static implicit operator string(JSONNode d)
         {
             return (d == null)?null:d.Value;
@@ -336,7 +323,7 @@ namespace LitJson
 									
 								}else{
 									
-									ctx.Add(Token);
+									ctx.Add(GetJSONData(Token));
 								}
 
 							}else if (TokenName != ""){
@@ -347,7 +334,7 @@ namespace LitJson
 									
 								}else{
 									
-									ctx.Add(TokenName, Token);
+									ctx.Add(TokenName, GetJSONData(Token));
 								}
 							}
                         }
@@ -390,7 +377,7 @@ namespace LitJson
 
 								}else{
 
-	                                ctx.Add(Token);
+									ctx.Add(GetJSONData(Token));
 								}
 
 							}else if (TokenName != ""){
@@ -401,7 +388,7 @@ namespace LitJson
 
 								}else{
 
-	                            	ctx.Add(TokenName, Token);
+									ctx.Add(TokenName, GetJSONData(Token));
 								}
 							}
                         }
@@ -456,6 +443,38 @@ namespace LitJson
             }
             return ctx;
         }
+
+		public static JSONData GetJSONData(string s){
+
+			bool boolResult;
+			
+			if(bool.TryParse(s,out boolResult)){
+				
+				return new JSONData(boolResult);
+				
+			}else{
+				
+				int intResult;
+				
+				if(int.TryParse(s,out intResult)){
+					
+					return new JSONData(intResult);
+					
+				}else{
+					
+					float floatResult;
+					
+					if(float.TryParse(s,out floatResult)){
+						
+						return new JSONData(floatResult);
+						
+					}else{
+						
+						return new JSONData(s);
+					}
+				}
+			}
+		}
 		
 		public virtual void Serialize(System.IO.BinaryWriter aWriter) {}
 

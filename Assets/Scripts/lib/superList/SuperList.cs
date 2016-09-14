@@ -1028,11 +1028,10 @@ namespace xy3d.tstd.lib.superList
 					if (cell.index == _index) {
 						
 						cell.SetSelected (true);
-					}
-					else if (cell.index == selectedIndex) {
+
+					}else if (cell.index == selectedIndex) {
 
 						cell.SetSelected (false);
-				
 					}
 				}
 
@@ -1051,17 +1050,11 @@ namespace xy3d.tstd.lib.superList
 					CellClickIndexHandle (_index);
 				}
 			}
-
 		}
 
 		public int GetSelectedIndex ()
 		{
 			return selectedIndex;
-		}
-
-		public void ResetSelectIndex()
-		{
-			selectedIndex = -1;
 		}
 
 		public void DisplayIndex (int _index)
