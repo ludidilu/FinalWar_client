@@ -125,8 +125,8 @@ public class Connection : MonoBehaviour {
 		socket.BeginSend(bytes, 0, length, SocketFlags.None, SendCallBack, null);
 	}
 
-	private void SendCallBack(IAsyncResult result)
+	private void SendCallBack(IAsyncResult _result)
 	{
-		
+		socket.EndSend (_result);
 	}
 }
