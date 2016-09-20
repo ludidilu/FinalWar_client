@@ -8,6 +8,7 @@
 	public int counter;
 	public int defense;
 	public int leader;
+	public int[] skills;
 	
 	public int GetID()
 	{
@@ -44,6 +45,10 @@
 	public int GetLeader()
 	{
 		return leader;
+	}
+	public int[] GetSkills()
+	{
+		return skills;
 	}
 }
 

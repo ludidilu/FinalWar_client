@@ -146,16 +146,27 @@ public class BattleManager : MonoBehaviour {
 		
 		StaticData.Load<HeroSDS>("hero");
 		
-		Dictionary<int, HeroSDS> dic = StaticData.GetDic<HeroSDS>();
+		Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS>();
 		
-		Dictionary<int, IHeroSDS> newDic = new Dictionary<int, IHeroSDS>();
+		Dictionary<int, IHeroSDS> newHeroDic = new Dictionary<int, IHeroSDS>();
 		
-		foreach(KeyValuePair<int,HeroSDS> pair in dic)
+		foreach(KeyValuePair<int,HeroSDS> pair in heroDic)
 		{
-			newDic.Add(pair.Key, pair.Value);
+			newHeroDic.Add(pair.Key, pair.Value);
+		}
+
+		StaticData.Load<SkillSDS> ("skill");
+
+		Dictionary<int, SkillSDS> skillDic = StaticData.GetDic<SkillSDS> ();
+
+		Dictionary<int, ISkillSDS> newSkillDic = new Dictionary<int, ISkillSDS> ();
+
+		foreach (KeyValuePair<int,SkillSDS> pair in skillDic) {
+
+			newSkillDic.Add(pair.Key, pair.Value);
 		}
 		
-		Battle.Init(newDic,Map.mapDataDic);
+		Battle.Init(Map.mapDataDic,newHeroDic,newSkillDic);
 		
 		battle = new Battle ();
 
@@ -836,6 +847,10 @@ public class BattleManager : MonoBehaviour {
 			}else if(vo is BattlePowerChangeVO){
 
 				DoPowerChange((BattlePowerChangeVO)vo,del);
+
+			}else if(vo is BattleHpChangeVO){
+
+				DoHpChange((BattleHpChangeVO)vo,del);
 			}
 		}
 	}
@@ -1104,7 +1119,45 @@ public class BattleManager : MonoBehaviour {
 				hero.ShowHud(str,color,null);
 			}
 		}
+	}
 
-//		_del ();
+	private void DoHpChange(BattleHpChangeVO _vo,Action _del){
+
+		for(int i = 0 ; i < _vo.pos.Count ; i++){
+			
+			int pos = _vo.pos[i];
+			
+			int hpChange = _vo.hpChange[i];
+			
+			HeroBattle hero = heroDic[pos];
+			
+			hero.RefreshHp();
+			
+			string str;
+			
+			Color color;
+			
+			if(hpChange > 0){
+				
+				str = "+" + hpChange.ToString();
+				
+				color = Color.green;
+				
+			}else{
+				
+				str = hpChange.ToString();
+				
+				color = Color.red;
+			}
+			
+			if(i == 0){
+				
+				hero.ShowHud(str,color,_del);
+				
+			}else{
+				
+				hero.ShowHud(str,color,null);
+			}
+		}
 	}
 }
