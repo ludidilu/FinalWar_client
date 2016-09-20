@@ -65,7 +65,7 @@ public class BattleControl : MonoBehaviour {
 
 				getHit = true;
 
-				if(_damage > 0){
+				if(_damage < 0){
 
 					List<Vector3> vList = new List<Vector3>();
 					
@@ -81,7 +81,7 @@ public class BattleControl : MonoBehaviour {
 
 		SuperTween.Instance.To(0,1,1,moveToDel,null);
 
-		if(_damage > 0){
+		if(_damage < 0){
 
 			SuperTween.Instance.DelayCall(2.5f,_callBack);
 
@@ -150,7 +150,7 @@ public class BattleControl : MonoBehaviour {
 				GameObject.Destroy(arrows[i]);
 			}
 			
-			if(_damage > 0){
+			if(_damage < 0){
 				
 				List<Vector3> vList = new List<Vector3>();
 				
@@ -165,7 +165,7 @@ public class BattleControl : MonoBehaviour {
 
 		SuperTween.Instance.To(0,1,1,shootToDel,shootOverDel);
 		
-		if(_damage > 0){
+		if(_damage < 0){
 			
 			SuperTween.Instance.DelayCall(3f,_callBack);
 			
@@ -245,14 +245,14 @@ public class BattleControl : MonoBehaviour {
 				
 				getHit = true;
 
-				if(_defender != null && _defenderDamage > 0){
+				if(_defender != null && _defenderDamage < 0){
 
 					_defender.Shock(vList,shockCurve,shockDis,_defenderDamage);
 				}
 				
 				for(int i = 0 ; i < _attackers.Count ; i++){
 
-					if(_attackersDamage[i] > 0){
+					if(_attackersDamage[i] < 0){
 
 						_attackers[i].Shock(new List<Vector3>(){_targetPos},shockCurve,shockDis,_attackersDamage[i]);
 					}
@@ -260,7 +260,7 @@ public class BattleControl : MonoBehaviour {
 
 				for(int i = 0 ; i < _supporters.Count ; i++){
 					
-					if(_supportersDamage[i] > 0){
+					if(_supportersDamage[i] < 0){
 						
 						_supporters[i].Shock(vList,shockCurve,shockDis,_supportersDamage[i]);
 					}

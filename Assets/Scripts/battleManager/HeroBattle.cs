@@ -149,7 +149,7 @@ public class HeroBattle : HeroBase {
 		
 		SuperTween.Instance.To(0,1,1,shockToDel,null);
 
-		ShowHud ((-_damage).ToString (), Color.red, null);
+		ShowHud (_damage.ToString (), Color.red, null);
 		
 		RefreshHp ();
 	}
