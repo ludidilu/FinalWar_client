@@ -2,7 +2,12 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.IO;
+
+#if UNITY_EDITOR
+
 using UnityEditor;
+
+#endif
 
 public class MapCreator : MonoBehaviour {
 
@@ -43,6 +48,8 @@ public class MapCreator : MonoBehaviour {
 
 	public void LoadMap(){
 
+#if UNITY_EDITOR
+
 		string path = EditorUtility.OpenFilePanel ("a", "a", "map");
 
 		if (!string.IsNullOrEmpty (path)) {
@@ -63,6 +70,8 @@ public class MapCreator : MonoBehaviour {
 				}
 			}
 		}
+
+#endif
 	}
 
 	public void ConfirmMapSize(){
@@ -139,6 +148,8 @@ public class MapCreator : MonoBehaviour {
 
 	public void SaveMap(){
 
+#if UNITY_EDITOR
+
 		string path = EditorUtility.SaveFilePanel("a","a","","map");
 
 		if (!string.IsNullOrEmpty (path)) {
@@ -151,6 +162,7 @@ public class MapCreator : MonoBehaviour {
 				}
 			}
 		}
+#endif
 	}
 
 	public void MapUnitUpAsButton(MapUnit _unit){
