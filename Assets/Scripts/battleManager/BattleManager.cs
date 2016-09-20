@@ -380,6 +380,11 @@ public class BattleManager : MonoBehaviour {
 
 	private void CreateMoneyTf(){
 
+		if (!moneyTf.gameObject.activeSelf) {
+
+			moneyTf.gameObject.SetActive(true);
+		}
+
 		moneyTf.text = GetMoney().ToString ();
 	}
 
@@ -797,8 +802,6 @@ public class BattleManager : MonoBehaviour {
 			SuperRaycast.SetIsOpen (touchable, "a");
 		}
 
-
-//		MapUnit.touchable = touchable;
 		actionBt.SetActive (touchable);
 	}
 
