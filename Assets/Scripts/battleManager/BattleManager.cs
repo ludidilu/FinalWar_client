@@ -16,7 +16,7 @@ public class BattleManager : MonoBehaviour {
 
 	private const float mapUnitWidth = 30;
 	private const float mapUnitScale = 55;
-	private const float heroScale = 0.75f;
+	private const float heroScale = 0.8f;
 	private const float mapContainerYFix = 60;
 	private static readonly float sqrt3 = Mathf.Sqrt (3);
 
