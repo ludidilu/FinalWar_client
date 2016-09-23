@@ -10,13 +10,13 @@ using xy3d.tstd.lib.superRaycast;
 
 public class BattleManager : MonoBehaviour {
 
-	private static readonly Color summonColor = new Color (0.2f, 0.8f, 0.8f);
+	public static readonly Color summonColor = new Color (0.2f, 0.8f, 0.8f);
 
 	private const float arrowZFix = -5;
 
 	private const float mapUnitWidth = 30;
 	private const float mapUnitScale = 55;
-	private const float heroScale = 0.5f;
+	private const float heroScale = 0.75f;
 	private const float mapContainerYFix = 60;
 	private static readonly float sqrt3 = Mathf.Sqrt (3);
 
@@ -736,8 +736,6 @@ public class BattleManager : MonoBehaviour {
 
 		summonHeroDic.Add (_pos, hero);
 
-		hero.body.color = summonColor;
-
 		HeroSDS sds = StaticData.GetData<HeroSDS> (cardID);
 		
 		hero.Init(cardID, _pos, battle.clientIsMine);
@@ -890,6 +888,10 @@ public class BattleManager : MonoBehaviour {
 		};
 
 		SuperTween.Instance.To (10, 1, 0.5f, toDel, endDel);
+
+		ClearCards ();
+
+		CreateCards ();
 	}
 
 	private void DoShoot(BattleShootVO _vo,Action _del){

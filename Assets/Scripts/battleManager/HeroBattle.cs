@@ -26,7 +26,7 @@ public class HeroBattle : HeroBase {
 	private CanvasGroup canvasGroup;
 
 	[SerializeField]
-	public Image body;
+	private Image body;
 	
 	[SerializeField]
 	protected Text hp;
@@ -81,6 +81,8 @@ public class HeroBattle : HeroBase {
 		SetHp (sds.hp);
 
 		SetPower (sds.power);
+
+		body.color = BattleManager.summonColor;
 	}
 
 	public void Init(Hero _hero){
