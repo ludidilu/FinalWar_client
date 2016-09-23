@@ -3,12 +3,14 @@
 	public int hp;
 	public int power;
 	public int cost;
+	public bool threat;
 	public int attack;
 	public int shoot;
 	public int counter;
 	public int defense;
 	public int leader;
 	public int[] skills;
+	public int[] auras;
 	
 	public int GetID()
 	{
@@ -25,6 +27,10 @@
 	public int GetCost()
 	{
 		return cost;
+	}
+	public bool GetThreat()
+	{
+		return threat;
 	}
 	public int GetAttack()
 	{
@@ -49,6 +55,10 @@
 	public int[] GetSkills()
 	{
 		return skills;
+	}
+	public int[] GetAuras()
+	{
+		return auras;
 	}
 }
 

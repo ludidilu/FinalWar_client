@@ -165,8 +165,19 @@ public class BattleManager : MonoBehaviour {
 
 			newSkillDic.Add(pair.Key, pair.Value);
 		}
+
+		StaticData.Load<AuraSDS> ("aura");
 		
-		Battle.Init(Map.mapDataDic,newHeroDic,newSkillDic);
+		Dictionary<int, AuraSDS> auraDic = StaticData.GetDic<AuraSDS> ();
+		
+		Dictionary<int, IAuraSDS> newAuraDic = new Dictionary<int, IAuraSDS> ();
+		
+		foreach (KeyValuePair<int,AuraSDS> pair in auraDic) {
+			
+			newAuraDic.Add(pair.Key, pair.Value);
+		}
+		
+		Battle.Init(Map.mapDataDic,newHeroDic,newSkillDic,newAuraDic);
 		
 		battle = new Battle ();
 
