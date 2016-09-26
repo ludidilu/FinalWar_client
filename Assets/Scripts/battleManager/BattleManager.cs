@@ -794,9 +794,17 @@ public class BattleManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
-		if(Input.GetKeyUp(KeyCode.F5)){
+		if (Input.GetKeyUp (KeyCode.F5)) {
 
-			battle.ClientRequestRefreshData();
+			battle.ClientRequestRefreshData ();
+
+		} else if (Input.GetKeyUp (KeyCode.A)) {
+
+			HeroAi.Start(battle,battle.clientIsMine,0);
+
+			ClearMoves();
+
+			CreateMoves();
 		}
 	}
 
