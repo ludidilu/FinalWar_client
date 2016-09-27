@@ -8,6 +8,9 @@ public class BallisticControl : MonoBehaviour {
 
 	[SerializeField]
 	private AnimationCurve curve;
+	
+	[SerializeField]
+	private float flyTime;
 
 	private Vector3 start;
 
@@ -15,21 +18,17 @@ public class BallisticControl : MonoBehaviour {
 
 	private float startTime;
 
-	private float time;
-
 	private Action callBack;
 
 	private bool show;
 
-	public void Fly(Vector3 _start,Vector3 _end,float _time,Action _callBack){
+	public void Fly(Vector3 _start,Vector3 _end,Action _callBack){
 
 		start = _start;
 
 		end = _end;
 
 		startTime = Time.time;
-
-		time = _time;
 
 		callBack = _callBack;
 
@@ -39,7 +38,7 @@ public class BallisticControl : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
-		float percent = (Time.time - startTime) / time;
+		float percent = (Time.time - startTime) / flyTime;
 
 		if(percent > 1){
 

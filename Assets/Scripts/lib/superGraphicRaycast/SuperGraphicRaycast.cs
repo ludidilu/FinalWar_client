@@ -20,6 +20,7 @@ namespace xy3d.tstd.lib.superGraphicRaycast
         /// <param name="_str"></param>
 		public static void SetIsOpen(bool _isOpen, string _str)
         {
+            SuperDebug.Log("-->> _isOpen: " + _isOpen + " , _str: " + _str);
             SuperGraphicRaycastScript.Instance.isOpen = SuperGraphicRaycastScript.Instance.isOpen + (_isOpen ? 1 : -1);
 
             if (dic.ContainsKey(_str))
@@ -117,6 +118,8 @@ namespace xy3d.tstd.lib.superGraphicRaycast
 
         public override void Raycast(PointerEventData eventData, List<RaycastResult> resultAppendList)
         {
+			//SuperDebug.Log("Raycast:" + SuperGraphicRaycastScript.Instance.isOpen);
+
             if (SuperGraphicRaycastScript.Instance.isOpen < 1)
             {
 
@@ -149,11 +152,11 @@ namespace xy3d.tstd.lib.superGraphicRaycast
                 }
             }
 
-			if (checkBlock3DRayCast && SuperRaycast.Instance != null && resultAppendList.Count > 0) {
+			if (checkBlock3DRayCast && resultAppendList.Count > 0) {
 
 				SuperEvent e = new SuperEvent(SuperRaycast.GetBlockByUi);
 
-				SuperFunction.Instance.DispatchEvent(SuperRaycast.Instance.gameObject,e);
+				SuperFunction.Instance.DispatchEvent(SuperRaycast.Go,e);
 			}
 
             //			}

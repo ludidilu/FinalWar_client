@@ -27,7 +27,13 @@ public class BattleManager : MonoBehaviour {
 	private Color myMapUnitColor;
 
 	[SerializeField]
+	private Color myBaseColor;
+
+	[SerializeField]
 	private Color oppMapUnitColor;
+
+	[SerializeField]
+	private Color oppBaseColor;
 
 	[SerializeField]
 	private GraphicRaycaster graphicRayCaster;
@@ -130,7 +136,7 @@ public class BattleManager : MonoBehaviour {
 
 		Log.Init (WriteLog);
 
-		SuperRaycast.Init (mainCamera);
+		SuperRaycast.SetCamera (mainCamera);
 
 		SuperRaycast.SetIsOpen (true, "a");
 
@@ -319,11 +325,25 @@ public class BattleManager : MonoBehaviour {
 				
 				if((battle.mapData.dic[index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(index)){
 
-					unit.SetMainColor(myMapUnitColor);
+					if(index == battle.mapData.base1){
+
+						unit.SetMainColor(myBaseColor);
+
+					}else{
+
+						unit.SetMainColor(myMapUnitColor);
+					}
 
 				}else{
-					
-					unit.SetMainColor(oppMapUnitColor);
+
+					if(index == battle.mapData.base2){
+						
+						unit.SetMainColor(oppBaseColor);
+						
+					}else{
+						
+						unit.SetMainColor(oppMapUnitColor);
+					}
 				}
 					
 				index++;

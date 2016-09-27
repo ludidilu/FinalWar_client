@@ -19,7 +19,7 @@ public class StaticData
 	
 	public const string datName = "csv.dat";
 	
-	public static Dictionary<Type, IDictionary> dic = new Dictionary<Type, IDictionary>();
+	public static Dictionary<Type, IDictionary> dic;
 	
 	private static Dictionary<Type, IList> dicList = new Dictionary<Type, IList>();
 	

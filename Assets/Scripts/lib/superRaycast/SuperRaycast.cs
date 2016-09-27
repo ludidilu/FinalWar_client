@@ -17,24 +17,41 @@ namespace xy3d.tstd.lib.superRaycast{
 
 		public const string GetBlockByUi = "GetBlockByUi";
 
-		private const string CHECK_LAYER_NAME = "Default";
-
 		private static SuperRaycast _Instance;
 
-		public Dictionary<string,int> dic = new Dictionary<string, int>();
+		public static void SetCamera(Camera _camera){
 
-		public static void Init(Camera _camera){
-
-			GameObject go = new GameObject("SuperRaycastGameObject");
-			
-			_Instance = go.AddComponent<SuperRaycast>();
-
-			_Instance.renderCamera = _camera;
+			Instance.renderCamera = _camera;
 		}
 
-		public static SuperRaycast Instance{
+		public static void AddLayer(string _layerName){
+
+			Instance.AddLayerReal(_layerName);
+		}
+
+		public static void DelLayer(string _layerName){
+
+			Instance.DelLayerReal(_layerName);
+		}
+
+		public static GameObject Go{
 
 			get{
+
+				return Instance.gameObject;
+			}
+		}
+
+		private static SuperRaycast Instance{
+
+			get{
+
+				if(_Instance == null){
+
+					GameObject go = new GameObject("SuperRaycastGameObject");
+					
+					_Instance = go.AddComponent<SuperRaycast>();
+				}
 
 				return _Instance;
 			}
@@ -42,37 +59,25 @@ namespace xy3d.tstd.lib.superRaycast{
 
 		public static bool GetIsOpen(){
 
-			if (_Instance == null) {
-				
-				return false;
-
-			} else {
-
-				return _Instance.m_isOpen > 0;
-			}
+			return Instance.m_isOpen > 0;
 		}
 
 		public static void SetIsOpen(bool _isOpen, string _str){
 
-			if(_Instance == null){
-
-				return;
-			}
-
-			_Instance.m_isOpen = _Instance.m_isOpen + (_isOpen ? 1 : -1);
+			Instance.m_isOpen = Instance.m_isOpen + (_isOpen ? 1 : -1);
 			
-			if(_Instance.m_isOpen == 0){
+			if(Instance.m_isOpen == 0){
 				
-				if(!_Instance.isProcessingUpdate){
+				if(!Instance.isProcessingUpdate){
 					
-					_Instance.objs.Clear();
+					Instance.objs.Clear();
 					
 				}else{
 					
-					_Instance.needClearObjs = true;
+					Instance.needClearObjs = true;
 				}
 				
-			}else if(_Instance.m_isOpen > 1)
+			}else if(Instance.m_isOpen > 1)
             {
                 PrintLog();
 
@@ -80,40 +85,40 @@ namespace xy3d.tstd.lib.superRaycast{
 
             }
 
-            if (_Instance.dic.ContainsKey(_str)){
+            if (Instance.dic.ContainsKey(_str)){
 
 				if(_isOpen){
 
-					_Instance.dic[_str]++;
+					Instance.dic[_str]++;
 
 				}else{
 
-					_Instance.dic[_str]--;
+					Instance.dic[_str]--;
 				}
 
-				if(_Instance.dic[_str] == 0){
+				if(Instance.dic[_str] == 0){
 
-					_Instance.dic.Remove(_str);
+					Instance.dic.Remove(_str);
 				}
 
 			}else{
 
 				if(_isOpen){
 
-					_Instance.dic.Add(_str,1);
+					Instance.dic.Add(_str,1);
 
 				}else{
 
-					_Instance.dic.Add(_str,-1);
+					Instance.dic.Add(_str,-1);
 				}
 			}
 		}
 
         public static void PrintLog()
         {
-            if (_Instance.needClearObjs)
+            if (Instance.needClearObjs)
             {
-                foreach (KeyValuePair<string, int> pair in _Instance.dic)
+                foreach (KeyValuePair<string, int> pair in Instance.dic)
                 {
                     SuperDebug.Log("SuperRaycast key:" + pair.Key + "  value:" + pair.Value);
                 }
@@ -124,22 +129,12 @@ namespace xy3d.tstd.lib.superRaycast{
 
 			get{
 
-				if(_Instance == null){
-					
-					return null;
-					
-				}else{
-					
-					return _Instance.m_filterTag;
-				}
+				return Instance.m_filterTag;
 			}
 
 			set{
 
-				if(_Instance != null){
-					
-					_Instance.m_filterTag = value;
-				}
+				Instance.m_filterTag = value;
 			}
 		}
 
@@ -147,22 +142,12 @@ namespace xy3d.tstd.lib.superRaycast{
 
 			get{
 
-				if(_Instance == null){
-					
-					return false;
-					
-				}else{
-					
-					return _Instance.m_filter;
-				}
+				return Instance.m_filter;
 			}
 
 			set{
 
-				if(_Instance != null){
-					
-					_Instance.m_filter = value;
-				}
+				Instance.m_filter = value;
 			}
 		}
 
@@ -170,41 +155,28 @@ namespace xy3d.tstd.lib.superRaycast{
 			
 			get{
 				
-				if(_Instance == null){
-					
-					return false;
-					
-				}else{
-					
-					return _Instance.m_checkBlockByUi;
-				}
+				return Instance.m_checkBlockByUi;
 			}
 			
 			set{
+
+				if(Instance.m_checkBlockByUi != value){
 				
-				if(_Instance != null){
+					Instance.m_checkBlockByUi = value;
 
-					if(_Instance.m_checkBlockByUi != value){
-					
-						_Instance.m_checkBlockByUi = value;
+					if(Instance.m_checkBlockByUi){
 
-						if(_Instance.m_checkBlockByUi){
+						SuperFunction.Instance.AddEventListener(Instance.gameObject,GetBlockByUi,Instance.CheckBlockByUiHandler);
 
-							SuperFunction.Instance.AddEventListener(_Instance.gameObject,GetBlockByUi,_Instance.CheckBlockByUiHandler);
+					}else{
 
-						}else{
-
-							SuperFunction.Instance.RemoveEventListener(_Instance.gameObject,GetBlockByUi,_Instance.CheckBlockByUiHandler);
-						}
+						SuperFunction.Instance.RemoveEventListener(Instance.gameObject,GetBlockByUi,Instance.CheckBlockByUiHandler);
 					}
 				}
 			}
 		}
 
-		void Awake(){
-
-			layerIndex = 1 << LayerMask.NameToLayer(CHECK_LAYER_NAME);
-		}
+		public Dictionary<string,int> dic = new Dictionary<string, int>();
 		
 		private int layerIndex;
 
@@ -228,6 +200,16 @@ namespace xy3d.tstd.lib.superRaycast{
 
 		private Camera renderCamera;
 
+		private void AddLayerReal(string _layerName){
+			
+			layerIndex = layerIndex | ( 1 << LayerMask.NameToLayer(_layerName));
+		}
+		
+		private void DelLayerReal(string _layerName){
+			
+			layerIndex = layerIndex & ~(1 << LayerMask.NameToLayer(_layerName));
+		}
+
 		private void CheckBlockByUiHandler(SuperEvent e){
 
 			isBlockByUi = true;
@@ -242,7 +224,7 @@ namespace xy3d.tstd.lib.superRaycast{
 				return;
 			}
 			
-			if(m_isOpen > 0){
+			if(m_isOpen > 0 && renderCamera != null){
 
 				isProcessingUpdate = true;
 
@@ -251,8 +233,15 @@ namespace xy3d.tstd.lib.superRaycast{
 				if(Input.GetMouseButtonDown(0)){
 
 					Ray ray = renderCamera.ScreenPointToRay(Input.mousePosition);
-					
-					hits = Physics.RaycastAll(ray,float.MaxValue,layerIndex);
+
+					if(layerIndex == 0){
+
+						hits = Physics.RaycastAll(ray,float.MaxValue);
+
+					}else{
+
+						hits = Physics.RaycastAll(ray,float.MaxValue,layerIndex);
+					}
 
 					int i = 0;
 					
@@ -290,7 +279,14 @@ namespace xy3d.tstd.lib.superRaycast{
 
 						Ray ray = renderCamera.ScreenPointToRay(Input.mousePosition);
 						
-						hits = Physics.RaycastAll(ray,float.MaxValue,layerIndex);
+						if(layerIndex == 0){
+							
+							hits = Physics.RaycastAll(ray,float.MaxValue);
+							
+						}else{
+							
+							hits = Physics.RaycastAll(ray,float.MaxValue,layerIndex);
+						}
 					}
 					
 					List<GameObject> newObjs = new List<GameObject>();
@@ -351,7 +347,14 @@ namespace xy3d.tstd.lib.superRaycast{
 
 						Ray ray = renderCamera.ScreenPointToRay(Input.mousePosition);
 						
-						hits = Physics.RaycastAll(ray,float.MaxValue,layerIndex);
+						if(layerIndex == 0){
+							
+							hits = Physics.RaycastAll(ray,float.MaxValue);
+							
+						}else{
+							
+							hits = Physics.RaycastAll(ray,float.MaxValue,layerIndex);
+						}
 					}
 
 					int i = 0;

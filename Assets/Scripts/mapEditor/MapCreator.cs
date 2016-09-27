@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.IO;
+using xy3d.tstd.lib.superRaycast;
 
 #if UNITY_EDITOR
 
@@ -11,6 +12,14 @@ using UnityEditor;
 
 public class MapCreator : MonoBehaviour {
 
+	private enum MapType
+	{
+		MYPOS,
+		MYBASE,
+		OPPPOSE,
+		OPPBASE,
+		NULL
+	}
 
 	[SerializeField]
 	private GameObject choosePanel;
@@ -30,13 +39,46 @@ public class MapCreator : MonoBehaviour {
 	[SerializeField]
 	private Transform mapContainer;
 
-	private float unitWidth = 0.6f;
+	[SerializeField]
+	private float unitWidth = 0.4f;
+
+	[SerializeField]
+	private float unitScale = 0.7f;
+
+	[SerializeField]
+	private Image[] bts;
+
+	[SerializeField]
+	private GameObject btShow;
+
 	private static readonly float sqrt3 = Mathf.Sqrt (3);
+
+	private MapUnit[] units;
 
 	private MapData mapData;
 
+	private MapType m_nowMapType;
+
+	private MapType nowMapType{
+
+		get{
+
+			return m_nowMapType;
+		}
+
+		set{
+
+			m_nowMapType = value;
+
+			(btShow.transform as RectTransform).anchoredPosition = (bts [(int)m_nowMapType].transform as RectTransform).anchoredPosition;
+		}
+	}
+
 	void Awake(){
 
+		SuperRaycast.SetCamera (Camera.main);
+
+		SuperRaycast.SetIsOpen (true, "a");
 	}
 
 	public void CreateMap(){
@@ -102,6 +144,12 @@ public class MapCreator : MonoBehaviour {
 
 	public void CreateMapPanel(){
 
+		nowMapType = MapType.MYPOS;
+
+		int size = mapData.mapWidth * mapData.mapHeight - mapData.mapHeight / 2;
+
+		units = new MapUnit[size];
+
 		int index = 0;
 
 		for (int i = 0; i < mapData.mapHeight; i++) {
@@ -119,24 +167,36 @@ public class MapCreator : MonoBehaviour {
 
 				go.transform.localPosition = new Vector3(m * unitWidth * sqrt3 * 2 + ((i % 2 == 1) ? unitWidth * Mathf.Sqrt(3) : 0),-i * unitWidth * 3,0);
 
+				go.transform.localScale = new Vector3(unitScale,unitScale,unitScale);
+
 				MapUnit unit = go.GetComponent<MapUnit>();
+
+				units[index] = unit;
 
 				unit.index = index;
 				
 				if(mapData.dic.ContainsKey(index)){
 
-					if(mapData.dic[index]){
+					if(index == mapData.base1){
 
-						unit.SetMainColor(Color.red);
+						unit.SetMainColor(bts[(int)MapType.MYBASE].color);
+
+					}else if(index == mapData.base2){
+
+						unit.SetMainColor(bts[(int)MapType.OPPBASE].color);
+
+					}else if(mapData.dic[index]){
+
+						unit.SetMainColor(bts[(int)MapType.MYPOS].color);
 
 					}else{
 
-						unit.SetMainColor(Color.green);
+						unit.SetMainColor(bts[(int)MapType.OPPPOSE].color);
 					}
 
 				}else{
 
-					unit.SetMainColor(new Color(0,0,0,0));
+					unit.SetMainColor(bts[(int)MapType.NULL].color);
 				}
 
 				index++;
@@ -154,7 +214,14 @@ public class MapCreator : MonoBehaviour {
 
 		if (!string.IsNullOrEmpty (path)) {
 
-			using(FileStream fs = new FileStream (path, FileMode.CreateNew)){
+			FileInfo fi = new FileInfo(path);
+
+			if(fi.Exists){
+
+				fi.Delete();
+			}
+
+			using(FileStream fs = fi.Create()){
 
 				using(BinaryWriter bw = new BinaryWriter (fs)){
 
@@ -165,28 +232,137 @@ public class MapCreator : MonoBehaviour {
 #endif
 	}
 
+	public void BtClick(int _index){
+
+		nowMapType = (MapType)_index;
+	}
+
 	public void MapUnitUpAsButton(MapUnit _unit){
 
-		if (mapData.dic.ContainsKey (_unit.index)) {
+		_unit.SetMainColor (bts[(int)nowMapType].color);
 
-			if (mapData.dic [_unit.index]) {
+		switch (nowMapType) {
 
-				_unit.SetMainColor (Color.green);
+		case MapType.NULL:
 
-				mapData.dic [_unit.index] = false;
+			if(mapData.dic.ContainsKey(_unit.index)){
 
-			} else {
-
-				_unit.SetMainColor (new Color (0, 0, 0, 0));
-
-				mapData.dic.Remove (_unit.index);
+				mapData.dic.Remove(_unit.index);
 			}
 
-		} else {
+			if(mapData.base1 == _unit.index){
 
-			mapData.dic.Add(_unit.index,true);
+				mapData.base1 = -1;
+			}
 
-			_unit.SetMainColor (Color.red);
+			if(mapData.base2 == _unit.index){
+				
+				mapData.base2 = -1;
+			}
+
+			break;
+
+		case MapType.MYPOS:
+
+			if(mapData.dic.ContainsKey(_unit.index)){
+				
+				mapData.dic[_unit.index] = true;
+
+			}else{
+
+				mapData.dic.Add(_unit.index,true);
+			}
+			
+			if(mapData.base1 == _unit.index){
+				
+				mapData.base1 = -1;
+			}
+			
+			if(mapData.base2 == _unit.index){
+				
+				mapData.base2 = -1;
+			}
+
+			break;
+
+		case MapType.OPPPOSE:
+			
+			if(mapData.dic.ContainsKey(_unit.index)){
+				
+				mapData.dic[_unit.index] = false;
+				
+			}else{
+				
+				mapData.dic.Add(_unit.index,false);
+			}
+			
+			if(mapData.base1 == _unit.index){
+				
+				mapData.base1 = -1;
+			}
+			
+			if(mapData.base2 == _unit.index){
+				
+				mapData.base2 = -1;
+			}
+			
+			break;
+
+		case MapType.MYBASE:
+			
+			if(mapData.dic.ContainsKey(_unit.index)){
+				
+				mapData.dic[_unit.index] = true;
+				
+			}else{
+				
+				mapData.dic.Add(_unit.index,true);
+			}
+			
+			if(mapData.base1 != _unit.index){
+
+				if(mapData.base1 != -1){
+
+					units[mapData.base1].SetMainColor(bts[(int)MapType.MYPOS].color);
+				}
+
+				mapData.base1 = _unit.index;
+			}
+			
+			if(mapData.base2 == _unit.index){
+				
+				mapData.base2 = -1;
+			}
+			
+			break;
+
+		case MapType.OPPBASE:
+			
+			if(mapData.dic.ContainsKey(_unit.index)){
+				
+				mapData.dic[_unit.index] = false;
+				
+			}else{
+				
+				mapData.dic.Add(_unit.index,false);
+			}
+			
+			if(mapData.base1 == _unit.index){
+				
+				mapData.base1 = -1;
+			}
+			
+			if(mapData.base2 != _unit.index){
+
+				if(mapData.base2 != -1){
+					
+					units[mapData.base2].SetMainColor(bts[(int)MapType.OPPPOSE].color);
+				}
+				
+				mapData.base2 = _unit.index;
+			}
+			
+			break;
 		}
 	}
 }

@@ -16,15 +16,13 @@ public class Map
         {
             MapData mapData = new MapData();
 
-			mapData.id = mapSDS.ID;
-
             mapDataDic.Add(mapSDS.ID, mapData);
 
             using (FileStream fs = new FileStream(ConfigDictionary.Instance.map_path + mapSDS.name, FileMode.Open))
             {
                 using (BinaryReader br = new BinaryReader(fs))
                 {
-                    mapData.GetData(br);
+					mapData.GetData(br);
                 }
             }
         }

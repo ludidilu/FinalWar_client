@@ -196,11 +196,13 @@ namespace xy3d.tstd.lib.publicTools
 			return new Vector3((screenPos.x * _canvasRect.sizeDelta.x) - (_canvasRect.sizeDelta.x * 0.5f),(screenPos.y * _canvasRect.sizeDelta.y) - (_canvasRect.sizeDelta.y * 0.5f),screenPos.z);
 		}
 
-		public static Vector3 MousePositionToCanvasPosition(Camera _worldCamera,RectTransform _canvasRect,Vector3 _mousePosition){
+		public static Vector3 MousePositionToCanvasPosition(Canvas _canvas,Vector3 _mousePosition){
 
-			Vector3 screenPos = _worldCamera.ScreenToViewportPoint(_mousePosition);
-			
-			return new Vector3((screenPos.x * _canvasRect.sizeDelta.x) - (_canvasRect.sizeDelta.x * 0.5f),(screenPos.y * _canvasRect.sizeDelta.y) - (_canvasRect.sizeDelta.y * 0.5f),screenPos.z);
+			Vector3 screenPos = _canvas.worldCamera.ScreenToViewportPoint(_mousePosition);
+
+			RectTransform canvasRect = _canvas.transform as RectTransform;
+
+			return new Vector3((screenPos.x * canvasRect.sizeDelta.x) - (canvasRect.sizeDelta.x * 0.5f),(screenPos.y * canvasRect.sizeDelta.y) - (canvasRect.sizeDelta.y * 0.5f),screenPos.z);
 		}
 
 		//场景被卸载时，如果场景上有GameObject从来没有active过，那GameObject所引用的贴图就会残留在内存里了  这个方法就是确保场景上所有GameObject都曾经被active过
