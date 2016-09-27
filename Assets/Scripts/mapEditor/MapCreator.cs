@@ -330,7 +330,7 @@ public class MapCreator : MonoBehaviour {
 			}
 			
 			if(mapData.base2 == _unit.index){
-				
+
 				mapData.base2 = -1;
 			}
 			
