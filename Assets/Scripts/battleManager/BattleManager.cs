@@ -827,6 +827,14 @@ public class BattleManager : MonoBehaviour {
 			ClearMoves();
 
 			CreateMoves();
+
+			ClearSummonHeros();
+
+			CreateSummonHeros();
+
+			ClearCards();
+
+			CreateCards();
 		}
 	}
 
