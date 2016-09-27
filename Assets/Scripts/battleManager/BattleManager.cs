@@ -327,7 +327,7 @@ public class BattleManager : MonoBehaviour {
 				
 				if((battle.mapData.dic[index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(index)){
 
-					if(index == battle.mapData.base2){
+					if((!battle.clientIsMine && index == battle.mapData.base2) || (battle.clientIsMine && index == battle.mapData.base1)){
 
 						unit.SetMainColor(myBaseColor);
 
@@ -338,7 +338,7 @@ public class BattleManager : MonoBehaviour {
 
 				}else{
 
-					if(index == battle.mapData.base1){
+					if((!battle.clientIsMine && index == battle.mapData.base1) || (battle.clientIsMine && index == battle.mapData.base2)){
 						
 						unit.SetMainColor(oppBaseColor);
 						
