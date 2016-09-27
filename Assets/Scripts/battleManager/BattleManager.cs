@@ -145,7 +145,9 @@ public class BattleManager : MonoBehaviour {
 		ConfigDictionary.Instance.LoadLocalConfig(Application.streamingAssetsPath + "/local.xml");
 		
 		StaticData.path = ConfigDictionary.Instance.table_path;
-		
+
+		StaticData.Dispose ();
+
 		StaticData.Load<MapSDS>("map");
 		
 		Map.Init();
