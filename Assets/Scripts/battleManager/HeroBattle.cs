@@ -36,47 +36,25 @@ public class HeroBattle : HeroBase {
 
 	private Hero hero;
 
-	private int summonPos;
+	public bool isMine{
 
-	private bool summonIsMine;
+		get{
+
+			return hero.isMine;
+		}
+	}
 
 	public int pos{
 
 		get{
 
-			if(hero != null){
-
-				return hero.pos;
-
-			}else{
-
-				return summonPos;
-			}
+			return hero.pos;
 		}
 	}
 
-	public bool isMine{
-
-		get{
-
-			if(hero != null){
-
-				return hero.isMine;
-
-			}else{
-
-				return summonIsMine;
-			}
-		}
-	}
-
-	public void Init(int _id,int _pos,bool _isMine){
+	public void Init(int _id){
 		
 		sds = StaticData.GetData<HeroSDS> (_id);
-
-		summonPos = _pos;
-
-		summonIsMine = _isMine;
 
 		SetHp (sds.hp);
 

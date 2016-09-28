@@ -76,51 +76,49 @@ public class BattleManager : MonoBehaviour {
 
 	private HeroCard m_nowChooseCard;
 
-	private HeroCard nowChooseCard{
+	private HeroCard GetNowChooseCard(){
 
-		get{
+		return m_nowChooseCard;
+	}
 
-			return m_nowChooseCard;
+	private void SetNowChooseCard(HeroCard _value){
+
+		if(_value == null){
+			
+			heroDetail.Hide(m_nowChooseCard);
+			
+		}else{
+			
+			heroDetail.Show(_value);
 		}
-
-		set{
-
-			if(value == null){
-
-				heroDetail.Hide(m_nowChooseCard);
-
-			}else{
-
-				heroDetail.Show(value);
-			}
-
-			m_nowChooseCard = value;
-		}
+		
+		m_nowChooseCard = _value;
 	}
 
 	private HeroBattle m_nowChooseHero;
 
-	private HeroBattle nowChooseHero{
+	private HeroBattle GetNowChooseHero(){
 
-		get{
-
-			return m_nowChooseHero;
-		}
-
-		set{
-
-			if(value == null){
-				
-				heroDetail.Hide(m_nowChooseHero);
-				
-			}else{
-				
-				heroDetail.Show(value);
-			}
-
-			m_nowChooseHero = value;
-		}
+		return  m_nowChooseHero;
 	}
+
+	private void SetNowChooseHero(HeroBattle _value,bool _canAction){
+
+		if(_value == null){
+			
+			heroDetail.Hide(m_nowChooseHero);
+			
+		}else{
+			
+			heroDetail.Show(_value);
+		}
+		
+		m_nowChooseHero = _value;
+
+		nowChooseHeroCanAction = _canAction;
+	}
+
+	private bool nowChooseHeroCanAction = false;
 
 	private int movingHeroPos = -1;
 
@@ -508,26 +506,26 @@ public class BattleManager : MonoBehaviour {
 
 	public void MapUnitDown(MapUnit _mapUnit){
 
-		if(nowChooseHero != null && nowChooseHero.isMine == battle.clientIsMine){
+		if(nowChooseHeroCanAction){
 
 			for(int i = 0 ; i < battle.action.Count ; i++){
 
 				KeyValuePair<int,int> pair = battle.action[i];
 
-				if(pair.Key == nowChooseHero.pos){
+				if(pair.Key == GetNowChooseHero().pos){
 
 					if(pair.Value == _mapUnit.index){
 
-						movingHeroPos = nowChooseHero.pos;
+						movingHeroPos = GetNowChooseHero().pos;
 					}
 
 					return;
 				}
 			}
 
-			if(_mapUnit.index == nowChooseHero.pos){
+			if(_mapUnit.index == GetNowChooseHero().pos){
 
-				movingHeroPos = nowChooseHero.pos;
+				movingHeroPos = GetNowChooseHero().pos;
 			}
 		}
 	}
@@ -593,17 +591,17 @@ public class BattleManager : MonoBehaviour {
 
 			HeroBattle summonHero = summonHeroDic [_mapUnit.index];
 
-			if (nowChooseHero == null) {
+			if (GetNowChooseHero() == null) {
 
-				nowChooseHero = summonHero;
+				SetNowChooseHero(summonHero,false);
 
-				nowChooseHero.SetFrameVisible (true);
+				GetNowChooseHero().SetFrameVisible (true);
 
 			} else {
 
-				if (nowChooseHero == summonHero) {
+				if (GetNowChooseHero() == summonHero) {
 
-					nowChooseHero = null;
+					ClearNowChooseHero();
 
 					UnsummonHero (summonHero.cardUid);
 
@@ -611,39 +609,39 @@ public class BattleManager : MonoBehaviour {
 
 					ClearNowChooseHero();
 
-					nowChooseHero = summonHero;
+					SetNowChooseHero(summonHero,false);
 
-					nowChooseHero.SetFrameVisible (true);
+					GetNowChooseHero().SetFrameVisible (true);
 				}
 			}
 			
 		} else if (battle.heroMapDic.ContainsKey (_mapUnit.index)) {
 
 			HeroBattle nowHero = heroDic [_mapUnit.index];
-			
-			if (nowChooseHero == null) {
-				
-				nowChooseHero = nowHero;
-				
-				nowChooseHero.SetFrameVisible (true);
+
+			if (GetNowChooseHero() == null) {
+
+				SetNowChooseHero(nowHero,nowHero.isMine == battle.clientIsMine);
+
+				GetNowChooseHero().SetFrameVisible (true);
 				
 			} else {
 				
-				if (nowChooseHero != nowHero) {
+				if (GetNowChooseHero() != nowHero) {
 
 					ClearNowChooseHero();
-					
-					nowChooseHero = nowHero;
-					
-					nowChooseHero.SetFrameVisible (true);
+
+					SetNowChooseHero(nowHero,nowHero.isMine == battle.clientIsMine);
+
+					GetNowChooseHero().SetFrameVisible (true);
 				}
 			}
 
-		} else if(nowChooseCard != null) {
+		} else if(GetNowChooseCard() != null) {
 
-			if ((battle.mapData.dic [_mapUnit.index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(_mapUnit.index) && nowChooseCard.sds.cost <= GetMoney ()) {
+			if ((battle.mapData.dic [_mapUnit.index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(_mapUnit.index) && GetNowChooseCard().sds.cost <= GetMoney ()) {
 				
-				SummonHero (nowChooseCard.cardUid, _mapUnit.index);
+				SummonHero (GetNowChooseCard().cardUid, _mapUnit.index);
 			}
 
 		}else {
@@ -665,33 +663,33 @@ public class BattleManager : MonoBehaviour {
 
 		ClearNowChooseHero();
 
-		if (nowChooseCard != _hero) {
+		if (GetNowChooseCard() != _hero) {
 
 			ClearNowChooseCard();
 
-			nowChooseCard = _hero;
+			SetNowChooseCard(_hero);
 
-			nowChooseCard.SetFrameVisible(true);
+			GetNowChooseCard().SetFrameVisible(true);
 		}
 	}
 
 	private void ClearNowChooseCard(){
 
-		if (nowChooseCard != null) {
+		if (GetNowChooseCard() != null) {
 
-			nowChooseCard.SetFrameVisible(false);
+			GetNowChooseCard().SetFrameVisible(false);
 
-			nowChooseCard = null;
+			SetNowChooseCard(null);
 		}
 	}
 
 	private void ClearNowChooseHero(){
 
-		if (nowChooseHero != null) {
+		if (GetNowChooseHero() != null) {
 
-			nowChooseHero.SetFrameVisible(false);
+			SetNowChooseHero(null,false);
 
-			nowChooseHero = null;
+			nowChooseHeroCanAction = false;
 		}
 	}
 
@@ -760,7 +758,7 @@ public class BattleManager : MonoBehaviour {
 
 		HeroSDS sds = StaticData.GetData<HeroSDS> (cardID);
 		
-		hero.Init(cardID, _pos, battle.clientIsMine);
+		hero.Init(cardID);
 
 		hero.cardUid = _cardUid;
 
