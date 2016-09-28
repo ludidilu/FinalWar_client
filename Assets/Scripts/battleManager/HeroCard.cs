@@ -15,6 +15,8 @@ public class HeroCard : HeroBase,IPointerClickHandler {
 		sds = StaticData.GetData<HeroSDS> (_id);
 
 		cost.text = sds.cost.ToString ();
+
+		SetBodyColor ();
 	}
 
 	public void OnPointerClick(PointerEventData _data){

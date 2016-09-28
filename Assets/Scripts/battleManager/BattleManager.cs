@@ -10,7 +10,7 @@ using xy3d.tstd.lib.superRaycast;
 
 public class BattleManager : MonoBehaviour {
 
-	public static readonly Color summonColor = new Color (0.2f, 0.8f, 0.8f);
+	public static readonly Color threatColor = new Color (0.2f, 0.8f, 0.8f);
 
 	private const float arrowZFix = -5;
 
@@ -506,6 +506,11 @@ public class BattleManager : MonoBehaviour {
 
 	public void MapUnitDown(MapUnit _mapUnit){
 
+		if(mouseHasExited){
+			
+			mouseHasExited = false;
+		}
+
 		if(nowChooseHeroCanAction){
 
 			for(int i = 0 ; i < battle.action.Count ; i++){
@@ -572,11 +577,6 @@ public class BattleManager : MonoBehaviour {
 		if (movingHeroPos != -1) {
 
 			movingHeroPos = -1;
-
-			if(mouseHasExited){
-
-				mouseHasExited = false;
-			}
 		}
 	}
 
@@ -687,9 +687,9 @@ public class BattleManager : MonoBehaviour {
 
 		if (GetNowChooseHero() != null) {
 
-			SetNowChooseHero(null,false);
+			GetNowChooseHero().SetFrameVisible(false);
 
-			nowChooseHeroCanAction = false;
+			SetNowChooseHero(null,false);
 		}
 	}
 

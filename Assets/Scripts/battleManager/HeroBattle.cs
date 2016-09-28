@@ -26,9 +26,6 @@ public class HeroBattle : HeroBase {
 	private CanvasGroup canvasGroup;
 
 	[SerializeField]
-	private Image body;
-	
-	[SerializeField]
 	protected Text hp;
 
 	[SerializeField]
@@ -56,11 +53,11 @@ public class HeroBattle : HeroBase {
 		
 		sds = StaticData.GetData<HeroSDS> (_id);
 
-		SetHp (sds.hp);
+		hp.gameObject.SetActive (false);
 
-		SetPower (sds.power);
+		power.gameObject.SetActive (false);
 
-		body.color = BattleManager.summonColor;
+		SetBodyColor ();
 	}
 
 	public void Init(Hero _hero){
@@ -72,6 +69,8 @@ public class HeroBattle : HeroBase {
 		RefreshHp ();
 
 		RefreshPower ();
+
+		SetBodyColor ();
 	}
 
 	public void RefreshHp(){

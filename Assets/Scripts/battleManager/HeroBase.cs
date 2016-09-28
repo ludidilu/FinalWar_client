@@ -5,7 +5,10 @@ using UnityEngine.UI;
 public class HeroBase : MonoBehaviour {
 
 	[SerializeField]
-	protected Image frame;
+	private Image frame;
+
+	[SerializeField]
+	private Image body;
 
 	public HeroSDS sds;
 
@@ -19,5 +22,13 @@ public class HeroBase : MonoBehaviour {
 	public void SetFrameColor(Color _color){
 		
 		frame.color = _color;
+	}
+
+	protected void SetBodyColor(){
+
+		if (sds.threat) {
+			
+			body.color = BattleManager.threatColor;
+		}
 	}
 }
