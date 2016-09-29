@@ -42,6 +42,9 @@ public class BattleManager : MonoBehaviour {
 	private RectTransform battleContainer;
 
 	[SerializeField]
+	private RectTransform battleContentContainer;
+
+	[SerializeField]
 	private RectTransform cardContainer;
 
 	[SerializeField]
@@ -350,7 +353,7 @@ public class BattleManager : MonoBehaviour {
 			}
 		}
 		
-		battleContainer.localPosition = new Vector3 (-0.5f * (battle.mapData.mapWidth * mapUnitWidth * sqrt3 * 2) + mapUnitWidth * sqrt3,mapContainerYFix + 0.5f * (battle.mapData.mapHeight * mapUnitWidth * 3 + mapUnitWidth) - mapUnitWidth * 2, 0);
+		battleContentContainer.localPosition = new Vector3 (-0.5f * (battle.mapData.mapWidth * mapUnitWidth * sqrt3 * 2) + mapUnitWidth * sqrt3,mapContainerYFix + 0.5f * (battle.mapData.mapHeight * mapUnitWidth * 3 + mapUnitWidth) - mapUnitWidth * 2, 0);
 	}
 
 	private void CreateCards(){
