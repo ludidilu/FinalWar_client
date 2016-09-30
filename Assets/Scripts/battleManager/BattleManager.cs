@@ -7,6 +7,9 @@ using xy3d.tstd.lib.superTween;
 using System;
 using FinalWar;
 using xy3d.tstd.lib.superRaycast;
+using xy3d.tstd.lib.screenScale;
+using xy3d.tstd.lib.superFunction;
+using xy3d.tstd.lib.publicTools;
 
 public class BattleManager : MonoBehaviour {
 
@@ -19,9 +22,15 @@ public class BattleManager : MonoBehaviour {
 	private const float heroScale = 0.8f;
 	private const float mapContainerYFix = 60;
 	private static readonly float sqrt3 = Mathf.Sqrt (3);
+	private const float scaleStep = 0.95f;
+	private const float minScale = 0.7f;
+	private const float maxScale = 1.3f;
 
 	[SerializeField]
 	private Camera mainCamera;
+
+	[SerializeField]
+	private Canvas canvas;
 
 	[SerializeField]
 	private Color myMapUnitColor;
@@ -65,6 +74,9 @@ public class BattleManager : MonoBehaviour {
 	[SerializeField]
 	private HeroDetail heroDetail;
 
+	[SerializeField]
+	private GameObject backGround;
+
 	private Battle battle;
 
 	private Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit> ();
@@ -76,6 +88,23 @@ public class BattleManager : MonoBehaviour {
 	private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
 
 	private List<GameObject> arrowList = new List<GameObject> ();
+
+	private Vector2 downPos;
+
+	private Vector2 lastPos;
+
+	private enum DownType
+	{
+		NULL,
+		BACKGROUND,
+		MAPUNIT
+	}
+
+	private DownType isDown = DownType.NULL;
+
+	private bool hasMove = false;
+
+	private MapUnit downMapUnit;
 
 	private HeroCard m_nowChooseCard;
 
@@ -143,25 +172,24 @@ public class BattleManager : MonoBehaviour {
 
 		SuperRaycast.checkBlockByUi = true;
 
-		ConfigDictionary.Instance.LoadLocalConfig(Application.streamingAssetsPath + "/local.xml");
+		ConfigDictionary.Instance.LoadLocalConfig (Application.streamingAssetsPath + "/local.xml");
 		
 		StaticData.path = ConfigDictionary.Instance.table_path;
 
 		StaticData.Dispose ();
 
-		StaticData.Load<MapSDS>("map");
+		StaticData.Load<MapSDS> ("map");
 		
-		Map.Init();
+		Map.Init ();
 		
-		StaticData.Load<HeroSDS>("hero");
+		StaticData.Load<HeroSDS> ("hero");
 		
-		Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS>();
+		Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS> ();
 		
-		Dictionary<int, IHeroSDS> newHeroDic = new Dictionary<int, IHeroSDS>();
+		Dictionary<int, IHeroSDS> newHeroDic = new Dictionary<int, IHeroSDS> ();
 		
-		foreach(KeyValuePair<int,HeroSDS> pair in heroDic)
-		{
-			newHeroDic.Add(pair.Key, pair.Value);
+		foreach (KeyValuePair<int,HeroSDS> pair in heroDic) {
+			newHeroDic.Add (pair.Key, pair.Value);
 		}
 
 		StaticData.Load<SkillSDS> ("skill");
@@ -172,7 +200,7 @@ public class BattleManager : MonoBehaviour {
 
 		foreach (KeyValuePair<int,SkillSDS> pair in skillDic) {
 
-			newSkillDic.Add(pair.Key, pair.Value);
+			newSkillDic.Add (pair.Key, pair.Value);
 		}
 
 		StaticData.Load<AuraSDS> ("aura");
@@ -183,16 +211,29 @@ public class BattleManager : MonoBehaviour {
 		
 		foreach (KeyValuePair<int,AuraSDS> pair in auraDic) {
 			
-			newAuraDic.Add(pair.Key, pair.Value);
+			newAuraDic.Add (pair.Key, pair.Value);
 		}
 		
-		Battle.Init(Map.mapDataDic,newHeroDic,newSkillDic,newAuraDic);
+		Battle.Init (Map.mapDataDic, newHeroDic, newSkillDic, newAuraDic);
 		
 		battle = new Battle ();
 
 		battle.ClientSetCallBack (SendData, RefreshData, DoAction);
 		
 		Connection.Instance.Init ("127.0.0.1", 1983, ReceiveData, ConfigDictionary.Instance.uid);
+
+		InitUi ();
+	}
+
+	private void InitUi(){
+
+		SuperFunction.Instance.AddEventListener (ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
+
+		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
+		
+		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButton, GetMouseMove);
+
+		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
 	}
 	
 	private void ReceiveData(byte[] _bytes){
@@ -525,6 +566,10 @@ public class BattleManager : MonoBehaviour {
 					if(pair.Value == _mapUnit.index){
 
 						movingHeroPos = GetNowChooseHero().pos;
+
+					}else{
+
+						MapUnitDownReal(_mapUnit);
 					}
 
 					return;
@@ -535,6 +580,11 @@ public class BattleManager : MonoBehaviour {
 
 				movingHeroPos = GetNowChooseHero().pos;
 			}
+		}
+
+		if (movingHeroPos == -1) {
+
+			MapUnitDownReal(_mapUnit);
 		}
 	}
 
@@ -1213,6 +1263,149 @@ public class BattleManager : MonoBehaviour {
 				
 				hero.ShowHud(str,color,null);
 			}
+		}
+	}
+
+	private void FixBattleContainerRect(){
+		
+		if(battleContainer.localScale.x < 1){
+			
+			battleContainer.anchoredPosition = Vector2.zero;
+			
+		}else{
+			
+			if(battleContainer.anchoredPosition.x - (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x > -(canvas.transform as RectTransform).rect.width / 2){
+				
+				battleContainer.anchoredPosition = new Vector2(-(canvas.transform as RectTransform).rect.width / 2 + (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x,battleContainer.anchoredPosition.y);
+				
+			}else if(battleContainer.anchoredPosition.x + (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x < (canvas.transform as RectTransform).rect.width / 2){
+				
+				battleContainer.anchoredPosition = new Vector2((canvas.transform as RectTransform).rect.width / 2 - (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x,battleContainer.anchoredPosition.y);
+			}
+			
+			if(battleContainer.anchoredPosition.y - (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x > -(canvas.transform as RectTransform).rect.height / 2){
+				
+				battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x,-(canvas.transform as RectTransform).rect.height / 2 + (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x);
+				
+			}else if(battleContainer.anchoredPosition.y + (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x < (canvas.transform as RectTransform).rect.height / 2){
+				
+				battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x,(canvas.transform as RectTransform).rect.height / 2 - (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x);
+			}
+		}
+	}
+
+	private void ScaleChange(SuperEvent e){
+
+		float scrollValue = (float)e.data [0];
+
+		Vector2 mousePosition = (Vector2)e.data [1];
+
+		if(scrollValue < 1){
+			
+			Vector2 v = PublicTools.MousePositionToCanvasPosition(canvas,mousePosition);
+			
+			Vector2 v2 = (v - battleContainer.anchoredPosition) / battleContainer.localScale.x;
+			
+			battleContainer.localScale = battleContainer.localScale * scaleStep;
+
+			if(battleContainer.localScale.x < minScale){
+
+				battleContainer.localScale = new Vector3(minScale,minScale,minScale);
+			}
+			
+			battleContainer.anchoredPosition = v - v2 * battleContainer.localScale.x;
+			
+			FixBattleContainerRect();
+			
+		}else if(scrollValue > 1){
+			
+			Vector2 v = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
+			
+			Vector2 v2 = (v - battleContainer.anchoredPosition) / battleContainer.localScale.x;
+			
+			battleContainer.localScale = battleContainer.localScale / scaleStep;
+
+			if(battleContainer.localScale.x > maxScale){
+				
+				battleContainer.localScale = new Vector3(maxScale,maxScale,maxScale);
+			}
+			
+			battleContainer.anchoredPosition = v - v2 * battleContainer.localScale.x;
+		}
+	}
+
+	private void GetMouseDown(SuperEvent e){
+		
+		if((int)e.data[1] == 0){
+			
+			BackgroundDown();
+		}
+	}
+
+	private void BackgroundDown(){
+
+		downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
+
+		isDown = DownType.BACKGROUND;
+	}
+
+	private void MapUnitDownReal(MapUnit _mapUnit){
+
+		downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
+		
+		isDown = DownType.MAPUNIT;
+
+		downMapUnit = _mapUnit;
+	}
+	
+	private void GetMouseMove(SuperEvent e){
+
+		if (isDown != DownType.NULL) {
+		
+			BackgroundMove ();
+		}
+	}
+
+	private void BackgroundMove(){
+			
+		Vector3 nowPos = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
+
+		if(Vector2.Distance(nowPos,downPos) > 10){
+
+			hasMove = true;
+
+			if(battleContainer.localScale.x > 1){
+			
+				battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x + nowPos.x - lastPos.x,battleContainer.anchoredPosition.y + nowPos.y - lastPos.y);
+				
+				FixBattleContainerRect();
+			}
+		}
+
+		lastPos = nowPos;
+	}
+
+	private void GetMouseUp(SuperEvent e){
+
+		if (isDown != DownType.NULL) {
+
+			if(!hasMove){
+
+				if(isDown == DownType.BACKGROUND){
+
+					BackgroundClick();
+
+				}else{
+
+					MapUnitUpAsButton(downMapUnit);
+				}
+
+			}else{
+
+				hasMove = false;
+			}
+
+			isDown = DownType.NULL;
 		}
 	}
 }

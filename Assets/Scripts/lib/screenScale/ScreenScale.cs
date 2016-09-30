@@ -18,9 +18,11 @@ namespace xy3d.tstd.lib.screenScale{
 
 				if(_Instance == null){
 
-					GameObject go = new GameObject("ScreenScaleGameObject");
+					GameObject tmpGo = new GameObject("ScreenScaleGameObject");
 
-					_Instance = go.AddComponent<ScreenScale>();
+					_Instance = tmpGo.AddComponent<ScreenScale>();
+
+					_Instance.go = tmpGo;
 				}
 
 				return _Instance;
@@ -28,6 +30,8 @@ namespace xy3d.tstd.lib.screenScale{
 		}
 
 		public const string SCALE_CHANGE = "ScaleChange";
+
+		public GameObject go{ get; private set; }
 
 		private float distance = -1;
 
@@ -58,6 +62,15 @@ namespace xy3d.tstd.lib.screenScale{
 			}else if(distance != -1){
 
 				distance = -1;
+			}
+
+			if (Input.mouseScrollDelta.y != 0) {
+
+				SuperEvent e = new SuperEvent(SCALE_CHANGE);
+				
+				e.data = new object[]{1 + Input.mouseScrollDelta.y,(Vector2)Input.mousePosition};
+				
+				SuperFunction.Instance.DispatchEvent(gameObject,e);
 			}
 		}
 	}
