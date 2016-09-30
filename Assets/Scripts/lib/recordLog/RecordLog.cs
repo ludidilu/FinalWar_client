@@ -124,62 +124,64 @@ public class RecordLog{
 
 	private static void UnityLogCallback(string condition, string stackTrace, LogType type)
 	{
+		bool isError = true;
+
 		string str = "";
 
 		switch (type) {
+
+		case LogType.Warning:
+		
+			return;
 			
 		case LogType.Assert:
 		case LogType.Error:
 		case LogType.Exception:
-		case LogType.Warning:
+
 			str = string.Format("{0}, {1}",condition,stackTrace);
+
+			isError = true;
+
 			break;
 
 		case LogType.Log:
-//			str = string.Format("{0}",condition);
+
+			str = string.Format("{0}",condition);
+
+			isError = false;
+
 			break;
-			
 		}
 
         Write(str);
-
-        bool tempbool = true;
-
-        foreach (string f in filterError)
+        
+		if (isError)
         {
-            if (condition.IndexOf(f) != -1)
+			foreach (string f in filterError)
+			{
+				if (condition.Contains(f))
+				{
+					return;
+				}
+			}
+
+            try
             {
-                tempbool = false;
-                break;
+                if (!Directory.Exists(Application.persistentDataPath + ERROR_PATH))
+                {
+                    Directory.CreateDirectory(Application.persistentDataPath + ERROR_PATH);
+                }
             }
-        }
-        if (tempbool)
-        {
-            string errorStr;
-
-            switch (type)
+            catch (Exception e)
             {
+            }
+            finally { }
 
-                case LogType.Error:
-                case LogType.Exception:
+			Stop();
 
-                    try
-                    {
-                        if (!Directory.Exists(Application.persistentDataPath + ERROR_PATH))
-                        {
-                            Directory.CreateDirectory(Application.persistentDataPath + ERROR_PATH);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    finally { }
+			FileInfo fi = new FileInfo(Application.persistentDataPath + "/" + LOG_FILE_NAME);
 
-					Stop();
-
-					FileInfo fi = new FileInfo(Application.persistentDataPath + "/" + LOG_FILE_NAME);
-
-					fi.CopyTo(Application.persistentDataPath + ERROR_PATH + "/" + string.Format("{0:yyyy-MM-dd-HH-mm-ss-ffffff}", DateTime.Now) + ".error");
+			fi.CopyTo(Application.persistentDataPath + ERROR_PATH + "/" + string.Format("{0:yyyy-MM-dd-HH-mm-ss-ffffff}", DateTime.Now) + ".error");
 
 //                    errorStr = string.Format("{0}, {1}", condition, stackTrace);
 //                    StreamWriter errorSW = new StreamWriter(Application.persistentDataPath + ERROR_PATH + "/" + (DateTime.Now.ToFileTime().ToString()) + ".error");
@@ -188,17 +190,16 @@ public class RecordLog{
 //                    errorSW.Flush();
 //                    errorSW.Close();
 
-                    Action quitCall = delegate()
-                    {
-                        Application.Quit();
-                    };
+            
 #if PLATFORM_ANDROID
-        UseFulUtil.Instance.ShowDialogOne("游戏出错,请退出游戏再进入!!!", "出错", quitCall);
+
+			Action quitCall = delegate()
+			{
+				Application.Quit();
+			};
+
+        	UseFulUtil.Instance.ShowDialogOne("游戏出错,请退出游戏再进入!!!", "出错", quitCall);
 #endif
-                    break;
-
-            }
-
         }
 	}
 

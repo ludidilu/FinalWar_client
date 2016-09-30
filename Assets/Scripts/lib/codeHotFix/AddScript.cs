@@ -86,15 +86,21 @@ public class AddScript : MonoBehaviour {
 
 		if(superScrollRectContent != null){
 
-			SuperScrollRect scrollRect = script as SuperScrollRect;
-
-			scrollRect.content = superScrollRectContent;
-
-			scrollRect.vertical = superScrollRectIsVertical;
-
-			scrollRect.horizontal = superScrollRectIsHorizontal;
-
-			scrollRect.movementType = superScrollRectMovementType;
+			PropertyInfo pi = type.GetProperty("content");
+			
+			pi.SetValue(script,superScrollRectContent,null);
+			
+			pi = type.GetProperty("vertical");
+			
+			pi.SetValue(script,superScrollRectIsVertical,null);
+			
+			pi = type.GetProperty("horizontal");
+			
+			pi.SetValue(script,superScrollRectIsHorizontal,null);
+			
+			pi = type.GetProperty("movementType");
+			
+			pi.SetValue(script,superScrollRectMovementType,null);
 		}
 
 		return script;

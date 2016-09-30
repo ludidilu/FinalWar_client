@@ -7,7 +7,7 @@ public class SuperDebug{
 	public static void Log(object _str){
 		#if !LOG_DISABLE
 		Debug.Log(_str);
-		RecordLog.Write(_str as String);
+//		RecordLog.Write(_str as String);
 		#endif
 	}
 
