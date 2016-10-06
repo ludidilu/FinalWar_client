@@ -93,6 +93,8 @@ public class BattleManager : MonoBehaviour {
 
 	private Vector2 lastPos;
 
+	private GameObject mapGo;
+
 	private enum DownType
 	{
 		NULL,
@@ -335,11 +337,16 @@ public class BattleManager : MonoBehaviour {
 
 	private void CreateMapPanel(){
 
-		GameObject newGo = new GameObject ();
-		
-		newGo.transform.SetParent (mapContainer, false);
+		if (mapGo != null) {
 
-		MeshRenderer mr = newGo.AddComponent<MeshRenderer> ();
+			Destroy(mapGo);
+		}
+
+		mapGo = GameObject.Instantiate (Resources.Load<GameObject> ("MapGo"));
+		
+		mapGo.transform.SetParent (mapContainer, false);
+
+		MeshRenderer mr = mapGo.GetComponent<MeshRenderer> ();
 
 		mr.material = new Material (Shader.Find("Unlit/MapUnit"));
 
@@ -412,7 +419,7 @@ public class BattleManager : MonoBehaviour {
 
 		Mesh mesh = PublicTools.CombineMeshs (gos);
 
-		MeshFilter mf = newGo.AddComponent<MeshFilter> ();
+		MeshFilter mf = mapGo.GetComponent<MeshFilter> ();
 
 		mf.mesh = mesh;
 
