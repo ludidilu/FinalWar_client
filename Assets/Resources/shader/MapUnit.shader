@@ -36,7 +36,6 @@
 				
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				
-				
 				return o;
 			}
 			

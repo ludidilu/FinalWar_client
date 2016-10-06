@@ -1394,16 +1394,18 @@ public class BattleManager : MonoBehaviour {
 			
 		Vector3 nowPos = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
 
-		if(Vector2.Distance(nowPos,downPos) > 10){
+		if(!hasMove && Vector2.Distance(nowPos,downPos) > 10){
 
 			hasMove = true;
 
-			if(battleContainer.localScale.x > 1){
+			SuperRaycast.checkBlockByUi = false;
+		}
+
+		if(hasMove && battleContainer.localScale.x > 1){
 			
-				battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x + nowPos.x - lastPos.x,battleContainer.anchoredPosition.y + nowPos.y - lastPos.y);
-				
-				FixBattleContainerRect();
-			}
+			battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x + nowPos.x - lastPos.x,battleContainer.anchoredPosition.y + nowPos.y - lastPos.y);
+			
+			FixBattleContainerRect();
 		}
 
 		lastPos = nowPos;
@@ -1425,6 +1427,8 @@ public class BattleManager : MonoBehaviour {
 				}
 
 			}else{
+
+				SuperRaycast.checkBlockByUi = true;
 
 				hasMove = false;
 			}
