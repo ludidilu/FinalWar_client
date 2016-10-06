@@ -258,9 +258,9 @@ namespace xy3d.tstd.lib.superRaycast{
 
 						downObjs.Add(hit.collider.gameObject);
 
-						SuperEvent enterEvent = new SuperEvent(GetMouseEnter);
-							
-						SuperFunction.Instance.DispatchEvent(hit.collider.gameObject,enterEvent);
+//						SuperEvent enterEvent = new SuperEvent(GetMouseEnter);
+//							
+//						SuperFunction.Instance.DispatchEvent(hit.collider.gameObject,enterEvent);
 							
 						SuperEvent e = new SuperEvent(GetMouseButtonDown);
 						

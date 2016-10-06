@@ -584,6 +584,11 @@ public class BattleManager : MonoBehaviour {
 			mouseHasExited = false;
 		}
 
+		if (movingHeroPos != -1) {
+			
+			movingHeroPos = -1;
+		}
+
 		if(nowChooseHeroCanAction){
 
 			for(int i = 0 ; i < battle.action.Count ; i++){
@@ -654,13 +659,13 @@ public class BattleManager : MonoBehaviour {
 		}
 	}
 
-	public void MapUnitUp(MapUnit _mapUnit){
-
-		if (movingHeroPos != -1) {
-
-			movingHeroPos = -1;
-		}
-	}
+//	public void MapUnitUp(MapUnit _mapUnit){
+//
+//		if (movingHeroPos != -1) {
+//
+//			movingHeroPos = -1;
+//		}
+//	}
 
 	public void MapUnitUpAsButton(MapUnit _mapUnit){
 
