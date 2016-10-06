@@ -9,7 +9,19 @@ public class MapUnit : MonoBehaviour {
 	[SerializeField]
 	private MeshRenderer mainMr;
 
-	public int index;
+	private MeshRenderer mr;
+
+	public int index{ private set; get; }
+
+	private int index2;
+
+	public void Init(int _index,int _index2,MeshRenderer _mr){
+
+		index = _index;
+		index2 = _index2;
+
+		mr = _mr;
+	}
 
 	// Use this for initialization
 	void Awake () {
@@ -28,6 +40,11 @@ public class MapUnit : MonoBehaviour {
 	public void SetMainColor(Color _color){
 
 		mainMr.material.SetColor ("_Color", _color);
+
+		if (mr != null) {
+
+			mr.material.SetVector("colors" + index2,_color);
+		}
 	}
 
 	private void GetMouseDown(SuperEvent e){

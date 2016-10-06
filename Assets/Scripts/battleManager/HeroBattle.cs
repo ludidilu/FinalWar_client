@@ -51,7 +51,9 @@ public class HeroBattle : HeroBase {
 
 	public void Init(int _id){
 		
-		sds = StaticData.GetData<HeroSDS> (_id);
+		HeroSDS heroSDS = StaticData.GetData<HeroSDS> (_id);
+
+		InitCard (heroSDS);
 
 		hp.gameObject.SetActive (false);
 
@@ -64,7 +66,7 @@ public class HeroBattle : HeroBase {
 
 		hero = _hero;
 
-		sds = hero.sds as HeroSDS;
+		InitCard (hero.sds as HeroSDS);
 
 		RefreshHp ();
 

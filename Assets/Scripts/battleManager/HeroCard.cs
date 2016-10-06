@@ -12,7 +12,9 @@ public class HeroCard : HeroBase,IPointerClickHandler {
 
 		cardUid = _cardUid;
 
-		sds = StaticData.GetData<HeroSDS> (_id);
+		HeroSDS heroSDS = StaticData.GetData<HeroSDS> (_id);
+
+		InitCard (heroSDS);
 
 		cost.text = sds.cost.ToString ();
 

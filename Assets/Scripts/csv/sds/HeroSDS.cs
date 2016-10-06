@@ -11,6 +11,8 @@
 	public int leader;
 	public int[] skills;
 	public int[] auras;
+
+	public string name;
 	
 	public int GetID()
 	{

@@ -394,8 +394,10 @@ namespace xy3d.tstd.lib.publicTools
 			CombineInstance[] cis = new CombineInstance[num];
 			
 			for(int i = 0 ; i < num ; i++){
+
+				GameObject go = _gos[i];
 				
-				MeshFilter mf = _gos[i].GetComponent<MeshFilter>();
+				MeshFilter mf = go.GetComponent<MeshFilter>();
 				
 				Mesh tmpMesh = mf.mesh;
 				
@@ -403,15 +405,18 @@ namespace xy3d.tstd.lib.publicTools
 				
 				for(int m = 0 ; m < tmpMesh.vertexCount ; m++){
 					
-					ts[m] = new Vector4(i,0,0,0);
+					ts[m] = new Vector4(i,i,i,i);
 				}
 				
 				tmpMesh.tangents = ts;
 				
 				cis[i].mesh = tmpMesh;
-				cis[i].transform = _gos[i].transform.localToWorldMatrix;
+
+//				cis[i].transform = _gos[i].transform.localToWorldMatrix;
+
+				cis[i].transform = Matrix4x4.TRS(go.transform.localPosition,go.transform.localRotation,go.transform.localScale);
 				
-				SetGameObjectVisible(_gos[i],false);
+				SetGameObjectVisible(go,false);
 			}
 			
 			mesh.CombineMeshes(cis);

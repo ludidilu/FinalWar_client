@@ -334,8 +334,20 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	private void CreateMapPanel(){
+
+		GameObject newGo = new GameObject ();
+		
+		newGo.transform.SetParent (mapContainer, false);
+
+		MeshRenderer mr = newGo.AddComponent<MeshRenderer> ();
+
+		mr.material = new Material (Shader.Find("Unlit/MapUnit"));
+
+		GameObject[] gos = new GameObject[battle.mapData.dic.Count];
 		
 		int index = 0;
+
+		int index2 = 0;
 		
 		for (int i = 0; i < battle.mapData.mapHeight; i++) {
 			
@@ -365,8 +377,8 @@ public class BattleManager : MonoBehaviour {
 
 				mapUnitDic.Add(index,unit);
 
-				unit.index = index;
-				
+				unit.Init(index,index2,mr);
+
 				if((battle.mapData.dic[index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(index)){
 
 					if((!battle.clientIsMine && index == battle.mapData.base2) || (battle.clientIsMine && index == battle.mapData.base1)){
@@ -391,9 +403,19 @@ public class BattleManager : MonoBehaviour {
 				}
 					
 				index++;
+
+				gos[index2] = go;
+
+				index2++;
 			}
 		}
-		
+
+		Mesh mesh = PublicTools.CombineMeshs (gos);
+
+		MeshFilter mf = newGo.AddComponent<MeshFilter> ();
+
+		mf.mesh = mesh;
+
 		battleContentContainer.localPosition = new Vector3 (-0.5f * (battle.mapData.mapWidth * mapUnitWidth * sqrt3 * 2) + mapUnitWidth * sqrt3,mapContainerYFix + 0.5f * (battle.mapData.mapHeight * mapUnitWidth * 3 + mapUnitWidth) - mapUnitWidth * 2, 0);
 	}
 
@@ -963,6 +985,8 @@ public class BattleManager : MonoBehaviour {
 		Hero hero = battle.heroMapDic [_vo.pos];
 
 		HeroBattle heroBattle = AddHeroToMap (hero);
+
+		heroBattle.transform.localScale = Vector3.zero;
 
 		Action<float> toDel = delegate(float obj) {
 

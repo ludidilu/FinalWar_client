@@ -10,10 +10,20 @@ public class HeroBase : MonoBehaviour {
 	[SerializeField]
 	private Image body;
 
-	public HeroSDS sds;
+	[SerializeField]
+	private Text nameText;
+
+	public HeroSDS sds{ get; private set;}
 
 	public int cardUid;
-	
+
+	protected void InitCard(HeroSDS _heroSDS){
+
+		sds = _heroSDS;
+
+		nameText.text = sds.name;
+	}
+
 	public void SetFrameVisible(bool _visible){
 		
 		frame.gameObject.SetActive (_visible);
