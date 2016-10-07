@@ -13,6 +13,7 @@
 	public int[] auras;
 
 	public string name;
+	public string comment;
 	
 	public int GetID()
 	{
