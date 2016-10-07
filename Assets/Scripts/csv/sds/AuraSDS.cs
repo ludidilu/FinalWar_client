@@ -16,4 +16,6 @@
 	{
 		return auraDatas;
 	}
+
+	public string comment;
 }

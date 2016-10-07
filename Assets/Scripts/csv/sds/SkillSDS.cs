@@ -26,4 +26,6 @@
 	{
 		return skillDatas;
 	}
+
+	public string comment;
 }
