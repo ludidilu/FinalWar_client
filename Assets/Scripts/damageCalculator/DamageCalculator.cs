@@ -77,9 +77,9 @@ public class DamageCalculator : MonoBehaviour {
 		
 		if(Check(out attacker,out defender)){
 			
-			int damage = attacker.GetCounterDamage();
+			int damage = defender.GetCounterDamage();
 			
-			damage = defender.BeDamage(damage);
+			damage = attacker.BeDamage(damage);
 			
 			info.text = damage.ToString();
 		}
