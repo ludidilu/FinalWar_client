@@ -155,7 +155,7 @@ public class BattleManager : MonoBehaviour {
 
 	private bool nowChooseHeroCanAction = false;
 
-	private int movingHeroPos = -1;
+	private bool isDoingHeroAction = false;
 
 	private bool mouseHasExited = false;
 
@@ -240,7 +240,7 @@ public class BattleManager : MonoBehaviour {
 		
 		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButton, GetMouseMove);
 
-		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
+//		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
 	}
 	
 	private void ReceiveData(byte[] _bytes){
@@ -618,15 +618,7 @@ public class BattleManager : MonoBehaviour {
 
 	public void MapUnitDown(MapUnit _mapUnit){
 
-		if(mouseHasExited){
-			
-			mouseHasExited = false;
-		}
-
-		if (movingHeroPos != -1) {
-			
-			movingHeroPos = -1;
-		}
+		MapUnitDownReal(_mapUnit);
 
 		if(nowChooseHeroCanAction){
 
@@ -638,11 +630,7 @@ public class BattleManager : MonoBehaviour {
 
 					if(pair.Value == _mapUnit.index){
 
-						movingHeroPos = GetNowChooseHero().pos;
-
-					}else{
-
-						MapUnitDownReal(_mapUnit);
+						isDoingHeroAction = true;
 					}
 
 					return;
@@ -651,21 +639,16 @@ public class BattleManager : MonoBehaviour {
 
 			if(_mapUnit.index == GetNowChooseHero().pos){
 
-				movingHeroPos = GetNowChooseHero().pos;
+				isDoingHeroAction = true;
 			}
-		}
-
-		if (movingHeroPos == -1) {
-
-			MapUnitDownReal(_mapUnit);
 		}
 	}
 
 	public void MapUnitEnter(MapUnit _mapUnit){
 
-		if (movingHeroPos != -1) {
+		if (isDoingHeroAction) {
 
-			if(battle.ClientRequestAction(movingHeroPos,_mapUnit.index)){
+			if(battle.ClientRequestAction(GetNowChooseHero().pos,_mapUnit.index)){
 
 				ClearMoves();
 				
@@ -676,7 +659,7 @@ public class BattleManager : MonoBehaviour {
 
 	public void MapUnitExit(MapUnit _mapUnit){
 
-		if (movingHeroPos != -1) {
+		if (isDoingHeroAction) {
 
 			mouseHasExited = true;
 
@@ -684,9 +667,9 @@ public class BattleManager : MonoBehaviour {
 				
 				KeyValuePair<int,int> pair = battle.action[i];
 				
-				if(pair.Key == movingHeroPos){
+				if(pair.Key == GetNowChooseHero().pos){
 
-					battle.ClientRequestUnaction(movingHeroPos);
+					battle.ClientRequestUnaction(GetNowChooseHero().pos);
 
 					ClearMoves();
 
@@ -939,6 +922,11 @@ public class BattleManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+		if (Input.GetMouseButtonUp (0)) {
+
+			GetMouseUp();
+		}
 	
 		if (Input.GetKeyUp (KeyCode.F5)) {
 
@@ -1464,7 +1452,7 @@ public class BattleManager : MonoBehaviour {
 			SuperRaycast.checkBlockByUi = false;
 		}
 
-		if(hasMove && battleContainer.localScale.x > 1){
+		if(!isDoingHeroAction && hasMove && battleContainer.localScale.x > 1){
 			
 			battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x + nowPos.x - lastPos.x,battleContainer.anchoredPosition.y + nowPos.y - lastPos.y);
 			
@@ -1474,7 +1462,7 @@ public class BattleManager : MonoBehaviour {
 		lastPos = nowPos;
 	}
 
-	private void GetMouseUp(SuperEvent e){
+	private void GetMouseUp(){
 
 		if (isDown != DownType.NULL) {
 
@@ -1497,6 +1485,16 @@ public class BattleManager : MonoBehaviour {
 			}
 
 			isDown = DownType.NULL;
+		}
+
+		if (mouseHasExited) {
+
+			mouseHasExited = false;
+		}
+
+		if (isDoingHeroAction) {
+
+			isDoingHeroAction = false;
 		}
 	}
 
