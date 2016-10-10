@@ -275,6 +275,15 @@ public class BattleManager : MonoBehaviour {
 		CreateMoneyTf ();
 
 		RefreshTouchable ();
+
+		if (battle.clientIsMine) {
+
+			SuperDebug.Log ("myWin:" + battle.mWin + "  oppWin:" + battle.oWin);
+
+		} else {
+
+			SuperDebug.Log ("myWin:" + battle.oWin + "  oppWin:" + battle.mWin);
+		}
 	}
 
 	private void ClearMapUnits(){
