@@ -10,6 +10,7 @@ using xy3d.tstd.lib.superRaycast;
 using xy3d.tstd.lib.screenScale;
 using xy3d.tstd.lib.superFunction;
 using xy3d.tstd.lib.publicTools;
+using xy3d.tstd.lib.superGraphicRaycast;
 
 public class BattleManager : MonoBehaviour {
 
@@ -45,9 +46,6 @@ public class BattleManager : MonoBehaviour {
 	private Color oppBaseColor;
 
 	[SerializeField]
-	private GraphicRaycaster graphicRayCaster;
-
-	[SerializeField]
 	private RectTransform battleContainer;
 
 	[SerializeField]
@@ -76,6 +74,9 @@ public class BattleManager : MonoBehaviour {
 
 	[SerializeField]
 	private GameObject backGround;
+
+	[SerializeField]
+	private AlertPanel alertPanel;
 
 	private Battle battle;
 
@@ -157,6 +158,10 @@ public class BattleManager : MonoBehaviour {
 	private int movingHeroPos = -1;
 
 	private bool mouseHasExited = false;
+
+	private bool canAction = true;
+
+	private bool isInit = false;
 
 	private void WriteLog(string _str){
 
@@ -250,6 +255,13 @@ public class BattleManager : MonoBehaviour {
 
 	private void RefreshData(){
 
+		if (!isInit) {
+
+			isInit = true;
+
+			actionBt.SetActive(true);
+		}
+
 		heroDetail.Hide();
 
 		ClearMapUnits ();
@@ -276,13 +288,31 @@ public class BattleManager : MonoBehaviour {
 
 		RefreshTouchable ();
 
-		if (battle.clientIsMine) {
+		if (battle.mWin && battle.oWin) {
 
-			SuperDebug.Log ("myWin:" + battle.mWin + "  oppWin:" + battle.oWin);
+			Alert ("Draw!");
 
-		} else {
+		} else if (battle.mWin) {
 
-			SuperDebug.Log ("myWin:" + battle.oWin + "  oppWin:" + battle.mWin);
+			if (battle.clientIsMine) {
+				
+				Alert ("You win!");
+				
+			} else {
+
+				Alert ("You lose!");
+			}
+
+		} else if (battle.oWin) {
+
+			if (battle.clientIsMine) {
+				
+				Alert ("You lose!");
+				
+			} else {
+				
+				Alert ("You win!");
+			}
 		}
 	}
 
@@ -934,16 +964,28 @@ public class BattleManager : MonoBehaviour {
 
 	private void RefreshTouchable(){
 
-		bool touchable = !(battle.clientIsMine ? battle.mOver : battle.oOver);
+		bool tmpCanAction = !(battle.clientIsMine ? battle.mOver : battle.oOver);
 
-		graphicRayCaster.enabled = touchable;
+		if (canAction && !tmpCanAction) {
 
-		if (SuperRaycast.GetIsOpen () != touchable) {
+			SuperGraphicRaycast.SetIsOpen (false, "a");
 
-			SuperRaycast.SetIsOpen (touchable, "a");
+			SuperRaycast.SetIsOpen (false, "a");
+
+			actionBt.SetActive (false);
+
+			canAction = tmpCanAction;
+
+		} else if (!canAction && tmpCanAction) {
+
+			SuperGraphicRaycast.SetIsOpen (true, "a");
+			
+			SuperRaycast.SetIsOpen (true, "a");
+
+			actionBt.SetActive (true);
+
+			canAction = tmpCanAction;
 		}
-
-		actionBt.SetActive (touchable);
 	}
 
 	private void DoAction(IEnumerator<ValueType> _enumerator){
@@ -1456,5 +1498,10 @@ public class BattleManager : MonoBehaviour {
 
 			isDown = DownType.NULL;
 		}
+	}
+
+	private void Alert(string _str){
+
+		alertPanel.Alert (_str);
 	}
 }
