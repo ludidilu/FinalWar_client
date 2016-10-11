@@ -179,26 +179,10 @@ public class BattleManager : MonoBehaviour {
 
 		SuperRaycast.checkBlockByUi = true;
 
-		ConfigDictionary.Instance.LoadLocalConfig (Application.streamingAssetsPath + "/local.xml");
-		
-		StaticData.path = ConfigDictionary.Instance.table_path;
-
-		StaticData.Dispose ();
-
-		StaticData.Load<MapSDS> ("map");
-		
-		Map.Init ();
-		
-		StaticData.Load<HeroSDS> ("hero");
-		
 		Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS> ();
-
-		StaticData.Load<SkillSDS> ("skill");
 
 		Dictionary<int, SkillSDS> skillDic = StaticData.GetDic<SkillSDS> ();
 
-		StaticData.Load<AuraSDS> ("aura");
-		
 		Dictionary<int, AuraSDS> auraDic = StaticData.GetDic<AuraSDS> ();
 
 		Battle.Init (Map.mapDataDic, heroDic, skillDic, auraDic);
@@ -207,8 +191,6 @@ public class BattleManager : MonoBehaviour {
 
 		battle.ClientSetCallBack (SendData, RefreshData, DoAction);
 		
-		Connection.Instance.Init ("127.0.0.1", 1983, ReceiveData, ConfigDictionary.Instance.uid);
-
 		InitUi ();
 	}
 
@@ -223,28 +205,9 @@ public class BattleManager : MonoBehaviour {
 //		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
 	}
 	
-	private void ReceiveData(byte[] _bytes){
+	public void ReceiveData(byte[] _bytes){
 
-		using(MemoryStream ms = new MemoryStream(_bytes)){
-
-			using(BinaryReader br = new BinaryReader(ms)){
-
-				short type = br.ReadInt16();
-
-				if(type == 1){
-
-					short length = br.ReadInt16();
-
-					byte[] bytes = br.ReadBytes(length);
-
-					battle.ClientGetPackage (bytes);
-
-				}else if(type == 0){
-
-
-				}
-			}
-		}
+		battle.ClientGetPackage (_bytes);
 	}
 
 	private void SendData(MemoryStream _ms){
