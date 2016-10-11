@@ -169,7 +169,7 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 
 		Log.Init (WriteLog);
 
@@ -192,36 +192,16 @@ public class BattleManager : MonoBehaviour {
 		StaticData.Load<HeroSDS> ("hero");
 		
 		Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS> ();
-		
-		Dictionary<int, IHeroSDS> newHeroDic = new Dictionary<int, IHeroSDS> ();
-		
-		foreach (KeyValuePair<int,HeroSDS> pair in heroDic) {
-			newHeroDic.Add (pair.Key, pair.Value);
-		}
 
 		StaticData.Load<SkillSDS> ("skill");
 
 		Dictionary<int, SkillSDS> skillDic = StaticData.GetDic<SkillSDS> ();
 
-		Dictionary<int, ISkillSDS> newSkillDic = new Dictionary<int, ISkillSDS> ();
-
-		foreach (KeyValuePair<int,SkillSDS> pair in skillDic) {
-
-			newSkillDic.Add (pair.Key, pair.Value);
-		}
-
 		StaticData.Load<AuraSDS> ("aura");
 		
 		Dictionary<int, AuraSDS> auraDic = StaticData.GetDic<AuraSDS> ();
-		
-		Dictionary<int, IAuraSDS> newAuraDic = new Dictionary<int, IAuraSDS> ();
-		
-		foreach (KeyValuePair<int,AuraSDS> pair in auraDic) {
-			
-			newAuraDic.Add (pair.Key, pair.Value);
-		}
-		
-		Battle.Init (Map.mapDataDic, newHeroDic, newSkillDic, newAuraDic);
+
+		Battle.Init (Map.mapDataDic, heroDic, skillDic, auraDic);
 		
 		battle = new Battle ();
 
@@ -245,7 +225,26 @@ public class BattleManager : MonoBehaviour {
 	
 	private void ReceiveData(byte[] _bytes){
 
-		battle.ClientGetPackage (_bytes);
+		using(MemoryStream ms = new MemoryStream(_bytes)){
+
+			using(BinaryReader br = new BinaryReader(ms)){
+
+				short type = br.ReadInt16();
+
+				if(type == 1){
+
+					short length = br.ReadInt16();
+
+					byte[] bytes = br.ReadBytes(length);
+
+					battle.ClientGetPackage (bytes);
+
+				}else if(type == 0){
+
+
+				}
+			}
+		}
 	}
 
 	private void SendData(MemoryStream _ms){
@@ -318,6 +317,11 @@ public class BattleManager : MonoBehaviour {
 
 	private void ClearMapUnits(){
 
+		if (mapGo != null) {
+			
+			Destroy(mapGo);
+		}
+
 		Dictionary<int,MapUnit>.ValueCollection.Enumerator enumerator = mapUnitDic.Values.GetEnumerator ();
 		
 		while (enumerator.MoveNext()) {
@@ -375,11 +379,6 @@ public class BattleManager : MonoBehaviour {
 	}
 
 	private void CreateMapPanel(){
-
-		if (mapGo != null) {
-
-			Destroy(mapGo);
-		}
 
 		mapGo = GameObject.Instantiate (Resources.Load<GameObject> ("MapGo"));
 		
