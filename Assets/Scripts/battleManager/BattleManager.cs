@@ -896,7 +896,7 @@ public class BattleManager : MonoBehaviour {
 
 		} else if (Input.GetKeyUp (KeyCode.A)) {
 
-			HeroAi.Start(battle,battle.clientIsMine,0);
+			HeroAi.Start(battle,battle.clientIsMine,0.2);
 
 			ClearMoves();
 
