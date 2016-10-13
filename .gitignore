@@ -58,6 +58,7 @@ Assets/TextMesh Pro/Examples/
 Assets/PlayGround/
 Assets/PlayGround.meta
 Assets/StreamingAssets/*
+Assets/StreamingAssets.meta
 /Assets/UnityVS
 /UnityVS.tstd_client.CSharp.Editor.csproj
 /UnityVS.tstd_client.sln
