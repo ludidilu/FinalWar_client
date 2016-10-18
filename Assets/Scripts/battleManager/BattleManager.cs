@@ -16,8 +16,6 @@ public class BattleManager : MonoBehaviour {
 
 	public static readonly Color threatColor = new Color (0.2f, 0.8f, 0.8f);
 
-	private const float arrowZFix = -5;
-
 	private const float mapUnitWidth = 30;
 	private const float mapUnitScale = 55;
 	private const float heroScale = 0.8f;

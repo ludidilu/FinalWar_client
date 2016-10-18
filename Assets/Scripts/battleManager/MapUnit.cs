@@ -71,4 +71,10 @@ public class MapUnit : MonoBehaviour {
 
 		SendMessageUpwards ("MapUnitUpAsButton", this, SendMessageOptions.DontRequireReceiver);
 	}
+
+#if UNITY_EDITOR
+
+
+
+#endif
 }
