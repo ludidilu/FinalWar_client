@@ -385,7 +385,7 @@ public class BattleManager : MonoBehaviour {
 
 				unit.Init(index,index2,mr);
 
-				if((battle.mapData.dic[index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(index)){
+				if(battle.GetPosIsMine(index) == battle.clientIsMine){
 
 					if((!battle.clientIsMine && index == battle.mapData.base2) || (battle.clientIsMine && index == battle.mapData.base1)){
 
@@ -708,7 +708,7 @@ public class BattleManager : MonoBehaviour {
 
 		} else if(GetNowChooseCard() != null) {
 
-			if ((battle.mapData.dic [_mapUnit.index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(_mapUnit.index) && GetNowChooseCard().sds.cost <= GetMoney ()) {
+			if (battle.GetPosIsMine(_mapUnit.index) == battle.clientIsMine && GetNowChooseCard().sds.cost <= GetMoney ()) {
 				
 				SummonHero (GetNowChooseCard().cardUid, _mapUnit.index);
 			}
@@ -1110,7 +1110,7 @@ public class BattleManager : MonoBehaviour {
 
 							MapUnit unit = mapUnitDic[index];
 
-							if((battle.mapData.dic[index] == battle.clientIsMine) != battle.mapBelongDic.ContainsKey(index)){
+							if(battle.GetPosIsMine(index) == battle.clientIsMine){
 								
 								unit.SetMainColor(myMapUnitColor);
 								

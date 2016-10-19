@@ -3,6 +3,7 @@
 	public int hp;
 	public int power;
 	public int cost;
+	public bool canControl;
 	public bool threat;
 	public int attack;
 	public int shoot;
@@ -27,6 +28,10 @@
 	public int GetCost()
 	{
 		return cost;
+	}
+	public bool GetCanControl()
+	{
+		return canControl;
 	}
 	public bool GetThreat()
 	{

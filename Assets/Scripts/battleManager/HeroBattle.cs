@@ -11,6 +11,7 @@ public class HeroBattle : HeroBase {
 	private static readonly Color[] POWER_COLORS = new Color[]{
 
 		Color.red,
+		Color.magenta,
 		Color.yellow,
 		Color.blue,
 		Color.green
