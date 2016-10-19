@@ -88,6 +88,8 @@ public class BattleManager : MonoBehaviour {
 
 	private List<GameObject> arrowList = new List<GameObject> ();
 
+	private List<GameObject> autoActionArrowList = new List<GameObject>();
+
 	private Vector2 downPos;
 
 	private Vector2 lastPos;
@@ -232,6 +234,8 @@ public class BattleManager : MonoBehaviour {
 
 		ClearHeros ();
 
+		ClearAutoActions ();
+
 		ClearMoves ();
 
 		CreateMapPanel ();
@@ -241,6 +245,8 @@ public class BattleManager : MonoBehaviour {
 		CreateSummonHeros ();
 
 		CreateHeros ();
+
+		CreateAutoActions ();
 
 		CreateMoves ();
 
@@ -327,6 +333,16 @@ public class BattleManager : MonoBehaviour {
 		}
 		
 		heroDic.Clear ();
+	}
+
+	private void ClearAutoActions(){
+
+		for(int i = 0 ; i < autoActionArrowList.Count ; i++){
+			
+			GameObject.Destroy(autoActionArrowList[i]);
+		}
+		
+		autoActionArrowList.Clear ();
 	}
 
 	private void ClearMoves(){
@@ -491,6 +507,38 @@ public class BattleManager : MonoBehaviour {
 		moneyTf.text = GetMoney().ToString ();
 	}
 
+	private void CreateAutoActions(){
+
+		Dictionary<int,int>.Enumerator enumerator = battle.autoAction.GetEnumerator ();
+
+		while (enumerator.MoveNext()) {
+
+			int pos = enumerator.Current.Key;
+
+			int targetPos = enumerator.Current.Value;
+
+			GameObject go;
+
+			if(BattlePublicTools.GetDistance(battle.mapData.mapWidth,pos,targetPos) == 1){
+
+				if(battle.GetPosIsMine(pos) == battle.GetPosIsMine(targetPos)){
+
+					go = CreateArrow(pos,targetPos,new Color(0,1,0,0.5f),0);
+
+				}else{
+
+					go = CreateArrow(pos,targetPos,new Color(1,0,0,0.5f),0);
+				}
+
+			}else{
+
+				go = CreateShootArrow(pos,targetPos,new Color(1,1,0,0.5f));
+			}
+
+			autoActionArrowList.Add(go);
+		}
+	}
+
 	private void CreateMoves(){
 
 		BattleData battleData = battle.GetBattleData ();
@@ -505,22 +553,28 @@ public class BattleManager : MonoBehaviour {
 
 			for(int i = 0 ; i < cellData.attackers.Count ; i++){
 
-				CreateArrow(cellData.attackers[i].pos,pos,Color.red,i);
+				GameObject go = CreateArrow(cellData.attackers[i].pos,pos,Color.red,i);
+
+				arrowList.Add(go);
 			}
 
 			for(int i = 0 ; i < cellData.supporters.Count ; i++){
 
-				CreateArrow(cellData.supporters[i].pos,pos,Color.green,i);
+				GameObject go = CreateArrow(cellData.supporters[i].pos,pos,Color.green,i);
+
+				arrowList.Add(go);
 			}
 
 			for(int i = 0 ; i < cellData.shooters.Count ; i++){
 
-				CreateShootArrow(cellData.shooters[i].pos,pos,Color.yellow);
+				GameObject go = CreateShootArrow(cellData.shooters[i].pos,pos,Color.yellow);
+
+				arrowList.Add(go);
 			}
 		}
 	}
 
-	private void CreateArrow(int _start,int _end,Color _color,int _index){
+	private GameObject CreateArrow(int _start,int _end,Color _color,int _index){
 
 		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
 		
@@ -545,11 +599,11 @@ public class BattleManager : MonoBehaviour {
 		arrow.SetColor (_color);
 
 		arrow.SetIndex (_index);
-		
-		arrowList.Add(go);
+
+		return go;
 	}
 
-	private void CreateShootArrow(int _start,int _end,Color _color){
+	private GameObject CreateShootArrow(int _start,int _end,Color _color){
 
 		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("ShootArrow"));
 		
@@ -572,8 +626,8 @@ public class BattleManager : MonoBehaviour {
 		go.transform.localRotation = q;
 		
 		arrow.SetColor (_color);
-		
-		arrowList.Add(go);
+
+		return go;
 	}
 
 	public void MapUnitDown(MapUnit _mapUnit){
@@ -775,10 +829,6 @@ public class BattleManager : MonoBehaviour {
 		ClearSummonHeros ();
 
 		CreateSummonHeros ();
-
-		ClearMoves ();
-
-		CreateMoves ();
 	}
 
 	private void UnsummonHero(int _cardUid){
@@ -794,10 +844,6 @@ public class BattleManager : MonoBehaviour {
 		ClearSummonHeros ();
 		
 		CreateSummonHeros ();
-
-		ClearMoves ();
-		
-		CreateMoves ();
 	}
 
 	private HeroBattle AddHeroToMap(Hero _hero){

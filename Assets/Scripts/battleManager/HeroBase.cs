@@ -22,6 +22,11 @@ public class HeroBase : MonoBehaviour {
 		sds = _heroSDS;
 
 		nameText.text = sds.name;
+
+		if (!sds.canControl) {
+
+			nameText.color = Color.red;
+		}
 	}
 
 	public void SetFrameVisible(bool _visible){
