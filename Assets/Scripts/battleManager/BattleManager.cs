@@ -517,25 +517,28 @@ public class BattleManager : MonoBehaviour {
 
 			int targetPos = enumerator.Current.Value;
 
-			GameObject go;
+			if(pos != targetPos){
 
-			if(BattlePublicTools.GetDistance(battle.mapData.mapWidth,pos,targetPos) == 1){
+				GameObject go;
 
-				if(battle.GetPosIsMine(pos) == battle.GetPosIsMine(targetPos)){
+				if(BattlePublicTools.GetDistance(battle.mapData.mapWidth,pos,targetPos) == 1){
 
-					go = CreateArrow(pos,targetPos,new Color(0,1,0,0.5f),0);
+					if(battle.GetPosIsMine(pos) == battle.GetPosIsMine(targetPos)){
+
+						go = CreateArrow(pos,targetPos,new Color(0,1,0,0.5f),0);
+
+					}else{
+
+						go = CreateArrow(pos,targetPos,new Color(1,0,0,0.5f),0);
+					}
 
 				}else{
 
-					go = CreateArrow(pos,targetPos,new Color(1,0,0,0.5f),0);
+					go = CreateShootArrow(pos,targetPos,new Color(1,1,0,0.5f));
 				}
 
-			}else{
-
-				go = CreateShootArrow(pos,targetPos,new Color(1,1,0,0.5f));
+				autoActionArrowList.Add(go);
 			}
-
-			autoActionArrowList.Add(go);
 		}
 	}
 
