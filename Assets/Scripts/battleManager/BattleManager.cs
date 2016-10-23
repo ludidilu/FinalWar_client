@@ -401,28 +401,7 @@ public class BattleManager : MonoBehaviour {
 
 				unit.Init(index,index2,mr);
 
-				if(battle.GetPosIsMine(index) == battle.clientIsMine){
-
-					if((!battle.clientIsMine && index == battle.mapData.base2) || (battle.clientIsMine && index == battle.mapData.base1)){
-
-						unit.SetMainColor(myBaseColor);
-
-					}else{
-
-						unit.SetMainColor(myMapUnitColor);
-					}
-
-				}else{
-
-					if((!battle.clientIsMine && index == battle.mapData.base1) || (battle.clientIsMine && index == battle.mapData.base2)){
-						
-						unit.SetMainColor(oppBaseColor);
-						
-					}else{
-						
-						unit.SetMainColor(oppMapUnitColor);
-					}
-				}
+				SetMapUnitColor(unit);
 					
 				index++;
 
@@ -1159,14 +1138,7 @@ public class BattleManager : MonoBehaviour {
 
 							MapUnit unit = mapUnitDic[index];
 
-							if(battle.GetPosIsMine(index) == battle.clientIsMine){
-								
-								unit.SetMainColor(myMapUnitColor);
-								
-							}else{
-								
-								unit.SetMainColor(oppMapUnitColor);
-							}
+							SetMapUnitColor(unit);
 						}
 						
 						DoMove(_vo,_del);
@@ -1183,6 +1155,34 @@ public class BattleManager : MonoBehaviour {
 		} else {
 
 			_del();
+		}
+	}
+
+	private void SetMapUnitColor(MapUnit _unit){
+
+		int index = _unit.index;
+
+		if(battle.GetPosIsMine(index) == battle.clientIsMine){
+			
+			if((!battle.clientIsMine && index == battle.mapData.oBase) || (battle.clientIsMine && index == battle.mapData.mBase)){
+				
+				_unit.SetMainColor(myBaseColor);
+				
+			}else{
+				
+				_unit.SetMainColor(myMapUnitColor);
+			}
+			
+		}else{
+			
+			if((!battle.clientIsMine && index == battle.mapData.mBase) || (battle.clientIsMine && index == battle.mapData.oBase)){
+				
+				_unit.SetMainColor(oppBaseColor);
+				
+			}else{
+				
+				_unit.SetMainColor(oppMapUnitColor);
+			}
 		}
 	}
 

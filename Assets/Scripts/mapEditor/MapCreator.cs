@@ -201,11 +201,11 @@ public class MapCreator : MonoBehaviour {
 
 				if(mapData.dic.ContainsKey(index)){
 
-					if(index == mapData.base1){
+					if(index == mapData.mBase){
 
 						unit.SetMainColor(bts[(int)MapType.MYBASE].color);
 
-					}else if(index == mapData.base2){
+					}else if(index == mapData.oBase){
 
 						unit.SetMainColor(bts[(int)MapType.OPPBASE].color);
 
@@ -459,14 +459,14 @@ public class MapCreator : MonoBehaviour {
 				HideArrow(oDel[i]);
 			}
 
-			if(mapData.base1 == _unit.index){
+			if(mapData.mBase == _unit.index){
 
-				mapData.base1 = -1;
+				mapData.mBase = -1;
 			}
 
-			if(mapData.base2 == _unit.index){
+			if(mapData.oBase == _unit.index){
 				
-				mapData.base2 = -1;
+				mapData.oBase = -1;
 			}
 
 			break;
@@ -484,14 +484,14 @@ public class MapCreator : MonoBehaviour {
 				mapData.moveMap.Add(_unit.index,new KeyValuePair<int, int>(-1,-1));
 			}
 			
-			if(mapData.base1 == _unit.index){
+			if(mapData.mBase == _unit.index){
 				
-				mapData.base1 = -1;
+				mapData.mBase = -1;
 			}
 			
-			if(mapData.base2 == _unit.index){
+			if(mapData.oBase == _unit.index){
 				
-				mapData.base2 = -1;
+				mapData.oBase = -1;
 			}
 
 			break;
@@ -509,14 +509,14 @@ public class MapCreator : MonoBehaviour {
 				mapData.moveMap.Add(_unit.index,new KeyValuePair<int, int>(-1,-1));
 			}
 			
-			if(mapData.base1 == _unit.index){
+			if(mapData.mBase == _unit.index){
 				
-				mapData.base1 = -1;
+				mapData.mBase = -1;
 			}
 			
-			if(mapData.base2 == _unit.index){
+			if(mapData.oBase == _unit.index){
 				
-				mapData.base2 = -1;
+				mapData.oBase = -1;
 			}
 			
 			break;
@@ -534,19 +534,19 @@ public class MapCreator : MonoBehaviour {
 				mapData.moveMap.Add(_unit.index,new KeyValuePair<int, int>(-1,-1));
 			}
 			
-			if(mapData.base1 != _unit.index){
+			if(mapData.mBase != _unit.index){
 
-				if(mapData.base1 != -1){
+				if(mapData.mBase != -1){
 
-					units[mapData.base1].SetMainColor(bts[(int)MapType.MYPOS].color);
+					units[mapData.mBase].SetMainColor(bts[(int)MapType.MYPOS].color);
 				}
 
-				mapData.base1 = _unit.index;
+				mapData.mBase = _unit.index;
 			}
 			
-			if(mapData.base2 == _unit.index){
+			if(mapData.oBase == _unit.index){
 
-				mapData.base2 = -1;
+				mapData.oBase = -1;
 			}
 			
 			break;
@@ -564,19 +564,19 @@ public class MapCreator : MonoBehaviour {
 				mapData.moveMap.Add(_unit.index,new KeyValuePair<int, int>(-1,-1));
 			}
 			
-			if(mapData.base1 == _unit.index){
+			if(mapData.mBase == _unit.index){
 				
-				mapData.base1 = -1;
+				mapData.mBase = -1;
 			}
 			
-			if(mapData.base2 != _unit.index){
+			if(mapData.oBase != _unit.index){
 
-				if(mapData.base2 != -1){
+				if(mapData.oBase != -1){
 					
-					units[mapData.base2].SetMainColor(bts[(int)MapType.OPPPOSE].color);
+					units[mapData.oBase].SetMainColor(bts[(int)MapType.OPPPOSE].color);
 				}
 				
-				mapData.base2 = _unit.index;
+				mapData.oBase = _unit.index;
 			}
 			
 			break;
