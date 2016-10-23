@@ -3,13 +3,16 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using xy3d.tstd.lib.superRaycast;
+using System;
 
 public class AlertPanel : MonoBehaviour,IPointerClickHandler {
 
 	[SerializeField]
 	private Text alertText;
 
-	public void Alert(string _str){
+	private Action callBack;
+
+	public void Alert(string _str,Action _callBack){
 
 		if (!gameObject.activeSelf) {
 
@@ -17,6 +20,8 @@ public class AlertPanel : MonoBehaviour,IPointerClickHandler {
 			
 			SuperRaycast.SetIsOpen(false,"a");
 		}
+
+		callBack = _callBack;
 
 		alertText.text = _str;
 	}
@@ -26,5 +31,10 @@ public class AlertPanel : MonoBehaviour,IPointerClickHandler {
 		gameObject.SetActive (false);
 
 		SuperRaycast.SetIsOpen(true,"a");
+
+		if (callBack != null) {
+
+			callBack();
+		}
 	}
 }

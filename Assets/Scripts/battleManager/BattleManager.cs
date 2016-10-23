@@ -14,6 +14,8 @@ using xy3d.tstd.lib.superGraphicRaycast;
 
 public class BattleManager : MonoBehaviour {
 
+	public const string BATTLE_OVER = "battleOver";
+
 	public static readonly Color threatColor = new Color (0.2f, 0.8f, 0.8f);
 
 	private const float mapUnitWidth = 30;
@@ -256,30 +258,39 @@ public class BattleManager : MonoBehaviour {
 
 		if (battle.mWin && battle.oWin) {
 
-			Alert ("Draw!");
+			Alert ("Draw!",BattleOver);
 
 		} else if (battle.mWin) {
 
 			if (battle.clientIsMine) {
 				
-				Alert ("You win!");
+				Alert ("You win!",BattleOver);
 				
 			} else {
 
-				Alert ("You lose!");
+				Alert ("You lose!",BattleOver);
 			}
 
 		} else if (battle.oWin) {
 
 			if (battle.clientIsMine) {
 				
-				Alert ("You lose!");
+				Alert ("You lose!",BattleOver);
 				
 			} else {
 				
-				Alert ("You win!");
+				Alert ("You win!",BattleOver);
 			}
 		}
+	}
+
+	private void BattleOver(){
+
+		gameObject.SetActive (false);
+
+		SuperEvent e = new SuperEvent (BATTLE_OVER);
+
+		SuperFunction.Instance.DispatchEvent (gameObject, e);
 	}
 
 	private void ClearMapUnits(){
@@ -1507,8 +1518,8 @@ public class BattleManager : MonoBehaviour {
 		}
 	}
 
-	private void Alert(string _str){
+	private void Alert(string _str,Action _callBack){
 
-		alertPanel.Alert (_str);
+		alertPanel.Alert (_str,_callBack);
 	}
 }

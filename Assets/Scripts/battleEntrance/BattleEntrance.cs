@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.IO;
+using xy3d.tstd.lib.superFunction;
 
 public class BattleEntrance : MonoBehaviour {
 
@@ -36,6 +37,8 @@ public class BattleEntrance : MonoBehaviour {
 		StaticData.Load<SkillSDS> ("skill");
 		
 		StaticData.Load<AuraSDS> ("aura");
+
+		SuperFunction.Instance.AddEventListener (battleManager.gameObject, BattleManager.BATTLE_OVER, BattleOver);
 
 		Connection.Instance.Init ("127.0.0.1", 1983, ReceiveData, ConfigDictionary.Instance.uid);
 	}
@@ -125,6 +128,19 @@ public class BattleEntrance : MonoBehaviour {
 				Connection.Instance.Send(ms);
 			}
 		}
+	}
+
+	private void BattleOver(SuperEvent e){
+
+		gameObject.SetActive (true);
+
+		panel.SetActive(true);
+		
+		btPVP.SetActive(true);
+		
+		btPVE.SetActive(true);
+		
+		btCancel.SetActive(false);
 	}
 
 	// Use this for initialization
