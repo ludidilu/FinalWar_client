@@ -285,6 +285,15 @@ public class BattleManager : MonoBehaviour {
 
 	private void BattleOver(){
 
+		if (!canAction) {
+
+			SuperGraphicRaycast.SetIsOpen(true,"a");
+
+			SuperRaycast.SetIsOpen(true,"a");
+
+			canAction = true;
+		}
+
 		gameObject.SetActive (false);
 
 		SuperEvent e = new SuperEvent (BATTLE_OVER);

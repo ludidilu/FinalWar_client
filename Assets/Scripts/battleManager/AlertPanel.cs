@@ -4,11 +4,14 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using xy3d.tstd.lib.superRaycast;
 using System;
+using xy3d.tstd.lib.superGraphicRaycast;
 
-public class AlertPanel : MonoBehaviour,IPointerClickHandler {
+public class AlertPanel : MonoBehaviour {
 
 	[SerializeField]
 	private Text alertText;
+
+	private bool hasDown = false;
 
 	private Action callBack;
 
@@ -17,6 +20,8 @@ public class AlertPanel : MonoBehaviour,IPointerClickHandler {
 		if (!gameObject.activeSelf) {
 
 			gameObject.SetActive (true);
+
+			SuperGraphicRaycast.SetIsOpen(false,"a");
 			
 			SuperRaycast.SetIsOpen(false,"a");
 		}
@@ -26,9 +31,29 @@ public class AlertPanel : MonoBehaviour,IPointerClickHandler {
 		alertText.text = _str;
 	}
 
-	public void OnPointerClick(PointerEventData _data){
+	void Update(){
+
+		if (Input.GetMouseButtonDown (0)) {
+
+			hasDown = true;
+		} 
+
+		if (Input.GetMouseButtonUp (0)) {
+
+			if(hasDown){
+
+				hasDown = false;
+
+				Close();
+			}
+		}
+	}
+
+	public void Close(){
 
 		gameObject.SetActive (false);
+
+		SuperGraphicRaycast.SetIsOpen (true,"a");
 
 		SuperRaycast.SetIsOpen(true,"a");
 
