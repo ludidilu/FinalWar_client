@@ -211,8 +211,6 @@ public class BattleManager : MonoBehaviour {
 		if (!isInit) {
 
 			isInit = true;
-
-			actionBt.SetActive(true);
 		}
 
 		heroDetail.Hide();
@@ -243,7 +241,7 @@ public class BattleManager : MonoBehaviour {
 
 		CreateMoneyTf ();
 
-		RefreshTouchable ();
+		RefreshTouchable (battle.GetClientCanAction());
 
 		if (battle.mWin && battle.oWin) {
 
@@ -285,14 +283,7 @@ public class BattleManager : MonoBehaviour {
 
 	private void BattleOver(){
 
-		if (!canAction) {
-
-			SuperGraphicRaycast.SetIsOpen(true,"a");
-
-			SuperRaycast.SetIsOpen(true,"a");
-
-			canAction = true;
-		}
+		RefreshTouchable (true);
 
 		gameObject.SetActive (false);
 
@@ -924,7 +915,7 @@ public class BattleManager : MonoBehaviour {
 
 		battle.ClientRequestDoAction ();
 
-		RefreshTouchable ();
+		RefreshTouchable (battle.GetClientCanAction());
 	}
 
 	// Update is called once per frame
@@ -957,11 +948,9 @@ public class BattleManager : MonoBehaviour {
 		}
 	}
 
-	private void RefreshTouchable(){
+	private void RefreshTouchable(bool _canAction){
 
-		bool tmpCanAction = !(battle.clientIsMine ? battle.mOver : battle.oOver);
-
-		if (canAction && !tmpCanAction) {
+		if (canAction && !_canAction) {
 
 			SuperGraphicRaycast.SetIsOpen (false, "a");
 
@@ -969,9 +958,9 @@ public class BattleManager : MonoBehaviour {
 
 			actionBt.SetActive (false);
 
-			canAction = tmpCanAction;
+			canAction = _canAction;
 
-		} else if (!canAction && tmpCanAction) {
+		} else if (!canAction && _canAction) {
 
 			SuperGraphicRaycast.SetIsOpen (true, "a");
 			
@@ -979,7 +968,7 @@ public class BattleManager : MonoBehaviour {
 
 			actionBt.SetActive (true);
 
-			canAction = tmpCanAction;
+			canAction = _canAction;
 		}
 	}
 
