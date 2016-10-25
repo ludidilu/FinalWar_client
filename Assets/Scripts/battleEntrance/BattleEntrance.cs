@@ -40,6 +40,8 @@ public class BattleEntrance : MonoBehaviour {
 
 		SuperFunction.Instance.AddEventListener (battleManager.gameObject, BattleManager.BATTLE_OVER, BattleOver);
 
+		battleManager.Init (SendBattleAction);
+
 		Connection.Instance.Init ("127.0.0.1", 1983, ReceiveData, ConfigDictionary.Instance.uid);
 	}
 
@@ -75,6 +77,16 @@ public class BattleEntrance : MonoBehaviour {
 
 				case 1:
 
+					if(battleManager.gameObject.activeSelf){
+
+						battleManager.gameObject.SetActive(false);
+					}
+
+					if(!gameObject.activeSelf){
+
+						gameObject.SetActive(true);
+					}
+
 					panel.SetActive(true);
 
 					btPVP.SetActive(false);
@@ -87,6 +99,16 @@ public class BattleEntrance : MonoBehaviour {
 
 				case 2:
 
+					if(battleManager.gameObject.activeSelf){
+						
+						battleManager.gameObject.SetActive(false);
+					}
+					
+					if(!gameObject.activeSelf){
+						
+						gameObject.SetActive(true);
+					}
+
 					panel.SetActive(true);
 					
 					btPVP.SetActive(true);
@@ -96,7 +118,6 @@ public class BattleEntrance : MonoBehaviour {
 					btCancel.SetActive(false);
 
 					break;
-
 				}
 			}
 		}
@@ -122,8 +143,29 @@ public class BattleEntrance : MonoBehaviour {
 		using (MemoryStream ms = new MemoryStream()) {
 			
 			using(BinaryWriter bw = new BinaryWriter(ms)){
-				
+
+				bw.Write((short)1);
+
 				bw.Write(_type);
+				
+				Connection.Instance.Send(ms);
+			}
+		}
+	}
+
+	private void SendBattleAction(MemoryStream _ms){
+
+		using (MemoryStream ms = new MemoryStream()) {
+			
+			using(BinaryWriter bw = new BinaryWriter(ms)){
+				
+				bw.Write((short)0);
+
+				short length = (short)_ms.Length;
+				
+				bw.Write(length);
+
+				bw.Write(_ms.GetBuffer(),0,length);
 				
 				Connection.Instance.Send(ms);
 			}

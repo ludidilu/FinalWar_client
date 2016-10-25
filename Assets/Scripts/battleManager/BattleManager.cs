@@ -170,33 +170,27 @@ public class BattleManager : MonoBehaviour {
 		Debug.Log (_str);
 	}
 
-	// Use this for initialization
-	void Awake () {
+	public void Init(Action<MemoryStream> _sendDataCallBack){
 
 		Log.Init (WriteLog);
-
+		
 		SuperRaycast.SetCamera (mainCamera);
-
+		
 		SuperRaycast.SetIsOpen (true, "a");
-
+		
 		SuperRaycast.checkBlockByUi = true;
-
+		
 		Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS> ();
-
+		
 		Dictionary<int, SkillSDS> skillDic = StaticData.GetDic<SkillSDS> ();
-
+		
 		Dictionary<int, AuraSDS> auraDic = StaticData.GetDic<AuraSDS> ();
-
+		
 		Battle.Init (Map.mapDataDic, heroDic, skillDic, auraDic);
 		
 		battle = new Battle ();
-
-		battle.ClientSetCallBack (SendData, RefreshData, DoAction);
 		
-		InitUi ();
-	}
-
-	private void InitUi(){
+		battle.ClientSetCallBack (_sendDataCallBack, RefreshData, DoAction, BattleQuit);
 
 		SuperFunction.Instance.AddEventListener (ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
 
@@ -210,11 +204,6 @@ public class BattleManager : MonoBehaviour {
 	public void ReceiveData(byte[] _bytes){
 
 		battle.ClientGetPackage (_bytes);
-	}
-
-	private void SendData(MemoryStream _ms){
-
-		Connection.Instance.Send (_ms);
 	}
 
 	private void RefreshData(){
@@ -282,6 +271,16 @@ public class BattleManager : MonoBehaviour {
 				Alert ("You win!",BattleOver);
 			}
 		}
+	}
+
+	public void QuitBattle(){
+
+		battle.ClientRequestQuitBattle ();
+	}
+
+	private void BattleQuit(){
+
+		Alert ("Battle quit!",BattleOver);
 	}
 
 	private void BattleOver(){
