@@ -56,7 +56,7 @@ public class HeroBattle : HeroBase {
 
 		hp.gameObject.SetActive (false);
 
-		hp.gameObject.SetActive (false);
+		shield.gameObject.SetActive (false);
 
 		SetBodyColor ();
 	}
