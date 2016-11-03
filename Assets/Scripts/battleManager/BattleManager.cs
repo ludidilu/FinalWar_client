@@ -1014,13 +1014,9 @@ public class BattleManager : MonoBehaviour {
 
 				DoSummon((BattleSummonVO)vo,del);
 
-			}else if(vo is BattlePowerChangeVO){
+			}else if(vo is BattleChangeVO){
 
-				DoPowerChange((BattlePowerChangeVO)vo,del);
-
-			}else if(vo is BattleHpChangeVO){
-
-				DoHpChange((BattleHpChangeVO)vo,del);
+				DoChange((BattleChangeVO)vo,del);
 			}
 		}
 	}
@@ -1063,7 +1059,7 @@ public class BattleManager : MonoBehaviour {
 			shooters.Add(heroDic[_vo.shooters[i]]);
 		}
 		
-		BattleControl.Instance.Shoot(shooters,heroDic[_vo.stander],_vo.damage,_del);
+		BattleControl.Instance.Shoot(shooters,heroDic[_vo.stander],_vo.shieldDamage,_vo.hpDamage,_del);
 	}
 
 	private void DoMove(BattleMoveVO _vo,Action _del){
@@ -1205,7 +1201,7 @@ public class BattleManager : MonoBehaviour {
 			attackers.Add(heroDic[_vo.attackers[i]]);
 		}
 
-		BattleControl.Instance.Rush (attackers, stander, _vo.damage, _del);
+		BattleControl.Instance.Rush (attackers, stander, _vo.shieldDamage, _vo.hpDamage, _del);
 	}
 
 	private void DoAttack(BattleAttackVO _vo,Action _del){
@@ -1216,22 +1212,14 @@ public class BattleManager : MonoBehaviour {
 
 		List<HeroBattle> supporters = new List<HeroBattle> ();
 
-		List<int> attackersDamage = new List<int> ();
-
-		List<int> supportersDamage = new List<int> ();
-
 		for (int i = 0; i < _vo.attackers.Count; i++) {
 
 			attackers.Add(heroDic[_vo.attackers[i]]);
-
-			attackersDamage.Add(_vo.attackersDamage[i]);
 		}
 
 		for (int i = 0; i < _vo.supporters.Count; i++) {
 
 			supporters.Add(heroDic[_vo.supporters[i]]);
-			
-			supportersDamage.Add(_vo.supportersDamage[i]);
 		}
 
 		HeroBattle defender;
@@ -1245,7 +1233,7 @@ public class BattleManager : MonoBehaviour {
 			defender = null;
 		}
 
-		BattleControl.Instance.Attack (attackers, pos, defender, supporters, _vo.defenderDamage, supportersDamage, attackersDamage, _del);
+		BattleControl.Instance.Attack (attackers, pos, defender, supporters, _vo.defenderShieldDamage, _vo.defenderHpDamage, _vo.supportersShieldDamage, _vo.supportersHpDamage, _vo.attackersShieldDamage, _vo.attackersHpDamage, _del);
 	}
 
 	private void DoDie(BattleDeathVO _vo,Action _del){
@@ -1269,91 +1257,50 @@ public class BattleManager : MonoBehaviour {
 		}
 	}
 
-	private void DoPowerChange(BattlePowerChangeVO _vo,Action _del){
-
-		for(int i = 0 ; i < _vo.pos.Count ; i++){
-
-			int pos = _vo.pos[i];
-
-			int powerChange = _vo.powerChange[i];
-
-			bool isDizz = _vo.isDizz[i];
-
-			HeroBattle hero = heroDic[pos];
-
-			hero.RefreshPower();
-
-			string str;
-
-			Color color;
-
-			if(powerChange > 0){
-
-				str = "+" + ((int)(powerChange / 100)).ToString();
-
-				color = Color.blue;
-
-			}else{
-
-				if(isDizz){
-
-					str = ((int)(powerChange / 100)).ToString() + "  混乱";
-
-				}else{
-
-					str = ((int)(powerChange / 100)).ToString();
-				}
-
-				color = Color.yellow;
-			}
-
-			if(i == 0){
-
-				hero.ShowHud(str,color,_del);
-
-			}else{
-
-				hero.ShowHud(str,color,null);
-			}
-		}
-	}
-
-	private void DoHpChange(BattleHpChangeVO _vo,Action _del){
+	private void DoChange(BattleChangeVO _vo,Action _del){
 
 		for(int i = 0 ; i < _vo.pos.Count ; i++){
 			
 			int pos = _vo.pos[i];
+
+			HeroBattle hero = heroDic[pos];
 			
 			int hpChange = _vo.hpChange[i];
-			
-			HeroBattle hero = heroDic[pos];
-			
+
+			int shieldChange = _vo.shieldChange[i];
+
+			hero.RefreshShield();
+
 			hero.RefreshHp();
-			
-			string str;
-			
-			Color color;
-			
-			if(hpChange > 0){
-				
-				str = "+" + hpChange.ToString();
-				
-				color = Color.green;
-				
-			}else{
-				
-				str = hpChange.ToString();
-				
-				color = Color.red;
+
+			string str = "";
+
+			if(shieldChange < 0){
+
+				str += "<color=\"#FFFF00\">" + shieldChange + "</color>";
+
+				if(hpChange != 0){
+
+					str += "   ";
+				}
 			}
-			
+
+			if(hpChange > 0){
+
+				str += "<color=\"#00FF00\">+" + hpChange + "</color>";
+
+			}else if(hpChange < 0){
+
+				str += "<color=\"#FF0000\">" + hpChange + "</color>";
+			}
+
 			if(i == 0){
 				
-				hero.ShowHud(str,color,_del);
+				hero.ShowHud(str,Color.white,_del);
 				
 			}else{
 				
-				hero.ShowHud(str,color,null);
+				hero.ShowHud(str,Color.white,null);
 			}
 		}
 	}

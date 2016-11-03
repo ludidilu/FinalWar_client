@@ -1,15 +1,13 @@
 ﻿public class HeroSDS : CsvBase,IHeroSDS
 {
 	public int hp;
+	public int shield;
 	public int power;
 	public int cost;
 	public bool canControl;
 	public bool threat;
 	public int attack;
 	public int shoot;
-	public int counter;
-	public int defense;
-	public int leader;
 	public int[] skills;
 	public int[] auras;
 	
@@ -21,9 +19,9 @@
 	{
 		return hp;
 	}
-	public int GetPower()
+	public int GetShield()
 	{
-		return power;
+		return shield;
 	}
 	public int GetCost()
 	{
@@ -44,18 +42,6 @@
 	public int GetShoot()
 	{
 		return shoot;
-	}
-	public int GetCounter()
-	{
-		return counter;
-	}
-	public int GetDefense()
-	{
-		return defense;
-	}
-	public int GetLeader()
-	{
-		return leader;
 	}
 	public int[] GetSkills()
 	{

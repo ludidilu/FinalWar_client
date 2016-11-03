@@ -14,22 +14,13 @@ public class HeroDetail : MonoBehaviour {
 	private Text hp;
 
 	[SerializeField]
-	private Text power;
+	private Text shield;
 
 	[SerializeField]
 	private Text attack;
 
 	[SerializeField]
 	private Text shoot;
-	
-	[SerializeField]
-	private Text counter;
-
-	[SerializeField]
-	private Text defense;
-
-	[SerializeField]
-	private Text leader;
 
 	[SerializeField]
 	private Text comment;
@@ -46,17 +37,11 @@ public class HeroDetail : MonoBehaviour {
 
 		hp.text = hero.sds.hp.ToString ();
 
-		power.text = hero.sds.power.ToString ();
+		shield.text = hero.sds.shield.ToString ();
 
 		attack.text = hero.sds.attack.ToString ();
 
 		shoot.text = hero.sds.shoot.ToString ();
-
-		counter.text = hero.sds.counter.ToString ();
-		
-		defense.text = hero.sds.defense.ToString ();
-
-		leader.text = hero.sds.leader.ToString ();
 
 		comment.text = hero.sds.comment;
 

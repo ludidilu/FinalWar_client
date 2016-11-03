@@ -2,7 +2,7 @@
 {
 	public int auraTarget;
 	public int auraEffect;
-	public float[] auraDatas;
+	public int[] auraDatas;
 	
 	public AuraTarget GetAuraTarget()
 	{
@@ -12,7 +12,7 @@
 	{
 		return (AuraEffect)auraEffect;
 	}
-	public float[] GetAuraDatas()
+	public int[] GetAuraDatas()
 	{
 		return auraDatas;
 	}

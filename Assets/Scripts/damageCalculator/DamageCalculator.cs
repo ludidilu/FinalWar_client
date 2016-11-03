@@ -42,47 +42,14 @@ public class DamageCalculator : MonoBehaviour {
 
 	public void Attack(){
 
-		Hero attacker;
-		Hero defender;
-
-		if(Check(out attacker,out defender)){
-
-			int damage = attacker.GetAttackDamage();
-
-			damage = defender.BeDamage(damage);
-
-			info.text = damage.ToString();
-		}
 	}
 
 	public void Shoot(){
-		
-		Hero attacker;
-		Hero defender;
-		
-		if(Check(out attacker,out defender)){
-			
-			int damage = attacker.GetShootDamage();
-			
-			damage = defender.BeDamageByShoot(damage);
-			
-			info.text = damage.ToString();
-		}
+
 	}
 
 	public void Counter(){
-		
-		Hero attacker;
-		Hero defender;
-		
-		if(Check(out attacker,out defender)){
-			
-			int damage = defender.GetCounterDamage();
-			
-			damage = attacker.BeDamage(damage);
-			
-			info.text = damage.ToString();
-		}
+
 	}
 
 	private bool Check(out Hero _attacker,out Hero _defender){
@@ -97,11 +64,11 @@ public class DamageCalculator : MonoBehaviour {
 
 			HeroSDS attackerSDS = StaticData.GetData<HeroSDS>(int.Parse(attackerID.text));
 			
-			_attacker = new Hero(true,attackerSDS,0,int.Parse(attackerHp.text),int.Parse(attackerPower.text));
+			_attacker = new Hero(true,attackerSDS,0,int.Parse(attackerHp.text));
 			
 			HeroSDS defenderSDS = StaticData.GetData<HeroSDS>(int.Parse(defenderID.text));
 			
-			_defender = new Hero(false,defenderSDS,0,defenderSDS.hp,int.Parse(defenderPower.text));
+			_defender = new Hero(false,defenderSDS,0,defenderSDS.hp);
 
 			if(isDefense.isOn){
 

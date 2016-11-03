@@ -28,7 +28,7 @@ public class HeroBattle : HeroBase {
 	protected Text hp;
 
 	[SerializeField]
-	protected Text power;
+	protected Text shield;
 
 	private Hero hero;
 
@@ -56,7 +56,7 @@ public class HeroBattle : HeroBase {
 
 		hp.gameObject.SetActive (false);
 
-		power.gameObject.SetActive (false);
+		hp.gameObject.SetActive (false);
 
 		SetBodyColor ();
 	}
@@ -69,7 +69,7 @@ public class HeroBattle : HeroBase {
 
 		RefreshHp ();
 
-		RefreshPower ();
+		RefreshShield();
 
 		SetBodyColor ();
 	}
@@ -79,24 +79,22 @@ public class HeroBattle : HeroBase {
 		SetHp (hero.nowHp);
 	}
 
-	public void RefreshPower(){
-
-		SetPower (hero.nowPower);
-	}
-	
 	private void SetHp(int _hp){
 
 		hp.text = _hp.ToString ();
 	}
 
-	private void SetPower(int _power){
+	public void RefreshShield(){
 
-		power.color = POWER_COLORS[Hero.GetPowerLevel (_power)];
-
-		power.text = ((int)(_power / 100)).ToString ();
+		SetShield(hero.nowShield);
 	}
 
-	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis,int _damage){
+	public void SetShield(int _shield){
+
+		shield.text = _shield.ToString();
+	}
+
+	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis,int _shieldDamage,int _hpDamage){
 		
 		Vector3 shockVector = Vector3.zero;
 		
@@ -129,8 +127,27 @@ public class HeroBattle : HeroBase {
 		
 		SuperTween.Instance.To(0,1,1,shockToDel,null);
 
-		ShowHud (_damage.ToString (), Color.red, null);
-		
+		string str = "";
+
+		if(_shieldDamage < 0){
+
+			str += "<color=\"#FFFF00\">" + _shieldDamage + "</color>";
+
+			if(_hpDamage < 0){
+
+				str += "   ";
+			}
+		}
+
+		if(_hpDamage < 0){
+
+			str += "<color=\"#FF0000\">" + _hpDamage + "</color>";
+		}
+
+		ShowHud (str, Color.red, null);
+
+		RefreshShield();
+
 		RefreshHp ();
 	}
 
