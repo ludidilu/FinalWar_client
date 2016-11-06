@@ -25,10 +25,16 @@ public class HeroBattle : HeroBase {
 	private CanvasGroup canvasGroup;
 
 	[SerializeField]
-	protected Text hp;
+	private Text hp;
 
 	[SerializeField]
-	protected Text shield;
+	private Text shield;
+
+	[SerializeField]
+	private Text attack;
+
+	[SerializeField]
+	private Text shoot;
 
 	private Hero hero;
 
@@ -58,6 +64,10 @@ public class HeroBattle : HeroBase {
 
 		shield.gameObject.SetActive (false);
 
+		attack.gameObject.SetActive (false);
+
+		shoot.gameObject.SetActive (false);
+
 		SetBodyColor ();
 	}
 
@@ -66,6 +76,10 @@ public class HeroBattle : HeroBase {
 		hero = _hero;
 
 		InitCard (hero.sds as HeroSDS);
+
+		attack.text = sds.GetAttack ().ToString ();
+
+		shoot.text = sds.GetShoot ().ToString ();
 
 		RefreshHp ();
 
