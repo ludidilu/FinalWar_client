@@ -46,6 +46,12 @@ public class BattleManager : MonoBehaviour {
 	private Color oppBaseColor;
 
 	[SerializeField]
+	private Color riverColor;
+
+	[SerializeField]
+	private Color hillColor;
+
+	[SerializeField]
 	private RectTransform battleContainer;
 
 	[SerializeField]
@@ -412,6 +418,13 @@ public class BattleManager : MonoBehaviour {
 				unit.Init(index,index2,mr);
 
 				SetMapUnitColor(unit);
+
+				MapData.MapUnitType mapUnitType = battle.mapData.dic[index];
+
+				if (mapUnitType == MapData.MapUnitType.RIVER || mapUnitType == MapData.MapUnitType.HILL) {
+
+					GameObject.Destroy(unit.GetComponent<Collider>());
+				}
 					
 				index++;
 
@@ -1166,24 +1179,34 @@ public class BattleManager : MonoBehaviour {
 
 		int index = _unit.index;
 
-		if(battle.GetPosIsMine(index) == battle.clientIsMine){
+		MapData.MapUnitType mapUnitType = battle.mapData.dic [index];
+
+		if (mapUnitType == MapData.MapUnitType.RIVER) {
+
+			_unit.SetMainColor(riverColor);
+
+		} else if (mapUnitType == MapData.MapUnitType.HILL) {
+
+			_unit.SetMainColor(hillColor);
+
+		} else if (battle.GetPosIsMine(index) == battle.clientIsMine) {
 			
-			if((!battle.clientIsMine && index == battle.mapData.oBase) || (battle.clientIsMine && index == battle.mapData.mBase)){
+			if ((!battle.clientIsMine && index == battle.mapData.oBase) || (battle.clientIsMine && index == battle.mapData.mBase)){
 				
 				_unit.SetMainColor(myBaseColor);
 				
-			}else{
+			} else{
 				
 				_unit.SetMainColor(myMapUnitColor);
 			}
 			
-		}else{
+		} else{
 			
-			if((!battle.clientIsMine && index == battle.mapData.mBase) || (battle.clientIsMine && index == battle.mapData.oBase)){
+			if ((!battle.clientIsMine && index == battle.mapData.mBase) || (battle.clientIsMine && index == battle.mapData.oBase)){
 				
 				_unit.SetMainColor(oppBaseColor);
 				
-			}else{
+			} else{
 				
 				_unit.SetMainColor(oppMapUnitColor);
 			}

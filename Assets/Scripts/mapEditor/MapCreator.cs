@@ -21,6 +21,8 @@ public class MapCreator : MonoBehaviour {
 		MYBASE,
 		OPPPOSE,
 		OPPBASE,
+		RIVER,
+		HILL,
 		NULL
 	}
 
@@ -149,12 +151,12 @@ public class MapCreator : MonoBehaviour {
 		
 		mapData = new MapData (_mapWidth,_mapHeight);
 		
-		for (int i = 0; i < mapData.size; i++) {
-			
-			mapData.dic.Add(i,true);
-
-			mapData.moveMap.Add(i,new KeyValuePair<int, int>(-1,-1));
-		}
+//		for (int i = 0; i < mapData.size; i++) {
+//			
+//			mapData.dic.Add(i,MapData.MapUnitType.HILL);
+//
+//			mapData.moveMap.Add(i,new KeyValuePair<int, int>(-1,-1));
+//		}
 	}
 
 	public void CreateMapPanel(){
@@ -209,13 +211,21 @@ public class MapCreator : MonoBehaviour {
 
 						unit.SetMainColor(bts[(int)MapType.OPPBASE].color);
 
-					}else if(mapData.dic[index]){
+					}else if(mapData.dic[index] == MapData.MapUnitType.M_AREA){
 
 						unit.SetMainColor(bts[(int)MapType.MYPOS].color);
 
-					}else{
+					}else if(mapData.dic[index] == MapData.MapUnitType.O_AREA){
 
 						unit.SetMainColor(bts[(int)MapType.OPPPOSE].color);
+
+					}else if(mapData.dic[index] == MapData.MapUnitType.RIVER){
+						
+						unit.SetMainColor(bts[(int)MapType.RIVER].color);
+						
+					}else if(mapData.dic[index] == MapData.MapUnitType.HILL){
+						
+						unit.SetMainColor(bts[(int)MapType.HILL].color);
 					}
 
 				}else{
@@ -229,23 +239,40 @@ public class MapCreator : MonoBehaviour {
 
 		mapContainer.transform.localPosition = new Vector3 (-0.5f * (mapData.mapWidth * unitWidth * sqrt3 * 2) + unitWidth * sqrt3, 0.5f * (mapData.mapHeight * unitWidth * 3 + unitWidth) - unitWidth * 2, 0);
 
-		Dictionary<int,KeyValuePair<int,int>>.Enumerator enumerator = mapData.moveMap.GetEnumerator ();
+		index = 0;
 
-		while (enumerator.MoveNext()) {
-
-			GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
+		for (int i = 0; i < mapData.mapHeight; i++) {
 			
-			go.transform.SetParent(arrowContainer,false);
+			for (int m = 0; m < mapData.mapWidth; m++) {
+				
+				if (i % 2 == 1 && m == mapData.mapWidth - 1) {
+					
+					continue;
+				}
 
-			arrows[enumerator.Current.Key] = go;
+				GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
+				
+				go.transform.SetParent(arrowContainer,false);
+				
+				arrows[index] = go;
+				
+				if(mapData.moveMap.ContainsKey(index)){
 
-			if(enumerator.Current.Value.Key != -1){
+					if(mapData.moveMap[index].Key != -1){
+					
+						ShowArrow(index,mapData.moveMap[index].Key);
 
-				ShowArrow(enumerator.Current.Key,enumerator.Current.Value.Key);
+					}else{
 
-			}else{
+						HideArrow(index);
+					}
+					
+				}else{
+					
+					HideArrow(index);
+				}
 
-				HideArrow(enumerator.Current.Key);
+				index++;
 			}
 		}
 	}
@@ -255,7 +282,7 @@ public class MapCreator : MonoBehaviour {
 		GameObject go = arrows [_start];
 
 		MapUnit start = units[_start];
-		
+
 		MapUnit end = units[_end];
 		
 		go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
@@ -277,6 +304,11 @@ public class MapCreator : MonoBehaviour {
 	}
 
 	public void SaveMap(){
+
+		if (!CheckMap ()) {
+
+			return;
+		}
 
 #if UNITY_EDITOR
 
@@ -302,6 +334,63 @@ public class MapCreator : MonoBehaviour {
 #endif
 	}
 
+	private bool CheckMap(){
+
+		if (mapData.mBase == -1) {
+
+			Debug.Log("mapData.mBase == -1");
+
+			return false;
+		}
+
+		if (mapData.oBase == -1) {
+			
+			Debug.Log("mapData.oBase == -1");
+			
+			return false;
+		}
+		
+		Dictionary<int, MapData.MapUnitType>.Enumerator enumerator = mapData.dic.GetEnumerator ();
+		
+		while (enumerator.MoveNext()) {
+			
+			if(enumerator.Current.Value != MapData.MapUnitType.RIVER && enumerator.Current.Value != MapData.MapUnitType.HILL){
+
+				KeyValuePair<int,int> pair = mapData.moveMap[enumerator.Current.Key];
+
+				if(enumerator.Current.Key == mapData.mBase){
+
+					if(pair.Key == -1){
+
+						Debug.Log("moveMap error pos=" + enumerator.Current.Key);
+						
+						return false;
+					}
+
+				}else if(enumerator.Current.Key == mapData.oBase){
+
+					if(pair.Value == -1){
+						
+						Debug.Log("moveMap error pos=" + enumerator.Current.Key);
+						
+						return false;
+					}
+
+				}else if(enumerator.Current.Value == MapData.MapUnitType.M_AREA || enumerator.Current.Value == MapData.MapUnitType.O_AREA){
+					
+					if(pair.Key == -1 || pair.Value == -1){
+						
+						Debug.Log("moveMap error pos=" + enumerator.Current.Key);
+						
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
 	public void BtClick(int _index){
 
 		nowMapType = (MapType)_index;
@@ -309,11 +398,20 @@ public class MapCreator : MonoBehaviour {
 
 	private int downPos = -1;
 
+	private bool hasExit = false;
+
 	public void MapUnitDown(MapUnit _unit){
+
+		hasExit = false;
 
 		if (mapData.dic.ContainsKey (_unit.index)) {
 
-			downPos = _unit.index;
+			MapData.MapUnitType mapUnitType = mapData.dic[_unit.index];
+
+			if (mapUnitType == MapData.MapUnitType.M_AREA || mapUnitType == MapData.MapUnitType.O_AREA) {
+
+				downPos = _unit.index;
+			}
 		}
 	}
 
@@ -323,24 +421,31 @@ public class MapCreator : MonoBehaviour {
 
 			if(mapData.dic.ContainsKey(_unit.index)){
 
-				if(BattlePublicTools.GetDistance(mapData.mapWidth,downPos,_unit.index) == 1){
-					
-					if(showMyTarget){
-						
-						mapData.moveMap[downPos] = new KeyValuePair<int, int>(_unit.index,mapData.moveMap[downPos].Value);
-						
-					}else{
+				MapData.MapUnitType mapUnitType = mapData.dic[_unit.index];
 
-						mapData.moveMap[downPos] = new KeyValuePair<int, int>(mapData.moveMap[downPos].Key,_unit.index);
+				if (mapUnitType == MapData.MapUnitType.M_AREA || mapUnitType == MapData.MapUnitType.O_AREA) {
+
+					if(BattlePublicTools.GetDistance(mapData.mapWidth,downPos,_unit.index) == 1){
+						
+						if(showMyTarget){
+							
+							mapData.moveMap[downPos] = new KeyValuePair<int, int>(_unit.index,mapData.moveMap[downPos].Value);
+							
+						}else{
+
+							mapData.moveMap[downPos] = new KeyValuePair<int, int>(mapData.moveMap[downPos].Key,_unit.index);
+						}
+
+						ShowArrow(downPos,_unit.index);
 					}
-
-					ShowArrow(downPos,_unit.index);
 				}
 			}
 		}
 	}
 
 	public void MapUnitExit(MapUnit _unit){
+
+		hasExit = true;
 
 		if (downPos != -1) {
 			
@@ -410,6 +515,11 @@ public class MapCreator : MonoBehaviour {
 
 	public void MapUnitUpAsButton(MapUnit _unit){
 
+		if (hasExit) {
+
+			return;
+		}
+
 		_unit.SetMainColor (bts[(int)nowMapType].color);
 
 		switch (nowMapType) {
@@ -449,14 +559,20 @@ public class MapCreator : MonoBehaviour {
 
 				mapData.moveMap[mDel[i]] = new KeyValuePair<int, int>(-1,mapData.moveMap[mDel[i]].Value);
 
-				HideArrow(mDel[i]);
+				if(showMyTarget){
+
+					HideArrow(mDel[i]);
+				}
 			}
 
 			for(int i = 0 ; i < oDel.Count ; i++){
 				
 				mapData.moveMap[oDel[i]] = new KeyValuePair<int, int>(mapData.moveMap[oDel[i]].Key,-1);
-				
-				HideArrow(oDel[i]);
+
+				if(!showMyTarget){
+
+					HideArrow(oDel[i]);
+				}
 			}
 
 			if(mapData.mBase == _unit.index){
@@ -475,12 +591,15 @@ public class MapCreator : MonoBehaviour {
 
 			if(mapData.dic.ContainsKey(_unit.index)){
 				
-				mapData.dic[_unit.index] = true;
+				mapData.dic[_unit.index] = MapData.MapUnitType.M_AREA;
 
 			}else{
 
-				mapData.dic.Add(_unit.index,true);
+				mapData.dic.Add(_unit.index,MapData.MapUnitType.M_AREA);
+			}
 
+			if (!mapData.moveMap.ContainsKey(_unit.index)) {
+				
 				mapData.moveMap.Add(_unit.index,new KeyValuePair<int, int>(-1,-1));
 			}
 			
@@ -500,12 +619,15 @@ public class MapCreator : MonoBehaviour {
 			
 			if(mapData.dic.ContainsKey(_unit.index)){
 				
-				mapData.dic[_unit.index] = false;
+				mapData.dic[_unit.index] = MapData.MapUnitType.O_AREA;
 				
 			}else{
 				
-				mapData.dic.Add(_unit.index,false);
+				mapData.dic.Add(_unit.index,MapData.MapUnitType.O_AREA);
+			}
 
+			if (!mapData.moveMap.ContainsKey(_unit.index)) {
+				
 				mapData.moveMap.Add(_unit.index,new KeyValuePair<int, int>(-1,-1));
 			}
 			
@@ -525,12 +647,15 @@ public class MapCreator : MonoBehaviour {
 			
 			if(mapData.dic.ContainsKey(_unit.index)){
 				
-				mapData.dic[_unit.index] = true;
+				mapData.dic[_unit.index] = MapData.MapUnitType.M_AREA;
 				
 			}else{
 				
-				mapData.dic.Add(_unit.index,true);
+				mapData.dic.Add(_unit.index,MapData.MapUnitType.M_AREA);
+			}
 
+			if (!mapData.moveMap.ContainsKey(_unit.index)) {
+				
 				mapData.moveMap.Add(_unit.index,new KeyValuePair<int, int>(-1,-1));
 			}
 			
@@ -554,12 +679,15 @@ public class MapCreator : MonoBehaviour {
 		case MapType.OPPBASE:
 			
 			if(mapData.dic.ContainsKey(_unit.index)){
-				
-				mapData.dic[_unit.index] = false;
+
+				mapData.dic[_unit.index] = MapData.MapUnitType.O_AREA;
 				
 			}else{
 				
-				mapData.dic.Add(_unit.index,false);
+				mapData.dic.Add(_unit.index,MapData.MapUnitType.O_AREA);
+			}
+
+			if (!mapData.moveMap.ContainsKey(_unit.index)) {
 
 				mapData.moveMap.Add(_unit.index,new KeyValuePair<int, int>(-1,-1));
 			}
@@ -577,6 +705,140 @@ public class MapCreator : MonoBehaviour {
 				}
 				
 				mapData.oBase = _unit.index;
+			}
+			
+			break;
+
+		case MapType.RIVER:
+
+			if(mapData.dic.ContainsKey(_unit.index)){
+				
+				mapData.dic[_unit.index] = MapData.MapUnitType.RIVER;
+				
+			}else{
+				
+				mapData.dic.Add(_unit.index,MapData.MapUnitType.RIVER);
+			}
+			
+			HideArrow(_unit.index);
+			
+			if(mapData.moveMap.ContainsKey(_unit.index)){
+				
+				mapData.moveMap.Remove(_unit.index);
+			}
+			
+			mDel = new List<int>();
+			
+			oDel = new List<int>();
+			
+			foreach(KeyValuePair<int,KeyValuePair<int,int>> pair in mapData.moveMap){
+				
+				if(pair.Value.Key == _unit.index){
+					
+					mDel.Add(pair.Key);
+				}
+				
+				if(pair.Value.Value == _unit.index){
+					
+					oDel.Add(pair.Key);
+				}
+			}
+			
+			for(int i = 0 ; i < mDel.Count ; i++){
+				
+				mapData.moveMap[mDel[i]] = new KeyValuePair<int, int>(-1,mapData.moveMap[mDel[i]].Value);
+
+				if(showMyTarget){
+
+					HideArrow(mDel[i]);
+				}
+			}
+			
+			for(int i = 0 ; i < oDel.Count ; i++){
+				
+				mapData.moveMap[oDel[i]] = new KeyValuePair<int, int>(mapData.moveMap[oDel[i]].Key,-1);
+
+				if(!showMyTarget){
+
+					HideArrow(oDel[i]);
+				}
+			}
+			
+			if(mapData.mBase == _unit.index){
+				
+				mapData.mBase = -1;
+			}
+			
+			if(mapData.oBase == _unit.index){
+				
+				mapData.oBase = -1;
+			}
+			
+			break;
+
+		case MapType.HILL:
+			
+			if(mapData.dic.ContainsKey(_unit.index)){
+				
+				mapData.dic[_unit.index] = MapData.MapUnitType.HILL;
+				
+			}else{
+				
+				mapData.dic.Add(_unit.index,MapData.MapUnitType.HILL);
+			}
+			
+			HideArrow(_unit.index);
+			
+			if(mapData.moveMap.ContainsKey(_unit.index)){
+				
+				mapData.moveMap.Remove(_unit.index);
+			}
+			
+			mDel = new List<int>();
+			
+			oDel = new List<int>();
+			
+			foreach(KeyValuePair<int,KeyValuePair<int,int>> pair in mapData.moveMap){
+				
+				if(pair.Value.Key == _unit.index){
+					
+					mDel.Add(pair.Key);
+				}
+				
+				if(pair.Value.Value == _unit.index){
+					
+					oDel.Add(pair.Key);
+				}
+			}
+			
+			for(int i = 0 ; i < mDel.Count ; i++){
+				
+				mapData.moveMap[mDel[i]] = new KeyValuePair<int, int>(-1,mapData.moveMap[mDel[i]].Value);
+
+				if(showMyTarget){
+				
+					HideArrow(mDel[i]);
+				}
+			}
+			
+			for(int i = 0 ; i < oDel.Count ; i++){
+				
+				mapData.moveMap[oDel[i]] = new KeyValuePair<int, int>(mapData.moveMap[oDel[i]].Key,-1);
+
+				if(!showMyTarget){
+
+					HideArrow(oDel[i]);
+				}
+			}
+			
+			if(mapData.mBase == _unit.index){
+				
+				mapData.mBase = -1;
+			}
+			
+			if(mapData.oBase == _unit.index){
+				
+				mapData.oBase = -1;
 			}
 			
 			break;
