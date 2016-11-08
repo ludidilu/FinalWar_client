@@ -1,197 +1,204 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.IO;
 using xy3d.tstd.lib.superFunction;
 
-public class BattleEntrance : MonoBehaviour {
+public class BattleEntrance : MonoBehaviour
+{
+    [SerializeField]
+    private BattleManager battleManager;
 
-	[SerializeField]
-	private BattleManager battleManager;
+    [SerializeField]
+    private GameObject panel;
 
-	[SerializeField]
-	private GameObject panel;
+    [SerializeField]
+    private GameObject btPVP;
 
-	[SerializeField]
-	private GameObject btPVP;
+    [SerializeField]
+    private GameObject btPVE;
 
-	[SerializeField]
-	private GameObject btPVE;
+    [SerializeField]
+    private GameObject btCancel;
 
-	[SerializeField]
-	private GameObject btCancel;
+    void Awake()
+    {
+        ConfigDictionary.Instance.LoadLocalConfig(Application.streamingAssetsPath + "/local.xml");
 
-	void Awake(){
+        StaticData.path = ConfigDictionary.Instance.table_path;
 
-		ConfigDictionary.Instance.LoadLocalConfig (Application.streamingAssetsPath + "/local.xml");
-		
-		StaticData.path = ConfigDictionary.Instance.table_path;
-		
-		StaticData.Dispose ();
-		
-		StaticData.Load<MapSDS> ("map");
-		
-		Map.Init ();
-		
-		StaticData.Load<HeroSDS> ("hero");
-		
-		StaticData.Load<SkillSDS> ("skill");
-		
-		StaticData.Load<AuraSDS> ("aura");
+        StaticData.Dispose();
 
-		SuperFunction.Instance.AddEventListener (battleManager.gameObject, BattleManager.BATTLE_OVER, BattleOver);
+        StaticData.Load<MapSDS>("map");
 
-		battleManager.Init (SendBattleAction);
+        Map.Init();
 
-		Connection.Instance.Init ("127.0.0.1", 1983, ReceiveData, ConfigDictionary.Instance.uid);
-	}
+        StaticData.Load<HeroSDS>("hero");
 
-	private void ReceiveData(byte[] _bytes){
-		
-		using(MemoryStream ms = new MemoryStream(_bytes)){
-			
-			using(BinaryReader br = new BinaryReader(ms)){
-				
-				short type = br.ReadInt16();
+        StaticData.Load<SkillSDS>("skill");
 
-				switch(type){
+        StaticData.Load<AuraSDS>("aura");
 
-				case 0:
+        SuperFunction.Instance.AddEventListener(battleManager.gameObject, BattleManager.BATTLE_OVER, BattleOver);
 
-					short length = br.ReadInt16();
-					
-					byte[] bytes = br.ReadBytes(length);
-					
-					if(!battleManager.gameObject.activeSelf){
-						
-						battleManager.gameObject.SetActive(true);
-					}
-					
-					if(gameObject.activeSelf){
-						
-						gameObject.SetActive(false);
-					}
-					
-					battleManager.ReceiveData(bytes);
+        battleManager.Init(SendBattleAction);
 
-					break;
+        Connection.Instance.Init("127.0.0.1", 1983, ReceiveData, ConfigDictionary.Instance.uid);
+    }
 
-				case 1:
+    private void ReceiveData(byte[] _bytes)
+    {
+        using (MemoryStream ms = new MemoryStream(_bytes))
+        {
+            using (BinaryReader br = new BinaryReader(ms))
+            {
+                short type = br.ReadInt16();
 
-					if(battleManager.gameObject.activeSelf){
+                switch (type)
+                {
+                    case 0:
 
-						battleManager.gameObject.SetActive(false);
-					}
+                        short length = br.ReadInt16();
 
-					if(!gameObject.activeSelf){
+                        byte[] bytes = br.ReadBytes(length);
 
-						gameObject.SetActive(true);
-					}
+                        if (!battleManager.gameObject.activeSelf)
+                        {
 
-					panel.SetActive(true);
+                            battleManager.gameObject.SetActive(true);
+                        }
 
-					btPVP.SetActive(false);
+                        if (gameObject.activeSelf)
+                        {
 
-					btPVE.SetActive(false);
+                            gameObject.SetActive(false);
+                        }
 
-					btCancel.SetActive(true);
+                        battleManager.ReceiveData(bytes);
 
-					break;
+                        break;
 
-				case 2:
+                    case 1:
 
-					if(battleManager.gameObject.activeSelf){
-						
-						battleManager.gameObject.SetActive(false);
-					}
-					
-					if(!gameObject.activeSelf){
-						
-						gameObject.SetActive(true);
-					}
+                        if (battleManager.gameObject.activeSelf)
+                        {
 
-					panel.SetActive(true);
-					
-					btPVP.SetActive(true);
-					
-					btPVE.SetActive(true);
-					
-					btCancel.SetActive(false);
+                            battleManager.gameObject.SetActive(false);
+                        }
 
-					break;
-				}
-			}
-		}
-	}
+                        if (!gameObject.activeSelf)
+                        {
 
-	public void EnterPVP(){
+                            gameObject.SetActive(true);
+                        }
 
-		SendAction (0);
-	}
+                        panel.SetActive(true);
 
-	public void EnterPVE(){
+                        btPVP.SetActive(false);
 
-		SendAction (1);
-	}
+                        btPVE.SetActive(false);
 
-	public void CancelPVP(){
+                        btCancel.SetActive(true);
 
-		SendAction (2);
-	}
+                        break;
 
-	private void SendAction(short _type){
+                    case 2:
 
-		using (MemoryStream ms = new MemoryStream()) {
-			
-			using(BinaryWriter bw = new BinaryWriter(ms)){
+                        if (battleManager.gameObject.activeSelf)
+                        {
 
-				bw.Write((short)1);
+                            battleManager.gameObject.SetActive(false);
+                        }
 
-				bw.Write(_type);
-				
-				Connection.Instance.Send(ms);
-			}
-		}
-	}
+                        if (!gameObject.activeSelf)
+                        {
 
-	private void SendBattleAction(MemoryStream _ms){
+                            gameObject.SetActive(true);
+                        }
 
-		using (MemoryStream ms = new MemoryStream()) {
-			
-			using(BinaryWriter bw = new BinaryWriter(ms)){
-				
-				bw.Write((short)0);
+                        panel.SetActive(true);
 
-				short length = (short)_ms.Length;
-				
-				bw.Write(length);
+                        btPVP.SetActive(true);
 
-				bw.Write(_ms.GetBuffer(),0,length);
-				
-				Connection.Instance.Send(ms);
-			}
-		}
-	}
+                        btPVE.SetActive(true);
 
-	private void BattleOver(SuperEvent e){
+                        btCancel.SetActive(false);
 
-		gameObject.SetActive (true);
+                        break;
+                }
+            }
+        }
+    }
 
-		panel.SetActive(true);
-		
-		btPVP.SetActive(true);
-		
-		btPVE.SetActive(true);
-		
-		btCancel.SetActive(false);
-	}
+    public void EnterPVP()
+    {
+        SendAction(0);
+    }
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public void EnterPVE()
+    {
+        SendAction(1);
+    }
+
+    public void CancelPVP()
+    {
+        SendAction(2);
+    }
+
+    private void SendAction(short _type)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                bw.Write((short)1);
+
+                bw.Write(_type);
+
+                Connection.Instance.Send(ms);
+            }
+        }
+    }
+
+    private void SendBattleAction(MemoryStream _ms)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                bw.Write((short)0);
+
+                short length = (short)_ms.Length;
+
+                bw.Write(length);
+
+                bw.Write(_ms.GetBuffer(), 0, length);
+
+                Connection.Instance.Send(ms);
+            }
+        }
+    }
+
+    private void BattleOver(SuperEvent e)
+    {
+        gameObject.SetActive(true);
+
+        panel.SetActive(true);
+
+        btPVP.SetActive(true);
+
+        btPVE.SetActive(true);
+
+        btCancel.SetActive(false);
+    }
+
+    // Use this for initialization
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }

@@ -1,28 +1,25 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class HeroCard : HeroBase,IPointerClickHandler {
+public class HeroCard : HeroBase, IPointerClickHandler
+{
+    [SerializeField]
+    protected Text cost;
 
-	[SerializeField]
-	protected Text cost;
+    public void Init(int _cardUid, int _id)
+    {
+        cardUid = _cardUid;
 
-	public void Init(int _cardUid,int _id){
+        HeroSDS heroSDS = StaticData.GetData<HeroSDS>(_id);
 
-		cardUid = _cardUid;
+        InitCard(heroSDS);
 
-		HeroSDS heroSDS = StaticData.GetData<HeroSDS> (_id);
+        cost.text = sds.cost.ToString();
+    }
 
-		InitCard (heroSDS);
-
-		cost.text = sds.cost.ToString ();
-
-		SetBodyColor ();
-	}
-
-	public void OnPointerClick(PointerEventData _data){
-
-		SendMessageUpwards ("HeroClick", this, SendMessageOptions.DontRequireReceiver);
-	}
+    public void OnPointerClick(PointerEventData _data)
+    {
+        SendMessageUpwards("HeroClick", this, SendMessageOptions.DontRequireReceiver);
+    }
 }

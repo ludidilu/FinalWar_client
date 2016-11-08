@@ -4,15 +4,11 @@ public class ConfigDictionary : Config
 
     public static ConfigDictionary Instance
     {
-
         get
         {
-
             if (_Instance == null)
             {
-
                 _Instance = new ConfigDictionary();
-
             }
 
             return _Instance;
@@ -21,5 +17,5 @@ public class ConfigDictionary : Config
 
     public string table_path;
     public string map_path;
-	public int uid;
+    public int uid;
 }

@@ -1,200 +1,193 @@
 ﻿using UnityEngine;
-using System.Collections;
 using xy3d.tstd.lib.superTween;
 using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using FinalWar;
 
-public class HeroBattle : HeroBase {
+public class HeroBattle : HeroBase
+{
+    [SerializeField]
+    public Transform moveTrans;
 
-	private static readonly Color[] POWER_COLORS = new Color[]{
+    [SerializeField]
+    public Transform shockTrans;
 
-		Color.red,
-		Color.yellow,
-		Color.green
-	};
+    [SerializeField]
+    private CanvasGroup canvasGroup;
 
-	[SerializeField]
-	public Transform moveTrans;
+    [SerializeField]
+    private Text hp;
 
-	[SerializeField]
-	public Transform shockTrans;
+    [SerializeField]
+    private Text shield;
 
-	[SerializeField]
-	private CanvasGroup canvasGroup;
+    [SerializeField]
+    private Text attack;
 
-	[SerializeField]
-	private Text hp;
+    [SerializeField]
+    private Text shoot;
 
-	[SerializeField]
-	private Text shield;
+    private Hero hero;
 
-	[SerializeField]
-	private Text attack;
+    public bool isMine
+    {
+        get
+        {
+            return hero.isMine;
+        }
+    }
 
-	[SerializeField]
-	private Text shoot;
+    public int pos
+    {
+        get
+        {
+            return hero.pos;
+        }
+    }
 
-	private Hero hero;
+    public void Init(int _id)
+    {
+        HeroSDS heroSDS = StaticData.GetData<HeroSDS>(_id);
 
-	public bool isMine{
+        InitCard(heroSDS);
 
-		get{
+        hp.gameObject.SetActive(false);
 
-			return hero.isMine;
-		}
-	}
+        shield.gameObject.SetActive(false);
 
-	public int pos{
+        attack.gameObject.SetActive(false);
 
-		get{
+        shoot.gameObject.SetActive(false);
+    }
 
-			return hero.pos;
-		}
-	}
+    public void Init(Hero _hero)
+    {
+        hero = _hero;
 
-	public void Init(int _id){
-		
-		HeroSDS heroSDS = StaticData.GetData<HeroSDS> (_id);
+        InitCard(hero.sds as HeroSDS);
 
-		InitCard (heroSDS);
+        attack.text = sds.GetAttack().ToString();
 
-		hp.gameObject.SetActive (false);
+        shoot.text = sds.GetShoot().ToString();
 
-		shield.gameObject.SetActive (false);
+        RefreshHp();
 
-		attack.gameObject.SetActive (false);
+        RefreshShield();
+    }
 
-		shoot.gameObject.SetActive (false);
+    public void RefreshHp()
+    {
+        hp.text = hero.nowHp.ToString();
+    }
 
-		SetBodyColor ();
-	}
+    public void RefreshShield()
+    {
+        if (sds.GetShield() > 0)
+        {
+            if (!shield.gameObject.activeSelf)
+            {
+                shield.gameObject.SetActive(true);
+            }
 
-	public void Init(Hero _hero){
+            shield.text = hero.nowShield.ToString();
+        }
+        else
+        {
+            if (shield.gameObject.activeSelf)
+            {
+                shield.gameObject.SetActive(false);
+            }
+        }
+    }
 
-		hero = _hero;
+    public void Shock(List<Vector3> _targets, AnimationCurve _curve, float _shockDis, int _shieldDamage, int _hpDamage)
+    {
+        Vector3 shockVector = Vector3.zero;
 
-		InitCard (hero.sds as HeroSDS);
+        for (int i = 0; i < _targets.Count; i++)
+        {
+            shockVector += (transform.position - _targets[i]).normalized;
+        }
 
-		attack.text = sds.GetAttack ().ToString ();
+        if (shockVector == Vector3.zero)
+        {
+            Vector3 v2 = transform.position - _targets[0];
 
-		shoot.text = sds.GetShoot ().ToString ();
+            float angle = Mathf.Atan2(v2.y, v2.x);
 
-		RefreshHp ();
+            angle += Mathf.PI * 0.5f;
 
-		RefreshShield();
+            shockVector = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * _shockDis;
+        }
+        else
+        {
+            shockVector = shockVector.normalized * _shockDis;
+        }
 
-		SetBodyColor ();
-	}
+        Action<float> shockToDel = delegate (float obj)
+        {
+            float value = _curve.Evaluate(obj);
 
-	public void RefreshHp(){
+            shockTrans.position = moveTrans.position - shockVector * value;
+        };
 
-		SetHp (hero.nowHp);
-	}
+        SuperTween.Instance.To(0, 1, 1, shockToDel, null);
 
-	private void SetHp(int _hp){
+        string str = "";
 
-		hp.text = _hp.ToString ();
-	}
+        if (_shieldDamage < 0)
+        {
+            str += "<color=\"#FFFF00\">" + _shieldDamage + "</color>";
 
-	public void RefreshShield(){
+            if (_hpDamage < 0)
+            {
+                str += "   ";
+            }
+        }
 
-		SetShield(hero.nowShield);
-	}
+        if (_hpDamage < 0)
+        {
+            str += "<color=\"#FF0000\">" + _hpDamage + "</color>";
+        }
 
-	public void SetShield(int _shield){
+        ShowHud(str, Color.red, null);
 
-		shield.text = _shield.ToString();
-	}
+        RefreshShield();
 
-	public void Shock(List<Vector3> _targets,AnimationCurve _curve,float _shockDis,int _shieldDamage,int _hpDamage){
-		
-		Vector3 shockVector = Vector3.zero;
-		
-		for(int i = 0 ; i < _targets.Count ; i++){
-			
-			shockVector += (transform.position - _targets[i]).normalized;
-		}
-		
-		if(shockVector == Vector3.zero){
-			
-			Vector3 v2 = transform.position - _targets[0];
-			
-			float angle = Mathf.Atan2(v2.y,v2.x);
-			
-			angle += Mathf.PI * 0.5f;
-			
-			shockVector = new Vector3(Mathf.Cos(angle),Mathf.Sin(angle),0) * _shockDis;
-			
-		}else{
-			
-			shockVector = shockVector.normalized * _shockDis;
-		}
-		
-		Action<float> shockToDel = delegate(float obj) {
-			
-			float value = _curve.Evaluate(obj);
-			
-			shockTrans.position = moveTrans.position - shockVector * value;
-		};
-		
-		SuperTween.Instance.To(0,1,1,shockToDel,null);
+        RefreshHp();
+    }
 
-		string str = "";
+    public void ShowHud(string _str, Color _color, Action _callBack)
+    {
+        GameObject go = GameObject.Instantiate<GameObject>(BattleControl.Instance.damageNumResources);
 
-		if(_shieldDamage < 0){
+        go.transform.SetParent(transform.parent, false);
 
-			str += "<color=\"#FFFF00\">" + _shieldDamage + "</color>";
+        go.transform.position = transform.position;
 
-			if(_hpDamage < 0){
+        DamageNum damageNum = go.GetComponent<DamageNum>();
 
-				str += "   ";
-			}
-		}
+        damageNum.Init(_str, _color, _callBack);
+    }
 
-		if(_hpDamage < 0){
+    public void Die(Action _del)
+    {
+        Action dieOver = delegate ()
+        {
+            GameObject.Destroy(gameObject);
 
-			str += "<color=\"#FF0000\">" + _hpDamage + "</color>";
-		}
+            if (_del != null)
+            {
+                _del();
+            }
+        };
 
-		ShowHud (str, Color.red, null);
+        SuperTween.Instance.To(1, 0, BattleControl.Instance.dieTime, DieTo, dieOver);
+    }
 
-		RefreshShield();
-
-		RefreshHp ();
-	}
-
-	public void ShowHud(string _str,Color _color,Action _callBack){
-
-		GameObject go = GameObject.Instantiate<GameObject>(BattleControl.Instance.damageNumResources);
-		
-		go.transform.SetParent(transform.parent,false);
-		
-		go.transform.position = transform.position;
-		
-		DamageNum damageNum = go.GetComponent<DamageNum>();
-		
-		damageNum.Init(_str,_color,_callBack);
-	}
-
-	public void Die(Action _del){
-
-		Action dieOver = delegate() {
-
-			GameObject.Destroy(gameObject);
-
-			if(_del != null){
-
-				_del();
-			}
-		};
-
-		SuperTween.Instance.To (1, 0, BattleControl.Instance.dieTime, DieTo, dieOver);
-	}
-
-	private void DieTo(float _v){
-
-		canvasGroup.alpha = _v;
-	}
+    private void DieTo(float _v)
+    {
+        canvasGroup.alpha = _v;
+    }
 }

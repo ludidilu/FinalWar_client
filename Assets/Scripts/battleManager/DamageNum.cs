@@ -1,77 +1,77 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using System;
 
-public class DamageNum : MonoBehaviour {
+public class DamageNum : MonoBehaviour
+{
+    [SerializeField]
+    private Text text;
 
-	[SerializeField]
-	private Text text;
+    [SerializeField]
+    private CanvasGroup group;
 
-	[SerializeField]
-	private CanvasGroup group;
+    [SerializeField]
+    private AnimationCurve posCurve;
 
-	[SerializeField]
-	private AnimationCurve posCurve;
+    [SerializeField]
+    private AnimationCurve alphaCurve;
 
-	[SerializeField]
-	private AnimationCurve alphaCurve;
+    [SerializeField]
+    private float moveTime;
 
-	[SerializeField]
-	private float moveTime;
+    [SerializeField]
+    private float height;
 
-	[SerializeField]
-	private float height;
+    private float startTime;
 
-	private float startTime;
+    private float startY;
 
-	private float startY;
+    private Action callBack;
 
-	private Action callBack;
+    public void Init(string _str, Color _color, Action _callBack)
+    {
+        startTime = Time.time;
 
-	public void Init(string _str,Color _color,Action _callBack){
+        text.text = _str;
 
-		startTime = Time.time;
+        text.color = _color;
 
-		text.text = _str;
+        callBack = _callBack;
 
-		text.color = _color;
+        startY = (transform as RectTransform).anchoredPosition.y;
+    }
 
-		callBack = _callBack;
+    // Use this for initialization
+    void Start()
+    {
 
-		startY = (transform as RectTransform).anchoredPosition.y;
-	}
+    }
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-		float time = Time.time;
-		
-		float percent = (time - startTime) / moveTime;
-		
-		if (percent > 1) {
-			
-			GameObject.Destroy(gameObject);
-			
-			if(callBack != null){
+    // Update is called once per frame
+    void Update()
+    {
+        float time = Time.time;
 
-				callBack();
-			}
-			
-		} else {
-			
-			float value = posCurve.Evaluate (percent);
-			
-			(transform as RectTransform).anchoredPosition = new Vector2((transform as RectTransform).anchoredPosition.x,startY + value * height);
+        float percent = (time - startTime) / moveTime;
 
-			value = alphaCurve.Evaluate(percent);
+        if (percent > 1)
+        {
+            GameObject.Destroy(gameObject);
 
-			group.alpha = value;
-		}
-	}
+            if (callBack != null)
+            {
+                callBack();
+            }
+        }
+        else
+        {
+            float value = posCurve.Evaluate(percent);
+
+            (transform as RectTransform).anchoredPosition = new Vector2((transform as RectTransform).anchoredPosition.x, startY + value * height);
+
+            value = alphaCurve.Evaluate(percent);
+
+            group.alpha = value;
+        }
+    }
 }

@@ -1,49 +1,50 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
-public class HeroBase : MonoBehaviour {
+public class HeroBase : MonoBehaviour
+{
+    [SerializeField]
+    private Image frame;
 
-	[SerializeField]
-	private Image frame;
+    [SerializeField]
+    private xy3d.tstd.lib.effect.Gradient gradient;
 
-	[SerializeField]
-	private Image body;
+    [SerializeField]
+    private Text nameText;
 
-	[SerializeField]
-	private Text nameText;
+    public HeroSDS sds { get; private set; }
 
-	public HeroSDS sds{ get; private set;}
+    public int cardUid;
 
-	public int cardUid;
+    protected void InitCard(HeroSDS _heroSDS)
+    {
+        sds = _heroSDS;
 
-	protected void InitCard(HeroSDS _heroSDS){
+        nameText.text = sds.name;
 
-		sds = _heroSDS;
+        if (!sds.canControl)
+        {
+            nameText.color = Color.red;
+        }
 
-		nameText.text = sds.name;
+        if (sds.threat)
+        {
+            gradient.topColor = BattleManager.threatColor;
+        }
 
-		if (!sds.canControl) {
+        if (!sds.canMove)
+        {
+            gradient.bottomColor = BattleManager.rootColor;
+        }
+    }
 
-			nameText.color = Color.red;
-		}
-	}
+    public void SetFrameVisible(bool _visible)
+    {
+        frame.gameObject.SetActive(_visible);
+    }
 
-	public void SetFrameVisible(bool _visible){
-		
-		frame.gameObject.SetActive (_visible);
-	}
-	
-	public void SetFrameColor(Color _color){
-		
-		frame.color = _color;
-	}
-
-	protected void SetBodyColor(){
-
-		if (sds.threat) {
-			
-			body.color = BattleManager.threatColor;
-		}
-	}
+    public void SetFrameColor(Color _color)
+    {
+        frame.color = _color;
+    }
 }

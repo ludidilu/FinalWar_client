@@ -1,65 +1,63 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using xy3d.tstd.lib.superRaycast;
 using System;
 using xy3d.tstd.lib.superGraphicRaycast;
 
-public class AlertPanel : MonoBehaviour {
+public class AlertPanel : MonoBehaviour
+{
+    [SerializeField]
+    private Text alertText;
 
-	[SerializeField]
-	private Text alertText;
+    private bool hasDown = false;
 
-	private bool hasDown = false;
+    private Action callBack;
 
-	private Action callBack;
+    public void Alert(string _str, Action _callBack)
+    {
+        if (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
 
-	public void Alert(string _str,Action _callBack){
+            SuperGraphicRaycast.SetIsOpen(false, "a");
 
-		if (!gameObject.activeSelf) {
+            SuperRaycast.SetIsOpen(false, "a");
+        }
 
-			gameObject.SetActive (true);
+        callBack = _callBack;
 
-			SuperGraphicRaycast.SetIsOpen(false,"a");
-			
-			SuperRaycast.SetIsOpen(false,"a");
-		}
+        alertText.text = _str;
+    }
 
-		callBack = _callBack;
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            hasDown = true;
+        }
 
-		alertText.text = _str;
-	}
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (hasDown)
+            {
+                hasDown = false;
 
-	void Update(){
+                Close();
+            }
+        }
+    }
 
-		if (Input.GetMouseButtonDown (0)) {
+    public void Close()
+    {
+        gameObject.SetActive(false);
 
-			hasDown = true;
-		} 
+        SuperGraphicRaycast.SetIsOpen(true, "a");
 
-		if (Input.GetMouseButtonUp (0)) {
+        SuperRaycast.SetIsOpen(true, "a");
 
-			if(hasDown){
-
-				hasDown = false;
-
-				Close();
-			}
-		}
-	}
-
-	public void Close(){
-
-		gameObject.SetActive (false);
-
-		SuperGraphicRaycast.SetIsOpen (true,"a");
-
-		SuperRaycast.SetIsOpen(true,"a");
-
-		if (callBack != null) {
-
-			callBack();
-		}
-	}
+        if (callBack != null)
+        {
+            callBack();
+        }
+    }
 }

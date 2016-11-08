@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -12,1481 +11,1487 @@ using xy3d.tstd.lib.superFunction;
 using xy3d.tstd.lib.publicTools;
 using xy3d.tstd.lib.superGraphicRaycast;
 
-public class BattleManager : MonoBehaviour {
+public class BattleManager : MonoBehaviour
+{
+    public const string BATTLE_OVER = "battleOver";
 
-	public const string BATTLE_OVER = "battleOver";
+    public static readonly Color threatColor = new Color(0.2f, 0.8f, 0.8f);
 
-	public static readonly Color threatColor = new Color (0.2f, 0.8f, 0.8f);
+    public static readonly Color rootColor = new Color(0.5f, 0.25f, 0f);
 
-	private const float mapUnitWidth = 30;
-	private const float mapUnitScale = 55;
-	private const float heroScale = 0.8f;
-	private const float mapContainerYFix = 60;
-	private static readonly float sqrt3 = Mathf.Sqrt (3);
-	private const float scaleStep = 0.95f;
-	private const float minScale = 0.7f;
-	private const float maxScale = 1.3f;
+    private const float mapUnitWidth = 30;
+    private const float mapUnitScale = 55;
+    private const float heroScale = 0.8f;
+    private const float mapContainerYFix = 60;
+    private static readonly float sqrt3 = Mathf.Sqrt(3);
+    private const float scaleStep = 0.95f;
+    private const float minScale = 0.7f;
+    private const float maxScale = 1.3f;
 
-	[SerializeField]
-	private Camera mainCamera;
+    [SerializeField]
+    private Camera mainCamera;
 
-	[SerializeField]
-	private Canvas canvas;
+    [SerializeField]
+    private Canvas canvas;
 
-	[SerializeField]
-	private Color myMapUnitColor;
+    [SerializeField]
+    private Color myMapUnitColor;
 
-	[SerializeField]
-	private Color myBaseColor;
+    [SerializeField]
+    private Color myBaseColor;
 
-	[SerializeField]
-	private Color oppMapUnitColor;
+    [SerializeField]
+    private Color oppMapUnitColor;
 
-	[SerializeField]
-	private Color oppBaseColor;
+    [SerializeField]
+    private Color oppBaseColor;
 
-	[SerializeField]
-	private Color riverColor;
+    [SerializeField]
+    private Color riverColor;
 
-	[SerializeField]
-	private Color hillColor;
+    [SerializeField]
+    private Color hillColor;
 
-	[SerializeField]
-	private RectTransform battleContainer;
+    [SerializeField]
+    private RectTransform battleContainer;
 
-	[SerializeField]
-	private RectTransform battleContentContainer;
+    [SerializeField]
+    private RectTransform battleContentContainer;
 
-	[SerializeField]
-	private RectTransform cardContainer;
+    [SerializeField]
+    private RectTransform cardContainer;
 
-	[SerializeField]
-	private RectTransform mapContainer;
+    [SerializeField]
+    private RectTransform mapContainer;
 
-	[SerializeField]
-	private RectTransform heroContainer;
+    [SerializeField]
+    private RectTransform heroContainer;
 
-	[SerializeField]
-	private RectTransform arrowContainer;
+    [SerializeField]
+    private RectTransform arrowContainer;
 
-	[SerializeField]
-	private Text moneyTf;
+    [SerializeField]
+    private Text moneyTf;
 
-	[SerializeField]
-	private GameObject actionBt;
+    [SerializeField]
+    private GameObject actionBt;
 
-	[SerializeField]
-	private HeroDetail heroDetail;
+    [SerializeField]
+    private HeroDetail heroDetail;
 
-	[SerializeField]
-	private GameObject backGround;
+    [SerializeField]
+    private GameObject backGround;
 
-	[SerializeField]
-	private AlertPanel alertPanel;
+    [SerializeField]
+    private AlertPanel alertPanel;
 
-	private Battle battle;
+    private Battle battle;
 
-	private Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit> ();
+    private Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
 
-	private Dictionary<int, HeroCard> cardDic = new Dictionary<int, HeroCard>();
+    private Dictionary<int, HeroCard> cardDic = new Dictionary<int, HeroCard>();
 
-	private Dictionary<int, HeroBattle> heroDic = new Dictionary<int, HeroBattle>();
+    private Dictionary<int, HeroBattle> heroDic = new Dictionary<int, HeroBattle>();
 
-	private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
+    private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
 
-	private List<GameObject> arrowList = new List<GameObject> ();
+    private List<GameObject> arrowList = new List<GameObject>();
 
-	private List<GameObject> autoActionArrowList = new List<GameObject>();
+    private List<GameObject> autoActionArrowList = new List<GameObject>();
 
-	private Vector2 downPos;
+    private Vector2 downPos;
 
-	private Vector2 lastPos;
+    private Vector2 lastPos;
 
-	private GameObject mapGo;
+    private GameObject mapGo;
 
-	private enum DownType
-	{
-		NULL,
-		BACKGROUND,
-		MAPUNIT
-	}
+    private enum DownType
+    {
+        NULL,
+        BACKGROUND,
+        MAPUNIT
+    }
 
-	private DownType isDown = DownType.NULL;
+    private DownType isDown = DownType.NULL;
 
-	private bool hasMove = false;
+    private bool hasMove = false;
 
-	private MapUnit downMapUnit;
+    private MapUnit downMapUnit;
 
-	private HeroCard m_nowChooseCard;
+    private HeroCard m_nowChooseCard;
 
-	private HeroCard GetNowChooseCard(){
+    private HeroCard GetNowChooseCard()
+    {
+        return m_nowChooseCard;
+    }
 
-		return m_nowChooseCard;
-	}
+    private void SetNowChooseCard(HeroCard _value)
+    {
+        if (_value == null)
+        {
+            heroDetail.Hide(m_nowChooseCard);
 
-	private void SetNowChooseCard(HeroCard _value){
+        }
+        else
+        {
+            heroDetail.Show(_value);
+        }
 
-		if(_value == null){
-			
-			heroDetail.Hide(m_nowChooseCard);
-			
-		}else{
-			
-			heroDetail.Show(_value);
-		}
-		
-		m_nowChooseCard = _value;
-	}
+        m_nowChooseCard = _value;
+    }
 
-	private HeroBattle m_nowChooseHero;
+    private HeroBattle m_nowChooseHero;
 
-	private HeroBattle GetNowChooseHero(){
+    private HeroBattle GetNowChooseHero()
+    {
+        return m_nowChooseHero;
+    }
 
-		return  m_nowChooseHero;
-	}
+    private void SetNowChooseHero(HeroBattle _value, bool _canAction)
+    {
+        if (_value == null)
+        {
+            heroDetail.Hide(m_nowChooseHero);
+        }
+        else
+        {
+            heroDetail.Show(_value);
+        }
 
-	private void SetNowChooseHero(HeroBattle _value,bool _canAction){
+        m_nowChooseHero = _value;
 
-		if(_value == null){
-			
-			heroDetail.Hide(m_nowChooseHero);
-			
-		}else{
-			
-			heroDetail.Show(_value);
-		}
-		
-		m_nowChooseHero = _value;
+        nowChooseHeroCanAction = _canAction;
+    }
 
-		nowChooseHeroCanAction = _canAction;
-	}
+    private bool nowChooseHeroCanAction = false;
 
-	private bool nowChooseHeroCanAction = false;
+    private bool isDoingHeroAction = false;
 
-	private bool isDoingHeroAction = false;
+    private bool mouseHasExited = false;
 
-	private bool mouseHasExited = false;
+    private bool canAction = true;
 
-	private bool canAction = true;
+    private bool isInit = false;
 
-	private bool isInit = false;
+    private void WriteLog(string _str)
+    {
+        Debug.Log(_str);
+    }
 
-	private void WriteLog(string _str){
+    public void Init(Action<MemoryStream> _sendDataCallBack)
+    {
+        Log.Init(WriteLog);
 
-		Debug.Log (_str);
-	}
+        SuperRaycast.SetCamera(mainCamera);
 
-	public void Init(Action<MemoryStream> _sendDataCallBack){
+        SuperRaycast.SetIsOpen(true, "a");
 
-		Log.Init (WriteLog);
-		
-		SuperRaycast.SetCamera (mainCamera);
-		
-		SuperRaycast.SetIsOpen (true, "a");
-		
-		SuperRaycast.checkBlockByUi = true;
-		
-		Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS> ();
-		
-		Dictionary<int, SkillSDS> skillDic = StaticData.GetDic<SkillSDS> ();
-		
-		Dictionary<int, AuraSDS> auraDic = StaticData.GetDic<AuraSDS> ();
-		
-		Battle.Init (Map.mapDataDic, heroDic, skillDic, auraDic);
-		
-		battle = new Battle ();
-		
-		battle.ClientSetCallBack (_sendDataCallBack, RefreshData, DoAction, BattleQuit);
+        SuperRaycast.checkBlockByUi = true;
 
-		SuperFunction.Instance.AddEventListener (ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
+        Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS>();
 
-		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
-		
-		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButton, GetMouseMove);
+        Dictionary<int, SkillSDS> skillDic = StaticData.GetDic<SkillSDS>();
 
-//		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
-	}
-	
-	public void ReceiveData(byte[] _bytes){
+        Dictionary<int, AuraSDS> auraDic = StaticData.GetDic<AuraSDS>();
 
-		battle.ClientGetPackage (_bytes);
-	}
+        Battle.Init(Map.mapDataDic, heroDic, skillDic, auraDic);
 
-	private void RefreshData(){
+        battle = new Battle();
 
-		if (!isInit) {
+        battle.ClientSetCallBack(_sendDataCallBack, RefreshData, DoAction, BattleQuit);
 
-			isInit = true;
-		}
+        SuperFunction.Instance.AddEventListener(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
 
-		heroDetail.Hide();
+        SuperFunction.Instance.AddEventListener(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
 
-		ClearMapUnits ();
-		
-		ClearCards ();
+        SuperFunction.Instance.AddEventListener(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
 
-		ClearSummonHeros ();
+        //		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
+    }
 
-		ClearHeros ();
+    public void ReceiveData(byte[] _bytes)
+    {
+        battle.ClientGetPackage(_bytes);
+    }
 
-		ClearAutoActions ();
+    private void RefreshData()
+    {
+        if (!isInit)
+        {
+            isInit = true;
+        }
 
-		ClearMoves ();
+        heroDetail.Hide();
 
-		CreateMapPanel ();
+        ClearMapUnits();
 
-		CreateCards ();
+        ClearCards();
 
-		CreateSummonHeros ();
+        ClearSummonHeros();
 
-		CreateHeros ();
+        ClearHeros();
 
-		CreateAutoActions ();
+        ClearAutoActions();
 
-		CreateMoves ();
+        ClearMoves();
 
-		CreateMoneyTf ();
+        CreateMapPanel();
 
-		RefreshTouchable (battle.GetClientCanAction());
+        CreateCards();
 
-		if (battle.mWin && battle.oWin) {
+        CreateSummonHeros();
 
-			Alert ("Draw!",BattleOver);
+        CreateHeros();
 
-		} else if (battle.mWin) {
+        CreateAutoActions();
 
-			if (battle.clientIsMine) {
-				
-				Alert ("You win!",BattleOver);
-				
-			} else {
+        CreateMoves();
 
-				Alert ("You lose!",BattleOver);
-			}
+        CreateMoneyTf();
 
-		} else if (battle.oWin) {
+        RefreshTouchable(battle.GetClientCanAction());
 
-			if (battle.clientIsMine) {
-				
-				Alert ("You lose!",BattleOver);
-				
-			} else {
-				
-				Alert ("You win!",BattleOver);
-			}
-		}
-	}
+        if (battle.mWin && battle.oWin)
+        {
+            Alert("Draw!", BattleOver);
 
-	public void QuitBattle(){
+        }
+        else if (battle.mWin)
+        {
+            if (battle.clientIsMine)
+            {
+                Alert("You win!", BattleOver);
+            }
+            else
+            {
+                Alert("You lose!", BattleOver);
+            }
+        }
+        else if (battle.oWin)
+        {
+            if (battle.clientIsMine)
+            {
+                Alert("You lose!", BattleOver);
+            }
+            else
+            {
+                Alert("You win!", BattleOver);
+            }
+        }
+    }
 
-		battle.ClientRequestQuitBattle ();
-	}
+    public void QuitBattle()
+    {
+        battle.ClientRequestQuitBattle();
+    }
 
-	private void BattleQuit(){
+    private void BattleQuit()
+    {
+        Alert("Battle quit!", BattleOver);
+    }
 
-		Alert ("Battle quit!",BattleOver);
-	}
+    private void BattleOver()
+    {
+        RefreshTouchable(true);
 
-	private void BattleOver(){
+        gameObject.SetActive(false);
 
-		RefreshTouchable (true);
+        SuperEvent e = new SuperEvent(BATTLE_OVER);
 
-		gameObject.SetActive (false);
+        SuperFunction.Instance.DispatchEvent(gameObject, e);
+    }
 
-		SuperEvent e = new SuperEvent (BATTLE_OVER);
+    private void ClearMapUnits()
+    {
+        if (mapGo != null)
+        {
+            Destroy(mapGo);
+        }
 
-		SuperFunction.Instance.DispatchEvent (gameObject, e);
-	}
+        Dictionary<int, MapUnit>.ValueCollection.Enumerator enumerator = mapUnitDic.Values.GetEnumerator();
 
-	private void ClearMapUnits(){
+        while (enumerator.MoveNext())
+        {
+            GameObject.Destroy(enumerator.Current.gameObject);
+        }
 
-		if (mapGo != null) {
-			
-			Destroy(mapGo);
-		}
+        mapUnitDic.Clear();
+    }
 
-		Dictionary<int,MapUnit>.ValueCollection.Enumerator enumerator = mapUnitDic.Values.GetEnumerator ();
-		
-		while (enumerator.MoveNext()) {
-			
-			GameObject.Destroy(enumerator.Current.gameObject);
-		}
-		
-		mapUnitDic.Clear ();
-	}
+    private void ClearCards()
+    {
+        Dictionary<int, HeroCard>.ValueCollection.Enumerator enumerator2 = cardDic.Values.GetEnumerator();
 
-	private void ClearCards(){
+        while (enumerator2.MoveNext())
+        {
+            GameObject.Destroy(enumerator2.Current.gameObject);
+        }
 
-		Dictionary<int,HeroCard>.ValueCollection.Enumerator enumerator2 = cardDic.Values.GetEnumerator ();
-		
-		while (enumerator2.MoveNext()) {
-			
-			GameObject.Destroy(enumerator2.Current.gameObject);
-		}
-		
-		cardDic.Clear ();
-	}
+        cardDic.Clear();
+    }
 
-	private void ClearSummonHeros(){
+    private void ClearSummonHeros()
+    {
+        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator2 = summonHeroDic.Values.GetEnumerator();
 
-		Dictionary<int,HeroBattle>.ValueCollection.Enumerator enumerator2 = summonHeroDic.Values.GetEnumerator ();
-		
-		while (enumerator2.MoveNext()) {
-			
-			GameObject.Destroy(enumerator2.Current.gameObject);
-		}
-		
-		summonHeroDic.Clear ();
-	}
+        while (enumerator2.MoveNext())
+        {
+            GameObject.Destroy(enumerator2.Current.gameObject);
+        }
 
-	private void ClearHeros(){
+        summonHeroDic.Clear();
+    }
 
-		Dictionary<int,HeroBattle>.ValueCollection.Enumerator enumerator2 = heroDic.Values.GetEnumerator ();
-		
-		while (enumerator2.MoveNext()) {
-			
-			GameObject.Destroy(enumerator2.Current.gameObject);
-		}
-		
-		heroDic.Clear ();
-	}
+    private void ClearHeros()
+    {
+        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator2 = heroDic.Values.GetEnumerator();
 
-	private void ClearAutoActions(){
+        while (enumerator2.MoveNext())
+        {
+            GameObject.Destroy(enumerator2.Current.gameObject);
+        }
 
-		for(int i = 0 ; i < autoActionArrowList.Count ; i++){
-			
-			GameObject.Destroy(autoActionArrowList[i]);
-		}
-		
-		autoActionArrowList.Clear ();
-	}
+        heroDic.Clear();
+    }
 
-	private void ClearMoves(){
+    private void ClearAutoActions()
+    {
+        for (int i = 0; i < autoActionArrowList.Count; i++)
+        {
+            GameObject.Destroy(autoActionArrowList[i]);
+        }
 
-		for(int i = 0 ; i < arrowList.Count ; i++){
+        autoActionArrowList.Clear();
+    }
 
-			GameObject.Destroy(arrowList[i]);
-		}
+    private void ClearMoves()
+    {
+        for (int i = 0; i < arrowList.Count; i++)
+        {
+            GameObject.Destroy(arrowList[i]);
+        }
 
-		arrowList.Clear ();
-	}
+        arrowList.Clear();
+    }
 
-	private void CreateMapPanel(){
+    private void CreateMapPanel()
+    {
+        mapGo = GameObject.Instantiate(Resources.Load<GameObject>("MapGo"));
 
-		mapGo = GameObject.Instantiate (Resources.Load<GameObject> ("MapGo"));
-		
-		mapGo.transform.SetParent (mapContainer, false);
+        mapGo.transform.SetParent(mapContainer, false);
 
-		MeshRenderer mr = mapGo.GetComponent<MeshRenderer> ();
+        MeshRenderer mr = mapGo.GetComponent<MeshRenderer>();
 
-		mr.material = new Material (Shader.Find("Unlit/MapUnit"));
+        mr.material = new Material(Shader.Find("Unlit/MapUnit"));
 
-		GameObject[] gos = new GameObject[battle.mapData.dic.Count];
-		
-		int index = 0;
+        GameObject[] gos = new GameObject[battle.mapData.dic.Count];
 
-		int index2 = 0;
-		
-		for (int i = 0; i < battle.mapData.mapHeight; i++) {
-			
-			for(int m = 0 ; m < battle.mapData.mapWidth ; m++){
-				
-				if(i % 2 == 1 && m == battle.mapData.mapWidth - 1){
-					
-					continue;
-				}
+        int index = 0;
 
-				if(!battle.mapData.dic.ContainsKey(index)){
+        int index2 = 0;
 
-					index++;
+        for (int i = 0; i < battle.mapData.mapHeight; i++)
+        {
+            for (int m = 0; m < battle.mapData.mapWidth; m++)
+            {
+                if (i % 2 == 1 && m == battle.mapData.mapWidth - 1)
+                {
+                    continue;
+                }
 
-					continue;
-				}
-				
-				GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("MapUnit"));
-				
-				go.transform.SetParent(mapContainer,false);
-				
-				go.transform.localPosition = new Vector3(m * mapUnitWidth * sqrt3 * 2 + ((i % 2 == 1) ? mapUnitWidth * Mathf.Sqrt(3) : 0),-i * mapUnitWidth * 3,0);
+                if (!battle.mapData.dic.ContainsKey(index))
+                {
+                    index++;
 
-				go.transform.localScale = new Vector3(mapUnitScale,mapUnitScale,mapUnitScale);
+                    continue;
+                }
 
-				MapUnit unit = go.GetComponent<MapUnit>();
+                GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("MapUnit"));
 
-				mapUnitDic.Add(index,unit);
+                go.transform.SetParent(mapContainer, false);
 
-				unit.Init(index,index2,mr);
+                go.transform.localPosition = new Vector3(m * mapUnitWidth * sqrt3 * 2 + ((i % 2 == 1) ? mapUnitWidth * Mathf.Sqrt(3) : 0), -i * mapUnitWidth * 3, 0);
 
-				SetMapUnitColor(unit);
+                go.transform.localScale = new Vector3(mapUnitScale, mapUnitScale, mapUnitScale);
 
-				MapData.MapUnitType mapUnitType = battle.mapData.dic[index];
+                MapUnit unit = go.GetComponent<MapUnit>();
 
-				if (mapUnitType == MapData.MapUnitType.RIVER || mapUnitType == MapData.MapUnitType.HILL) {
+                mapUnitDic.Add(index, unit);
 
-					GameObject.Destroy(unit.GetComponent<Collider>());
-				}
-					
-				index++;
+                unit.Init(index, index2, mr);
 
-				gos[index2] = go;
+                SetMapUnitColor(unit);
 
-				index2++;
-			}
-		}
+                MapData.MapUnitType mapUnitType = battle.mapData.dic[index];
 
-		Mesh mesh = PublicTools.CombineMeshs (gos);
+                if (mapUnitType == MapData.MapUnitType.RIVER || mapUnitType == MapData.MapUnitType.HILL)
+                {
+                    GameObject.Destroy(unit.GetComponent<Collider>());
+                }
 
-		MeshFilter mf = mapGo.GetComponent<MeshFilter> ();
+                index++;
 
-		mf.mesh = mesh;
+                gos[index2] = go;
 
-		battleContentContainer.localPosition = new Vector3 (-0.5f * (battle.mapData.mapWidth * mapUnitWidth * sqrt3 * 2) + mapUnitWidth * sqrt3,mapContainerYFix + 0.5f * (battle.mapData.mapHeight * mapUnitWidth * 3 + mapUnitWidth) - mapUnitWidth * 2, 0);
-	}
+                index2++;
+            }
+        }
 
-	private void CreateCards(){
+        Mesh mesh = PublicTools.CombineMeshs(gos);
 
-		Dictionary<int,int> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
+        MeshFilter mf = mapGo.GetComponent<MeshFilter>();
 
-		Dictionary<int,int>.Enumerator enumerator = tmpCardDic.GetEnumerator ();
+        mf.mesh = mesh;
 
-		int index = 0;
+        battleContentContainer.localPosition = new Vector3(-0.5f * (battle.mapData.mapWidth * mapUnitWidth * sqrt3 * 2) + mapUnitWidth * sqrt3, mapContainerYFix + 0.5f * (battle.mapData.mapHeight * mapUnitWidth * 3 + mapUnitWidth) - mapUnitWidth * 2, 0);
+    }
 
-		while (enumerator.MoveNext()) {
+    private void CreateCards()
+    {
+        Dictionary<int, int> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
-			if(battle.summon.ContainsKey(enumerator.Current.Key)){
+        Dictionary<int, int>.Enumerator enumerator = tmpCardDic.GetEnumerator();
 
-				continue;
-			}
+        int index = 0;
 
-			GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroCard"));
+        while (enumerator.MoveNext())
+        {
+            if (battle.summon.ContainsKey(enumerator.Current.Key))
+            {
+                continue;
+            }
 
-			HeroCard hero = go.GetComponent<HeroCard>();
+            GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroCard"));
 
-			hero.SetFrameVisible(false);
+            HeroCard hero = go.GetComponent<HeroCard>();
 
-			hero.Init(enumerator.Current.Key,enumerator.Current.Value);
+            hero.SetFrameVisible(false);
 
-			cardDic.Add(enumerator.Current.Key,hero);
+            hero.Init(enumerator.Current.Key, enumerator.Current.Value);
 
-			go.transform.SetParent(cardContainer,false);
+            cardDic.Add(enumerator.Current.Key, hero);
 
-			float cardWidth = (go.transform as RectTransform).sizeDelta.x;
-			float cardHeight = (go.transform as RectTransform).sizeDelta.y;
+            go.transform.SetParent(cardContainer, false);
 
-			(go.transform as RectTransform).anchoredPosition = new Vector2(-0.5f * cardContainer.rect.width + cardWidth * 0.5f + index * cardWidth,-0.5f * cardContainer.rect.height + cardHeight * 0.5f);
+            float cardWidth = (go.transform as RectTransform).sizeDelta.x;
+            float cardHeight = (go.transform as RectTransform).sizeDelta.y;
 
-			index++;
-		}
-	}
+            (go.transform as RectTransform).anchoredPosition = new Vector2(-0.5f * cardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * cardContainer.rect.height + cardHeight * 0.5f);
 
-	private void CreateSummonHeros(){
+            index++;
+        }
+    }
 
-		Dictionary<int,int>.Enumerator enumerator2 = battle.summon.GetEnumerator ();
-		
-		while (enumerator2.MoveNext()) {
-			
-			AddCardToMap(enumerator2.Current.Key,enumerator2.Current.Value);
-		}
-	}
+    private void CreateSummonHeros()
+    {
+        Dictionary<int, int>.Enumerator enumerator2 = battle.summon.GetEnumerator();
 
-	private void CreateHeros(){
+        while (enumerator2.MoveNext())
+        {
+            AddCardToMap(enumerator2.Current.Key, enumerator2.Current.Value);
+        }
+    }
 
-		Dictionary<int,Hero>.ValueCollection.Enumerator enumerator = battle.heroMapDic.Values.GetEnumerator ();
+    private void CreateHeros()
+    {
+        Dictionary<int, Hero>.ValueCollection.Enumerator enumerator = battle.heroMapDic.Values.GetEnumerator();
 
-		while (enumerator.MoveNext()) {
+        while (enumerator.MoveNext())
+        {
+            AddHeroToMap(enumerator.Current);
+        }
+    }
 
-			AddHeroToMap(enumerator.Current);
-		}
-	}
+    private void CreateMoneyTf()
+    {
+        if (!moneyTf.gameObject.activeSelf)
+        {
 
-	private void CreateMoneyTf(){
+            moneyTf.gameObject.SetActive(true);
+        }
 
-		if (!moneyTf.gameObject.activeSelf) {
+        moneyTf.text = GetMoney().ToString();
+    }
 
-			moneyTf.gameObject.SetActive(true);
-		}
+    private void CreateAutoActions()
+    {
+        Dictionary<int, int>.Enumerator enumerator = battle.autoAction.GetEnumerator();
 
-		moneyTf.text = GetMoney().ToString ();
-	}
+        while (enumerator.MoveNext())
+        {
+            int pos = enumerator.Current.Key;
 
-	private void CreateAutoActions(){
+            int targetPos = enumerator.Current.Value;
 
-		Dictionary<int,int>.Enumerator enumerator = battle.autoAction.GetEnumerator ();
+            if (pos != targetPos)
+            {
+                GameObject go;
 
-		while (enumerator.MoveNext()) {
+                if (BattlePublicTools.GetDistance(battle.mapData.mapWidth, pos, targetPos) == 1)
+                {
+                    if (battle.GetPosIsMine(pos) == battle.GetPosIsMine(targetPos))
+                    {
+                        go = CreateArrow(pos, targetPos, new Color(0, 1, 0, 0.5f), 0);
+                    }
+                    else
+                    {
+                        go = CreateArrow(pos, targetPos, new Color(1, 0, 0, 0.5f), 0);
+                    }
+                }
+                else
+                {
+                    go = CreateShootArrow(pos, targetPos, new Color(1, 1, 0, 0.5f));
+                }
 
-			int pos = enumerator.Current.Key;
+                autoActionArrowList.Add(go);
+            }
+        }
+    }
 
-			int targetPos = enumerator.Current.Value;
+    private void CreateMoves()
+    {
+        BattleData battleData = battle.GetBattleData();
 
-			if(pos != targetPos){
+        Dictionary<int, BattleCellData>.Enumerator enumerator2 = battleData.actionDic.GetEnumerator();
 
-				GameObject go;
+        while (enumerator2.MoveNext())
+        {
+            int pos = enumerator2.Current.Key;
 
-				if(BattlePublicTools.GetDistance(battle.mapData.mapWidth,pos,targetPos) == 1){
+            BattleCellData cellData = enumerator2.Current.Value;
 
-					if(battle.GetPosIsMine(pos) == battle.GetPosIsMine(targetPos)){
+            for (int i = 0; i < cellData.attackers.Count; i++)
+            {
+                GameObject go = CreateArrow(cellData.attackers[i].pos, pos, Color.red, i);
 
-						go = CreateArrow(pos,targetPos,new Color(0,1,0,0.5f),0);
+                arrowList.Add(go);
+            }
 
-					}else{
+            for (int i = 0; i < cellData.supporters.Count; i++)
+            {
+                GameObject go = CreateArrow(cellData.supporters[i].pos, pos, Color.green, i);
 
-						go = CreateArrow(pos,targetPos,new Color(1,0,0,0.5f),0);
-					}
+                arrowList.Add(go);
+            }
 
-				}else{
+            for (int i = 0; i < cellData.shooters.Count; i++)
+            {
+                GameObject go = CreateShootArrow(cellData.shooters[i].pos, pos, Color.yellow);
 
-					go = CreateShootArrow(pos,targetPos,new Color(1,1,0,0.5f));
-				}
+                arrowList.Add(go);
+            }
+        }
+    }
 
-				autoActionArrowList.Add(go);
-			}
-		}
-	}
+    private GameObject CreateArrow(int _start, int _end, Color _color, int _index)
+    {
+        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
 
-	private void CreateMoves(){
+        Arrow arrow = go.GetComponent<Arrow>();
 
-		BattleData battleData = battle.GetBattleData ();
+        go.transform.SetParent(arrowContainer, false);
 
-		Dictionary<int,BattleCellData>.Enumerator enumerator2 = battleData.actionDic.GetEnumerator ();
+        MapUnit start = mapUnitDic[_start];
 
-		while (enumerator2.MoveNext()) {
+        MapUnit end = mapUnitDic[_end];
 
-			int pos = enumerator2.Current.Key;
+        go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
 
-			BattleCellData cellData = enumerator2.Current.Value;
+        float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y, end.transform.position.x - start.transform.position.x);
 
-			for(int i = 0 ; i < cellData.attackers.Count ; i++){
+        Quaternion q = new Quaternion();
 
-				GameObject go = CreateArrow(cellData.attackers[i].pos,pos,Color.red,i);
+        q.eulerAngles = new Vector3(0, 0, angle * 180 / Mathf.PI);
 
-				arrowList.Add(go);
-			}
+        go.transform.localRotation = q;
 
-			for(int i = 0 ; i < cellData.supporters.Count ; i++){
+        arrow.SetColor(_color);
 
-				GameObject go = CreateArrow(cellData.supporters[i].pos,pos,Color.green,i);
+        arrow.SetIndex(_index);
 
-				arrowList.Add(go);
-			}
+        return go;
+    }
 
-			for(int i = 0 ; i < cellData.shooters.Count ; i++){
+    private GameObject CreateShootArrow(int _start, int _end, Color _color)
+    {
+        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("ShootArrow"));
 
-				GameObject go = CreateShootArrow(cellData.shooters[i].pos,pos,Color.yellow);
+        ShootArrow arrow = go.GetComponent<ShootArrow>();
 
-				arrowList.Add(go);
-			}
-		}
-	}
+        go.transform.SetParent(arrowContainer, false);
 
-	private GameObject CreateArrow(int _start,int _end,Color _color,int _index){
+        MapUnit start = mapUnitDic[_start];
 
-		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
-		
-		Arrow arrow = go.GetComponent<Arrow>();
-		
-		go.transform.SetParent(arrowContainer,false);
-		
-		MapUnit start = mapUnitDic[_start];
-		
-		MapUnit end = mapUnitDic[_end];
-		
-		go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
-		
-		float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y,end.transform.position.x - start.transform.position.x);
-		
-		Quaternion q = new Quaternion();
-		
-		q.eulerAngles = new Vector3(0,0,angle * 180 / Mathf.PI);
-		
-		go.transform.localRotation = q;
-		
-		arrow.SetColor (_color);
+        MapUnit end = mapUnitDic[_end];
 
-		arrow.SetIndex (_index);
+        go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
 
-		return go;
-	}
+        float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y, end.transform.position.x - start.transform.position.x);
 
-	private GameObject CreateShootArrow(int _start,int _end,Color _color){
+        Quaternion q = new Quaternion();
 
-		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("ShootArrow"));
-		
-		ShootArrow arrow = go.GetComponent<ShootArrow>();
-		
-		go.transform.SetParent(arrowContainer,false);
-		
-		MapUnit start = mapUnitDic[_start];
-		
-		MapUnit end = mapUnitDic[_end];
-		
-		go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
-		
-		float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y,end.transform.position.x - start.transform.position.x);
-		
-		Quaternion q = new Quaternion();
-		
-		q.eulerAngles = new Vector3(0,0,angle * 180 / Mathf.PI);
-		
-		go.transform.localRotation = q;
-		
-		arrow.SetColor (_color);
+        q.eulerAngles = new Vector3(0, 0, angle * 180 / Mathf.PI);
 
-		return go;
-	}
+        go.transform.localRotation = q;
 
-	public void MapUnitDown(MapUnit _mapUnit){
+        arrow.SetColor(_color);
 
-		MapUnitDownReal(_mapUnit);
+        return go;
+    }
 
-		if(nowChooseHeroCanAction){
+    public void MapUnitDown(MapUnit _mapUnit)
+    {
+        MapUnitDownReal(_mapUnit);
 
-			for(int i = 0 ; i < battle.action.Count ; i++){
+        if (nowChooseHeroCanAction)
+        {
+            for (int i = 0; i < battle.action.Count; i++)
+            {
+                KeyValuePair<int, int> pair = battle.action[i];
 
-				KeyValuePair<int,int> pair = battle.action[i];
+                if (pair.Key == GetNowChooseHero().pos)
+                {
+                    if (pair.Value == _mapUnit.index)
+                    {
+                        isDoingHeroAction = true;
+                    }
 
-				if(pair.Key == GetNowChooseHero().pos){
+                    return;
+                }
+            }
 
-					if(pair.Value == _mapUnit.index){
+            if (_mapUnit.index == GetNowChooseHero().pos)
+            {
+                isDoingHeroAction = true;
+            }
+        }
+    }
 
-						isDoingHeroAction = true;
-					}
+    public void MapUnitEnter(MapUnit _mapUnit)
+    {
+        if (isDoingHeroAction)
+        {
+            if (battle.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
+            {
+                ClearMoves();
 
-					return;
-				}
-			}
+                CreateMoves();
+            }
+        }
+    }
 
-			if(_mapUnit.index == GetNowChooseHero().pos){
+    public void MapUnitExit(MapUnit _mapUnit)
+    {
+        if (isDoingHeroAction)
+        {
+            mouseHasExited = true;
 
-				isDoingHeroAction = true;
-			}
-		}
-	}
+            for (int i = 0; i < battle.action.Count; i++)
+            {
+                KeyValuePair<int, int> pair = battle.action[i];
 
-	public void MapUnitEnter(MapUnit _mapUnit){
+                if (pair.Key == GetNowChooseHero().pos)
+                {
+                    battle.ClientRequestUnaction(GetNowChooseHero().pos);
 
-		if (isDoingHeroAction) {
+                    ClearMoves();
 
-			if(battle.ClientRequestAction(GetNowChooseHero().pos,_mapUnit.index)){
+                    CreateMoves();
 
-				ClearMoves();
-				
-				CreateMoves();
-			}
-		}
-	}
+                    return;
+                }
+            }
+        }
+    }
 
-	public void MapUnitExit(MapUnit _mapUnit){
+    //	public void MapUnitUp(MapUnit _mapUnit){
+    //
+    //		if (movingHeroPos != -1) {
+    //
+    //			movingHeroPos = -1;
+    //		}
+    //	}
 
-		if (isDoingHeroAction) {
+    public void MapUnitUpAsButton(MapUnit _mapUnit)
+    {
+        if (mouseHasExited)
+        {
+            return;
+        }
 
-			mouseHasExited = true;
+        if (battle.summon.ContainsValue(_mapUnit.index))
+        {
+            HeroBattle summonHero = summonHeroDic[_mapUnit.index];
 
-			for(int i = 0 ; i < battle.action.Count ; i++){
-				
-				KeyValuePair<int,int> pair = battle.action[i];
-				
-				if(pair.Key == GetNowChooseHero().pos){
+            if (GetNowChooseHero() == null)
+            {
+                SetNowChooseHero(summonHero, false);
 
-					battle.ClientRequestUnaction(GetNowChooseHero().pos);
+                GetNowChooseHero().SetFrameVisible(true);
+            }
+            else
+            {
+                if (GetNowChooseHero() == summonHero)
+                {
+                    ClearNowChooseHero();
 
-					ClearMoves();
+                    UnsummonHero(summonHero.cardUid);
+                }
+                else
+                {
+                    ClearNowChooseHero();
 
-					CreateMoves();
-					
-					return;
-				}
-			}
-		}
-	}
+                    SetNowChooseHero(summonHero, false);
 
-//	public void MapUnitUp(MapUnit _mapUnit){
-//
-//		if (movingHeroPos != -1) {
-//
-//			movingHeroPos = -1;
-//		}
-//	}
+                    GetNowChooseHero().SetFrameVisible(true);
+                }
+            }
+        }
+        else if (battle.heroMapDic.ContainsKey(_mapUnit.index))
+        {
+            HeroBattle nowHero = heroDic[_mapUnit.index];
 
-	public void MapUnitUpAsButton(MapUnit _mapUnit){
+            if (GetNowChooseHero() == null)
+            {
+                SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine);
 
-		if (mouseHasExited) {
+                GetNowChooseHero().SetFrameVisible(true);
+            }
+            else
+            {
+                if (GetNowChooseHero() != nowHero)
+                {
+                    ClearNowChooseHero();
 
-			return;
-		}
+                    SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine);
 
-		if (battle.summon.ContainsValue (_mapUnit.index)) {
+                    GetNowChooseHero().SetFrameVisible(true);
+                }
+            }
+        }
+        else if (GetNowChooseCard() != null)
+        {
+            if (battle.GetPosIsMine(_mapUnit.index) == battle.clientIsMine && GetNowChooseCard().sds.cost <= GetMoney())
+            {
+                SummonHero(GetNowChooseCard().cardUid, _mapUnit.index);
+            }
+        }
+        else
+        {
+            ClearNowChooseHero();
+        }
 
-			HeroBattle summonHero = summonHeroDic [_mapUnit.index];
+        ClearNowChooseCard();
+    }
 
-			if (GetNowChooseHero() == null) {
+    public void BackgroundClick()
+    {
+        ClearNowChooseHero();
 
-				SetNowChooseHero(summonHero,false);
+        ClearNowChooseCard();
+    }
 
-				GetNowChooseHero().SetFrameVisible (true);
+    public void HeroClick(HeroCard _hero)
+    {
+        ClearNowChooseHero();
 
-			} else {
+        if (GetNowChooseCard() != _hero)
+        {
+            ClearNowChooseCard();
 
-				if (GetNowChooseHero() == summonHero) {
+            SetNowChooseCard(_hero);
 
-					ClearNowChooseHero();
+            GetNowChooseCard().SetFrameVisible(true);
+        }
+    }
 
-					UnsummonHero (summonHero.cardUid);
+    private void ClearNowChooseCard()
+    {
+        if (GetNowChooseCard() != null)
+        {
+            GetNowChooseCard().SetFrameVisible(false);
 
-				} else {
+            SetNowChooseCard(null);
+        }
+    }
 
-					ClearNowChooseHero();
+    private void ClearNowChooseHero()
+    {
+        if (GetNowChooseHero() != null)
+        {
+            GetNowChooseHero().SetFrameVisible(false);
 
-					SetNowChooseHero(summonHero,false);
+            SetNowChooseHero(null, false);
+        }
+    }
 
-					GetNowChooseHero().SetFrameVisible (true);
-				}
-			}
-			
-		} else if (battle.heroMapDic.ContainsKey (_mapUnit.index)) {
+    private void SummonHero(int _cardUid, int _pos)
+    {
+        battle.ClientRequestSummon(_cardUid, _pos);
 
-			HeroBattle nowHero = heroDic [_mapUnit.index];
+        CreateMoneyTf();
 
-			if (GetNowChooseHero() == null) {
+        ClearCards();
 
-				SetNowChooseHero(nowHero,nowHero.isMine == battle.clientIsMine);
+        CreateCards();
 
-				GetNowChooseHero().SetFrameVisible (true);
-				
-			} else {
-				
-				if (GetNowChooseHero() != nowHero) {
+        ClearSummonHeros();
 
-					ClearNowChooseHero();
+        CreateSummonHeros();
+    }
 
-					SetNowChooseHero(nowHero,nowHero.isMine == battle.clientIsMine);
+    private void UnsummonHero(int _cardUid)
+    {
+        battle.ClientRequestUnsummon(_cardUid);
 
-					GetNowChooseHero().SetFrameVisible (true);
-				}
-			}
+        CreateMoneyTf();
 
-		} else if(GetNowChooseCard() != null) {
+        ClearCards();
 
-			if (battle.GetPosIsMine(_mapUnit.index) == battle.clientIsMine && GetNowChooseCard().sds.cost <= GetMoney ()) {
-				
-				SummonHero (GetNowChooseCard().cardUid, _mapUnit.index);
-			}
+        CreateCards();
 
-		}else {
+        ClearSummonHeros();
 
-			ClearNowChooseHero();
-		}
+        CreateSummonHeros();
+    }
 
-		ClearNowChooseCard ();
-	}
+    private HeroBattle AddHeroToMap(Hero _hero)
+    {
+        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 
-	public void BackgroundClick(){
+        HeroBattle hero = go.GetComponent<HeroBattle>();
 
-		ClearNowChooseHero ();
+        heroDic.Add(_hero.pos, hero);
 
-		ClearNowChooseCard ();
-	}
+        hero.Init(_hero);
 
-	public void HeroClick(HeroCard _hero){
+        AddHeroToMapReal(hero, _hero.pos);
 
-		ClearNowChooseHero();
+        return hero;
+    }
 
-		if (GetNowChooseCard() != _hero) {
+    private HeroBattle AddCardToMap(int _cardUid, int _pos)
+    {
+        int cardID = (battle.clientIsMine ? battle.mHandCards : battle.oHandCards)[_cardUid];
 
-			ClearNowChooseCard();
+        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 
-			SetNowChooseCard(_hero);
+        HeroBattle hero = go.GetComponent<HeroBattle>();
 
-			GetNowChooseCard().SetFrameVisible(true);
-		}
-	}
+        summonHeroDic.Add(_pos, hero);
 
-	private void ClearNowChooseCard(){
+        hero.Init(cardID);
 
-		if (GetNowChooseCard() != null) {
+        hero.cardUid = _cardUid;
 
-			GetNowChooseCard().SetFrameVisible(false);
+        AddHeroToMapReal(hero, _pos);
 
-			SetNowChooseCard(null);
-		}
-	}
+        return hero;
+    }
 
-	private void ClearNowChooseHero(){
+    private void AddHeroToMapReal(HeroBattle _heroCard, int _pos)
+    {
+        MapUnit mapUnit = mapUnitDic[_pos];
 
-		if (GetNowChooseHero() != null) {
+        _heroCard.SetFrameVisible(false);
 
-			GetNowChooseHero().SetFrameVisible(false);
+        _heroCard.transform.SetParent(heroContainer, false);
 
-			SetNowChooseHero(null,false);
-		}
-	}
+        _heroCard.transform.localPosition = mapUnit.transform.localPosition;
 
-	private void SummonHero(int _cardUid,int _pos){
-		
-		battle.ClientRequestSummon (_cardUid, _pos);
+        _heroCard.transform.localScale = new Vector3(heroScale, heroScale, heroScale);
+    }
 
-		CreateMoneyTf ();
+    private int GetMoney()
+    {
+        int money = battle.clientIsMine ? battle.mMoney : battle.oMoney;
 
-		ClearCards ();
+        Dictionary<int, int> cards = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
-		CreateCards ();
+        Dictionary<int, int>.KeyCollection.Enumerator enumerator = battle.summon.Keys.GetEnumerator();
 
-		ClearSummonHeros ();
+        while (enumerator.MoveNext())
+        {
+            int cardID = cards[enumerator.Current];
 
-		CreateSummonHeros ();
-	}
+            HeroSDS heroSDS = StaticData.GetData<HeroSDS>(cardID);
 
-	private void UnsummonHero(int _cardUid){
+            money -= heroSDS.cost;
+        }
 
-		battle.ClientRequestUnsummon (_cardUid);
-		
-		CreateMoneyTf ();
-		
-		ClearCards ();
-		
-		CreateCards ();
-		
-		ClearSummonHeros ();
-		
-		CreateSummonHeros ();
-	}
+        return money;
+    }
 
-	private HeroBattle AddHeroToMap(Hero _hero){
+    public void ActionBtClick()
+    {
+        ClearNowChooseCard();
 
-		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
-		
-		HeroBattle hero = go.GetComponent<HeroBattle>();
+        ClearNowChooseHero();
 
-		heroDic.Add (_hero.pos, hero);
-		
-		hero.Init (_hero);
-		
-		AddHeroToMapReal (hero, _hero.pos);
+        battle.ClientRequestDoAction();
 
-		return hero;
-	}
+        RefreshTouchable(battle.GetClientCanAction());
+    }
 
-	private HeroBattle AddCardToMap(int _cardUid,int _pos){
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetMouseButtonUp(0))
+        {
+            GetMouseUp();
+        }
 
-		int cardID = (battle.clientIsMine ? battle.mHandCards : battle.oHandCards) [_cardUid];
+        if (Input.GetKeyUp(KeyCode.F5))
+        {
+            battle.ClientRequestRefreshData();
 
-		GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
-		
-		HeroBattle hero = go.GetComponent<HeroBattle>();
+        }
+        else if (Input.GetKeyUp(KeyCode.A))
+        {
+            HeroAi.Start(battle, battle.clientIsMine, 0.2);
 
-		summonHeroDic.Add (_pos, hero);
+            ClearMoves();
 
-		HeroSDS sds = StaticData.GetData<HeroSDS> (cardID);
-		
-		hero.Init(cardID);
+            CreateMoves();
 
-		hero.cardUid = _cardUid;
+            ClearSummonHeros();
 
-		AddHeroToMapReal (hero, _pos);
+            CreateSummonHeros();
 
-		return hero;
-	}
+            ClearCards();
 
-	private void AddHeroToMapReal(HeroBattle _heroCard,int _pos){
+            CreateCards();
+        }
+    }
 
-		MapUnit mapUnit = mapUnitDic [_pos];
-		
-		_heroCard.SetFrameVisible(false);
+    private void RefreshTouchable(bool _canAction)
+    {
+        if (canAction && !_canAction)
+        {
+            SuperGraphicRaycast.SetIsOpen(false, "a");
 
-		_heroCard.transform.SetParent (heroContainer, false);
+            SuperRaycast.SetIsOpen(false, "a");
 
-		_heroCard.transform.localPosition = mapUnit.transform.localPosition;
-		
-		_heroCard.transform.localScale = new Vector3 (heroScale, heroScale, heroScale);
-	}
+            actionBt.SetActive(false);
 
-	private int GetMoney(){
+            canAction = _canAction;
 
-		int money = battle.clientIsMine ? battle.mMoney : battle.oMoney;
+        }
+        else if (!canAction && _canAction)
+        {
+            SuperGraphicRaycast.SetIsOpen(true, "a");
 
-		Dictionary<int,int> cards = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
+            SuperRaycast.SetIsOpen(true, "a");
 
-		Dictionary<int,int>.KeyCollection.Enumerator enumerator = battle.summon.Keys.GetEnumerator ();
+            actionBt.SetActive(true);
 
-		while (enumerator.MoveNext()) {
+            canAction = _canAction;
+        }
+    }
 
-			int cardID = cards[enumerator.Current];
+    private void DoAction(IEnumerator<ValueType> _enumerator)
+    {
+        RefreshData();
 
-			HeroSDS heroSDS = StaticData.GetData<HeroSDS>(cardID);
+        DoActionReal(_enumerator);
+    }
 
-			money -= heroSDS.cost;
-		}
+    private void DoActionReal(IEnumerator<ValueType> _enumerator)
+    {
+        if (_enumerator.MoveNext())
+        {
+            Action del = delegate ()
+            {
+                DoActionReal(_enumerator);
+            };
 
-		return money;
-	}
+            ValueType vo = _enumerator.Current;
 
-	public void ActionBtClick(){
+            if (vo is BattleShootVO)
+            {
+                DoShoot((BattleShootVO)(vo), del);
+            }
+            else if (vo is BattleMoveVO)
+            {
+                DoMove((BattleMoveVO)vo, del);
+            }
+            else if (vo is BattleRushVO)
+            {
+                DoRush((BattleRushVO)vo, del);
+            }
+            else if (vo is BattleAttackVO)
+            {
+                DoAttack((BattleAttackVO)vo, del);
+            }
+            else if (vo is BattleDeathVO)
+            {
+                DoDie((BattleDeathVO)vo, del);
+            }
+            else if (vo is BattleSummonVO)
+            {
+                DoSummon((BattleSummonVO)vo, del);
+            }
+            else if (vo is BattleChangeVO)
+            {
+                DoChange((BattleChangeVO)vo, del);
+            }
+        }
+    }
 
-		ClearNowChooseCard ();
+    private void DoSummon(BattleSummonVO _vo, Action _del)
+    {
+        CreateMoneyTf();
 
-		ClearNowChooseHero ();
+        Hero hero = battle.heroMapDic[_vo.pos];
 
-		battle.ClientRequestDoAction ();
+        HeroBattle heroBattle = AddHeroToMap(hero);
 
-		RefreshTouchable (battle.GetClientCanAction());
-	}
+        heroBattle.transform.localScale = Vector3.zero;
 
-	// Update is called once per frame
-	void Update () {
+        Action<float> toDel = delegate (float obj)
+        {
+            float scale = heroScale * obj;
 
-		if (Input.GetMouseButtonUp (0)) {
+            heroBattle.transform.localScale = new Vector3(scale, scale, scale);
+        };
 
-			GetMouseUp();
-		}
-	
-		if (Input.GetKeyUp (KeyCode.F5)) {
+        Action endDel = delegate ()
+        {
+            SuperTween.Instance.DelayCall(0.5f, _del);
+        };
 
-			battle.ClientRequestRefreshData ();
+        SuperTween.Instance.To(10, 1, 0.5f, toDel, endDel);
 
-		} else if (Input.GetKeyUp (KeyCode.A)) {
+        ClearCards();
 
-			HeroAi.Start(battle,battle.clientIsMine,0.2);
+        CreateCards();
+    }
 
-			ClearMoves();
+    private void DoShoot(BattleShootVO _vo, Action _del)
+    {
+        List<HeroBattle> shooters = new List<HeroBattle>();
 
-			CreateMoves();
+        for (int i = 0; i < _vo.shooters.Count; i++)
+        {
+            shooters.Add(heroDic[_vo.shooters[i]]);
+        }
 
-			ClearSummonHeros();
+        BattleControl.Instance.Shoot(shooters, heroDic[_vo.stander], _vo.shieldDamage, _vo.hpDamage, _del);
+    }
 
-			CreateSummonHeros();
+    private void DoMove(BattleMoveVO _vo, Action _del)
+    {
+        if (_vo.moves.Count > 0)
+        {
+            List<KeyValuePair<int, int>> tmpList = new List<KeyValuePair<int, int>>();
 
-			ClearCards();
+            List<KeyValuePair<int, int>> tmpList2 = new List<KeyValuePair<int, int>>();
 
-			CreateCards();
-		}
-	}
+            Dictionary<int, int>.Enumerator enumerator = _vo.moves.GetEnumerator();
 
-	private void RefreshTouchable(bool _canAction){
+            enumerator.MoveNext();
 
-		if (canAction && !_canAction) {
+            tmpList.Add(enumerator.Current);
 
-			SuperGraphicRaycast.SetIsOpen (false, "a");
+            while (tmpList.Count > 0)
+            {
+                KeyValuePair<int, int> pair = tmpList[0];
 
-			SuperRaycast.SetIsOpen (false, "a");
+                _vo.moves.Remove(pair.Key);
 
-			actionBt.SetActive (false);
+                tmpList.RemoveAt(0);
 
-			canAction = _canAction;
+                tmpList2.Add(pair);
 
-		} else if (!canAction && _canAction) {
+                if (_vo.moves.ContainsKey(pair.Value))
+                {
+                    tmpList.Add(new KeyValuePair<int, int>(pair.Value, _vo.moves[pair.Value]));
+                }
 
-			SuperGraphicRaycast.SetIsOpen (true, "a");
-			
-			SuperRaycast.SetIsOpen (true, "a");
+                if (_vo.moves.ContainsValue(pair.Key))
+                {
+                    enumerator = _vo.moves.GetEnumerator();
 
-			actionBt.SetActive (true);
+                    while (enumerator.MoveNext())
+                    {
+                        if (enumerator.Current.Value == pair.Key)
+                        {
+                            tmpList.Add(enumerator.Current);
 
-			canAction = _canAction;
-		}
-	}
+                            break;
+                        }
+                    }
+                }
+            }
 
-	private void DoAction(IEnumerator<ValueType> _enumerator){
+            Dictionary<int, HeroBattle> tmpDic = new Dictionary<int, HeroBattle>();
 
-		RefreshData ();
+            for (int i = 0; i < tmpList2.Count; i++)
+            {
+                KeyValuePair<int, int> pair = tmpList2[i];
 
-		DoActionReal (_enumerator);
-	}
+                HeroBattle hero = heroDic[pair.Key];
 
-	private void DoActionReal(IEnumerator<ValueType> _enumerator){
+                tmpDic.Add(pair.Key, hero);
 
-		if (_enumerator.MoveNext ()) {
-			
-			Action del = delegate() {
-				
-				DoActionReal(_enumerator);
-			};
+                heroDic.Remove(pair.Key);
 
-			ValueType vo = _enumerator.Current;
+                Vector3 startPos = mapUnitDic[pair.Key].transform.position;
 
-			if(vo is BattleShootVO){
+                Vector3 endPos = mapUnitDic[pair.Value].transform.position;
 
-				DoShoot((BattleShootVO)(vo),del);
+                Action<float> toDel = delegate (float obj)
+                {
+                    hero.transform.position = Vector3.Lerp(startPos, endPos, obj);
+                };
 
-			}else if(vo is BattleMoveVO){
+                if (i == 0)
+                {
+                    Action del = delegate ()
+                    {
+                        for (int l = 0; l < tmpList2.Count; l++)
+                        {
+                            pair = tmpList2[l];
 
-				DoMove((BattleMoveVO)vo,del);
+                            heroDic.Add(pair.Value, tmpDic[pair.Key]);
 
-			}else if(vo is BattleRushVO){
+                            int index = pair.Value;
 
-				DoRush((BattleRushVO)vo,del);
+                            MapUnit unit = mapUnitDic[index];
 
-			}else if(vo is BattleAttackVO){
+                            SetMapUnitColor(unit);
+                        }
 
-				DoAttack((BattleAttackVO)vo,del);
+                        DoMove(_vo, _del);
+                    };
 
-			}else if(vo is BattleDeathVO){
+                    SuperTween.Instance.To(0, 1, 1, toDel, del);
+                }
+                else
+                {
+                    SuperTween.Instance.To(0, 1, 1, toDel, null);
+                }
+            }
+        }
+        else
+        {
+            _del();
+        }
+    }
 
-				DoDie((BattleDeathVO)vo,del);
+    private void SetMapUnitColor(MapUnit _unit)
+    {
+        int index = _unit.index;
 
-			}else if (vo is BattleSummonVO){
+        MapData.MapUnitType mapUnitType = battle.mapData.dic[index];
 
-				DoSummon((BattleSummonVO)vo,del);
+        if (mapUnitType == MapData.MapUnitType.RIVER)
+        {
+            _unit.SetMainColor(riverColor);
 
-			}else if(vo is BattleChangeVO){
+        }
+        else if (mapUnitType == MapData.MapUnitType.HILL)
+        {
+            _unit.SetMainColor(hillColor);
+        }
+        else if (battle.GetPosIsMine(index) == battle.clientIsMine)
+        {
+            if ((!battle.clientIsMine && index == battle.mapData.oBase) || (battle.clientIsMine && index == battle.mapData.mBase))
+            {
+                _unit.SetMainColor(myBaseColor);
+            }
+            else
+            {
+                _unit.SetMainColor(myMapUnitColor);
+            }
+        }
+        else
+        {
+            if ((!battle.clientIsMine && index == battle.mapData.mBase) || (battle.clientIsMine && index == battle.mapData.oBase))
+            {
+                _unit.SetMainColor(oppBaseColor);
+            }
+            else
+            {
+                _unit.SetMainColor(oppMapUnitColor);
+            }
+        }
+    }
 
-				DoChange((BattleChangeVO)vo,del);
-			}
-		}
-	}
+    private void DoRush(BattleRushVO _vo, Action _del)
+    {
+        List<HeroBattle> attackers = new List<HeroBattle>();
 
-	private void DoSummon(BattleSummonVO _vo,Action _del){
+        HeroBattle stander = heroDic[_vo.stander];
 
-		CreateMoneyTf ();
+        for (int i = 0; i < _vo.attackers.Count; i++)
+        {
+            attackers.Add(heroDic[_vo.attackers[i]]);
+        }
 
-		Hero hero = battle.heroMapDic [_vo.pos];
+        BattleControl.Instance.Rush(attackers, stander, _vo.shieldDamage, _vo.hpDamage, _del);
+    }
 
-		HeroBattle heroBattle = AddHeroToMap (hero);
+    private void DoAttack(BattleAttackVO _vo, Action _del)
+    {
+        Vector3 pos = mapUnitDic[_vo.defender].transform.position;
 
-		heroBattle.transform.localScale = Vector3.zero;
+        List<HeroBattle> attackers = new List<HeroBattle>();
 
-		Action<float> toDel = delegate(float obj) {
+        List<HeroBattle> supporters = new List<HeroBattle>();
 
-			float scale = heroScale * obj;
+        for (int i = 0; i < _vo.attackers.Count; i++)
+        {
+            attackers.Add(heroDic[_vo.attackers[i]]);
+        }
 
-			heroBattle.transform.localScale = new Vector3(scale,scale,scale);
-		};
+        for (int i = 0; i < _vo.supporters.Count; i++)
+        {
+            supporters.Add(heroDic[_vo.supporters[i]]);
+        }
 
-		Action endDel = delegate() {
+        HeroBattle defender;
 
-			SuperTween.Instance.DelayCall(0.5f,_del);
-		};
+        if (heroDic.ContainsKey(_vo.defender))
+        {
+            defender = heroDic[_vo.defender];
+        }
+        else
+        {
+            defender = null;
+        }
 
-		SuperTween.Instance.To (10, 1, 0.5f, toDel, endDel);
+        BattleControl.Instance.Attack(attackers, pos, defender, supporters, _vo.defenderShieldDamage, _vo.defenderHpDamage, _vo.supportersShieldDamage, _vo.supportersHpDamage, _vo.attackersShieldDamage, _vo.attackersHpDamage, _del);
+    }
 
-		ClearCards ();
+    private void DoDie(BattleDeathVO _vo, Action _del)
+    {
+        for (int i = 0; i < _vo.deads.Count; i++)
+        {
+            int pos = _vo.deads[i];
 
-		CreateCards ();
-	}
+            HeroBattle hero = heroDic[pos];
 
-	private void DoShoot(BattleShootVO _vo,Action _del){
+            heroDic.Remove(pos);
 
-		List<HeroBattle> shooters = new List<HeroBattle>();
-		
-		for(int i = 0 ; i < _vo.shooters.Count ; i++){
-			
-			shooters.Add(heroDic[_vo.shooters[i]]);
-		}
-		
-		BattleControl.Instance.Shoot(shooters,heroDic[_vo.stander],_vo.shieldDamage,_vo.hpDamage,_del);
-	}
+            if (i == 0)
+            {
+                hero.Die(_del);
+            }
+            else
+            {
+                hero.Die(null);
+            }
+        }
+    }
 
-	private void DoMove(BattleMoveVO _vo,Action _del){
+    private void DoChange(BattleChangeVO _vo, Action _del)
+    {
+        for (int i = 0; i < _vo.pos.Count; i++)
+        {
+            int pos = _vo.pos[i];
 
-		if (_vo.moves.Count > 0) {
+            HeroBattle hero = heroDic[pos];
 
-			List<KeyValuePair<int,int>> tmpList = new List<KeyValuePair<int,int>>();
+            int hpChange = _vo.hpChange[i];
 
-			List<KeyValuePair<int,int>> tmpList2 = new List<KeyValuePair<int,int>>();
+            int shieldChange = _vo.shieldChange[i];
 
-			Dictionary<int,int>.Enumerator enumerator = _vo.moves.GetEnumerator();
+            hero.RefreshShield();
 
-			enumerator.MoveNext();
+            hero.RefreshHp();
 
-			tmpList.Add(enumerator.Current);
+            string str = "";
 
-			while(tmpList.Count > 0){
+            if (shieldChange < 0)
+            {
+                str += "<color=\"#FFFF00\">" + shieldChange + "</color>";
 
-				KeyValuePair<int,int> pair = tmpList[0];
+                if (hpChange != 0)
+                {
+                    str += "   ";
+                }
+            }
 
-				_vo.moves.Remove(pair.Key);
+            if (hpChange > 0)
+            {
+                str += "<color=\"#00FF00\">+" + hpChange + "</color>";
+            }
+            else if (hpChange < 0)
+            {
+                str += "<color=\"#FF0000\">" + hpChange + "</color>";
+            }
 
-				tmpList.RemoveAt(0);
+            if (i == 0)
+            {
+                hero.ShowHud(str, Color.white, _del);
+            }
+            else
+            {
+                hero.ShowHud(str, Color.white, null);
+            }
+        }
+    }
 
-				tmpList2.Add(pair);
+    private void FixBattleContainerRect()
+    {
+        if (battleContainer.localScale.x < 1)
+        {
+            battleContainer.anchoredPosition = Vector2.zero;
+        }
+        else
+        {
+            if (battleContainer.anchoredPosition.x - (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x > -(canvas.transform as RectTransform).rect.width / 2)
+            {
+                battleContainer.anchoredPosition = new Vector2(-(canvas.transform as RectTransform).rect.width / 2 + (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x, battleContainer.anchoredPosition.y);
+            }
+            else if (battleContainer.anchoredPosition.x + (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x < (canvas.transform as RectTransform).rect.width / 2)
+            {
+                battleContainer.anchoredPosition = new Vector2((canvas.transform as RectTransform).rect.width / 2 - (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x, battleContainer.anchoredPosition.y);
+            }
 
-				if(_vo.moves.ContainsKey(pair.Value)){
+            if (battleContainer.anchoredPosition.y - (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x > -(canvas.transform as RectTransform).rect.height / 2)
+            {
+                battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x, -(canvas.transform as RectTransform).rect.height / 2 + (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x);
+            }
+            else if (battleContainer.anchoredPosition.y + (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x < (canvas.transform as RectTransform).rect.height / 2)
+            {
+                battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x, (canvas.transform as RectTransform).rect.height / 2 - (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x);
+            }
+        }
+    }
 
-					tmpList.Add(new KeyValuePair<int, int>(pair.Value,_vo.moves[pair.Value]));
-				}
+    private void ScaleChange(SuperEvent e)
+    {
+        float scrollValue = (float)e.data[0];
 
-				if(_vo.moves.ContainsValue(pair.Key)){
+        Vector2 mousePosition = (Vector2)e.data[1];
 
-					enumerator = _vo.moves.GetEnumerator();
+        if (scrollValue < 1)
+        {
+            Vector2 v = PublicTools.MousePositionToCanvasPosition(canvas, mousePosition);
 
-					while(enumerator.MoveNext()){
+            Vector2 v2 = (v - battleContainer.anchoredPosition) / battleContainer.localScale.x;
 
-						if(enumerator.Current.Value == pair.Key){
+            battleContainer.localScale = battleContainer.localScale * scaleStep;
 
-							tmpList.Add(enumerator.Current);
+            if (battleContainer.localScale.x < minScale)
+            {
+                battleContainer.localScale = new Vector3(minScale, minScale, minScale);
+            }
 
-							break;
-						}
-					}
-				}
-			}
+            battleContainer.anchoredPosition = v - v2 * battleContainer.localScale.x;
 
-			Dictionary<int,HeroBattle> tmpDic = new Dictionary<int, HeroBattle>();
+            FixBattleContainerRect();
+        }
+        else if (scrollValue > 1)
+        {
+            Vector2 v = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
 
-			for(int i = 0 ; i < tmpList2.Count ; i++){
+            Vector2 v2 = (v - battleContainer.anchoredPosition) / battleContainer.localScale.x;
 
-				KeyValuePair<int,int> pair = tmpList2[i];
+            battleContainer.localScale = battleContainer.localScale / scaleStep;
 
-				HeroBattle hero = heroDic[pair.Key];
+            if (battleContainer.localScale.x > maxScale)
+            {
+                battleContainer.localScale = new Vector3(maxScale, maxScale, maxScale);
+            }
 
-				tmpDic.Add(pair.Key,hero);
+            battleContainer.anchoredPosition = v - v2 * battleContainer.localScale.x;
+        }
+    }
 
-				heroDic.Remove(pair.Key);
+    private void GetMouseDown(SuperEvent e)
+    {
+        if ((int)e.data[1] == 0)
+        {
+            BackgroundDown();
+        }
+    }
 
-				Vector3 startPos = mapUnitDic[pair.Key].transform.position;
+    private void BackgroundDown()
+    {
+        downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
 
-				Vector3 endPos = mapUnitDic[pair.Value].transform.position;
+        isDown = DownType.BACKGROUND;
+    }
 
-				Action<float> toDel = delegate(float obj) {
+    private void MapUnitDownReal(MapUnit _mapUnit)
+    {
+        downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
 
-					hero.transform.position = Vector3.Lerp(startPos,endPos,obj);
-				};
+        isDown = DownType.MAPUNIT;
 
-				if(i == 0){
-					
-					Action del = delegate() {
+        downMapUnit = _mapUnit;
+    }
 
-						for(int l = 0 ; l < tmpList2.Count ; l++){
+    private void GetMouseMove(SuperEvent e)
+    {
+        if (isDown != DownType.NULL)
+        {
+            BackgroundMove();
+        }
+    }
 
-							pair = tmpList2[l];
+    private void BackgroundMove()
+    {
+        Vector3 nowPos = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
 
-							heroDic.Add(pair.Value,tmpDic[pair.Key]);
+        if (!hasMove && Vector2.Distance(nowPos, downPos) > 10)
+        {
+            hasMove = true;
 
-							int index = pair.Value;
+            SuperRaycast.checkBlockByUi = false;
+        }
 
-							MapUnit unit = mapUnitDic[index];
+        if (!isDoingHeroAction && hasMove && battleContainer.localScale.x > 1)
+        {
+            battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x + nowPos.x - lastPos.x, battleContainer.anchoredPosition.y + nowPos.y - lastPos.y);
 
-							SetMapUnitColor(unit);
-						}
-						
-						DoMove(_vo,_del);
-					};
+            FixBattleContainerRect();
+        }
 
-					SuperTween.Instance.To(0,1,1,toDel,del);
+        lastPos = nowPos;
+    }
 
-				}else{
+    private void GetMouseUp()
+    {
+        if (isDown != DownType.NULL)
+        {
+            if (!hasMove)
+            {
+                if (isDown == DownType.BACKGROUND)
+                {
+                    BackgroundClick();
+                }
+                else
+                {
+                    MapUnitUpAsButton(downMapUnit);
+                }
+            }
+            else
+            {
+                SuperRaycast.checkBlockByUi = true;
 
-					SuperTween.Instance.To(0,1,1,toDel,null);
-				}
-			}
+                hasMove = false;
+            }
 
-		} else {
+            isDown = DownType.NULL;
+        }
 
-			_del();
-		}
-	}
+        if (mouseHasExited)
+        {
+            mouseHasExited = false;
+        }
 
-	private void SetMapUnitColor(MapUnit _unit){
+        if (isDoingHeroAction)
+        {
+            isDoingHeroAction = false;
+        }
+    }
 
-		int index = _unit.index;
-
-		MapData.MapUnitType mapUnitType = battle.mapData.dic [index];
-
-		if (mapUnitType == MapData.MapUnitType.RIVER) {
-
-			_unit.SetMainColor(riverColor);
-
-		} else if (mapUnitType == MapData.MapUnitType.HILL) {
-
-			_unit.SetMainColor(hillColor);
-
-		} else if (battle.GetPosIsMine(index) == battle.clientIsMine) {
-			
-			if ((!battle.clientIsMine && index == battle.mapData.oBase) || (battle.clientIsMine && index == battle.mapData.mBase)){
-				
-				_unit.SetMainColor(myBaseColor);
-				
-			} else{
-				
-				_unit.SetMainColor(myMapUnitColor);
-			}
-			
-		} else{
-			
-			if ((!battle.clientIsMine && index == battle.mapData.mBase) || (battle.clientIsMine && index == battle.mapData.oBase)){
-				
-				_unit.SetMainColor(oppBaseColor);
-				
-			} else{
-				
-				_unit.SetMainColor(oppMapUnitColor);
-			}
-		}
-	}
-
-	private void DoRush(BattleRushVO _vo,Action _del){
-
-		List<HeroBattle> attackers = new List<HeroBattle> ();
-
-		HeroBattle stander = heroDic [_vo.stander];
-
-		for(int i = 0 ; i < _vo.attackers.Count ; i++){
-
-			attackers.Add(heroDic[_vo.attackers[i]]);
-		}
-
-		BattleControl.Instance.Rush (attackers, stander, _vo.shieldDamage, _vo.hpDamage, _del);
-	}
-
-	private void DoAttack(BattleAttackVO _vo,Action _del){
-
-		Vector3 pos = mapUnitDic [_vo.defender].transform.position;
-
-		List<HeroBattle> attackers = new List<HeroBattle> ();
-
-		List<HeroBattle> supporters = new List<HeroBattle> ();
-
-		for (int i = 0; i < _vo.attackers.Count; i++) {
-
-			attackers.Add(heroDic[_vo.attackers[i]]);
-		}
-
-		for (int i = 0; i < _vo.supporters.Count; i++) {
-
-			supporters.Add(heroDic[_vo.supporters[i]]);
-		}
-
-		HeroBattle defender;
-
-		if (heroDic.ContainsKey (_vo.defender)) {
-
-			defender = heroDic [_vo.defender];
-
-		} else {
-
-			defender = null;
-		}
-
-		BattleControl.Instance.Attack (attackers, pos, defender, supporters, _vo.defenderShieldDamage, _vo.defenderHpDamage, _vo.supportersShieldDamage, _vo.supportersHpDamage, _vo.attackersShieldDamage, _vo.attackersHpDamage, _del);
-	}
-
-	private void DoDie(BattleDeathVO _vo,Action _del){
-
-		for(int i = 0 ; i < _vo.deads.Count ; i++){
-
-			int pos = _vo.deads[i];
-
-			HeroBattle hero = heroDic[pos];
-
-			heroDic.Remove(pos);
-
-			if(i == 0){
-
-				hero.Die(_del);
-
-			}else{
-
-				hero.Die(null);
-			}
-		}
-	}
-
-	private void DoChange(BattleChangeVO _vo,Action _del){
-
-		for(int i = 0 ; i < _vo.pos.Count ; i++){
-			
-			int pos = _vo.pos[i];
-
-			HeroBattle hero = heroDic[pos];
-			
-			int hpChange = _vo.hpChange[i];
-
-			int shieldChange = _vo.shieldChange[i];
-
-			hero.RefreshShield();
-
-			hero.RefreshHp();
-
-			string str = "";
-
-			if(shieldChange < 0){
-
-				str += "<color=\"#FFFF00\">" + shieldChange + "</color>";
-
-				if(hpChange != 0){
-
-					str += "   ";
-				}
-			}
-
-			if(hpChange > 0){
-
-				str += "<color=\"#00FF00\">+" + hpChange + "</color>";
-
-			}else if(hpChange < 0){
-
-				str += "<color=\"#FF0000\">" + hpChange + "</color>";
-			}
-
-			if(i == 0){
-				
-				hero.ShowHud(str,Color.white,_del);
-				
-			}else{
-				
-				hero.ShowHud(str,Color.white,null);
-			}
-		}
-	}
-
-	private void FixBattleContainerRect(){
-		
-		if(battleContainer.localScale.x < 1){
-			
-			battleContainer.anchoredPosition = Vector2.zero;
-			
-		}else{
-			
-			if(battleContainer.anchoredPosition.x - (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x > -(canvas.transform as RectTransform).rect.width / 2){
-				
-				battleContainer.anchoredPosition = new Vector2(-(canvas.transform as RectTransform).rect.width / 2 + (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x,battleContainer.anchoredPosition.y);
-				
-			}else if(battleContainer.anchoredPosition.x + (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x < (canvas.transform as RectTransform).rect.width / 2){
-				
-				battleContainer.anchoredPosition = new Vector2((canvas.transform as RectTransform).rect.width / 2 - (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x,battleContainer.anchoredPosition.y);
-			}
-			
-			if(battleContainer.anchoredPosition.y - (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x > -(canvas.transform as RectTransform).rect.height / 2){
-				
-				battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x,-(canvas.transform as RectTransform).rect.height / 2 + (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x);
-				
-			}else if(battleContainer.anchoredPosition.y + (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x < (canvas.transform as RectTransform).rect.height / 2){
-				
-				battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x,(canvas.transform as RectTransform).rect.height / 2 - (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x);
-			}
-		}
-	}
-
-	private void ScaleChange(SuperEvent e){
-
-		float scrollValue = (float)e.data [0];
-
-		Vector2 mousePosition = (Vector2)e.data [1];
-
-		if(scrollValue < 1){
-			
-			Vector2 v = PublicTools.MousePositionToCanvasPosition(canvas,mousePosition);
-			
-			Vector2 v2 = (v - battleContainer.anchoredPosition) / battleContainer.localScale.x;
-			
-			battleContainer.localScale = battleContainer.localScale * scaleStep;
-
-			if(battleContainer.localScale.x < minScale){
-
-				battleContainer.localScale = new Vector3(minScale,minScale,minScale);
-			}
-			
-			battleContainer.anchoredPosition = v - v2 * battleContainer.localScale.x;
-			
-			FixBattleContainerRect();
-			
-		}else if(scrollValue > 1){
-			
-			Vector2 v = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
-			
-			Vector2 v2 = (v - battleContainer.anchoredPosition) / battleContainer.localScale.x;
-			
-			battleContainer.localScale = battleContainer.localScale / scaleStep;
-
-			if(battleContainer.localScale.x > maxScale){
-				
-				battleContainer.localScale = new Vector3(maxScale,maxScale,maxScale);
-			}
-			
-			battleContainer.anchoredPosition = v - v2 * battleContainer.localScale.x;
-		}
-	}
-
-	private void GetMouseDown(SuperEvent e){
-		
-		if((int)e.data[1] == 0){
-			
-			BackgroundDown();
-		}
-	}
-
-	private void BackgroundDown(){
-
-		downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
-
-		isDown = DownType.BACKGROUND;
-	}
-
-	private void MapUnitDownReal(MapUnit _mapUnit){
-
-		downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
-		
-		isDown = DownType.MAPUNIT;
-
-		downMapUnit = _mapUnit;
-	}
-	
-	private void GetMouseMove(SuperEvent e){
-
-		if (isDown != DownType.NULL) {
-		
-			BackgroundMove ();
-		}
-	}
-
-	private void BackgroundMove(){
-			
-		Vector3 nowPos = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
-
-		if(!hasMove && Vector2.Distance(nowPos,downPos) > 10){
-
-			hasMove = true;
-
-			SuperRaycast.checkBlockByUi = false;
-		}
-
-		if(!isDoingHeroAction && hasMove && battleContainer.localScale.x > 1){
-			
-			battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x + nowPos.x - lastPos.x,battleContainer.anchoredPosition.y + nowPos.y - lastPos.y);
-			
-			FixBattleContainerRect();
-		}
-
-		lastPos = nowPos;
-	}
-
-	private void GetMouseUp(){
-
-		if (isDown != DownType.NULL) {
-
-			if(!hasMove){
-
-				if(isDown == DownType.BACKGROUND){
-
-					BackgroundClick();
-
-				}else{
-
-					MapUnitUpAsButton(downMapUnit);
-				}
-
-			}else{
-
-				SuperRaycast.checkBlockByUi = true;
-
-				hasMove = false;
-			}
-
-			isDown = DownType.NULL;
-		}
-
-		if (mouseHasExited) {
-
-			mouseHasExited = false;
-		}
-
-		if (isDoingHeroAction) {
-
-			isDoingHeroAction = false;
-		}
-	}
-
-	private void Alert(string _str,Action _callBack){
-
-		alertPanel.Alert (_str,_callBack);
-	}
+    private void Alert(string _str, Action _callBack)
+    {
+        alertPanel.Alert(_str, _callBack);
+    }
 }

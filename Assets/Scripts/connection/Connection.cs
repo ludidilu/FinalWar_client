@@ -5,128 +5,125 @@ using System.Net;
 using System;
 using System.IO;
 
-public class Connection : MonoBehaviour {
+public class Connection : MonoBehaviour
+{
+    private static Connection _Instance;
 
-	private static Connection _Instance;
+    public static Connection Instance
+    {
+        get
+        {
+            if (_Instance == null)
+            {
+                GameObject go = new GameObject("Connection");
 
-	public static Connection Instance{
+                _Instance = go.AddComponent<Connection>();
+            }
 
-		get{
+            return _Instance;
+        }
+    }
 
-			if(_Instance == null){
+    private const int HEAD_LENGTH = 2;
 
-				GameObject go = new GameObject("Connection");
+    private ushort bodyLength = 0;
+    private byte[] headBuffer = new byte[HEAD_LENGTH];
+    private byte[] bodyBuffer = new byte[ushort.MaxValue];
 
-				_Instance = go.AddComponent<Connection>();
-			}
+    private Socket socket;
 
-			return _Instance;
-		}
-	}
+    private Action<byte[]> receiveCallBack;
 
-	private const int HEAD_LENGTH = 2;
-	
-	private ushort bodyLength = 0;
-	private ushort headLength = 0;
-	private byte[] headBuffer = new byte[HEAD_LENGTH];
-	private byte[] bodyBuffer = new byte[ushort.MaxValue];
-	private int headOffset = 0;
-	private int bodyOffset = 0;
+    private bool isReceivingHead = true;
 
-	private Socket socket;
+    private bool isConnect = false;
 
-	private Action<byte[]> receiveCallBack;
+    public void Init(string _ip, int _port, Action<byte[]> _receiveCallBack, int _uid)
+    {
+        receiveCallBack = _receiveCallBack;
 
-	private bool isReceivingHead = true;
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-	private bool isConnect = false;
+        IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(_ip), _port);
 
-	public void Init(string _ip, int _port, Action<byte[]> _receiveCallBack, int _uid){
+        socket.Connect(ipe);
 
-		receiveCallBack = _receiveCallBack;
+        isConnect = true;
 
-		socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        socket.BeginSend(BitConverter.GetBytes(_uid), 0, 4, SocketFlags.None, SendCallBack, null);
+    }
 
-		IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(_ip), _port);
-		
-		socket.Connect(ipe);
+    void Update()
+    {
+        if (!isConnect)
+        {
+            return;
+        }
 
-		isConnect = true;
+        if (socket.Poll(10, SelectMode.SelectRead) && socket.Available == 0)
+        {
+            SuperDebug.Log("Disconnect!");
 
-		socket.BeginSend (BitConverter.GetBytes (_uid), 0, 4, SocketFlags.None, SendCallBack, null);
-	}
+            isConnect = false;
 
-	void Update(){
+            return;
+        }
 
-		if (!isConnect) {
+        if (isReceivingHead)
+        {
+            ReceiveHead();
+        }
+        else
+        {
+            ReceiveBody();
+        }
+    }
 
-			return;
-		}
+    private void ReceiveHead()
+    {
+        if (socket.Available >= HEAD_LENGTH)
+        {
+            socket.Receive(headBuffer, HEAD_LENGTH, SocketFlags.None);
 
-		if (socket.Poll (10, SelectMode.SelectRead) && socket.Available == 0) {
+            isReceivingHead = false;
 
-			SuperDebug.Log("Disconnect!");
+            bodyLength = BitConverter.ToUInt16(headBuffer, 0);
 
-			isConnect = false;
+            ReceiveBody();
+        }
+    }
 
-			return;
-		}
+    private void ReceiveBody()
+    {
+        if (socket.Available >= bodyLength)
+        {
+            socket.Receive(bodyBuffer, bodyLength, SocketFlags.None);
 
-		if (isReceivingHead) {
+            isReceivingHead = true;
 
-			ReceiveHead ();
+            byte[] result = new byte[bodyLength];
 
-		} else {
+            Array.Copy(bodyBuffer, result, bodyLength);
 
-			ReceiveBody ();
-		}
-	}
+            receiveCallBack(result);
+        }
+    }
 
-	private void ReceiveHead(){
+    public void Send(MemoryStream _ms)
+    {
+        int length = HEAD_LENGTH + (int)_ms.Length;
 
-		if (socket.Available >= HEAD_LENGTH)
-		{
-			socket.Receive(headBuffer, HEAD_LENGTH, SocketFlags.None);
-			
-			isReceivingHead = false;
-			
-			bodyLength = BitConverter.ToUInt16(headBuffer, 0);
-			
-			ReceiveBody();
-		}
-	}
+        byte[] bytes = new byte[length];
 
-	private void ReceiveBody(){
+        Array.Copy(BitConverter.GetBytes((ushort)_ms.Length), bytes, HEAD_LENGTH);
 
-		if(socket.Available >= bodyLength)
-		{
-			socket.Receive(bodyBuffer, bodyLength, SocketFlags.None);
-			
-			isReceivingHead = true;
-			
-			byte[] result = new byte[bodyLength];
+        Array.Copy(_ms.GetBuffer(), 0, bytes, HEAD_LENGTH, _ms.Length);
 
-			Array.Copy(bodyBuffer,result,bodyLength);
+        socket.BeginSend(bytes, 0, length, SocketFlags.None, SendCallBack, null);
+    }
 
-			receiveCallBack(result);
-		}
-	}
-
-	public void Send(MemoryStream _ms){
-
-		int length = HEAD_LENGTH + (int)_ms.Length;
-		
-		byte[] bytes = new byte[length];
-		
-		Array.Copy(BitConverter.GetBytes((ushort)_ms.Length), bytes, HEAD_LENGTH);
-		
-		Array.Copy(_ms.GetBuffer(), 0, bytes, HEAD_LENGTH, _ms.Length);
-		
-		socket.BeginSend(bytes, 0, length, SocketFlags.None, SendCallBack, null);
-	}
-
-	private void SendCallBack(IAsyncResult _result)
-	{
-		socket.EndSend (_result);
-	}
+    private void SendCallBack(IAsyncResult _result)
+    {
+        socket.EndSend(_result);
+    }
 }
