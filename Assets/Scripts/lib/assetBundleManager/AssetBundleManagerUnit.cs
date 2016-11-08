@@ -54,7 +54,9 @@ namespace xy3d.tstd.lib.assetBundleManager{
 
 //			SuperDebug.Log("一个assetBundle加载完毕了:" + name + "    " + assetBundle);
 
-			foreach (Action<AssetBundle> callBack in callBackList) {
+			for(int i = 0 ; i < callBackList.Count ; i++){
+
+				Action<AssetBundle> callBack = callBackList[i];
 
 				callBack (assetBundle);
 			}

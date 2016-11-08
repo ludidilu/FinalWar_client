@@ -55,8 +55,12 @@ namespace xy3d.tstd.lib.versionControl{
 
 				bw.Write(_data.dic.Count);
 
-				foreach(KeyValuePair<string,int> pair in _data.dic){
+				Dictionary<string,int>.Enumerator enumerator = _data.dic.GetEnumerator();
 
+				while(enumerator.MoveNext()){
+
+					KeyValuePair<string,int> pair = enumerator.Current;
+				
 					bw.Write(pair.Key);
 
 					bw.Write(pair.Value);

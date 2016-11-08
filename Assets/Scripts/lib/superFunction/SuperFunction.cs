@@ -23,16 +23,17 @@ namespace xy3d.tstd.lib.superFunction{
 			}
 		}
 
-		private Dictionary<int,SuperFunctionUnit> dic;
-		private Dictionary<GameObject,Dictionary<string,List<SuperFunctionUnit>>> dic2;
-//		private int dispatchEventIndex = 0;
-//		private List<Action> delegateList = new List<Action>();
+		public delegate void callbackV<T>(SuperEvent e,ref T v)where T : struct;
+
+		private Dictionary<int,SuperFunctionUnitBase> dic;
+		private Dictionary<GameObject,Dictionary<string,List<SuperFunctionUnitBase>>> dic2;
+
 		private int index = 0;
 
 		public SuperFunction(){
 
-			dic = new Dictionary<int, SuperFunctionUnit>();
-			dic2 = new Dictionary<GameObject,Dictionary<string,List<SuperFunctionUnit>>>();
+			dic = new Dictionary<int, SuperFunctionUnitBase>();
+			dic2 = new Dictionary<GameObject,Dictionary<string,List<SuperFunctionUnitBase>>>();
 		}
 
 		public int AddEventListener(GameObject _target,string _eventName,Action<SuperEvent> _callBack){
@@ -43,7 +44,7 @@ namespace xy3d.tstd.lib.superFunction{
 
 			dic.Add(result,unit);
 
-			Dictionary<string,List<SuperFunctionUnit>> tmpDic;
+			Dictionary<string,List<SuperFunctionUnitBase>> tmpDic;
 
 			if(dic2.ContainsKey(_target)){
 
@@ -53,12 +54,12 @@ namespace xy3d.tstd.lib.superFunction{
 
 				_target.AddComponent<SuperFunctionControl>();
 
-				tmpDic = new Dictionary<string,List<SuperFunctionUnit>>();
+				tmpDic = new Dictionary<string,List<SuperFunctionUnitBase>>();
 
 				dic2.Add(_target,tmpDic);
 			}
 
-			List<SuperFunctionUnit> tmpList;
+			List<SuperFunctionUnitBase> tmpList;
 
 			if(tmpDic.ContainsKey(_eventName)){
 
@@ -66,7 +67,7 @@ namespace xy3d.tstd.lib.superFunction{
 
 			}else{
 
-				tmpList = new List<SuperFunctionUnit>();
+				tmpList = new List<SuperFunctionUnitBase>();
 
 				tmpDic.Add(_eventName,tmpList);
 			}
@@ -76,17 +77,58 @@ namespace xy3d.tstd.lib.superFunction{
 			return result;
 		}
 
+		public int AddEventListener<T>(GameObject _target,string _eventName,callbackV<T> _callBack) where T : struct{
+			
+			int result = GetIndex();
+			
+			SuperFunctionUnitV<T> unit = new SuperFunctionUnitV<T>(_target,_eventName,_callBack,result);
+			
+			dic.Add(result,unit);
+			
+			Dictionary<string,List<SuperFunctionUnitBase>> tmpDic;
+			
+			if(dic2.ContainsKey(_target)){
+				
+				tmpDic = dic2[_target];
+				
+			}else{
+				
+				_target.AddComponent<SuperFunctionControl>();
+				
+				tmpDic = new Dictionary<string,List<SuperFunctionUnitBase>>();
+				
+				dic2.Add(_target,tmpDic);
+			}
+			
+			List<SuperFunctionUnitBase> tmpList;
+			
+			if(tmpDic.ContainsKey(_eventName)){
+				
+				tmpList = tmpDic[_eventName];
+				
+			}else{
+				
+				tmpList = new List<SuperFunctionUnitBase>();
+				
+				tmpDic.Add(_eventName,tmpList);
+			}
+			
+			tmpList.Add(unit);
+			
+			return result;
+		}
+
 		public void RemoveEventListener(int _index){
 
 			if(dic.ContainsKey(_index)){
 
-				SuperFunctionUnit unit = dic[_index];
+				SuperFunctionUnitBase unit = dic[_index];
 
 				dic.Remove(_index);
 
-				Dictionary<string,List<SuperFunctionUnit>> tmpDic = dic2[unit.target];
+				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[unit.target];
 
-				List<SuperFunctionUnit> tmpList = tmpDic[unit.eventName];
+				List<SuperFunctionUnitBase> tmpList = tmpDic[unit.eventName];
 
 				tmpList.Remove(unit);
 
@@ -106,15 +148,15 @@ namespace xy3d.tstd.lib.superFunction{
 
 			if(dic2.ContainsKey(_target)){
 
-				Dictionary<string,List<SuperFunctionUnit>> tmpDic = dic2[_target];
+				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
 				
 				DestroyControl(_target);
 
-				Dictionary<string,List<SuperFunctionUnit>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
+				Dictionary<string,List<SuperFunctionUnitBase>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
 
 				while(enumerator.MoveNext()){
 
-					List<SuperFunctionUnit> tmpList = enumerator.Current;
+					List<SuperFunctionUnitBase> tmpList = enumerator.Current;
 
 					for(int i = 0 ; i < tmpList.Count ; i++){
 
@@ -128,11 +170,11 @@ namespace xy3d.tstd.lib.superFunction{
 
 			if(dic2.ContainsKey(_target)){
 				
-				Dictionary<string,List<SuperFunctionUnit>> tmpDic = dic2[_target];
+				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
 
 				if(tmpDic.ContainsKey(_eventName)){
 
-					List<SuperFunctionUnit> list = tmpDic[_eventName];
+					List<SuperFunctionUnitBase> list = tmpDic[_eventName];
 
 					for(int i = 0 ; i < list.Count ; i++){
 
@@ -153,21 +195,26 @@ namespace xy3d.tstd.lib.superFunction{
 
 			if(dic2.ContainsKey(_target)){
 				
-				Dictionary<string,List<SuperFunctionUnit>> tmpDic = dic2[_target];
+				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
 				
 				if(tmpDic.ContainsKey(_eventName)){
 					
-					List<SuperFunctionUnit> list = tmpDic[_eventName];
+					List<SuperFunctionUnitBase> list = tmpDic[_eventName];
 
 					for(int i = 0 ; i < list.Count ; i++){
 
-						if(list[i].callBack == _callBack){
+						if(list[i] is SuperFunctionUnit){
 
-							dic.Remove(list[i].index);
+							SuperFunctionUnit unit = list[i] as SuperFunctionUnit;
 
-							list.RemoveAt(i);
+							if(unit.callBack == _callBack){
 
-							break;
+								dic.Remove(unit.index);
+
+								list.RemoveAt(i);
+
+								break;
+							}
 						}
 					}
 
@@ -184,38 +231,81 @@ namespace xy3d.tstd.lib.superFunction{
 			}
 		}
 
+		public void RemoveEventListener<T>(GameObject _target,string _eventName,callbackV<T> _callBack)where T : struct{
+
+			if(dic2.ContainsKey(_target)){
+				
+				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
+				
+				if(tmpDic.ContainsKey(_eventName)){
+					
+					List<SuperFunctionUnitBase> list = tmpDic[_eventName];
+					
+					for(int i = 0 ; i < list.Count ; i++){
+						
+						if(list[i] is SuperFunctionUnitV<T>){
+							
+							SuperFunctionUnitV<T> unit = list[i] as SuperFunctionUnitV<T>;
+							
+							if(unit.callBack == _callBack){
+								
+								dic.Remove(unit.index);
+								
+								list.RemoveAt(i);
+								
+								break;
+							}
+						}
+					}
+					
+					if(list.Count == 0){
+						
+						tmpDic.Remove(_eventName);
+						
+						if(tmpDic.Count == 0){
+							
+							DestroyControl(_target);
+						}
+					}
+				}
+			}
+		}
+
 		public void DispatchEvent(GameObject _target,SuperEvent _event){
 
 			if (dic2.ContainsKey (_target)) {
 				
-				Dictionary<string,List<SuperFunctionUnit>> tmpDic = dic2[_target];
+				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
 				
 				if(tmpDic.ContainsKey(_event.eventName)){
 
-					List<SuperFunctionUnit> tmpList = tmpDic[_event.eventName];
+					List<SuperFunctionUnitBase> tmpList = tmpDic[_event.eventName];
 					
-					SuperEvent[] eventList = new SuperEvent[tmpList.Count];
+					List<SuperEvent> eventList = new List<SuperEvent>();
 
-					SuperFunctionUnit[] unitList = new SuperFunctionUnit[tmpList.Count];
+					List<SuperFunctionUnit> unitList = new List<SuperFunctionUnit>();
 
 					for(int i = 0 ; i < tmpList.Count ; i++){
 
-						SuperFunctionUnit unit = tmpList[i];
+						if(tmpList[i] is SuperFunctionUnit){
 
-						SuperEvent tmpEvent = new SuperEvent(_event.eventName);
+							SuperFunctionUnit unit = tmpList[i] as SuperFunctionUnit;
 
-						tmpEvent.target = _target;
+							SuperEvent tmpEvent = new SuperEvent(_event.eventName);
 
-						tmpEvent.data = _event.data;
+							tmpEvent.target = _target;
 
-						tmpEvent.index = unit.index;
+							tmpEvent.data = _event.data;
 
-						eventList[i] = tmpEvent;
+							tmpEvent.index = unit.index;
 
-						unitList[i] = unit;
+							eventList.Add(tmpEvent);
+
+							unitList.Add(unit);
+						}
 					}
 
-					for(int i = 0 ; i < eventList.Length ; i++){
+					for(int i = 0 ; i < eventList.Count ; i++){
 
 						unitList[i].callBack(eventList[i]);
 					}
@@ -223,21 +313,66 @@ namespace xy3d.tstd.lib.superFunction{
 			}
 		}
 
+		public void DispatchEvent<T>(GameObject _target,SuperEvent _event,ref T _v) where T : struct{
+			
+			if (dic2.ContainsKey (_target)) {
+				
+				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
+				
+				if(tmpDic.ContainsKey(_event.eventName)){
+					
+					List<SuperFunctionUnitBase> tmpList = tmpDic[_event.eventName];
+					
+					List<SuperEvent> eventList = new List<SuperEvent>();
+					
+					List<SuperFunctionUnitV<T>> unitList = new List<SuperFunctionUnitV<T>>();
+					
+					for(int i = 0 ; i < tmpList.Count ; i++){
+
+						if(tmpList[i] is SuperFunctionUnitV<T>){
+						
+							SuperFunctionUnitV<T> unit = tmpList[i] as SuperFunctionUnitV<T>;
+							
+							SuperEvent tmpEvent = new SuperEvent(_event.eventName);
+							
+							tmpEvent.target = _target;
+							
+							tmpEvent.data = _event.data;
+							
+							tmpEvent.index = unit.index;
+							
+							eventList.Add(tmpEvent);
+							
+							unitList.Add(unit);
+						}
+					}
+					
+					for(int i = 0 ; i < eventList.Count ; i++){
+						
+						unitList[i].callBack(eventList[i],ref _v);
+					}
+				}
+			}
+		}
+
 		public void DestroyGameObject(GameObject _target){
 
-			Dictionary<string,List<SuperFunctionUnit>> tmpDic = dic2[_target];
-			
-			dic2.Remove(_target);
+			if(dic2.ContainsKey(_target)){
 
-			Dictionary<string,List<SuperFunctionUnit>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
-			
-			while(enumerator.MoveNext()){
+				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
 				
-				List<SuperFunctionUnit> tmpList = enumerator.Current;
+				dic2.Remove(_target);
+
+				Dictionary<string,List<SuperFunctionUnitBase>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
 				
-				for(int i = 0 ; i < tmpList.Count ; i++){
+				while(enumerator.MoveNext()){
 					
-					dic.Remove(tmpList[i].index);
+					List<SuperFunctionUnitBase> tmpList = enumerator.Current;
+					
+					for(int i = 0 ; i < tmpList.Count ; i++){
+						
+						dic.Remove(tmpList[i].index);
+					}
 				}
 			}
 		}

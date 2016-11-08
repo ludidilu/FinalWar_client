@@ -4,12 +4,9 @@ using System;
 
 namespace xy3d.tstd.lib.superFunction{
 
-	public class SuperFunctionUnit{
+	public class SuperFunctionUnit : SuperFunctionUnitBase{
 
-		public GameObject target;
-		public string eventName;
 		public Action<SuperEvent> callBack;
-		public int index;
 
 		public SuperFunctionUnit(GameObject _target,string _eventName,Action<SuperEvent> _callBack,int _index){
 

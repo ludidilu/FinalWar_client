@@ -11,23 +11,28 @@ namespace xy3d.tstd.lib.wwwManager
 	public class WWWManagerScript : MonoBehaviour
 	{
 
-#if PLATFORM_ANDROID
-
-		private static string path = Application.streamingAssetsPath + "/";
-
-#elif PLATFORM_IOS
-
-		private static string path = "file:" + Application.streamingAssetsPath + "/";
-
-#else 
-
-		private static string path = "file:///" + Application.streamingAssetsPath + "/";
-
-#endif
+		private static string path;
 
 		private WWWManager.fixUrlDelegate fixUrlDelegate;
 
 		private Action loadOverCallBack;
+
+		void Awake(){
+
+			#if PLATFORM_ANDROID
+			
+			path = Application.streamingAssetsPath + "/";
+			
+			#elif PLATFORM_IOS
+			
+			path = "file:" + Application.streamingAssetsPath + "/";
+			
+			#else 
+			
+			path = "file:///" + Application.streamingAssetsPath + "/";
+			
+			#endif
+		}
 
 		public void SetLoadOverCallBack(Action _callBack){
 

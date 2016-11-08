@@ -30,9 +30,10 @@ public class AudioPlayScript : MonoBehaviour {
         set
         {
             value = Mathf.Clamp(value, 0, 1);
-            foreach (var item in effectSources)
-            {
-                item.volume = value;
+
+			for(int i = 0; i < effectSources.Count ; i++){
+
+				effectSources[i].volume = value;
             }
         }
     }

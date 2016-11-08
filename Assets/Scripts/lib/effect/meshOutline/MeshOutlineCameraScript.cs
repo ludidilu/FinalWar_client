@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Camera))]
 public class MeshOutlineCameraScript : MonoBehaviour {
-	
-	[SerializeField]
+
 	private Material mat;
-	
-	private Camera rc;
 	
 	// Use this for initialization
 	void Start () {
+
+		mat = new Material(Shader.Find("Custom/Mesh_Outline"));
 		
-		rc = GetComponent<Camera>();
+		Camera rc = GetComponent<Camera>();
 		
 		rc.clearFlags = CameraClearFlags.SolidColor;
 		

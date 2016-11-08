@@ -25,7 +25,9 @@ public class UIParticleContainerFix : MonoBehaviour {
 				scale = 1;
 			}
 
-			foreach(ParticleSystemRenderer r in renderers){
+			for(int i = 0 ; i < renderers.Length ; i++){
+
+				ParticleSystemRenderer r = renderers[i];
 
 				r.material.SetFloat("_Scaling",scale);
 

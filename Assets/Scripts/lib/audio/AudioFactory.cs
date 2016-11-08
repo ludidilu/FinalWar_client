@@ -64,7 +64,11 @@ namespace xy3d.tstd.lib.audio{
 
 			List<string> delKeyList = new List<string> ();
 
-			foreach(KeyValuePair<String,AudioFactoryUnit> pair in dic){
+			Dictionary<string,AudioFactoryUnit>.Enumerator enumerator = dic.GetEnumerator();
+
+			while(enumerator.MoveNext()){
+
+				KeyValuePair<string,AudioFactoryUnit> pair = enumerator.Current;
 
 				AudioFactoryUnit unit = pair.Value;
 

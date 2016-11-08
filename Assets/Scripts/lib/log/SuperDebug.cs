@@ -76,4 +76,36 @@ public class SuperDebug{
 		Debug.LogErrorFormat(context,format,args);
 		#endif
 	}
+
+	public static void Log(Color color, string str){
+		#if !LOG_DISABLE
+		string col = "<color=#" + ColorToHexStr(color) + ">";
+		Debug.Log(col + str + "</color>");
+		#endif
+	}
+
+	public static void LogWarning(Color color, string str){
+		#if !LOG_DISABLE
+		string col = "<color=#" + ColorToHexStr(color) + ">";
+		Debug.LogWarning(col + str + "</color>");
+		#endif
+	}
+
+	public static void LogError(Color color, string str){
+		#if !LOG_DISABLE
+		string col = "<color=#" + ColorToHexStr(color) + ">";
+		Debug.LogError(col + str + "</color>");
+		#endif
+	}
+
+	static string ColorToHexStr(Color col) 
+	{ 
+		Color32 col32 = (Color32)col;
+		byte r = col32.r;
+		byte g = col32.g;
+		byte b = col32.b;
+		byte a = col32.a;
+		string returnStr = ""; 
+		return r.ToString ("X2") + g.ToString ("X2") + b.ToString ("X2") + a.ToString ("X2");
+	} 
 }

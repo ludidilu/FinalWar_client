@@ -28,6 +28,8 @@ public class ArMain : MonoBehaviour {
 
 	private int layerIndex;
 
+	private int rotationFix;
+
 	private void Init(){
 
 		layerIndex = container.gameObject.layer;
@@ -104,9 +106,13 @@ public class ArMain : MonoBehaviour {
 //
 //				SuperDebug.Log("webCamTexture.requestedWidth:" + webCamTexture.requestedWidth + "   webCamTexture.requestedHeight:" + webCamTexture.requestedHeight);
 //
-//				SuperDebug.Log("webCamTexture.videoRotationAngle:" + webCamTexture.videoRotationAngle);
-//
-//				SuperDebug.Log("webCamTexture.videoVerticallyMirrored:" + webCamTexture.videoVerticallyMirrored);
+				SuperDebug.Log("webCamTexture.videoRotationAngle:" + webCamTexture.videoRotationAngle);
+
+				SuperDebug.Log("webCamTexture.videoVerticallyMirrored:" + webCamTexture.videoVerticallyMirrored);
+
+				rotationFix = webCamTexture.videoVerticallyMirrored ? -1 : 1;
+
+				ri.transform.localScale = new Vector3(1, rotationFix, 1);
 
 				ri.texture = webCamTexture;
 

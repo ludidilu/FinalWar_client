@@ -28,8 +28,39 @@ namespace xy3d.tstd.lib.textureFactory{
 		public Dictionary<string,ITextureFactoryUnit> dicWillDispose  = new Dictionary<string, ITextureFactoryUnit>();
 
 		public T GetTexture<T> (string _name,Action<T> _callBack,bool _doNotDispose) where T:UnityEngine.Object {
+
+			return GetTexture(_name,0,_callBack,_doNotDispose);
 			
-			TextureFactoryUnit<T> unit;
+//			TextureFactoryUnit<T> unit;
+//			
+//			Dictionary<string,ITextureFactoryUnit> tmpDic;
+//			
+//			if (_doNotDispose) {
+//				
+//				tmpDic = dic;
+//				
+//			} else {
+//				
+//				tmpDic = dicWillDispose;
+//			}
+//			
+//			if (!tmpDic.ContainsKey (_name)) {
+//				
+//				unit = new TextureFactoryUnit<T> (_name);
+//				
+//				tmpDic.Add (_name, unit);
+//				
+//			} else {
+//				
+//				unit = tmpDic [_name] as TextureFactoryUnit<T>;
+//			}
+//
+//			return unit.GetTexture(_callBack);
+		}
+
+		public T GetTexture<T> (string _name,int _index,Action<T> _callBack,bool _doNotDispose) where T:UnityEngine.Object {
+			
+			TextureFactoryUnit2<T> unit;
 			
 			Dictionary<string,ITextureFactoryUnit> tmpDic;
 			
@@ -44,32 +75,36 @@ namespace xy3d.tstd.lib.textureFactory{
 			
 			if (!tmpDic.ContainsKey (_name)) {
 				
-				unit = new TextureFactoryUnit<T> (_name);
+				unit = new TextureFactoryUnit2<T> (_name);
 				
 				tmpDic.Add (_name, unit);
 				
 			} else {
 				
-				unit = tmpDic [_name] as TextureFactoryUnit<T>;
+				unit = tmpDic [_name] as TextureFactoryUnit2<T>;
 			}
 			
-			return unit.GetTexture(_callBack);
+			return unit.GetTexture(_index,_callBack);
 		}
 
 		public void Dispose(bool _force){
 
-			foreach (ITextureFactoryUnit unit in dicWillDispose.Values) {
+			Dictionary<string,ITextureFactoryUnit>.ValueCollection.Enumerator enumerator = dicWillDispose.Values.GetEnumerator();
 
-				unit.Dispose ();
+			while(enumerator.MoveNext()){
+
+				enumerator.Current.Dispose();
 			}
 
 			dicWillDispose.Clear ();
 
 			if(_force){
 
-				foreach(ITextureFactoryUnit unit in dic.Values){
+				enumerator = dic.Values.GetEnumerator();
 
-					unit.Dispose();
+				while(enumerator.MoveNext()){
+
+					enumerator.Current.Dispose();
 				}
 
 				dic.Clear();

@@ -167,7 +167,11 @@ namespace xy3d.tstd.lib.gameObjectFactory{
 
 			List<string> delKeyList = new List<string> ();
 
-			foreach (KeyValuePair<String,GameObjectFactoryUnit> pair in dic) {
+			Dictionary<string,GameObjectFactoryUnit>.Enumerator enumerator = dic.GetEnumerator();
+
+			while(enumerator.MoveNext()){
+
+				KeyValuePair<String,GameObjectFactoryUnit> pair = enumerator.Current;
 
 				if (_force || pair.Value.useNum == 0) {
 

@@ -161,4 +161,9 @@ public class Joystick4Direction : MonoBehaviour {
 			}
 		}
 	}
+	
+	void OnDisable(){
+		
+		isDown = false;
+	}
 }

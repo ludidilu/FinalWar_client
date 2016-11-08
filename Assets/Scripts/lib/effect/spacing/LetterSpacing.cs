@@ -35,7 +35,7 @@ namespace xy3d.tstd.lib.effect{
 			}
 		}
 
-		#if UNITY_5_2_2 || UNITY_5_2_3 || UNITY_5_3
+#if UNITY_5_2_2 || UNITY_5_2_3 || UNITY_5_3 || UNITY_5_4
 		public override void ModifyMesh (VertexHelper vh)
 		{
 			if (!IsActive ()){

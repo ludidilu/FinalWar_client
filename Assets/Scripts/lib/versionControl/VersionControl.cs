@@ -183,7 +183,11 @@ namespace xy3d.tstd.lib.versionControl{
 
 			int loadSize = 0;
 
-			foreach(KeyValuePair<string,UpdateFileInfo> pair in _dic){
+			Dictionary<string,UpdateFileInfo>.Enumerator enumerator = _dic.GetEnumerator();
+
+			while(enumerator.MoveNext()){
+
+				KeyValuePair<string,UpdateFileInfo> pair = enumerator.Current;
 
 				string path = pair.Key;
 

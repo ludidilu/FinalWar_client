@@ -59,8 +59,10 @@ namespace xy3d.tstd.lib.audio{
 			data.name = name;
 			
 			type = 1;
+
+			for(int i = 0 ; i < callBackList.Count ; i++){
 			
-			foreach(Action<AudioClip> callBack in callBackList){
+				Action<AudioClip> callBack = callBackList[i];
 				
 				if(callBack != null){
 					

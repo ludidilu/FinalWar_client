@@ -12,6 +12,7 @@ using xy3d.tstd.lib.wwwManager;
 using xy3d.tstd.lib.systemIO;
 using xy3d.tstd.lib.thread;
 using System.Threading;
+using xy3d.tstd.lib.publicTools;
 
 public class StaticData
 {
@@ -42,9 +43,13 @@ public class StaticData
 		Type type = typeof(T);
 		
 		FieldInfo field = type.GetField(key);
+
+		Dictionary<int,T>.ValueCollection.Enumerator enumerator = dict.Values.GetEnumerator();
+
+		while(enumerator.MoveNext()){
+
+			T item = enumerator.Current;
 		
-		foreach (T item in dict.Values)
-		{
 			object keyValue = field.GetValue(item);
 			
 			if (keyValue.Equals(keyValueParam))
@@ -215,7 +220,7 @@ public class StaticData
 				
 			case "String":
 				
-				_info.SetValue(_csv, _data);
+				_info.SetValue(_csv, PublicTools.FixStringChangeLine(_data));
 				
 				break;
 				
@@ -294,7 +299,14 @@ public class StaticData
 				
 				if (!string.IsNullOrEmpty(_data))
 				{
-					stringResult = _data.Split('$');
+					string[] tmpStr = _data.Split('$');
+
+					stringResult = new string[tmpStr.Length];
+
+					for(int i = 0 ; i < tmpStr.Length ; i++){
+
+						stringResult[i] = PublicTools.FixStringChangeLine(tmpStr[i]);
+					}
 				}
 				else
 				{

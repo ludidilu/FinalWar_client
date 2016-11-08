@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using xy3d.tstd.lib.superTween;
+using UnityEngine.UI;
 
 
 namespace xy3d.tstd.lib.publicTools
@@ -424,6 +425,134 @@ namespace xy3d.tstd.lib.publicTools
 			return mesh;
 		}
 
+		public static GameObject CombineImage(Transform _container,Material _mat,List<Sprite> _sprites,List<Vector2> _pos,List<Vector2> _rect){
+			
+			int num = _sprites.Count;
+			
+			Mesh mesh = new Mesh();
+			
+			CombineInstance[] cis = new CombineInstance[num];
+
+			GameObject tmpGo = new GameObject ("tmpGo",typeof(RectTransform));
+
+			tmpGo.transform.SetParent (_container, false);
+
+			RectTransform tmpRect = tmpGo.transform as RectTransform;
+			
+			for(int i = 0 ; i < num ; i++){
+
+				Sprite sp = _sprites[i];
+				
+				tmpRect.anchoredPosition = _pos[i];
+
+				Mesh tmpMesh = new Mesh();
+
+				Vector3[] vertices = new Vector3[sp.vertices.Length];
+
+				for(int m = 0 ; m < vertices.Length ; m++){
+
+					vertices[m] = sp.vertices[m];
+				}
+
+				tmpMesh.vertices = vertices;
+
+				int[] triangles = new int[sp.triangles.Length];
+
+				for(int m = 0 ; m < triangles.Length ; m++){
+
+					triangles[m] = sp.triangles[m];
+				}
+
+				tmpMesh.triangles = triangles;
+				
+				tmpMesh.uv = sp.uv;
+				
+				cis[i].mesh = tmpMesh;
+				
+				cis[i].transform = Matrix4x4.TRS(tmpRect.localPosition,Quaternion.identity,new Vector3(_rect[i].x * 100 / sp.rect.width,_rect[i].y * 100 / sp.rect.height,0));
+			}
+			
+			mesh.CombineMeshes(cis);
+			
+			GameObject result = new GameObject();
+			
+			MeshFilter mf = result.AddComponent<MeshFilter>();
+			
+			mf.mesh = mesh;
+			
+			MeshRenderer mr = result.AddComponent<MeshRenderer>();
+			
+			_mat.mainTexture = _sprites[0].texture;
+			
+			mr.material = _mat;
+			
+			result.transform.SetParent(_container,false);
+
+			GameObject.Destroy (tmpGo);
+			
+			return result;
+		}
+
+		public static GameObject CombineImage(Transform _container,Material _mat,List<Image> _images){
+
+			int num = _images.Count;
+			
+			Mesh mesh = new Mesh();
+
+			CombineInstance[] cis = new CombineInstance[num];
+
+			for(int i = 0 ; i < num ; i++){
+
+				Sprite sp = _images[i].sprite;
+
+				Mesh tmpMesh = new Mesh();
+				
+				Vector3[] vertices = new Vector3[sp.vertices.Length];
+				
+				for(int m = 0 ; m < vertices.Length ; m++){
+					
+					vertices[m] = sp.vertices[m];
+				}
+				
+				tmpMesh.vertices = vertices;
+				
+				int[] triangles = new int[sp.triangles.Length];
+				
+				for(int m = 0 ; m < triangles.Length ; m++){
+					
+					triangles[m] = sp.triangles[m];
+				}
+				
+				tmpMesh.triangles = triangles;
+				
+				tmpMesh.uv = sp.uv;
+
+				cis[i].mesh = tmpMesh;
+
+				RectTransform rect = _images[i].transform as RectTransform;
+				
+				cis[i].transform = Matrix4x4.TRS(rect.localPosition,Quaternion.identity,new Vector3(rect.sizeDelta.x * 100 / sp.rect.width,rect.sizeDelta.y * 100 / sp.rect.height,0));
+			}
+			
+			mesh.CombineMeshes(cis);
+
+			GameObject result = new GameObject();
+			
+			MeshFilter mf = result.AddComponent<MeshFilter>();
+			
+			mf.mesh = mesh;
+			
+			MeshRenderer mr = result.AddComponent<MeshRenderer>();
+
+			_mat.mainTexture = _images[0].sprite.texture;
+			
+			mr.material = _mat;
+			
+			result.transform.SetParent(_container,false);
+
+			return result;
+		}
+
 		public static int[] SplitInt(int _data,int _num,float _range){
 
 			int[] result = new int[_num];
@@ -466,6 +595,11 @@ namespace xy3d.tstd.lib.publicTools
 			result[numRec - 1] = _data;
 			
 			return result;
+		}
+
+		public static string FixStringChangeLine(string _str){
+
+			return _str.Replace("\\n","\n");
 		}
 	}
 }

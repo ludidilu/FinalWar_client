@@ -78,9 +78,13 @@ namespace xy3d.tstd.lib.animatorFactoty{
 		public void Dispose(bool _force){
 			
 			List<string> delKeyList = new List<string> ();
+
+			Dictionary<string,AnimatorFactoryUnit>.Enumerator enumerator = dic.GetEnumerator();
+
+			while(enumerator.MoveNext()){
+
+				KeyValuePair<String,AnimatorFactoryUnit> pair = enumerator.Current;
 			
-			foreach (KeyValuePair<String,AnimatorFactoryUnit> pair in dic) {
-				
 				if (_force || pair.Value.useNum == 0) {
 					
 					pair.Value.Dispose ();

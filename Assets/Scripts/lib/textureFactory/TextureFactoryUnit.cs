@@ -61,7 +61,9 @@ namespace xy3d.tstd.lib.textureFactory{
 
 			type = 1;
 
-			foreach(Action<T> callBack in callBackList){
+			for(int i = 0 ; i < callBackList.Count ; i++){
+
+				Action<T> callBack = callBackList[i];
 
 				if(callBack != null){
 

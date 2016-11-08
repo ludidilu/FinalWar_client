@@ -40,11 +40,8 @@ namespace xy3d.tstd.lib.assetManager
 			}
 		}
 
-#if USE_ASSETBUNDLE
-		
 		public Dictionary<string,IAssetManagerUnit> dic;
 		
-		private GameObject go;
 		public AssetManagerScript script;
 
 		public Dictionary<string,AssetManagerData> dataDic;
@@ -55,7 +52,7 @@ namespace xy3d.tstd.lib.assetManager
 
 			if(LOADASYNC){
 				
-				go = new GameObject("AssetManagerGameObject");
+				GameObject go = new GameObject("AssetManagerGameObject");
 
 				GameObject.DontDestroyOnLoad(go);
 				
@@ -107,7 +104,6 @@ namespace xy3d.tstd.lib.assetManager
 
 		public void RemoveUnit (string _name)
 		{
-			
 			dic.Remove (_name);
 		}
 
@@ -122,7 +118,6 @@ namespace xy3d.tstd.lib.assetManager
 
 			AssetManagerDataFactory.SetData(_bw,dataDic);
 		}
-#endif
 
 		public T GetAsset<T> (string _name, Action<T> _callBack) where T:UnityEngine.Object
 		{
@@ -159,6 +154,57 @@ namespace xy3d.tstd.lib.assetManager
 
 			return data;
 #endif
+		}
+
+		public T[] GetAsset<T> (string _name, Action<T[]> _callBack) where T:UnityEngine.Object
+		{
+			#if USE_ASSETBUNDLE
+			
+			AssetManagerUnit2<T> unit;
+			
+			if (!dic.ContainsKey (_name)) {
+				
+				unit = new AssetManagerUnit2<T> (_name);
+				
+				dic.Add(_name,unit);
+				
+			} else {
+				
+				unit = dic [_name] as AssetManagerUnit2<T>;
+			}
+			
+			unit.Load (_callBack);
+			
+			return null;
+			
+			#else
+			
+			UnityEngine.Object[] datas = AssetDatabase.LoadAllAssetsAtPath (_name);
+			
+			if(datas == null){
+				
+				SuperDebug.LogError("Resource load fail:" + _name);
+			}
+
+			List<T> tmpList = new List<T>();
+
+			for(int i = 0 ; i < datas.Length ; i++){
+
+				UnityEngine.Object data = datas[i];
+
+				if(data is T){
+
+					tmpList.Add(data as T);
+				}
+			}
+
+			T[] result = tmpList.ToArray();
+
+			_callBack (result);
+			
+			return result;
+
+			#endif
 		}
 	}
 }

@@ -28,10 +28,10 @@ namespace xy3d.tstd.lib.gameObjectFactory{
 				GameObject obj = _obj.transform.GetChild(i).gameObject;
 
 				List<Transform> tmpList = GetTransforms(obj);
+
+				for(int m = 0 ; m < tmpList.Count ; m++){
 				
-				foreach(Transform transform in tmpList){
-					
-					list.Add(transform);
+					list.Add(tmpList[m]);
 				}
 			}
 			
