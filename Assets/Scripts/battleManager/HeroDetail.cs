@@ -25,6 +25,9 @@ public class HeroDetail : MonoBehaviour
     [SerializeField]
     private Text comment;
 
+	[SerializeField]
+	private GameObject commentContainer;
+
     private HeroBase hero;
 
     public void Show(HeroBase _hero)
@@ -49,6 +52,23 @@ public class HeroDetail : MonoBehaviour
         {
             gameObject.SetActive(true);
         }
+
+		if (!string.IsNullOrEmpty (hero.sds.comment)) {
+
+			comment.text = hero.sds.comment;
+
+			if(!commentContainer.activeSelf){
+
+				commentContainer.SetActive(true);
+			}
+
+		}else{
+
+			if(commentContainer.activeSelf){
+
+				commentContainer.SetActive(false);
+			}
+		}
     }
 
     public void Hide(HeroBase _hero)

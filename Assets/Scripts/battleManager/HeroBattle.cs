@@ -134,7 +134,7 @@ public class HeroBattle : HeroBase
 
         SuperTween.Instance.To(0, 1, 1, shockToDel, null);
 
-        string str = "";
+        string str = string.Empty;
 
         if (_shieldDamage < 0)
         {

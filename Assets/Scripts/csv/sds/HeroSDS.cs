@@ -67,7 +67,7 @@
 
 			if(m_comment == null){
 
-				m_comment = "";
+				m_comment = string.Empty;
 
 				for(int i = 0 ; i < skills.Length ; i++){
 

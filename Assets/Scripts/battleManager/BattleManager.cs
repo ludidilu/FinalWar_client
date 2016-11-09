@@ -1301,7 +1301,7 @@ public class BattleManager : MonoBehaviour
 
             hero.RefreshHp();
 
-            string str = "";
+			string str = string.Empty;
 
             if (shieldChange < 0)
             {
