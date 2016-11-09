@@ -989,14 +989,14 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void DoAction(IEnumerator<ValueType> _enumerator)
+    private void DoAction(IEnumerator<IBattleVO> _enumerator)
     {
         RefreshData();
 
         DoActionReal(_enumerator);
     }
 
-    private void DoActionReal(IEnumerator<ValueType> _enumerator)
+	private void DoActionReal(IEnumerator<IBattleVO> _enumerator)
     {
         if (_enumerator.MoveNext())
         {
@@ -1005,7 +1005,7 @@ public class BattleManager : MonoBehaviour
                 DoActionReal(_enumerator);
             };
 
-            ValueType vo = _enumerator.Current;
+			IBattleVO vo = _enumerator.Current;
 
             if (vo is BattleShootVO)
             {
@@ -1035,6 +1035,18 @@ public class BattleManager : MonoBehaviour
             {
                 DoChange((BattleChangeVO)vo, del);
             }
+			else if(vo is BattleAddCardsVO)
+			{
+				DoAddCards((BattleAddCardsVO)vo,del);
+			}
+			else if(vo is BattleDelCardsVO)
+			{
+				DoDelCards((BattleDelCardsVO)vo,del);
+			}
+			else if(vo is BattleMoneyChangeVO)
+			{
+				DoMoneyChange((BattleMoneyChangeVO)vo,del);
+			}
         }
     }
 
@@ -1332,6 +1344,31 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
+
+	private void DoAddCards(BattleAddCardsVO _vo, Action _del){
+
+		ClearCards();
+		
+		CreateCards();
+
+		_del ();
+	}
+
+	private void DoDelCards(BattleDelCardsVO _vo, Action _del){
+		
+		ClearCards();
+		
+		CreateCards();
+
+		_del ();
+	}
+
+	private void DoMoneyChange(BattleMoneyChangeVO _vo, Action _del){
+
+		CreateMoneyTf ();
+
+		_del ();
+	}
 
     private void FixBattleContainerRect()
     {
