@@ -69,7 +69,22 @@ public class HeroBattle : HeroBase
 
         attack.text = sds.GetAttack().ToString();
 
-        shoot.text = sds.GetShoot().ToString();
+		if (sds.GetShoot () > 0) {
+
+			if (!shoot.gameObject.activeSelf) {
+
+				shoot.gameObject.SetActive (true);
+			}
+
+			shoot.text = sds.GetShoot ().ToString ();
+
+		} else {
+
+			if(shoot.gameObject.activeSelf){
+
+				shoot.gameObject.SetActive(false);
+			}
+		}
 
         RefreshHp();
 
