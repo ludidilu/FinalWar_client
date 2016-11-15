@@ -1315,7 +1315,16 @@ public class BattleManager : MonoBehaviour
 
 			string str = string.Empty;
 
-            if (shieldChange < 0)
+			if(shieldChange > 0)
+			{
+				str += "<color=\"#0000FF\">+" + shieldChange + "</color>";
+				
+				if (hpChange != 0)
+				{
+					str += "   ";
+				}
+			}
+            else if (shieldChange < 0)
             {
                 str += "<color=\"#FFFF00\">" + shieldChange + "</color>";
 

@@ -98,22 +98,7 @@ public class HeroBattle : HeroBase
 
     public void RefreshShield()
     {
-        if (sds.GetShield() > 0)
-        {
-            if (!shield.gameObject.activeSelf)
-            {
-                shield.gameObject.SetActive(true);
-            }
-
-            shield.text = hero.nowShield.ToString();
-        }
-        else
-        {
-            if (shield.gameObject.activeSelf)
-            {
-                shield.gameObject.SetActive(false);
-            }
-        }
+        shield.text = hero.nowShield.ToString();
     }
 
     public void Shock(List<Vector3> _targets, AnimationCurve _curve, float _shockDis, int _shieldDamage, int _hpDamage)
