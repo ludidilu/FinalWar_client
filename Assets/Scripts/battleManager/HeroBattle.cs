@@ -63,8 +63,13 @@ public class HeroBattle : HeroBase
 
     public void Init(Hero _hero)
     {
-        hero = _hero;
+		hero = _hero;
 
+		RefreshAll ();
+	}
+
+	public void RefreshAll()
+	{
         InitCard(hero.sds as HeroSDS);
 
         attack.text = sds.GetAttack().ToString();

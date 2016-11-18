@@ -7,6 +7,7 @@
 	public bool canControl;
 	public bool canMove;
 	public bool threat;
+	public int levelUp;
 	public int attack;
 	public int shoot;
 	public int[] skills;
@@ -39,6 +40,10 @@
 	public bool GetThreat()
 	{
 		return threat;
+	}
+	public int GetLevelUp()
+	{
+		return levelUp;
 	}
 	public int GetAttack()
 	{
