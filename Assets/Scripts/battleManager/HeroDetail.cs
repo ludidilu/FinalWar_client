@@ -26,50 +26,81 @@ public class HeroDetail : MonoBehaviour
     private Text comment;
 
 	[SerializeField]
+	private Text levelUp;
+
+	[SerializeField]
 	private GameObject commentContainer;
 
     private HeroBase hero;
+
+	private int levelUpID;
 
     public void Show(HeroBase _hero)
     {
         hero = _hero;
 
-        heroName.text = hero.sds.name;
+		ShowReal (hero.sds);
+    }
 
-        cost.text = hero.sds.cost.ToString();
+	private void ShowReal(HeroSDS _heroSDS){
 
-        hp.text = hero.sds.hp.ToString();
+		heroName.color = _heroSDS == hero.sds ? Color.black : Color.red;
 
-        shield.text = hero.sds.shield.ToString();
-
-        attack.text = hero.sds.attack.ToString();
-
-        shoot.text = hero.sds.shoot.ToString();
-
-        comment.text = hero.sds.comment;
-
-        if (!gameObject.activeSelf)
-        {
-            gameObject.SetActive(true);
-        }
-
-		if (!string.IsNullOrEmpty (hero.sds.comment)) {
-
-			comment.text = hero.sds.comment;
-
-			if(!commentContainer.activeSelf){
-
-				commentContainer.SetActive(true);
+		heroName.text = _heroSDS.name;
+		
+		cost.text = _heroSDS.cost.ToString();
+		
+		hp.text = _heroSDS.hp.ToString();
+		
+		shield.text = _heroSDS.shield.ToString();
+		
+		attack.text = _heroSDS.attack.ToString();
+		
+		shoot.text = _heroSDS.shoot.ToString();
+		
+		if (_heroSDS.levelUp != 0) {
+			
+			if(!levelUp.gameObject.activeSelf){
+				
+				levelUp.gameObject.SetActive (true);
 			}
 
+			levelUpID = _heroSDS.levelUp;
+			
+			HeroSDS sds = StaticData.GetData<HeroSDS> (levelUpID);
+			
+			levelUp.text = sds.name;
+			
+		} else {
+			
+			if(levelUp.gameObject.activeSelf){
+				
+				levelUp.gameObject.SetActive(false);
+			}
+		}
+
+		if (!string.IsNullOrEmpty (_heroSDS.comment)) {
+			
+			comment.text = _heroSDS.comment;
+			
+			if(!commentContainer.activeSelf){
+				
+				commentContainer.SetActive(true);
+			}
+			
 		}else{
-
+			
 			if(commentContainer.activeSelf){
-
+				
 				commentContainer.SetActive(false);
 			}
 		}
-    }
+		
+		if (!gameObject.activeSelf)
+		{
+			gameObject.SetActive(true);
+		}
+	}
 
     public void Hide(HeroBase _hero)
     {
@@ -93,4 +124,11 @@ public class HeroDetail : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+
+	public void LevelUpClick(){
+
+		HeroSDS sds = StaticData.GetData<HeroSDS> (levelUpID);
+
+		ShowReal (sds);
+	}
 }

@@ -130,7 +130,6 @@ public class BattleManager : MonoBehaviour
         if (_value == null)
         {
             heroDetail.Hide(m_nowChooseCard);
-
         }
         else
         {
@@ -795,14 +794,15 @@ public class BattleManager : MonoBehaviour
     {
         ClearNowChooseHero();
 
-        if (GetNowChooseCard() != _hero)
-        {
+		//因为可能之前点击过进阶显示  所以这里要刷新英雄详情
+//        if (GetNowChooseCard() != _hero)
+//        {
             ClearNowChooseCard();
 
             SetNowChooseCard(_hero);
 
             GetNowChooseCard().SetFrameVisible(true);
-        }
+//        }
     }
 
     private void ClearNowChooseCard()
