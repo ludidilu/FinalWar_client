@@ -193,8 +193,15 @@ namespace xy3d.tstd.lib.publicTools
 		public static Vector3 WorldPositionToCanvasPosition(Camera _worldCamera,RectTransform _canvasRect,Vector3 _worldPosition){
 
 			Vector3 screenPos = _worldCamera.WorldToViewportPoint(_worldPosition);
-			
+
 			return new Vector3((screenPos.x * _canvasRect.sizeDelta.x) - (_canvasRect.sizeDelta.x * 0.5f),(screenPos.y * _canvasRect.sizeDelta.y) - (_canvasRect.sizeDelta.y * 0.5f),screenPos.z);
+		}
+
+		public static Vector3 CanvasPositionToWorldPosition(Camera _worldCamea,RectTransform _canvasRect,Vector2 _canvasPosition){
+
+			Vector3 screenPos = new Vector3((_canvasPosition.x + _canvasRect.sizeDelta.x * 0.5f) / _canvasRect.sizeDelta.x,(_canvasPosition.y + _canvasRect.sizeDelta.y * 0.5f) / _canvasRect.sizeDelta.y,0);
+
+			return _worldCamea.ViewportToWorldPoint(screenPos);
 		}
 
 		public static Vector3 MousePositionToCanvasPosition(Canvas _canvas,Vector3 _mousePosition){
@@ -204,6 +211,15 @@ namespace xy3d.tstd.lib.publicTools
 			RectTransform canvasRect = _canvas.transform as RectTransform;
 
 			return new Vector3((screenPos.x * canvasRect.sizeDelta.x) - (canvasRect.sizeDelta.x * 0.5f),(screenPos.y * canvasRect.sizeDelta.y) - (canvasRect.sizeDelta.y * 0.5f),screenPos.z);
+		}
+
+		public static Vector3 CanvasPostionToMousePosition(Canvas _canvas,Vector2 _canvasPosition){
+
+			RectTransform canvasRect = _canvas.transform as RectTransform;
+
+			Vector3 screenPos = new Vector3((_canvasPosition.x + canvasRect.sizeDelta.x * 0.5f) / canvasRect.sizeDelta.x,(_canvasPosition.y + canvasRect.sizeDelta.y * 0.5f) / canvasRect.sizeDelta.y,0);
+			
+			return _canvas.worldCamera.ViewportToScreenPoint(screenPos);
 		}
 
 		//场景被卸载时，如果场景上有GameObject从来没有active过，那GameObject所引用的贴图就会残留在内存里了  这个方法就是确保场景上所有GameObject都曾经被active过
@@ -423,6 +439,140 @@ namespace xy3d.tstd.lib.publicTools
 			mesh.CombineMeshes(cis);
 			
 			return mesh;
+		}
+
+		public static GameObject CombineImage(Transform _container,Material _mat,List<List<Sprite>> _sprites,List<Vector2> _pos,List<Vector2> _rect){
+			
+			int num = _sprites.Count;
+			
+			Mesh mesh = new Mesh();
+			
+			List<CombineInstance> cis = new List<CombineInstance>();
+			
+			GameObject tmpGo = new GameObject ("tmpGo",typeof(RectTransform));
+			
+			tmpGo.transform.SetParent (_container, false);
+			
+			RectTransform tmpRect = tmpGo.transform as RectTransform;
+			
+			for(int i = 0 ; i < num ; i++){
+				
+				List<Sprite> sps = _sprites[i];
+				
+				if(sps.Count == 1){
+					
+					Sprite sp = _sprites[i][0];
+					
+					tmpRect.anchoredPosition = _pos[i];
+					
+					Mesh tmpMesh = new Mesh();
+					
+					Vector3[] vertices = new Vector3[sp.vertices.Length];
+					
+					for(int m = 0 ; m < vertices.Length ; m++){
+						
+						vertices[m] = sp.vertices[m];
+					}
+					
+					tmpMesh.vertices = vertices;
+					
+					Vector2[] uv = new Vector2[sp.vertices.Length];
+					
+					for(int m = 0 ; m < uv.Length ; m++){
+						
+						uv[m] = new Vector2(-1,0);
+					}
+					
+					tmpMesh.uv2 = uv;
+					
+					int[] triangles = new int[sp.triangles.Length];
+					
+					for(int m = 0 ; m < triangles.Length ; m++){
+						
+						triangles[m] = sp.triangles[m];
+					}
+					
+					tmpMesh.triangles = triangles;
+					
+					tmpMesh.uv = sp.uv;
+					
+					CombineInstance ci = new CombineInstance();
+					
+					ci.mesh = tmpMesh;
+					
+					ci.transform = Matrix4x4.TRS(tmpRect.localPosition,Quaternion.identity,new Vector3(_rect[i].x * 100 / sp.rect.width,_rect[i].y * 100 / sp.rect.height,0));
+					
+					cis.Add(ci);
+					
+				}else{
+					
+					for(int m = 0 ; m < sps.Count ; m++){
+						
+						Sprite sp = _sprites[i][m];
+						
+						tmpRect.anchoredPosition = _pos[i];
+						
+						Mesh tmpMesh = new Mesh();
+						
+						Vector3[] vertices = new Vector3[sp.vertices.Length];
+						
+						for(int n = 0 ; n < vertices.Length ; n++){
+							
+							vertices[n] = sp.vertices[n];
+						}
+						
+						tmpMesh.vertices = vertices;
+						
+						Vector2[] uv = new Vector2[sp.vertices.Length];
+						
+						for(int n = 0 ; n < uv.Length ; n++){
+							
+							uv[n] = new Vector2(m,sps.Count);
+						}
+						
+						tmpMesh.uv2 = uv;
+						
+						int[] triangles = new int[sp.triangles.Length];
+						
+						for(int n = 0 ; n < triangles.Length ; n++){
+							
+							triangles[n] = sp.triangles[n];
+						}
+						
+						tmpMesh.triangles = triangles;
+						
+						tmpMesh.uv = sp.uv;
+						
+						CombineInstance ci = new CombineInstance();
+						
+						ci.mesh = tmpMesh;
+						
+						ci.transform = Matrix4x4.TRS(tmpRect.localPosition,Quaternion.identity,new Vector3(_rect[i].x * 100 / sp.rect.width,_rect[i].y * 100 / sp.rect.height,0));
+						
+						cis.Add(ci);
+					}
+				}
+			}
+			
+			mesh.CombineMeshes(cis.ToArray());
+			
+			GameObject result = new GameObject();
+			
+			MeshFilter mf = result.AddComponent<MeshFilter>();
+			
+			mf.mesh = mesh;
+			
+			MeshRenderer mr = result.AddComponent<MeshRenderer>();
+			
+			_mat.mainTexture = _sprites[0][0].texture;
+			
+			mr.material = _mat;
+			
+			result.transform.SetParent(_container,false);
+			
+			GameObject.Destroy (tmpGo);
+			
+			return result;
 		}
 
 		public static GameObject CombineImage(Transform _container,Material _mat,List<Sprite> _sprites,List<Vector2> _pos,List<Vector2> _rect){

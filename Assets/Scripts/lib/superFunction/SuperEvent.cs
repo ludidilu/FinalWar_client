@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace xy3d.tstd.lib.superFunction{
 
-	public class SuperEvent {
+	public struct SuperEvent {
 
 		public GameObject target;
 		public string eventName;
@@ -13,6 +13,9 @@ namespace xy3d.tstd.lib.superFunction{
 		public SuperEvent(string _eventName){
 
 			eventName = _eventName;
+			index = 0;
+			data = null;
+			target = null;
 		}
 	}
 }

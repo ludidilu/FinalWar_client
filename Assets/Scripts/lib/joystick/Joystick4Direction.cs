@@ -5,20 +5,6 @@ using xy3d.tstd.lib.superFunction;
 
 public class Joystick4Direction : MonoBehaviour {
 
-	public enum Direction{
-
-		UP,
-		DOWN,
-		RIGHT,
-		LEFT
-	}
-
-	public const string DOWN = "joystickDown";
-
-	public const string MOVE = "joystickMove";
-
-	public const string UP = "joystickUp";
-
 	[SerializeField]
 	private Canvas canvas;
 
@@ -30,7 +16,7 @@ public class Joystick4Direction : MonoBehaviour {
 
 	private Rect clickArea;
 
-	private Vector3 downPos;
+	private Vector2 downPos;
 
 	private bool isDown = false;
 
@@ -42,15 +28,23 @@ public class Joystick4Direction : MonoBehaviour {
 
 	void Awake(){
 
-		downEvent = new SuperEvent(DOWN);
+		downEvent = new SuperEvent(Joystick4DirectionData.DOWN);
 
-		downEvent.data = new object[1];
+		downEvent.data = new object[2];
 
-		moveEvent = new SuperEvent(MOVE);
+		downEvent.data[0] = this;
 
-		moveEvent.data = new object[2];
+		moveEvent = new SuperEvent(Joystick4DirectionData.MOVE);
 
-		upEvent = new SuperEvent(UP);
+		moveEvent.data = new object[4];
+
+		moveEvent.data[0] = this;
+
+		upEvent = new SuperEvent(Joystick4DirectionData.UP);
+
+		upEvent.data = new object[1];
+		
+		upEvent.data[0] = this;
 	}
 
 	void Start(){
@@ -76,7 +70,7 @@ public class Joystick4Direction : MonoBehaviour {
 
 		downPos = Input.mousePosition;
 
-		downEvent.data[0] = downPos;
+		downEvent.data[1] = downPos;
 
 		SuperFunction.Instance.DispatchEvent(gameObject,downEvent);
 	}
@@ -92,7 +86,7 @@ public class Joystick4Direction : MonoBehaviour {
 
 		if(isDown){
 
-			if(Input.GetMouseButtonUp(0)){
+			if(!Input.GetMouseButton(0)){
 				
 				Up ();
 
@@ -103,9 +97,9 @@ public class Joystick4Direction : MonoBehaviour {
 
 			float dy = Input.mousePosition.y - downPos.y;
 
-			Direction direction;
+			Joystick4DirectionData.Direction direction;
 
-			float percent;
+			float moveDis;
 
 			if(Mathf.Abs(dx) > Mathf.Abs(dy)){
 
@@ -113,14 +107,14 @@ public class Joystick4Direction : MonoBehaviour {
 
 				if(dx > 0){
 
-					direction = Direction.RIGHT;
+					direction = Joystick4DirectionData.Direction.RIGHT;
 
 				}else{
 
-					direction = Direction.LEFT;
+					direction = Joystick4DirectionData.Direction.LEFT;
 				}
 
-				percent = Mathf.Abs(dx) / maxValue;
+				moveDis = dx;
 
 			}else{
 
@@ -128,19 +122,21 @@ public class Joystick4Direction : MonoBehaviour {
 
 				if(dy > 0){
 					
-					direction = Direction.UP;
+					direction = Joystick4DirectionData.Direction.UP;
 					
 				}else{
 					
-					direction = Direction.DOWN;
+					direction = Joystick4DirectionData.Direction.DOWN;
 				}
 
-				percent = Mathf.Abs(dy) / maxValue;
+				moveDis = dy;
 			}
 
-			moveEvent.data[0] = direction;
+			moveEvent.data[1] = direction;
 
-			moveEvent.data[1] = percent;
+			moveEvent.data[2] = moveDis;
+
+			moveEvent.data[3] = downPos;
 
 			SuperFunction.Instance.DispatchEvent(gameObject,moveEvent);
 

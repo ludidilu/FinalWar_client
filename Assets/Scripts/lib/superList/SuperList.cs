@@ -556,9 +556,9 @@ namespace xy3d.tstd.lib.superList
 
 							showPool.Add (unit);
 
-							SetCellIndex (unit, newIndex);
+                            SetCellData(unit, newIndex);
 
-							SetCellData (unit, newIndex);
+                            SetCellIndex(unit, newIndex);
 
 						} else {
 
@@ -593,12 +593,12 @@ namespace xy3d.tstd.lib.superList
 
 						showPool.Insert (0, unit);
 
-						SetCellIndex (unit, newIndex);
-
 						SetCellData (unit, newIndex);
-					}
 
-				} else {
+                        SetCellIndex(unit, newIndex);
+                    }
+
+                } else {
 
 					List<int> tmpList = new List<int> ();
 
@@ -669,12 +669,12 @@ namespace xy3d.tstd.lib.superList
 
 							newShowPool [i] = unit;
 
-							SetCellIndex (unit, tmpList [i]);
-
 							SetCellData (unit, tmpList [i]);
-						}
 
-						showPool.Add (newShowPool [i]);
+                            SetCellIndex(unit, tmpList[i]);
+                        }
+
+                        showPool.Add (newShowPool [i]);
 					}
 
 					for(int i = 0 ; i < replacePool.Count ; i++){
@@ -702,12 +702,12 @@ namespace xy3d.tstd.lib.superList
 						if (newIndex < data.Count) {
 							
 							showPool.Add (unit);
-							
-							SetCellIndex (unit, newIndex);
 
 							SetCellData (unit, newIndex);
 
-						} else {
+                            SetCellIndex(unit, newIndex);
+                        }
+                        else {
 							
 							hidePool.Add (unit);
 							
@@ -740,12 +740,12 @@ namespace xy3d.tstd.lib.superList
 						
 						showPool.Insert (0, unit);
 
-						SetCellIndex (unit, newIndex);
-
 						SetCellData (unit, newIndex);
-					}
-					
-				} else {
+
+                        SetCellIndex(unit, newIndex);
+                    }
+
+                } else {
 					
 					List<int> tmpList = new List<int> ();
 					
@@ -816,12 +816,12 @@ namespace xy3d.tstd.lib.superList
 							
 							newShowPool [i] = unit;
 
-							SetCellIndex (unit, tmpList [i]);
-
 							SetCellData (unit, tmpList [i]);
-						}	
-						
-						showPool.Add (newShowPool [i]);
+
+                            SetCellIndex(unit, tmpList[i]);
+                        }
+
+                        showPool.Add (newShowPool [i]);
 					}
 
 					for(int i = 0 ; i < replacePool.Count ; i++){
@@ -848,12 +848,12 @@ namespace xy3d.tstd.lib.superList
 					unit.transform.SetParent (container.transform, false);
 
 					showPool.Add(unit);
-
-					SetCellIndex (unit, showIndex + i);
 					
 					SetCellData (unit, -1);
-				}
-			}
+
+                    SetCellIndex(unit, showIndex + i);
+                }
+            }
 		}
 
 		private void SetCellIndex (SuperListCell _cell, int _index)

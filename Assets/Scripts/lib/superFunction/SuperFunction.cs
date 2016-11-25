@@ -281,9 +281,11 @@ namespace xy3d.tstd.lib.superFunction{
 
 					List<SuperFunctionUnitBase> tmpList = tmpDic[_event.eventName];
 					
-					List<SuperEvent> eventList = new List<SuperEvent>();
+					SuperEvent[] eventList = null;
 
-					List<SuperFunctionUnit> unitList = new List<SuperFunctionUnit>();
+					SuperFunctionUnit[] unitList = null;
+
+					int num = 0;
 
 					for(int i = 0 ; i < tmpList.Count ; i++){
 
@@ -299,15 +301,27 @@ namespace xy3d.tstd.lib.superFunction{
 
 							tmpEvent.index = unit.index;
 
-							eventList.Add(tmpEvent);
+							if(eventList == null){
 
-							unitList.Add(unit);
+								eventList = new SuperEvent[tmpList.Count];
+
+								unitList = new SuperFunctionUnit[tmpList.Count];
+							}
+
+							eventList[num] = tmpEvent;
+
+							unitList[num] = unit;
+
+							num++;
 						}
 					}
 
-					for(int i = 0 ; i < eventList.Count ; i++){
+					if(eventList != null){
 
-						unitList[i].callBack(eventList[i]);
+						for(int i = 0 ; i < num ; i++){
+
+							unitList[i].callBack(eventList[i]);
+						}
 					}
 				}
 			}
@@ -323,9 +337,11 @@ namespace xy3d.tstd.lib.superFunction{
 					
 					List<SuperFunctionUnitBase> tmpList = tmpDic[_event.eventName];
 					
-					List<SuperEvent> eventList = new List<SuperEvent>();
+					SuperEvent[] eventList = null;
 					
-					List<SuperFunctionUnitV<T>> unitList = new List<SuperFunctionUnitV<T>>();
+					SuperFunctionUnitV<T>[] unitList = null;
+
+					int num = 0;
 					
 					for(int i = 0 ; i < tmpList.Count ; i++){
 
@@ -340,16 +356,28 @@ namespace xy3d.tstd.lib.superFunction{
 							tmpEvent.data = _event.data;
 							
 							tmpEvent.index = unit.index;
-							
-							eventList.Add(tmpEvent);
-							
-							unitList.Add(unit);
+
+							if(eventList == null){
+
+								eventList = new SuperEvent[tmpList.Count];
+
+								unitList = new SuperFunctionUnitV<T>[tmpList.Count];
+							}
+
+							eventList[num] = tmpEvent;
+
+							unitList[num] = unit;
+
+							num++;
 						}
 					}
+
+					if(eventList != null){
 					
-					for(int i = 0 ; i < eventList.Count ; i++){
-						
-						unitList[i].callBack(eventList[i],ref _v);
+						for(int i = 0 ; i < num ; i++){
+							
+							unitList[i].callBack(eventList[i],ref _v);
+						}
 					}
 				}
 			}
@@ -398,9 +426,9 @@ namespace xy3d.tstd.lib.superFunction{
 
 		private int GetIndex(){
 
-			int result = index;
-
 			index++;
+
+			int result = index;
 
 			return result;
 		}

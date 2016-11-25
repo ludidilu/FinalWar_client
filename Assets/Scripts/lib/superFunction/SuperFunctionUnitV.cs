@@ -10,7 +10,10 @@ namespace xy3d.tstd.lib.superFunction{
 		
 		public SuperFunctionUnitV(GameObject _target,string _eventName,SuperFunction.callbackV<T> _callBack,int _index){
 			
+			target = _target;
+			eventName = _eventName;
 			callBack = _callBack;
+			index = _index;
 		}
 	}
 }

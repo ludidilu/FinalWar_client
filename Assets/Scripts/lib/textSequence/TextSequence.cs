@@ -26,29 +26,26 @@ public class TextSequence
         private Text text;
         private TextSequenceEffect effect;
         private string str;
-        private int tweenIndex;
-        private int currentIndex;
         private Action callBack;
 
-        public SequenceHandler(Text text, TextSequenceEffect _effect, string str, Action _callBack, float time)
+		private int tweenIndex;
+		private int currentIndex;
+
+		public SequenceHandler(Text _text, TextSequenceEffect _effect, string _str, Action _callBack, float _oneLetterTime)
         {
-            this.text = text;
+            text = _text;
             effect = _effect;
-            this.str = str;
+            str = _str;
             callBack = _callBack;
 
             text.text = str;
 
-            Start(time);
-        }
+			Action<int> dele = delegate(int obj) {
 
-        private void Start(float time)
-        {
-            int length = str.Length;
+				tweenIndex = SuperTween.Instance.To(0, obj, obj * _oneLetterTime, Step, Over);
+			};
 
-            effect.SetShowNum(currentIndex);
-
-            tweenIndex = SuperTween.Instance.To(0, length, time, Step, Over);
+			_effect.Init(dele);
         }
 
         private void Step(float value)
@@ -57,7 +54,6 @@ public class TextSequence
 
             if (index == currentIndex)
             {
-
                 return;
             }
 
@@ -65,22 +61,17 @@ public class TextSequence
 
             effect.SetShowNum(currentIndex);
 
-            text.text = "";
+			text.text = string.Empty;
 
             text.text = str;
         }
 
-        private void Over()
-        {
+		private void Over(){
 
-            effect.SetShowNum(-1);
+			effect.SetShowNum(-1);
 
-            text.text = "";
-
-            text.text = str;
-
-            callBack();
-        }
+			callBack();
+		}
 
         public void Stop()
         {
@@ -88,7 +79,7 @@ public class TextSequence
 
             effect.SetShowNum(-1);
 
-            text.text = "";
+			text.text = string.Empty;
 
             text.text = str;
 
@@ -100,28 +91,22 @@ public class TextSequence
 
     public void AddSequence(Text text, TextSequenceEffect _effect, string str, Action _callBack)
     {
-        float time = str.Length * m_SingleDefualtTime;
-
-        AddSequence(text, _effect, str, _callBack, time);
+		AddSequence(text, _effect, str, _callBack, m_SingleDefualtTime);
     }
 
-    public void AddSequence(Text text, TextSequenceEffect _effect, string str, Action _callBack, float time)
+    public void AddSequence(Text text, TextSequenceEffect _effect, string str, Action _callBack, float _oneLetterTime)
     {
-        text.text = string.Empty;
-
         Action dele = delegate ()
         {
-
             m_sequenceDic.Remove(text);
 
             if (_callBack != null)
             {
-
                 _callBack();
             }
         };
 
-        SequenceHandler handler = new SequenceHandler(text, _effect, str, dele, time);
+		SequenceHandler handler = new SequenceHandler(text, _effect, str, dele, _oneLetterTime);
 
         m_sequenceDic.Add(text, handler);
     }

@@ -9,8 +9,6 @@ namespace xy3d.tstd.lib.localData{
 			
 			PlayerPrefs.SetFloat(_key,_data);
 
-
-
 			PlayerPrefs.Save();
 		}
 

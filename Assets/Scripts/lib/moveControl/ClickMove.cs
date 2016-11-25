@@ -60,8 +60,8 @@ public class ClickMove : MonoBehaviour {
 		
 		if(isDown){
 			
-			if(Input.GetMouseButtonUp(0)){
-				
+			if(!Input.GetMouseButton(0)){
+
 				isDown = false;
 
 				SuperFunction.Instance.DispatchEvent(gameObject,upEvent);

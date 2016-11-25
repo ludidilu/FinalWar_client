@@ -4,17 +4,31 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System;
 
 namespace xy3d.tstd.lib.effect{
 	
 	[AddComponentMenu("UI/Effects/TextSequenceEffect")]
 	public class TextSequenceEffect : BaseMeshEffect
 	{
+		private bool[] showArr;
+
+		private int strLength;
+
 		private int showNum = -1;
+
+		private Action<int> callBack;
 
 		public void SetShowNum(int _showNum){
 
 			showNum = _showNum;
+		}
+
+		public void Init(Action<int> _callBack){
+
+			showNum = 0;
+
+			callBack = _callBack;
 		}
 
 		#if UNITY_5_2_2 || UNITY_5_2_3 || UNITY_5_3 || UNITY_5_4
@@ -25,7 +39,45 @@ namespace xy3d.tstd.lib.effect{
 				return;
 			}
 
+			if(callBack != null){
+
+				InitReal(vh);
+
+				Action<int> tmpCallBack = callBack;
+				
+				callBack = null;
+				
+				tmpCallBack(strLength);
+			}
+
 			int index = 0;
+			
+			for(int i = 0 ; i < vh.currentIndexCount / 6 ; i++){
+
+				if(showArr[i]){
+					
+					if(index >= showNum){
+
+						for(int m = 0 ; m < 4 ; m++){
+							
+							UIVertex uiVertex1 = new UIVertex();
+
+							vh.SetUIVertex(uiVertex1,i * 4 + m);
+						}
+					}
+					
+					index++;
+				}
+			}
+		}
+		
+		#endif
+
+		private void InitReal(VertexHelper vh){
+
+			showArr = new bool[vh.currentIndexCount / 6];
+			
+			strLength = 0;
 			
 			for(int i = 0 ; i < vh.currentIndexCount / 6 ; i++){
 				
@@ -51,29 +103,12 @@ namespace xy3d.tstd.lib.effect{
 				
 				if(!isSame){
 					
-					if(index < showNum){
-						
-						
-					}else{
-						
-						for(int m = 0 ; m < 4 ; m++){
-							
-							UIVertex uiVertex1 = new UIVertex();
-							
-							vh.PopulateUIVertex(ref uiVertex1,i * 4 + m);
-							
-							uiVertex1.color = new Color32(0,0,0,0);
-							
-							vh.SetUIVertex(uiVertex1,i * 4 + m);
-						}
-					}
-					
-					index++;
+					strLength++;
 				}
+				
+				showArr[i] = !isSame;
 			}
 		}
-		
-		#endif
 
 		public override void ModifyMesh (Mesh _mesh)
 		{
@@ -84,44 +119,28 @@ namespace xy3d.tstd.lib.effect{
 			
 			using (VertexHelper vh = new VertexHelper(_mesh)) {
 					
+				if(callBack != null){
+					
+					InitReal(vh);
+					
+					Action<int> tmpCallBack = callBack;
+					
+					callBack = null;
+					
+					tmpCallBack(strLength);
+				}
+				
 				int index = 0;
 				
 				for(int i = 0 ; i < vh.currentIndexCount / 6 ; i++){
 					
-					UIVertex uiVertex0 = new UIVertex();
-					
-					vh.PopulateUIVertex(ref uiVertex0,i * 4);
-					
-					bool isSame = true;
-					
-					for(int m = 1 ; m < 4 ; m++){
+					if(showArr[i]){
 						
-						UIVertex uiVertex1 = new UIVertex();
-						
-						vh.PopulateUIVertex(ref uiVertex1,i * 4 + m);
-						
-						if(uiVertex1.position != uiVertex0.position){
-							
-							isSame = false;
-							
-							break;
-						}
-					}
-					
-					if(!isSame){
-						
-						if(index < showNum){
-							
-							
-						}else{
+						if(index >= showNum){
 							
 							for(int m = 0 ; m < 4 ; m++){
 								
 								UIVertex uiVertex1 = new UIVertex();
-								
-								vh.PopulateUIVertex(ref uiVertex1,i * 4 + m);
-								
-								uiVertex1.color = new Color32(0,0,0,0);
 								
 								vh.SetUIVertex(uiVertex1,i * 4 + m);
 							}
@@ -144,17 +163,31 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System;
 
 namespace xy3d.tstd.lib.effect{
 	
-	[AddComponentMenu("UI/Effects/Gradient")]
+	[AddComponentMenu("UI/Effects/TextSequenceEffect")]
 	public class TextSequenceEffect : BaseVertexEffect {
 
+		private bool[] showArr;
+		
+		private int strLength;
+		
 		private int showNum = -1;
+		
+		private Action<int> callBack;
 		
 		public void SetShowNum(int _showNum){
 			
 			showNum = _showNum;
+		}
+		
+		public void Init(Action<int> _callBack){
+			
+			showNum = 0;
+			
+			callBack = _callBack;
 		}
 		
 		public override void ModifyVertices(List<UIVertex> vertexList) {
@@ -164,10 +197,44 @@ namespace xy3d.tstd.lib.effect{
 				return;
 			}
 
+			if(callBack != null){
+				
+				InitReal(vertexList);
+				
+				Action<int> tmpCallBack = callBack;
+				
+				callBack = null;
+				
+				tmpCallBack(strLength);
+			}
+
 			int index = 0;
 
-			for(int i = 0 ; i < vertexList.Count < 4 ; i++){
+			for(int i = 0 ; i < vertexList.Count / 4 ; i++){
 
+				if(showArr[i]){
+					
+					if(index >= showNum){
+
+						for(int m = 0 ; m < 4 ; m++){
+
+							vertexList[i * 4 + m] = new UIVertex();
+						}
+					}
+					
+					index++;
+				}
+			}
+		}
+
+		private void InitReal(List<UIVertex> vertexList){
+
+			showArr = new bool[vertexList.Count / 4];
+			
+			strLength = 0;
+			
+			for(int i = 0 ; i < vertexList.Count / 4 ; i++){
+				
 				UIVertex uiVertex0 = vertexList[i * 4];
 				
 				bool isSame = true;
@@ -175,7 +242,7 @@ namespace xy3d.tstd.lib.effect{
 				for(int m = 1 ; m < 4 ; m++){
 					
 					UIVertex uiVertex1 = vertexList[i * 4 + m];
-
+					
 					if(uiVertex1.position != uiVertex0.position){
 						
 						isSame = false;
@@ -183,26 +250,13 @@ namespace xy3d.tstd.lib.effect{
 						break;
 					}
 				}
-				
+
 				if(!isSame){
-					
-					if(index < showNum){
-						
-						
-					}else{
-						
-						for(int m = 0 ; m < 4 ; m++){
-							
-							UIVertex uiVertex1 = vertexList[i * 4 + m];
-							
-							uiVertex1.color = new Color32(0,0,0,0);
-							
-							vertexList[i * 4 + m] = uiVertex1;
-						}
-					}
-					
-					index++;
+
+					strLength++;
 				}
+
+				showArr[i] = !isSame;
 			}
 		}
 	}
