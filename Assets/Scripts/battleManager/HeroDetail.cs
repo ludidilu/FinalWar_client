@@ -19,8 +19,11 @@ public class HeroDetail : MonoBehaviour
     [SerializeField]
     private Text attack;
 
+	[SerializeField]
+	private Text abilityType;
+
     [SerializeField]
-    private Text shoot;
+    private Text abilityData;
 
     [SerializeField]
     private Text comment;
@@ -56,7 +59,28 @@ public class HeroDetail : MonoBehaviour
 		
 		attack.text = _heroSDS.attack.ToString();
 		
-		shoot.text = _heroSDS.shoot.ToString();
+		if (_heroSDS.GetAbilityType () == AbilityType.Null) {
+
+			if(abilityType.gameObject.activeSelf){
+
+				abilityType.gameObject.SetActive(false);
+
+				abilityData.gameObject.SetActive(false);
+			}
+
+		}else{
+			
+			if(!abilityType.gameObject.activeSelf){
+				
+				abilityType.gameObject.SetActive(true);
+				
+				abilityData.gameObject.SetActive(true);
+			}
+
+			abilityType.text = _heroSDS.GetAbilityType().ToString();
+
+			abilityData.text = _heroSDS.abilityData.ToString();
+		}
 		
 		if (_heroSDS.levelUp != 0) {
 			

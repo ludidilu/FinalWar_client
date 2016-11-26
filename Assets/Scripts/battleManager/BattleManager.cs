@@ -670,14 +670,17 @@ public class BattleManager : MonoBehaviour
     {
         if (isDoingHeroAction)
         {
-            if (battle.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
-            {
-                ClearMoves();
+			if(GetNowChooseHero().pos != _mapUnit.index){
 
-                CreateMoves();
-            }
-        }
-    }
+				if (battle.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
+				{
+					ClearMoves();
+					
+					CreateMoves();
+				}
+			}
+		}
+	}
 
     public void MapUnitExit(MapUnit _mapUnit)
     {

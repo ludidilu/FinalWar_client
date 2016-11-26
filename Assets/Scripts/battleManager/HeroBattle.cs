@@ -26,7 +26,7 @@ public class HeroBattle : HeroBase
     private Text attack;
 
     [SerializeField]
-    private Text shoot;
+    private Text ability;
 
     private Hero hero;
 
@@ -58,7 +58,7 @@ public class HeroBattle : HeroBase
 
         attack.gameObject.SetActive(false);
 
-        shoot.gameObject.SetActive(false);
+        ability.gameObject.SetActive(false);
     }
 
     public void Init(Hero _hero)
@@ -74,21 +74,56 @@ public class HeroBattle : HeroBase
 
         attack.text = sds.GetAttack().ToString();
 
-		if (sds.GetShoot () > 0) {
+		switch (hero.sds.GetAbilityType ()) {
 
-			if (!shoot.gameObject.activeSelf) {
+		case AbilityType.Shoot:
 
-				shoot.gameObject.SetActive (true);
+			if(!ability.gameObject.activeSelf){
+
+				ability.gameObject.SetActive(true);
 			}
 
-			shoot.text = sds.GetShoot ().ToString ();
+			ability.color = Color.red;
 
-		} else {
+			ability.text = sds.GetAbilityData().ToString();
 
-			if(shoot.gameObject.activeSelf){
+			break;
 
-				shoot.gameObject.SetActive(false);
+		case AbilityType.Support:
+			
+			if(!ability.gameObject.activeSelf){
+				
+				ability.gameObject.SetActive(true);
 			}
+			
+			ability.color = Color.green;
+			
+			ability.text = sds.GetAbilityData().ToString();
+			
+			break;
+
+		case AbilityType.Counter:
+			
+			if(!ability.gameObject.activeSelf){
+				
+				ability.gameObject.SetActive(true);
+			}
+			
+			ability.color = Color.black;
+			
+			ability.text = sds.GetAbilityData().ToString();
+			
+			break;
+
+		default:
+
+			if(ability.gameObject.activeSelf){
+
+				ability.gameObject.SetActive(false);
+			}
+
+			break;
+
 		}
 
         RefreshHp();

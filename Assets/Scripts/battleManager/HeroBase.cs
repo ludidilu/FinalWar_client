@@ -27,11 +27,6 @@ public class HeroBase : MonoBehaviour
             nameText.color = Color.red;
         }
 
-        if (sds.threat)
-        {
-            gradient.topColor = BattleManager.threatColor;
-        }
-
         if (!sds.canMove)
         {
             gradient.bottomColor = BattleManager.rootColor;
