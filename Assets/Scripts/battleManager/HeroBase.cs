@@ -26,11 +26,6 @@ public class HeroBase : MonoBehaviour
         {
             nameText.color = Color.red;
         }
-
-        if (!sds.canMove)
-        {
-            gradient.bottomColor = BattleManager.rootColor;
-        }
     }
 
     public void SetFrameVisible(bool _visible)

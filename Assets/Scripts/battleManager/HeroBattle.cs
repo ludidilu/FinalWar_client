@@ -7,6 +7,8 @@ using FinalWar;
 
 public class HeroBattle : HeroBase
 {
+	public static readonly string[] abilityName = new string[]{string.Empty,"射","援","防","建"};
+
     [SerializeField]
     public Transform moveTrans;
 
@@ -74,57 +76,7 @@ public class HeroBattle : HeroBase
 
         attack.text = sds.GetAttack().ToString();
 
-		switch (hero.sds.GetAbilityType ()) {
-
-		case AbilityType.Shoot:
-
-			if(!ability.gameObject.activeSelf){
-
-				ability.gameObject.SetActive(true);
-			}
-
-			ability.color = Color.red;
-
-			ability.text = sds.GetAbilityData().ToString();
-
-			break;
-
-		case AbilityType.Support:
-			
-			if(!ability.gameObject.activeSelf){
-				
-				ability.gameObject.SetActive(true);
-			}
-			
-			ability.color = Color.green;
-			
-			ability.text = sds.GetAbilityData().ToString();
-			
-			break;
-
-		case AbilityType.Counter:
-			
-			if(!ability.gameObject.activeSelf){
-				
-				ability.gameObject.SetActive(true);
-			}
-			
-			ability.color = Color.black;
-			
-			ability.text = sds.GetAbilityData().ToString();
-			
-			break;
-
-		default:
-
-			if(ability.gameObject.activeSelf){
-
-				ability.gameObject.SetActive(false);
-			}
-
-			break;
-
-		}
+		ability.text = abilityName [(int)hero.sds.GetAbilityType ()];
 
         RefreshHp();
 

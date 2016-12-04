@@ -5,11 +5,9 @@
 	public int power;
 	public int cost;
 	public bool canControl;
-	public bool canMove;
 	public int levelUp;
 	public int attack;
 	public int abilityType;
-	public int abilityData;
 	public int[] skills;
 	public int[] auras;
 	
@@ -33,10 +31,6 @@
 	{
 		return canControl;
 	}
-	public bool GetCanMove()
-	{
-		return canMove;
-	}
 	public int GetLevelUp()
 	{
 		return levelUp;
@@ -48,10 +42,6 @@
 	public AbilityType GetAbilityType()
 	{
 		return (AbilityType)abilityType;
-	}
-	public int GetAbilityData()
-	{
-		return abilityData;
 	}
 	public int[] GetSkills()
 	{

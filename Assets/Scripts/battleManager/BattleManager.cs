@@ -509,7 +509,7 @@ public class BattleManager : MonoBehaviour
             moneyTf.gameObject.SetActive(true);
         }
 
-        moneyTf.text = GetMoney().ToString();
+		moneyTf.text = battle.ClientGetMoney().ToString();
     }
 
     private void CreateAutoActions()
@@ -773,10 +773,24 @@ public class BattleManager : MonoBehaviour
         }
         else if (GetNowChooseCard() != null)
         {
-            if (battle.GetPosIsMine(_mapUnit.index) == battle.clientIsMine && GetNowChooseCard().sds.cost <= GetMoney())
-            {
-                SummonHero(GetNowChooseCard().cardUid, _mapUnit.index);
-            }
+			bool b = SummonHero(GetNowChooseCard().cardUid, _mapUnit.index);
+
+			if(b){
+
+				CreateMoneyTf();
+				
+				ClearCards();
+				
+				CreateCards();
+				
+				ClearSummonHeros();
+				
+				CreateSummonHeros();
+
+			}else{
+
+				ClearNowChooseHero();
+			}
         }
         else
         {
@@ -828,19 +842,24 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void SummonHero(int _cardUid, int _pos)
+    private bool SummonHero(int _cardUid, int _pos)
     {
-        battle.ClientRequestSummon(_cardUid, _pos);
+        bool b = battle.ClientRequestSummon(_cardUid, _pos);
 
-        CreateMoneyTf();
+		if (b) {
 
-        ClearCards();
+			CreateMoneyTf ();
 
-        CreateCards();
+			ClearCards ();
 
-        ClearSummonHeros();
+			CreateCards ();
 
-        CreateSummonHeros();
+			ClearSummonHeros ();
+
+			CreateSummonHeros ();
+		}
+
+		return b;
     }
 
     private void UnsummonHero(int _cardUid)
@@ -905,26 +924,7 @@ public class BattleManager : MonoBehaviour
         _heroCard.transform.localScale = new Vector3(heroScale, heroScale, heroScale);
     }
 
-    private int GetMoney()
-    {
-        int money = battle.clientIsMine ? battle.mMoney : battle.oMoney;
-
-        Dictionary<int, int> cards = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
-
-        Dictionary<int, int>.KeyCollection.Enumerator enumerator = battle.summon.Keys.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            int cardID = cards[enumerator.Current];
-
-            HeroSDS heroSDS = StaticData.GetData<HeroSDS>(cardID);
-
-            money -= heroSDS.cost;
-        }
-
-        return money;
-    }
-
+    
     public void ActionBtClick()
     {
         ClearNowChooseCard();
