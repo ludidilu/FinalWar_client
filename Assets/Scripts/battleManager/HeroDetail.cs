@@ -26,9 +26,6 @@ public class HeroDetail : MonoBehaviour
     private Text comment;
 
 	[SerializeField]
-	private Text levelUp;
-
-	[SerializeField]
 	private GameObject commentContainer;
 
     private HeroBase hero;
@@ -57,27 +54,6 @@ public class HeroDetail : MonoBehaviour
 		attack.text = _heroSDS.attack.ToString();
 
 		abilityType.text = HeroBattle.abilityName[(int)_heroSDS.GetAbilityType ()];
-
-		if (_heroSDS.levelUp != 0) {
-			
-			if(!levelUp.gameObject.activeSelf){
-				
-				levelUp.gameObject.SetActive (true);
-			}
-
-			levelUpID = _heroSDS.levelUp;
-			
-			HeroSDS sds = StaticData.GetData<HeroSDS> (levelUpID);
-			
-			levelUp.text = sds.name;
-			
-		} else {
-			
-			if(levelUp.gameObject.activeSelf){
-				
-				levelUp.gameObject.SetActive(false);
-			}
-		}
 
 		if (!string.IsNullOrEmpty (_heroSDS.comment)) {
 			
@@ -124,11 +100,4 @@ public class HeroDetail : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
-
-	public void LevelUpClick(){
-
-		HeroSDS sds = StaticData.GetData<HeroSDS> (levelUpID);
-
-		ShowReal (sds);
-	}
 }

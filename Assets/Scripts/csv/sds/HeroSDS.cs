@@ -5,7 +5,6 @@
 	public int power;
 	public int cost;
 	public bool canControl;
-	public int levelUp;
 	public int attack;
 	public int abilityType;
 	public int[] skills;
@@ -30,10 +29,6 @@
 	public bool GetCanControl()
 	{
 		return canControl;
-	}
-	public int GetLevelUp()
-	{
-		return levelUp;
 	}
 	public int GetAttack()
 	{

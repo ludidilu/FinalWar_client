@@ -811,15 +811,14 @@ public class BattleManager : MonoBehaviour
     {
         ClearNowChooseHero();
 
-		//因为可能之前点击过进阶显示  所以这里要刷新英雄详情
-//        if (GetNowChooseCard() != _hero)
-//        {
+        if (GetNowChooseCard() != _hero)
+        {
             ClearNowChooseCard();
 
             SetNowChooseCard(_hero);
 
             GetNowChooseCard().SetFrameVisible(true);
-//        }
+        }
     }
 
     private void ClearNowChooseCard()
@@ -1053,6 +1052,10 @@ public class BattleManager : MonoBehaviour
 			else if(vo is BattleLevelUpVO)
 			{
 				DoLevelUp((BattleLevelUpVO)vo,del);
+			}
+			else if(vo is BattleRecoverShieldVO)
+			{
+				DoRecoverShield((BattleRecoverShieldVO)vo,del);
 			}
         }
     }
@@ -1392,6 +1395,15 @@ public class BattleManager : MonoBehaviour
 
 		hero.RefreshAll ();
 
+		_del ();
+	}
+
+	private void DoRecoverShield(BattleRecoverShieldVO _vo, Action _del){
+
+		HeroBattle hero = heroDic[_vo.pos];
+		
+		hero.RefreshShield ();
+		
 		_del ();
 	}
 
