@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using xy3d.tstd.lib.publicTools;
 using xy3d.tstd.lib.superFunction;
@@ -11,57 +11,23 @@ public class Joystick4Direction : MonoBehaviour {
 	[SerializeField]
 	private RectTransform rect;
 
-	[SerializeField]
-	private float maxValue;
-
 	private Rect clickArea;
 
 	private Vector2 downPos;
 
 	private bool isDown = false;
 
-	private SuperEvent downEvent;
-
-	private SuperEvent moveEvent;
-
-	private SuperEvent upEvent;
+	private float maxValue;
 
 	void Awake(){
 
-		downEvent = new SuperEvent(Joystick4DirectionData.DOWN);
-
-		downEvent.data = new object[2];
-
-		downEvent.data[0] = this;
-
-		moveEvent = new SuperEvent(Joystick4DirectionData.MOVE);
-
-		moveEvent.data = new object[4];
-
-		moveEvent.data[0] = this;
-
-		upEvent = new SuperEvent(Joystick4DirectionData.UP);
-
-		upEvent.data = new object[1];
-		
-		upEvent.data[0] = this;
 	}
 
 	void Start(){
 
-		if(rect != null){
+		maxValue = JoystickData.moveMaxValue * canvas.scaleFactor;
 
-			clickArea = new Rect(rect.rect.x + rect.anchoredPosition.x,rect.rect.y + rect.anchoredPosition.y,rect.rect.width,rect.rect.height);
-		}
-	}
-
-	public void Init(Canvas _canvas,RectTransform _rect,float _maxValue){
-
-		canvas = _canvas;
-
-		rect = _rect;
-
-		maxValue = _maxValue;
+		clickArea = new Rect(rect.rect.x + rect.anchoredPosition.x,rect.rect.y + rect.anchoredPosition.y,rect.rect.width,rect.rect.height);
 	}
 
 	private void Down(){
@@ -69,6 +35,12 @@ public class Joystick4Direction : MonoBehaviour {
 		isDown = true;
 
 		downPos = Input.mousePosition;
+
+		SuperEvent downEvent = new SuperEvent(JoystickData.DOWN);
+		
+		downEvent.data = new object[2];
+		
+		downEvent.data[0] = this;
 
 		downEvent.data[1] = downPos;
 
@@ -78,6 +50,12 @@ public class Joystick4Direction : MonoBehaviour {
 	private void Up(){
 
 		isDown = false;
+
+		SuperEvent upEvent = new SuperEvent(JoystickData.UP);
+		
+		upEvent.data = new object[1];
+		
+		upEvent.data[0] = this;
 
 		SuperFunction.Instance.DispatchEvent(gameObject,upEvent);
 	}
@@ -97,7 +75,7 @@ public class Joystick4Direction : MonoBehaviour {
 
 			float dy = Input.mousePosition.y - downPos.y;
 
-			Joystick4DirectionData.Direction direction;
+			JoystickData.Direction direction;
 
 			float moveDis;
 
@@ -107,11 +85,11 @@ public class Joystick4Direction : MonoBehaviour {
 
 				if(dx > 0){
 
-					direction = Joystick4DirectionData.Direction.RIGHT;
+					direction = JoystickData.Direction.RIGHT;
 
 				}else{
 
-					direction = Joystick4DirectionData.Direction.LEFT;
+					direction = JoystickData.Direction.LEFT;
 				}
 
 				moveDis = dx;
@@ -122,15 +100,21 @@ public class Joystick4Direction : MonoBehaviour {
 
 				if(dy > 0){
 					
-					direction = Joystick4DirectionData.Direction.UP;
+					direction = JoystickData.Direction.UP;
 					
 				}else{
 					
-					direction = Joystick4DirectionData.Direction.DOWN;
+					direction = JoystickData.Direction.DOWN;
 				}
 
 				moveDis = dy;
 			}
+
+			SuperEvent moveEvent = new SuperEvent(JoystickData.MOVE);
+			
+			moveEvent.data = new object[4];
+			
+			moveEvent.data[0] = this;
 
 			moveEvent.data[1] = direction;
 
@@ -142,18 +126,11 @@ public class Joystick4Direction : MonoBehaviour {
 
 		}else if(Input.GetMouseButtonDown(0)){
 				
-			if(rect != null){
-				
-				Vector3 v = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
+			Vector3 v = PublicTools.MousePositionToCanvasPosition(canvas,Input.mousePosition);
 
-				if(clickArea.Contains(v)){
-					
-					Down();
-				}
+			if(clickArea.Contains(v)){
 				
-			}else{
-				
-				Down ();
+				Down();
 			}
 		}
 	}

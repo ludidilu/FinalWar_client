@@ -12,6 +12,8 @@
 		
 		Cull Off
 		
+		ZTest Off
+		
 		Blend SrcAlpha OneMinusSrcAlpha
 		
 		Pass{

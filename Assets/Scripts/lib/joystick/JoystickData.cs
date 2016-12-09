@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Joystick4DirectionData{
+public class JoystickData{
 
 	public enum Direction{
 		
@@ -16,4 +16,6 @@ public class Joystick4DirectionData{
 	public const string MOVE = "joystickMove";
 	
 	public const string UP = "joystickUp";
+
+	public const float moveMaxValue = 50f;
 }
