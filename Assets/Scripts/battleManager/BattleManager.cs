@@ -1366,25 +1366,34 @@ public class BattleManager : MonoBehaviour
 
 	private void DoAddCards(BattleAddCardsVO _vo, Action _del){
 
-		ClearCards();
-		
-		CreateCards();
+		if (_vo.isMine == battle.clientIsMine) {
+
+			ClearCards ();
+			
+			CreateCards ();
+		}
 
 		_del ();
 	}
 
 	private void DoDelCards(BattleDelCardsVO _vo, Action _del){
-		
-		ClearCards();
-		
-		CreateCards();
+
+		if (_vo.isMine == battle.clientIsMine) {
+
+			ClearCards ();
+			
+			CreateCards ();
+		}
 
 		_del ();
 	}
 
 	private void DoMoneyChange(BattleMoneyChangeVO _vo, Action _del){
 
-		CreateMoneyTf ();
+		if (_vo.isMine == battle.clientIsMine) {
+
+			CreateMoneyTf ();
+		}
 
 		_del ();
 	}
