@@ -35,11 +35,30 @@ public class CreateHero : MonoBehaviour {
 	[SerializeField]
 	private int num;
 
+	private int startID = 1000000;
+
 	private string heroStr = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}";
 
 	// Use this for initialization
 	void Start () {
-	
+
+		string str = string.Empty;
+
+		int maxNum = num * 5 * 2;
+
+		for (int i = 0; i < maxNum; i++) {
+
+			str += startID;
+
+			startID++;
+
+			if(i != maxNum - 1){
+
+				str += "$";
+			}
+		}
+
+		Debug.Log (str);
 	}
 	
 	// Update is called once per frame
@@ -49,30 +68,32 @@ public class CreateHero : MonoBehaviour {
 
 	public void Click(){
 
-		int startId = 1000000;
-
 		string result = string.Empty;
 
 		for(int m = 0 ; m < 5 ; m++){
 
 			for (int i = 0; i < num; i++) {
 
-				int id = startId;
+				int id = startID;
 
-				startId++;
+				startID++;
 
-				string str = GetOneHero(id,false,m);
+				string name = "A" + (m + 1) + "_" + (i + 1);
+
+				string str = GetOneHero(id,false,m,name);
 
 				result = result + str + "\r\n";
 			}
 
 			for (int i = 0; i < num; i++) {
 				
-				int id = startId;
+				int id = startID;
 				
-				startId++;
+				startID++;
+
+				string name = "C" + (m + 1) + "_" + (i + 1);
 				
-				string str = GetOneHero(id,true,m);
+				string str = GetOneHero(id,true,m,name);
 				
 				result = result + str + "\r\n";
 			}
@@ -103,7 +124,7 @@ public class CreateHero : MonoBehaviour {
 #endif
 	}
 
-	private string GetOneHero(int _id,bool _canControl,int _level){
+	private string GetOneHero(int _id,bool _canControl,int _level,string _name){
 
 		int id = _id;
 		
@@ -171,7 +192,7 @@ public class CreateHero : MonoBehaviour {
 			}
 		}
 
-		string str = string.Format(heroStr,id,string.Empty,_canControl ? "1" : "0",hp,shield,attack,ability,_level + 1,string.Empty,string.Empty,string.Empty);
+		string str = string.Format(heroStr,id,_name,_canControl ? "1" : "0",hp,shield,attack,ability,_level + 1,string.Empty,string.Empty,string.Empty);
 
 		return str;
 	}
