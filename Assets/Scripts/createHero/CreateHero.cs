@@ -42,15 +42,17 @@ public class CreateHero : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		int tmpID = startID;
+
 		string str = string.Empty;
 
 		int maxNum = num * 5 * 2;
 
 		for (int i = 0; i < maxNum; i++) {
 
-			str += startID;
+			str += tmpID;
 
-			startID++;
+			tmpID++;
 
 			if(i != maxNum - 1){
 
@@ -68,15 +70,17 @@ public class CreateHero : MonoBehaviour {
 
 	public void Click(){
 
+		int tmpID = startID;
+
 		string result = string.Empty;
 
 		for(int m = 0 ; m < 5 ; m++){
 
 			for (int i = 0; i < num; i++) {
 
-				int id = startID;
+				int id = tmpID;
 
-				startID++;
+				tmpID++;
 
 				string name = "A" + (m + 1) + "_" + (i + 1);
 
@@ -87,9 +91,9 @@ public class CreateHero : MonoBehaviour {
 
 			for (int i = 0; i < num; i++) {
 				
-				int id = startID;
+				int id = tmpID;
 				
-				startID++;
+				tmpID++;
 
 				string name = "C" + (m + 1) + "_" + (i + 1);
 				
