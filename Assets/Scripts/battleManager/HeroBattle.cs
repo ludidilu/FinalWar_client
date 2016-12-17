@@ -7,7 +7,7 @@ using FinalWar;
 
 public class HeroBattle : HeroBase
 {
-	public static readonly string[] abilityName = new string[]{string.Empty,"弓","援","防","助","努","建"};
+	public static readonly string[] abilityName = new string[]{string.Empty,"弓","援","防","助","弩","建"};
 
     [SerializeField]
     public Transform moveTrans;
