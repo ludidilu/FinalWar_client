@@ -15,10 +15,6 @@ public class BattleManager : MonoBehaviour
 {
     public const string BATTLE_OVER = "battleOver";
 
-    public static readonly Color threatColor = new Color(0.2f, 0.8f, 0.8f);
-
-    public static readonly Color rootColor = new Color(0.5f, 0.25f, 0f);
-
     private const float mapUnitWidth = 30;
     private const float mapUnitScale = 55;
     private const float heroScale = 0.8f;
@@ -632,6 +628,10 @@ public class BattleManager : MonoBehaviour
         q.eulerAngles = new Vector3(0, 0, angle * 180 / Mathf.PI);
 
         go.transform.localRotation = q;
+
+		float scale = Vector3.Distance (start.transform.localPosition, end.transform.localPosition) / (mapUnitWidth * sqrt3 * 4);
+
+		go.transform.localScale = new Vector3 (scale, scale, scale);
 
         arrow.SetColor(_color);
 
