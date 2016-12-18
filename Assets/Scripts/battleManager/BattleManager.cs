@@ -1251,7 +1251,23 @@ public class BattleManager : MonoBehaviour
             attackers.Add(heroDic[_vo.attackers[i]]);
         }
 
-        BattleControl.Instance.Rush(attackers, stander, _vo.shieldDamage, _vo.hpDamage, _del);
+		List<List<HeroBattle>> helpers = new List<List<HeroBattle>> ();
+
+		for (int i = 0; i < _vo.helpers.Count; i++) 
+		{
+			List<int> tmpList2 = _vo.helpers[i];
+
+			List<HeroBattle> tmpList = new List<HeroBattle>();
+
+			helpers.Add(tmpList);
+
+			for (int m = 0 ; m < tmpList2.Count ; m++)
+			{
+				tmpList.Add(heroDic[tmpList2[m]]);
+			}
+		}
+
+		BattleControl.Instance.Rush(attackers, helpers, stander, _vo.shieldDamage, _vo.hpDamage, _del);
     }
 
     private void DoAttack(BattleAttackVO _vo, Action _del)
@@ -1260,11 +1276,24 @@ public class BattleManager : MonoBehaviour
 
         List<HeroBattle> attackers = new List<HeroBattle>();
 
+		List<List<HeroBattle>> helpers = new List<List<HeroBattle>> ();
+
         List<HeroBattle> supporters = new List<HeroBattle>();
 
         for (int i = 0; i < _vo.attackers.Count; i++)
         {
             attackers.Add(heroDic[_vo.attackers[i]]);
+
+			List<int> tmpList = _vo.helpers[i];
+
+			List<HeroBattle> tmpList2 = new List<HeroBattle>();
+			
+			helpers.Add(tmpList2);
+			
+			for (int m = 0 ; m < tmpList.Count ; m++)
+			{
+				tmpList2.Add(heroDic[tmpList[m]]);
+			}
         }
 
         for (int i = 0; i < _vo.supporters.Count; i++)
@@ -1283,7 +1312,7 @@ public class BattleManager : MonoBehaviour
             defender = null;
         }
 
-        BattleControl.Instance.Attack(attackers, pos, defender, supporters, _vo.defenderShieldDamage, _vo.defenderHpDamage, _vo.supportersShieldDamage, _vo.supportersHpDamage, _vo.attackersShieldDamage, _vo.attackersHpDamage, _del);
+		BattleControl.Instance.Attack(attackers, helpers, pos, defender, supporters, _vo.defenderShieldDamage, _vo.defenderHpDamage, _vo.supportersShieldDamage, _vo.supportersHpDamage, _vo.attackersShieldDamage, _vo.attackersHpDamage, _del);
     }
 
     private void DoDie(BattleDeathVO _vo, Action _del)

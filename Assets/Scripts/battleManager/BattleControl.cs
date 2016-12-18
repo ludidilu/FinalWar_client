@@ -39,8 +39,51 @@ public class BattleControl : MonoBehaviour
         Instance = this;
     }
 
-    public void Rush(List<HeroBattle> _attackers, HeroBattle _stander, int _shieldDamage, int _hpDamage, Action _callBack)
+    public void Rush(List<HeroBattle> _attackers, List<List<HeroBattle>> _helpers, HeroBattle _stander, int _shieldDamage, int _hpDamage, Action _callBack)
     {
+		Action<float> supportToDel = delegate (float obj)
+		{
+			for (int i = 0; i < _helpers.Count; i++)
+			{
+				List<HeroBattle> tmpList = _helpers[i];
+				
+				for(int m = 0 ; m < tmpList.Count ; m++){
+					
+					HeroBattle tmpHero = tmpList[m];
+					
+					Vector3 v = Vector3.Lerp(tmpHero.transform.localPosition, _attackers[i].transform.localPosition, obj);
+					
+					tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
+				}
+			}
+		};
+		
+		SuperTween.Instance.To(0, 0.5f, 0.5f, supportToDel, null);
+		
+		Action<float> resetToDel = delegate (float obj)
+		{
+			for (int i = 0; i < _helpers.Count; i++)
+			{
+				List<HeroBattle> tmpList = _helpers[i];
+				
+				for(int m = 0 ; m < tmpList.Count ; m++){
+					
+					HeroBattle tmpHero = tmpList[m];
+					
+					Vector3 v = Vector3.Lerp(_attackers[i].transform.localPosition, tmpHero.transform.localPosition, obj);
+					
+					tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
+				}
+			}
+		};
+		
+		Action resetDel = delegate ()
+		{
+			SuperTween.Instance.To(0.5f, 1, 0.5f, resetToDel, null);
+			
+			SuperTween.Instance.DelayCall(2, _callBack);
+		};
+
         bool getHit = false;
 
         Action<float> moveToDel = delegate (float obj)
@@ -75,7 +118,7 @@ public class BattleControl : MonoBehaviour
             }
         };
 
-        SuperTween.Instance.To(0, 1, 1, moveToDel, null);
+		SuperTween.Instance.To(0, 1, 1, moveToDel, resetDel);
 
         if (_shieldDamage < 0 || _hpDamage < 0)
         {
@@ -172,51 +215,68 @@ public class BattleControl : MonoBehaviour
         }
     }
 
-    public void Attack(List<HeroBattle> _attackers, Vector3 _targetPos, HeroBattle _defender, List<HeroBattle> _supporters, int _defenderShieldDamage, int _defenderHpDamage, List<int> _supportersShieldDamage, List<int> _supportersHpDamage, List<int> _attackersShieldDamage, List<int> _attackersHpDamage, Action _callBack)
+    public void Attack(List<HeroBattle> _attackers, List<List<HeroBattle>> _helpers, Vector3 _targetPos, HeroBattle _defender, List<HeroBattle> _supporters, int _defenderShieldDamage, int _defenderHpDamage, List<int> _supportersShieldDamage, List<int> _supportersHpDamage, List<int> _attackersShieldDamage, List<int> _attackersHpDamage, Action _callBack)
     {
-        Action resetDel;
-
-        if (_supporters.Count > 0)
+        Action<float> supportToDel = delegate (float obj)
         {
-            Vector3[] supportPos = new Vector3[_supporters.Count];
-
             for (int i = 0; i < _supporters.Count; i++)
             {
-                supportPos[i] = _supporters[i].transform.localPosition;
+				HeroBattle tmpHero = _supporters[i];
+
+				Vector3 v = Vector3.Lerp(tmpHero.transform.localPosition, _targetPos, obj);
+
+				tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
             }
 
-            Action<float> supportToDel = delegate (float obj)
-            {
-                for (int i = 0; i < _supporters.Count; i++)
-                {
-                    _supporters[i].transform.localPosition = Vector3.Lerp(supportPos[i], _targetPos, obj);
-                }
-            };
+			for (int i = 0; i < _helpers.Count; i++)
+			{
+				List<HeroBattle> tmpList = _helpers[i];
+				
+				for(int m = 0 ; m < tmpList.Count ; m++){
+					
+					HeroBattle tmpHero = tmpList[m];
+					
+					Vector3 v = Vector3.Lerp(tmpHero.transform.localPosition, _attackers[i].transform.localPosition, obj);
+					
+					tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
+				}
+			}
+        };
 
-            SuperTween.Instance.To(0, 0.5f, 0.5f, supportToDel, null);
+        SuperTween.Instance.To(0, 0.5f, 0.5f, supportToDel, null);
 
-            Action<float> resetToDel = delegate (float obj)
-            {
-                for (int i = 0; i < _supporters.Count; i++)
-                {
-                    _supporters[i].transform.localPosition = Vector3.Lerp(_targetPos, supportPos[i], obj);
-                }
-            };
-
-            resetDel = delegate ()
-            {
-                SuperTween.Instance.To(0.5f, 1, 0.5f, resetToDel, null);
-
-                SuperTween.Instance.DelayCall(2, _callBack);
-            };
-        }
-        else
+        Action<float> resetToDel = delegate (float obj)
         {
-            resetDel = delegate ()
+            for (int i = 0; i < _supporters.Count; i++)
             {
-                SuperTween.Instance.DelayCall(1.5f, _callBack);
-            };
-        }
+				HeroBattle tmpHero = _supporters[i];
+
+				Vector3 v = Vector3.Lerp(_targetPos, tmpHero.transform.localPosition, obj);
+
+				tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
+            }
+
+			for (int i = 0; i < _helpers.Count; i++)
+			{
+				List<HeroBattle> tmpList = _helpers[i];
+				
+				for(int m = 0 ; m < tmpList.Count ; m++){
+					
+					HeroBattle tmpHero = tmpList[m];
+					
+					Vector3 v = Vector3.Lerp(_attackers[i].transform.localPosition, tmpHero.transform.localPosition, obj);
+					
+					tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
+				}
+			}
+        };
+
+        Action resetDel = delegate ()
+        {
+            SuperTween.Instance.To(0.5f, 1, 0.5f, resetToDel, null);
+
+            SuperTween.Instance.DelayCall(2, _callBack);
+        };
 
         List<Vector3> vList = new List<Vector3>();
 
@@ -238,8 +298,6 @@ public class BattleControl : MonoBehaviour
 				Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, _targetPos, value);
 
 				attacker.moveTrans.localPosition = vv - attacker.transform.localPosition;
-
-//                attacker.moveTrans.localPosition = Vector3.LerpUnclamped(attacker.transform.localPosition, _targetPos, value);
             }
 
             if (!getHit && obj > hitPercent)
