@@ -99,12 +99,12 @@ public class HeroBattle : HeroBase
 
         for (int i = 0; i < _targets.Count; i++)
         {
-            shockVector += (transform.position - _targets[i]).normalized;
+            shockVector += (transform.localPosition - _targets[i]).normalized;
         }
 
         if (shockVector == Vector3.zero)
         {
-            Vector3 v2 = transform.position - _targets[0];
+            Vector3 v2 = transform.localPosition - _targets[0];
 
             float angle = Mathf.Atan2(v2.y, v2.x);
 
@@ -121,7 +121,7 @@ public class HeroBattle : HeroBase
         {
             float value = _curve.Evaluate(obj);
 
-            shockTrans.position = moveTrans.position - shockVector * value;
+            shockTrans.localPosition = moveTrans.localPosition - shockVector * value;
         };
 
         SuperTween.Instance.To(0, 1, 1, shockToDel, null);
@@ -156,7 +156,7 @@ public class HeroBattle : HeroBase
 
         go.transform.SetParent(transform.parent, false);
 
-        go.transform.position = transform.position;
+        go.transform.localPosition = transform.localPosition;
 
         DamageNum damageNum = go.GetComponent<DamageNum>();
 

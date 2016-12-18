@@ -590,9 +590,9 @@ public class BattleManager : MonoBehaviour
 
         MapUnit end = mapUnitDic[_end];
 
-        go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
+		go.transform.localPosition = (start.transform.localPosition + end.transform.localPosition) * 0.5f;
 
-        float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y, end.transform.position.x - start.transform.position.x);
+		float angle = Mathf.Atan2(end.transform.localPosition.y - start.transform.localPosition.y, end.transform.localPosition.x - start.transform.localPosition.x);
 
         Quaternion q = new Quaternion();
 
@@ -619,9 +619,9 @@ public class BattleManager : MonoBehaviour
 
         MapUnit end = mapUnitDic[_end];
 
-        go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
+		go.transform.localPosition = (start.transform.localPosition + end.transform.localPosition) * 0.5f;
 
-        float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y, end.transform.position.x - start.transform.position.x);
+		float angle = Mathf.Atan2(end.transform.localPosition.y - start.transform.localPosition.y, end.transform.localPosition.x - start.transform.localPosition.x);
 
         Quaternion q = new Quaternion();
 
@@ -1158,13 +1158,13 @@ public class BattleManager : MonoBehaviour
 
                 heroDic.Remove(pair.Key);
 
-                Vector3 startPos = mapUnitDic[pair.Key].transform.position;
+                Vector3 startPos = mapUnitDic[pair.Key].transform.localPosition;
 
-                Vector3 endPos = mapUnitDic[pair.Value].transform.position;
+				Vector3 endPos = mapUnitDic[pair.Value].transform.localPosition;
 
                 Action<float> toDel = delegate (float obj)
                 {
-                    hero.transform.position = Vector3.Lerp(startPos, endPos, obj);
+					hero.transform.localPosition = Vector3.Lerp(startPos, endPos, obj);
                 };
 
                 if (i == 0)
@@ -1256,7 +1256,7 @@ public class BattleManager : MonoBehaviour
 
     private void DoAttack(BattleAttackVO _vo, Action _del)
     {
-        Vector3 pos = mapUnitDic[_vo.defender].transform.position;
+        Vector3 pos = mapUnitDic[_vo.defender].transform.localPosition;
 
         List<HeroBattle> attackers = new List<HeroBattle>();
 

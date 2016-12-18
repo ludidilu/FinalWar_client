@@ -9,13 +9,7 @@ public class BattleControl : MonoBehaviour
     private float hitPercent;
 
     [SerializeField]
-    private float defenderMoveDis;
-
-    [SerializeField]
     private float shockDis;
-
-    [SerializeField]
-    public float damageNumGap;
 
     [SerializeField]
     public float dieTime;
@@ -57,7 +51,9 @@ public class BattleControl : MonoBehaviour
             {
                 HeroBattle attacker = _attackers[i];
 
-                attacker.moveTrans.position = Vector3.LerpUnclamped(attacker.transform.position, _stander.transform.position, value);
+				Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, _stander.transform.localPosition, value);
+
+				attacker.moveTrans.localPosition = vv - attacker.transform.localPosition;
             }
 
             if (!getHit && obj > hitPercent)
@@ -71,7 +67,7 @@ public class BattleControl : MonoBehaviour
                     for (int m = 0; m < _attackers.Count; m++)
                     {
 
-                        vList.Add(_attackers[m].transform.position);
+                        vList.Add(_attackers[m].transform.localPosition);
                     }
 
                     _stander.Shock(vList, shockCurve, shockDis, _shieldDamage, _hpDamage);
@@ -101,7 +97,7 @@ public class BattleControl : MonoBehaviour
         {
             HeroBattle shooter = _shooters[i];
 
-            float angle = Mathf.Atan2(_stander.transform.position.y - shooter.transform.position.y, _stander.transform.position.x - shooter.transform.position.x);
+            float angle = Mathf.Atan2(_stander.transform.localPosition.y - shooter.transform.localPosition.y, _stander.transform.localPosition.x - shooter.transform.localPosition.x);
 
             angle += Mathf.PI * 0.5f;
 
@@ -109,7 +105,7 @@ public class BattleControl : MonoBehaviour
 
             arrow.transform.SetParent(shooter.transform.parent, false);
 
-            arrow.transform.position = shooter.transform.position;
+            arrow.transform.localPosition = shooter.transform.localPosition;
 
             arrow.SetActive(false);
 
@@ -133,13 +129,13 @@ public class BattleControl : MonoBehaviour
                     arrow.SetActive(true);
                 }
 
-                Vector3 targetPos = Vector3.Lerp(_shooters[i].transform.position, _stander.transform.position, obj);
+                Vector3 targetPos = Vector3.Lerp(_shooters[i].transform.localPosition, _stander.transform.localPosition, obj);
 
                 targetPos += new Vector3(Mathf.Cos(angle) * v * shootFix, Mathf.Sin(angle) * v * shootFix, 0);
 
-                (arrow.transform as RectTransform).localEulerAngles = new Vector3(0, 0, Mathf.Atan2(targetPos.y - arrow.transform.position.y, targetPos.x - arrow.transform.position.x) * 180 / Mathf.PI);
+                (arrow.transform as RectTransform).localEulerAngles = new Vector3(0, 0, Mathf.Atan2(targetPos.y - arrow.transform.localPosition.y, targetPos.x - arrow.transform.localPosition.x) * 180 / Mathf.PI);
 
-                arrow.transform.position = targetPos;
+                arrow.transform.localPosition = targetPos;
             }
         };
 
@@ -157,7 +153,7 @@ public class BattleControl : MonoBehaviour
                 for (int m = 0; m < _shooters.Count; m++)
                 {
 
-                    vList.Add(_shooters[m].transform.position);
+                    vList.Add(_shooters[m].transform.localPosition);
                 }
 
                 _stander.Shock(vList, shockCurve, shockDis, _shieldDamage, _hpDamage);
@@ -186,14 +182,14 @@ public class BattleControl : MonoBehaviour
 
             for (int i = 0; i < _supporters.Count; i++)
             {
-                supportPos[i] = _supporters[i].transform.position;
+                supportPos[i] = _supporters[i].transform.localPosition;
             }
 
             Action<float> supportToDel = delegate (float obj)
             {
                 for (int i = 0; i < _supporters.Count; i++)
                 {
-                    _supporters[i].transform.position = Vector3.Lerp(supportPos[i], _targetPos, obj);
+                    _supporters[i].transform.localPosition = Vector3.Lerp(supportPos[i], _targetPos, obj);
                 }
             };
 
@@ -203,7 +199,7 @@ public class BattleControl : MonoBehaviour
             {
                 for (int i = 0; i < _supporters.Count; i++)
                 {
-                    _supporters[i].transform.position = Vector3.Lerp(_targetPos, supportPos[i], obj);
+                    _supporters[i].transform.localPosition = Vector3.Lerp(_targetPos, supportPos[i], obj);
                 }
             };
 
@@ -226,7 +222,7 @@ public class BattleControl : MonoBehaviour
 
         for (int m = 0; m < _attackers.Count; m++)
         {
-            vList.Add(_attackers[m].transform.position);
+            vList.Add(_attackers[m].transform.localPosition);
         }
 
         bool getHit = false;
@@ -239,7 +235,11 @@ public class BattleControl : MonoBehaviour
             {
                 HeroBattle attacker = _attackers[i];
 
-                attacker.moveTrans.position = Vector3.LerpUnclamped(attacker.transform.position, _targetPos, value);
+				Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, _targetPos, value);
+
+				attacker.moveTrans.localPosition = vv - attacker.transform.localPosition;
+
+//                attacker.moveTrans.localPosition = Vector3.LerpUnclamped(attacker.transform.localPosition, _targetPos, value);
             }
 
             if (!getHit && obj > hitPercent)
