@@ -80,8 +80,6 @@ public class BattleControl : MonoBehaviour
 		Action resetDel = delegate ()
 		{
 			SuperTween.Instance.To(0.5f, 1, 0.5f, resetToDel, null);
-			
-			SuperTween.Instance.DelayCall(2, _callBack);
 		};
 
         bool getHit = false;
