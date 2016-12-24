@@ -22,7 +22,8 @@ public class BattleManager : MonoBehaviour
     private static readonly float sqrt3 = Mathf.Sqrt(3);
     private const float scaleStep = 0.95f;
     private const float minScale = 0.7f;
-    private const float maxScale = 1.3f;
+    private const float maxScale = 1.4f;
+	private const int defaultMapHeight = 5;
 
     [SerializeField]
     private Camera mainCamera;
@@ -50,6 +51,9 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField]
     private RectTransform battleContainer;
+
+	[SerializeField]
+	private RectTransform battleScaleContainer;
 
     [SerializeField]
     private RectTransform battleContentContainer;
@@ -439,6 +443,14 @@ public class BattleManager : MonoBehaviour
         mf.mesh = mesh;
 
         battleContentContainer.localPosition = new Vector3(-0.5f * (battle.mapData.mapWidth * mapUnitWidth * sqrt3 * 2) + mapUnitWidth * sqrt3, mapContainerYFix + 0.5f * (battle.mapData.mapHeight * mapUnitWidth * 3 + mapUnitWidth) - mapUnitWidth * 2, 0);
+
+		float baseScale = (float)defaultMapHeight / battle.mapData.mapHeight;
+
+		battleScaleContainer.localScale = new Vector3 (baseScale, baseScale, baseScale);
+
+		battleContainer.localScale = Vector3.one;
+
+		battleContainer.localPosition = Vector3.zero;
     }
 
     private void CreateCards()
