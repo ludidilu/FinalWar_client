@@ -15,18 +15,6 @@ using System.IO;
 public class CreateHero : MonoBehaviour {
 
 	[SerializeField]
-	private int shieldValue;
-
-	[SerializeField]
-	private int hpValue;
-
-	[SerializeField]
-	private int attackkValue;
-
-	[SerializeField]
-	private int[] abilitys;
-
-	[SerializeField]
 	private int[] aScore;
 
 	[SerializeField]
@@ -39,8 +27,20 @@ public class CreateHero : MonoBehaviour {
 
 	private string heroStr = "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}";
 
+	private Dictionary<int,AttSDS> attDic;
+
 	// Use this for initialization
 	void Start () {
+
+		ConfigDictionary.Instance.LoadLocalConfig(Application.streamingAssetsPath + "/local.xml");
+		
+		StaticData.path = ConfigDictionary.Instance.table_path;
+		
+		StaticData.Dispose();
+		
+		StaticData.Load<AttSDS>("att");
+
+		attDic = StaticData.GetDic<AttSDS>();
 
 		int tmpID = startID;
 
@@ -134,11 +134,11 @@ public class CreateHero : MonoBehaviour {
 		
 		int score = _canControl ? cScore[_level] : aScore[_level];
 		
-		int ability = (int)(UnityEngine.Random.value * abilitys.Length);
+		int ability = (int)(UnityEngine.Random.value * attDic.Count);
+
+		AttSDS attSDS = attDic[ability];
 		
-		int v = abilitys[ability];
-		
-		score -= v;
+		score -= attSDS.hp;
 		
 		int hp = 1;
 		
@@ -146,23 +146,21 @@ public class CreateHero : MonoBehaviour {
 		
 		int attack = 0;
 		
-		score -= hpValue;
-		
 		while(score > 0){
 			
 			List<int> tmpList = new List<int>();
 			
-			if(score >= shieldValue && shield < 9){
+			if(score >= attSDS.shield && shield < 9){
 				
 				tmpList.Add(0);
 			}
 			
-			if(score >= hpValue && hp < 9){
+			if(score >= attSDS.hp && hp < 9){
 				
 				tmpList.Add(1);
 			}
 			
-			if(score >= attackkValue && attack < 9){
+			if(score >= attSDS.attack && attack < 9){
 				
 				tmpList.Add(2);
 			}
@@ -180,19 +178,19 @@ public class CreateHero : MonoBehaviour {
 				
 				shield++;
 				
-				score -= shieldValue;
+				score -= attSDS.shield;
 				
 			}else if(att == 1){
 				
 				hp++;
 				
-				score -= hpValue;
+				score -= attSDS.hp;
 				
 			}else{
 				
 				attack++;
 				
-				score -= attackkValue;
+				score -= attSDS.attack;
 			}
 		}
 
