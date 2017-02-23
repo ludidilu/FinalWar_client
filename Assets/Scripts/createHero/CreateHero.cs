@@ -21,7 +21,10 @@ public class CreateHero : MonoBehaviour {
 	private int[] cScore;
 
 	[SerializeField]
-	private int num;
+	private int aNum;
+
+	[SerializeField]
+	private int cNum;
 
 	private int startID = 1000000;
 
@@ -46,7 +49,7 @@ public class CreateHero : MonoBehaviour {
 
 		string str = string.Empty;
 
-		int maxNum = num * 5 * 2;
+		int maxNum = (aNum + cNum) * 5;
 
 		for (int i = 0; i < maxNum; i++) {
 
@@ -76,7 +79,7 @@ public class CreateHero : MonoBehaviour {
 
 		for(int m = 0 ; m < 5 ; m++){
 
-			for (int i = 0; i < num; i++) {
+			for (int i = 0; i < aNum; i++) {
 
 				int id = tmpID;
 
@@ -89,7 +92,7 @@ public class CreateHero : MonoBehaviour {
 				result = result + str + "\r\n";
 			}
 
-			for (int i = 0; i < num; i++) {
+			for (int i = 0; i < cNum; i++) {
 				
 				int id = tmpID;
 				
