@@ -41,7 +41,7 @@ public class BattleEntrance : MonoBehaviour
 
         battleManager.Init(SendBattleAction);
 
-        Connection.Instance.Init("127.0.0.1", 1983, ReceiveData, ConfigDictionary.Instance.uid);
+		Connection.Instance.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ReceiveData, ConfigDictionary.Instance.uid);
     }
 
     private void ReceiveData(byte[] _bytes)

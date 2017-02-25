@@ -18,4 +18,6 @@ public class ConfigDictionary : Config
     public string table_path;
     public string map_path;
     public int uid;
+	public string ip;
+	public int port;
 }
