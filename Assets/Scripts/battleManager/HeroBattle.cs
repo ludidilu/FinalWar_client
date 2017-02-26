@@ -7,7 +7,7 @@ using FinalWar;
 
 public class HeroBattle : HeroBase
 {
-	public static readonly string[] abilityName = new string[]{string.Empty,"弓","援","防","助","弩","攻","建"};
+
 
     [SerializeField]
     public Transform moveTrans;
@@ -26,9 +26,6 @@ public class HeroBattle : HeroBase
 
     [SerializeField]
     private Text attack;
-
-    [SerializeField]
-    private Text ability;
 
     private Hero hero;
 
@@ -59,8 +56,6 @@ public class HeroBattle : HeroBase
         shield.gameObject.SetActive(false);
 
         attack.gameObject.SetActive(false);
-
-        ability.gameObject.SetActive(false);
     }
 
     public void Init(Hero _hero)
@@ -75,8 +70,6 @@ public class HeroBattle : HeroBase
         InitCard(hero.sds as HeroSDS);
 
         attack.text = sds.GetAttack().ToString();
-
-		ability.text = abilityName [(int)hero.sds.GetAbilityType ()];
 
         RefreshHp();
 

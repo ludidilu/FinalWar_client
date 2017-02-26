@@ -3,14 +3,16 @@ using UnityEngine.UI;
 
 public class HeroBase : MonoBehaviour
 {
+	public static readonly string[] abilityName = new string[]{string.Empty,"弓","援","防","助","弩","攻","建"};
+
     [SerializeField]
     private Image frame;
 
     [SerializeField]
-    private xy3d.tstd.lib.effect.Gradient gradient;
-
-    [SerializeField]
     private Text nameText;
+
+	[SerializeField]
+	protected Text ability;
 
     public HeroSDS sds { get; private set; }
 
@@ -21,6 +23,8 @@ public class HeroBase : MonoBehaviour
         sds = _heroSDS;
 
         nameText.text = sds.name;
+
+		ability.text = abilityName [(int)_heroSDS.GetAbilityType ()];
 
         if (!sds.canControl)
         {
