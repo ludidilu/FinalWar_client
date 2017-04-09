@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using xy3d.tstd.lib.superRaycast;
+using superRaycast;
 using System;
-using xy3d.tstd.lib.superGraphicRaycast;
+using superGraphicRaycast;
 
 public class AlertPanel : MonoBehaviour
 {

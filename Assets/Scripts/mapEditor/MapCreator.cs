@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
-using xy3d.tstd.lib.superRaycast;
-using xy3d.tstd.lib.superFunction;
+using superRaycast;
+using superFunction;
 using System;
 using System.Collections.Generic;
 
@@ -190,7 +190,7 @@ public class MapCreator : MonoBehaviour
 
                 MapUnit unit = go.GetComponent<MapUnit>();
 
-                Action<SuperEvent> click = delegate (SuperEvent obj)
+				SuperFunction.SuperFunctionCallBack click = delegate (int _index, object[] _objs)
                 {
                     MapUnitUpAsButton(unit);
                 };

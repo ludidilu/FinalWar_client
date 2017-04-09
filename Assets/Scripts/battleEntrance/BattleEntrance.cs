@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
-using xy3d.tstd.lib.superFunction;
+using superFunction;
 
 public class BattleEntrance : MonoBehaviour
 {
@@ -177,7 +177,7 @@ public class BattleEntrance : MonoBehaviour
         }
     }
 
-    private void BattleOver(SuperEvent e)
+	private void BattleOver(int _index, object[] _objs)
     {
         gameObject.SetActive(true);
 

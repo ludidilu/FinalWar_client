@@ -2,14 +2,14 @@
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using xy3d.tstd.lib.superTween;
+using superTween;
 using System;
 using FinalWar;
-using xy3d.tstd.lib.superRaycast;
-using xy3d.tstd.lib.screenScale;
-using xy3d.tstd.lib.superFunction;
-using xy3d.tstd.lib.publicTools;
-using xy3d.tstd.lib.superGraphicRaycast;
+using superRaycast;
+using screenScale;
+using superFunction;
+using publicTools;
+using superGraphicRaycast;
 
 public class BattleManager : MonoBehaviour
 {
@@ -96,8 +96,6 @@ public class BattleManager : MonoBehaviour
     private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
 
     private List<GameObject> arrowList = new List<GameObject>();
-
-    private List<GameObject> autoActionArrowList = new List<GameObject>();
 
     private Vector2 downPos;
 
@@ -230,8 +228,6 @@ public class BattleManager : MonoBehaviour
 
         ClearHeros();
 
-        ClearAutoActions();
-
         ClearMoves();
 
         CreateMapPanel();
@@ -242,41 +238,38 @@ public class BattleManager : MonoBehaviour
 
         CreateHeros();
 
-        CreateAutoActions();
-
         CreateMoves();
 
         CreateMoneyTf();
 
         RefreshTouchable(battle.GetClientCanAction());
 
-        if (battle.mWin && battle.oWin)
-        {
-            Alert("Draw!", BattleOver);
+        if (battle.mWin && battle.oWin) {
 
-        }
-        else if (battle.mWin)
-        {
-            if (battle.clientIsMine)
-            {
-                Alert("You win!", BattleOver);
-            }
-            else
-            {
-                Alert("You lose!", BattleOver);
-            }
-        }
-        else if (battle.oWin)
-        {
-            if (battle.clientIsMine)
-            {
-                Alert("You lose!", BattleOver);
-            }
-            else
-            {
-                Alert("You win!", BattleOver);
-            }
-        }
+			Alert ("Draw!", BattleOver);
+
+		} else if (battle.mWin) {
+
+			if (battle.clientIsMine) {
+
+				Alert ("You win!", BattleOver);
+
+			} else {
+
+				Alert ("You lose!", BattleOver);
+			}
+
+		} else if (battle.oWin) {
+
+			if (battle.clientIsMine) {
+
+				Alert ("You lose!", BattleOver);
+
+			} else {
+
+				Alert ("You win!", BattleOver);
+			}
+		}
     }
 
     public void QuitBattle()
@@ -295,9 +288,7 @@ public class BattleManager : MonoBehaviour
 
         gameObject.SetActive(false);
 
-        SuperEvent e = new SuperEvent(BATTLE_OVER);
-
-        SuperFunction.Instance.DispatchEvent(gameObject, e);
+		SuperFunction.Instance.DispatchEvent(gameObject, BATTLE_OVER);
     }
 
     private void ClearMapUnits()
@@ -351,16 +342,6 @@ public class BattleManager : MonoBehaviour
         }
 
         heroDic.Clear();
-    }
-
-    private void ClearAutoActions()
-    {
-        for (int i = 0; i < autoActionArrowList.Count; i++)
-        {
-            GameObject.Destroy(autoActionArrowList[i]);
-        }
-
-        autoActionArrowList.Clear();
     }
 
     private void ClearMoves()
@@ -518,41 +499,6 @@ public class BattleManager : MonoBehaviour
         }
 
 		moneyTf.text = battle.ClientGetMoney().ToString();
-    }
-
-    private void CreateAutoActions()
-    {
-        Dictionary<int, int>.Enumerator enumerator = battle.autoAction.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            int pos = enumerator.Current.Key;
-
-            int targetPos = enumerator.Current.Value;
-
-            if (pos != targetPos)
-            {
-                GameObject go;
-
-                if (BattlePublicTools.GetDistance(battle.mapData.mapWidth, pos, targetPos) == 1)
-                {
-                    if (battle.GetPosIsMine(pos) == battle.GetPosIsMine(targetPos))
-                    {
-                        go = CreateArrow(pos, targetPos, new Color(0, 1, 0, 0.5f), 0);
-                    }
-                    else
-                    {
-                        go = CreateArrow(pos, targetPos, new Color(1, 0, 0, 0.5f), 0);
-                    }
-                }
-                else
-                {
-                    go = CreateShootArrow(pos, targetPos, new Color(1, 1, 0, 0.5f));
-                }
-
-                autoActionArrowList.Add(go);
-            }
-        }
     }
 
     private void CreateMoves()
@@ -962,21 +908,33 @@ public class BattleManager : MonoBehaviour
         }
         else if (Input.GetKeyUp(KeyCode.A))
         {
-            HeroAi.Start(battle, battle.clientIsMine, 0.2);
-
-            ClearMoves();
-
-            CreateMoves();
-
-            ClearSummonHeros();
-
-            CreateSummonHeros();
-
-            ClearCards();
-
-            CreateCards();
+			CreateAiAction();
         }
+
+		if (actionBt.activeSelf) {
+
+			CreateAiAction();
+
+			ActionBtClick();
+		}
     }
+
+	private void CreateAiAction(){
+
+		HeroAi.Start(battle, battle.clientIsMine, 0.2);
+		
+		ClearMoves();
+		
+		CreateMoves();
+		
+		ClearSummonHeros();
+		
+		CreateSummonHeros();
+		
+		ClearCards();
+		
+		CreateCards();
+	}
 
     private void RefreshTouchable(bool _canAction)
     {
@@ -1491,11 +1449,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void ScaleChange(SuperEvent e)
+	private void ScaleChange(int _index, object[] _objs)
     {
-        float scrollValue = (float)e.data[0];
+		float scrollValue = (float)_objs[0];
 
-        Vector2 mousePosition = (Vector2)e.data[1];
+		Vector2 mousePosition = (Vector2)_objs[1];
 
         if (scrollValue < 1)
         {
@@ -1531,9 +1489,9 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void GetMouseDown(SuperEvent e)
+	private void GetMouseDown(int _index, object[] _objs)
     {
-        if ((int)e.data[1] == 0)
+		if ((int)_objs[1] == 0)
         {
             BackgroundDown();
         }
@@ -1555,7 +1513,7 @@ public class BattleManager : MonoBehaviour
         downMapUnit = _mapUnit;
     }
 
-    private void GetMouseMove(SuperEvent e)
+	private void GetMouseMove(int _index, object[] _objs)
     {
         if (isDown != DownType.NULL)
         {

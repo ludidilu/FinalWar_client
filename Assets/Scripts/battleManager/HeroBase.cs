@@ -24,12 +24,7 @@ public class HeroBase : MonoBehaviour
 
         nameText.text = sds.name;
 
-		ability.text = abilityName [(int)_heroSDS.GetAbilityType ()];
-
-        if (!sds.canControl)
-        {
-            nameText.color = Color.red;
-        }
+		ability.text = abilityName [_heroSDS.heroType];
     }
 
     public void SetFrameVisible(bool _visible)

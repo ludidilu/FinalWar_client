@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using xy3d.tstd.lib.superTween;
+using superTween;
 using System;
 using System.Collections.Generic;
 using UnityEngine.UI;

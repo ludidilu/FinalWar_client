@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using xy3d.tstd.lib.superFunction;
-using xy3d.tstd.lib.superRaycast;
+using superFunction;
+using superRaycast;
 
 public class MapUnit : MonoBehaviour
 {
@@ -45,7 +45,7 @@ public class MapUnit : MonoBehaviour
         }
     }
 
-    private void GetMouseDown(SuperEvent e)
+	private void GetMouseDown(int _index, object[] _objs)
     {
         SendMessageUpwards("MapUnitDown", this, SendMessageOptions.DontRequireReceiver);
     }
@@ -55,17 +55,17 @@ public class MapUnit : MonoBehaviour
     //		SendMessageUpwards ("MapUnitUp", this, SendMessageOptions.DontRequireReceiver);
     //	}
 
-    private void GetMouseEnter(SuperEvent e)
+	private void GetMouseEnter(int _index, object[] _objs)
     {
         SendMessageUpwards("MapUnitEnter", this, SendMessageOptions.DontRequireReceiver);
     }
 
-    private void GetMouseExit(SuperEvent e)
+	private void GetMouseExit(int _index, object[] _objs)
     {
         SendMessageUpwards("MapUnitExit", this, SendMessageOptions.DontRequireReceiver);
     }
 
-    private void GetMouseClick(SuperEvent e)
+	private void GetMouseClick(int _index, object[] _objs)
     {
         SendMessageUpwards("MapUnitUpAsButton", this, SendMessageOptions.DontRequireReceiver);
     }
