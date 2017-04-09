@@ -31,6 +31,8 @@ public class BattleEntrance : MonoBehaviour
 
         Map.Init();
 
+		StaticData.Load<HeroTypeSDS> ("heroType");
+
         StaticData.Load<HeroSDS>("hero");
 
         StaticData.Load<SkillSDS>("skill");
