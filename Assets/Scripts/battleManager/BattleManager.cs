@@ -1237,7 +1237,7 @@ public class BattleManager : MonoBehaviour
 			}
 		}
 
-		BattleControl.Instance.Rush(attackers, helpers, stander, _vo.shieldDamage, _vo.hpDamage, _del);
+		BattleControl.Instance.Rush(attackers, helpers, stander, 0, _vo.hpDamage, _del);
     }
 
     private void DoAttack(BattleAttackVO _vo, Action _del)

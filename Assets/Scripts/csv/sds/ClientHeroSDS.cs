@@ -12,19 +12,9 @@
 
 				m_comment = string.Empty;
 
-				for(int i = 0 ; i < skills.Length ; i++){
+				SkillSDS skillSDS = StaticData.GetData<SkillSDS>(skill);
 
-					SkillSDS skillSDS = StaticData.GetData<SkillSDS>(skills[i]);
-
-					m_comment += skillSDS.comment + "\n\n";
-				}
-
-				for(int i = 0 ; i < auras.Length ; i++){
-
-					AuraSDS auraSDS = StaticData.GetData<AuraSDS>(auras[i]);
-
-					m_comment += auraSDS.comment + "\n\n";
-				}
+				m_comment += skillSDS.comment + "\n\n";
 			}
 
 			return m_comment;

@@ -6,8 +6,7 @@
 	public int cost;
 	public int heroType;
 	public int attack;
-	public int[] skills;
-	public int[] auras;
+	public int skill;
 
 	public HeroTypeSDS heroTypeFix;
 
@@ -41,14 +40,9 @@
 		return attack;
 	}
 
-	public int[] GetSkills()
+	public int GetSkill()
 	{
-		return skills;
-	}
-
-	public int[] GetAuras()
-	{
-		return auras;
+		return skill;
 	}
 
 	public override void Fix()
