@@ -12,9 +12,12 @@
 
 				m_comment = string.Empty;
 
-				SkillSDS skillSDS = StaticData.GetData<SkillSDS>(skill);
+				if (skill != 0) {
 
-				m_comment += skillSDS.comment + "\n\n";
+					SkillSDS skillSDS = StaticData.GetData<SkillSDS> (skill);
+
+					m_comment += skillSDS.comment + "\n\n";
+				}
 			}
 
 			return m_comment;
