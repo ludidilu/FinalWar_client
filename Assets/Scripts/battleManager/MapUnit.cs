@@ -1,24 +1,25 @@
 ﻿using UnityEngine;
 using superFunction;
 using superRaycast;
+using System;
 
 public class MapUnit : MonoBehaviour
 {
     [SerializeField]
     private MeshRenderer mainMr;
 
-    private MeshRenderer mr;
-
     public int index { private set; get; }
 
     private int index2;
 
-    public void Init(int _index, int _index2, MeshRenderer _mr)
+	private Action<int, Color> setColorCb;
+
+	public void Init(int _index, int _index2, Action<int, Color> _setColorCb)
     {
         index = _index;
         index2 = _index2;
 
-        mr = _mr;
+		setColorCb = _setColorCb;
     }
 
     // Use this for initialization
@@ -39,9 +40,9 @@ public class MapUnit : MonoBehaviour
     {
         mainMr.material.SetColor("_Color", _color);
 
-        if (mr != null)
+		if (setColorCb != null)
         {
-            mr.material.SetVector("colors" + index2, _color);
+			setColorCb (index2, _color);
         }
     }
 

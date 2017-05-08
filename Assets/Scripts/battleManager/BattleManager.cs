@@ -362,6 +362,15 @@ public class BattleManager : MonoBehaviour
 
         MeshRenderer mr = mapGo.GetComponent<MeshRenderer>();
 
+		Color[] colorArr = new Color[battle.mapData.dic.Count];
+
+		Action<int, Color> dele = delegate(int arg1, Color arg2) {
+
+			colorArr[arg1] = arg2;
+
+			mr.material.SetColorArray("colors",colorArr);
+		};
+
         mr.material = new Material(Shader.Find("Unlit/MapUnit"));
 
         GameObject[] gos = new GameObject[battle.mapData.dic.Count];
@@ -398,7 +407,7 @@ public class BattleManager : MonoBehaviour
 
                 mapUnitDic.Add(index, unit);
 
-                unit.Init(index, index2, mr);
+				unit.Init(index, index2, dele);
 
                 SetMapUnitColor(unit);
 
@@ -1582,4 +1591,9 @@ public class BattleManager : MonoBehaviour
     {
         alertPanel.Alert(_str, _callBack);
     }
+
+	void Start(){
+
+		gameObject.SetActive (false);
+	}
 }
