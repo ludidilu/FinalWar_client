@@ -911,12 +911,12 @@ public class BattleManager : MonoBehaviour
 			CreateAiAction();
         }
 
-		if (actionBt.activeSelf) {
-
-			CreateAiAction();
-
-			ActionBtClick();
-		}
+//		if (actionBt.activeSelf) {
+//
+//			CreateAiAction();
+//
+//			ActionBtClick();
+//		}
     }
 
 	private void CreateAiAction(){
