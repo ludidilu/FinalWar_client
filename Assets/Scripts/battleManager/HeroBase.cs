@@ -3,8 +3,6 @@ using UnityEngine.UI;
 
 public class HeroBase : MonoBehaviour
 {
-	public static readonly string[] abilityName = new string[]{string.Empty,"弓","援","防","助","弩","攻","建"};
-
     [SerializeField]
     private Image frame;
 
@@ -24,7 +22,7 @@ public class HeroBase : MonoBehaviour
 
         nameText.text = sds.name;
 
-		ability.text = abilityName [_heroSDS.heroType];
+		ability.text = _heroSDS.heroTypeFix.name;
     }
 
     public void SetFrameVisible(bool _visible)

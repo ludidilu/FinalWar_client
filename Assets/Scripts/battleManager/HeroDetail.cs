@@ -53,7 +53,7 @@ public class HeroDetail : MonoBehaviour
 		
 		attack.text = _heroSDS.attack.ToString();
 
-		abilityType.text = HeroBase.abilityName[_heroSDS.heroType];
+		abilityType.text = _heroSDS.heroTypeFix.name;
 
 		if (!string.IsNullOrEmpty (_heroSDS.comment)) {
 			

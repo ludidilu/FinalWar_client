@@ -1,4 +1,4 @@
-﻿public class HeroTypeSDS : CsvBase, IHeroTypeSDS
+﻿public partial class HeroTypeSDS : CsvBase, IHeroTypeSDS
 {
 	public bool canDoAction;
 	public int thread;
