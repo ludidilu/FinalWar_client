@@ -1311,29 +1311,27 @@ public class BattleManager : MonoBehaviour
 
     private void DoDie(BattleDeathVO _vo, Action _del)
     {
-		LinkedList<int>.Enumerator enumerator = _vo.deads.GetEnumerator();
-
 		bool getDie = false;
 
-		while(enumerator.MoveNext())
-        {
-			int pos = enumerator.Current;
+		for (int i = 0; i < _vo.deads.Count; i++) {
 
-            HeroBattle hero = heroDic[pos];
+			int pos = _vo.deads[i];
 
-            heroDic.Remove(pos);
+			HeroBattle hero = heroDic[pos];
+
+			heroDic.Remove(pos);
 
 			if (!getDie)
-            {
+			{
 				getDie = true;
 
-                hero.Die(_del);
-            }
-            else
-            {
-                hero.Die(null);
-            }
-        }
+				hero.Die(_del);
+			}
+			else
+			{
+				hero.Die(null);
+			}
+		}
     }
 
     private void DoChange(BattleChangeVO _vo, Action _del)
