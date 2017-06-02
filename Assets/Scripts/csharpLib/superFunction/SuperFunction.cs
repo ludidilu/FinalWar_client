@@ -4,486 +4,568 @@ using System.Collections.Generic;
 using System;
 using superFunction;
 
-namespace superFunction{
+namespace superFunction
+{
 
-	public class SuperFunction{
+    public class SuperFunction
+    {
 
-		private static SuperFunction _Instance;
+        private static SuperFunction _Instance;
 
-		public static SuperFunction Instance{
+        public static SuperFunction Instance
+        {
 
-			get{
+            get
+            {
 
-				if(_Instance == null){
+                if (_Instance == null)
+                {
 
-					_Instance = new SuperFunction();
-				}
+                    _Instance = new SuperFunction();
+                }
 
-				return _Instance;
-			}
-		}
+                return _Instance;
+            }
+        }
 
-		public delegate void SuperFunctionCallBackV<T>(int _index,ref T v,params object[] _datas)where T : struct;
+        public delegate void SuperFunctionCallBack0(int _index);
+        public delegate void SuperFunctionCallBack1<T1>(int _index, T1 t1);
+        public delegate void SuperFunctionCallBack2<T1, T2>(int _index, T1 t1, T2 t2);
+        public delegate void SuperFunctionCallBack3<T1, T2, T3>(int _index, T1 t1, T2 t2, T3 t3);
+        public delegate void SuperFunctionCallBack4<T1, T2, T3, T4>(int _index, T1 t1, T2 t2, T3 t3, T4 t4);
 
-		public delegate void SuperFunctionCallBack(int _index,params object[] _datas);
+        private Dictionary<int, SuperFunctionUnit> dic;
+        private Dictionary<GameObject, Dictionary<string, List<SuperFunctionUnit>>> dic2;
 
-		private Dictionary<int,SuperFunctionUnitBase> dic;
-		private Dictionary<GameObject,Dictionary<string,List<SuperFunctionUnitBase>>> dic2;
+        private int index = 0;
 
-		private int index = 0;
+        private Action<int> removeDelegate;
 
-		private Action<int> removeDelegate;
+        public SuperFunction()
+        {
 
-		public SuperFunction(){
+            dic = new Dictionary<int, SuperFunctionUnit>();
+            dic2 = new Dictionary<GameObject, Dictionary<string, List<SuperFunctionUnit>>>();
+        }
 
-			dic = new Dictionary<int, SuperFunctionUnitBase>();
-			dic2 = new Dictionary<GameObject,Dictionary<string,List<SuperFunctionUnitBase>>>();
-		}
+        public void AddRemoveDelegate(Action<int> _dele)
+        {
 
-		public void AddRemoveDelegate(Action<int> _dele){
+            removeDelegate += _dele;
+        }
 
-			removeDelegate += _dele;
-		}
+        public void RemoveRemoveDelegate(Action<int> _dele)
+        {
 
-		public void RemoveRemoveDelegate(Action<int> _dele){
+            removeDelegate -= _dele;
+        }
 
-			removeDelegate -= _dele;
-		}
+        public int AddOnceEventListener(GameObject _target, string _eventName, SuperFunctionCallBack0 _callBack)
+        {
 
-		public int AddOnceEventListener(GameObject _target,string _eventName,SuperFunctionCallBack _callBack){
+            return AddEventListener(_target, _eventName, _callBack, true);
+        }
 
-			return AddEventListener(_target,_eventName,_callBack,true);
-		}
+        public int AddEventListener(GameObject _target, string _eventName, SuperFunctionCallBack0 _callBack)
+        {
 
-		public int AddEventListener(GameObject _target,string _eventName,SuperFunctionCallBack _callBack){
+            return AddEventListener(_target, _eventName, _callBack, false);
+        }
 
-			return AddEventListener(_target,_eventName,_callBack,false);
-		}
+        public int AddOnceEventListener<T1>(GameObject _target, string _eventName, SuperFunctionCallBack1<T1> _callBack)
+        {
 
-		private int AddEventListener(GameObject _target,string _eventName,SuperFunctionCallBack _callBack,bool _isOnce){
+            return AddEventListener(_target, _eventName, _callBack, true);
+        }
 
-			int result = GetIndex();
+        public int AddEventListener<T1>(GameObject _target, string _eventName, SuperFunctionCallBack1<T1> _callBack)
+        {
 
-			SuperFunctionUnit unit = new SuperFunctionUnit(_target,_eventName,_callBack,result,_isOnce);
+            return AddEventListener(_target, _eventName, _callBack, false);
+        }
 
-			dic.Add(result,unit);
+        public int AddOnceEventListener<T1, T2>(GameObject _target, string _eventName, SuperFunctionCallBack2<T1, T2> _callBack)
+        {
 
-			Dictionary<string,List<SuperFunctionUnitBase>> tmpDic;
+            return AddEventListener(_target, _eventName, _callBack, true);
+        }
 
-			if(dic2.ContainsKey(_target)){
+        public int AddEventListener<T1, T2>(GameObject _target, string _eventName, SuperFunctionCallBack2<T1, T2> _callBack)
+        {
 
-				tmpDic = dic2[_target];
+            return AddEventListener(_target, _eventName, _callBack, false);
+        }
 
-			}else{
+        public int AddOnceEventListener<T1, T2, T3>(GameObject _target, string _eventName, SuperFunctionCallBack3<T1, T2, T3> _callBack)
+        {
 
-				_target.AddComponent<SuperFunctionControl>();
+            return AddEventListener(_target, _eventName, _callBack, true);
+        }
 
-				tmpDic = new Dictionary<string,List<SuperFunctionUnitBase>>();
+        public int AddEventListener<T1, T2, T3>(GameObject _target, string _eventName, SuperFunctionCallBack3<T1, T2, T3> _callBack)
+        {
 
-				dic2.Add(_target,tmpDic);
-			}
+            return AddEventListener(_target, _eventName, _callBack, false);
+        }
 
-			List<SuperFunctionUnitBase> tmpList;
+        public int AddOnceEventListener<T1, T2, T3, T4>(GameObject _target, string _eventName, SuperFunctionCallBack4<T1, T2, T3, T4> _callBack)
+        {
 
-			if(tmpDic.ContainsKey(_eventName)){
+            return AddEventListener(_target, _eventName, _callBack, true);
+        }
 
-				tmpList = tmpDic[_eventName];
+        public int AddEventListener<T1, T2, T3, T4>(GameObject _target, string _eventName, SuperFunctionCallBack4<T1, T2, T3, T4> _callBack)
+        {
 
-			}else{
+            return AddEventListener(_target, _eventName, _callBack, false);
+        }
 
-				tmpList = new List<SuperFunctionUnitBase>();
+        private int AddEventListener(GameObject _target, string _eventName, Delegate _callBack, bool _isOnce)
+        {
 
-				tmpDic.Add(_eventName,tmpList);
-			}
+            int result = GetIndex();
 
-			tmpList.Add(unit);
+            SuperFunctionUnit unit = new SuperFunctionUnit(_target, _eventName, _callBack, result, _isOnce);
 
-			return result;
-		}
+            dic.Add(result, unit);
 
-		public int AddOnceEventListener<T>(GameObject _target,string _eventName,SuperFunctionCallBackV<T> _callBack) where T : struct{
+            Dictionary<string, List<SuperFunctionUnit>> tmpDic;
 
-			return AddEventListener<T>(_target,_eventName,_callBack,true);
-		}
+            if (dic2.ContainsKey(_target))
+            {
 
-		public int AddEventListener<T>(GameObject _target,string _eventName,SuperFunctionCallBackV<T> _callBack) where T : struct{
-			
-			return AddEventListener<T>(_target,_eventName,_callBack,false);
-		}
+                tmpDic = dic2[_target];
 
-		public int AddEventListener<T>(GameObject _target,string _eventName,SuperFunctionCallBackV<T> _callBack,bool _isOnce) where T : struct{
+            }
+            else {
 
-			int result = GetIndex();
+                _target.AddComponent<SuperFunctionControl>();
 
-			SuperFunctionUnitV<T> unit = new SuperFunctionUnitV<T>(_target,_eventName,_callBack,result,_isOnce);
+                tmpDic = new Dictionary<string, List<SuperFunctionUnit>>();
 
-			dic.Add(result,unit);
+                dic2.Add(_target, tmpDic);
+            }
 
-			Dictionary<string,List<SuperFunctionUnitBase>> tmpDic;
+            List<SuperFunctionUnit> tmpList;
 
-			if(dic2.ContainsKey(_target)){
+            if (tmpDic.ContainsKey(_eventName))
+            {
 
-				tmpDic = dic2[_target];
+                tmpList = tmpDic[_eventName];
 
-			}else{
+            }
+            else {
 
-				_target.AddComponent<SuperFunctionControl>();
+                tmpList = new List<SuperFunctionUnit>();
 
-				tmpDic = new Dictionary<string,List<SuperFunctionUnitBase>>();
+                tmpDic.Add(_eventName, tmpList);
+            }
 
-				dic2.Add(_target,tmpDic);
-			}
+            tmpList.Add(unit);
 
-			List<SuperFunctionUnitBase> tmpList;
+            return result;
+        }
 
-			if(tmpDic.ContainsKey(_eventName)){
+        public void RemoveEventListener(int _index)
+        {
 
-				tmpList = tmpDic[_eventName];
+            if (dic.ContainsKey(_index))
+            {
 
-			}else{
+                SuperFunctionUnit unit = dic[_index];
 
-				tmpList = new List<SuperFunctionUnitBase>();
+                dic.Remove(_index);
 
-				tmpDic.Add(_eventName,tmpList);
-			}
+                if (removeDelegate != null)
+                {
 
-			tmpList.Add(unit);
+                    removeDelegate(_index);
+                }
 
-			return result;
-		}
+                Dictionary<string, List<SuperFunctionUnit>> tmpDic = dic2[unit.target];
 
-		public void RemoveEventListener(int _index){
+                List<SuperFunctionUnit> tmpList = tmpDic[unit.eventName];
 
-			if(dic.ContainsKey(_index)){
+                tmpList.Remove(unit);
 
-				SuperFunctionUnitBase unit = dic[_index];
+                if (tmpList.Count == 0)
+                {
 
-				dic.Remove(_index);
+                    tmpDic.Remove(unit.eventName);
 
-				if(removeDelegate != null){
+                    if (tmpDic.Count == 0)
+                    {
 
-					removeDelegate(_index);
-				}
+                        DestroyControl(unit.target);
+                    }
+                }
+            }
+        }
 
-				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[unit.target];
+        public void RemoveEventListener(GameObject _target)
+        {
 
-				List<SuperFunctionUnitBase> tmpList = tmpDic[unit.eventName];
+            if (dic2.ContainsKey(_target))
+            {
 
-				tmpList.Remove(unit);
+                Dictionary<string, List<SuperFunctionUnit>> tmpDic = dic2[_target];
 
-				if(tmpList.Count == 0){
+                DestroyControl(_target);
 
-					tmpDic.Remove(unit.eventName);
+                Dictionary<string, List<SuperFunctionUnit>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
 
-					if(tmpDic.Count == 0){
+                while (enumerator.MoveNext())
+                {
 
-						DestroyControl(unit.target);
-					}
-				}
-			}
-		}
+                    List<SuperFunctionUnit> tmpList = enumerator.Current;
 
-		public void RemoveEventListener(GameObject _target){
+                    for (int i = 0; i < tmpList.Count; i++)
+                    {
 
-			if(dic2.ContainsKey(_target)){
+                        SuperFunctionUnit unit = tmpList[i];
 
-				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
-				
-				DestroyControl(_target);
+                        dic.Remove(unit.index);
 
-				Dictionary<string,List<SuperFunctionUnitBase>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
+                        if (removeDelegate != null)
+                        {
 
-				while(enumerator.MoveNext()){
+                            removeDelegate(unit.index);
+                        }
+                    }
+                }
+            }
+        }
 
-					List<SuperFunctionUnitBase> tmpList = enumerator.Current;
+        public void RemoveEventListener(GameObject _target, string _eventName)
+        {
 
-					for(int i = 0 ; i < tmpList.Count ; i++){
+            if (dic2.ContainsKey(_target))
+            {
 
-						SuperFunctionUnitBase unit = tmpList[i];
+                Dictionary<string, List<SuperFunctionUnit>> tmpDic = dic2[_target];
 
-						dic.Remove(unit.index);
+                if (tmpDic.ContainsKey(_eventName))
+                {
 
-						if(removeDelegate != null){
+                    List<SuperFunctionUnit> list = tmpDic[_eventName];
 
-							removeDelegate(unit.index);
-						}
-					}
-				}
-			}
-		}
+                    for (int i = 0; i < list.Count; i++)
+                    {
 
-		public void RemoveEventListener(GameObject _target,string _eventName){
+                        SuperFunctionUnit unit = list[i];
 
-			if(dic2.ContainsKey(_target)){
-				
-				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
+                        dic.Remove(unit.index);
 
-				if(tmpDic.ContainsKey(_eventName)){
+                        if (removeDelegate != null)
+                        {
 
-					List<SuperFunctionUnitBase> list = tmpDic[_eventName];
+                            removeDelegate(unit.index);
+                        }
+                    }
 
-					for(int i = 0 ; i < list.Count ; i++){
+                    tmpDic.Remove(_eventName);
 
-						SuperFunctionUnitBase unit = list[i];
+                    if (tmpDic.Count == 0)
+                    {
 
-						dic.Remove(unit.index);
+                        DestroyControl(_target);
+                    }
+                }
+            }
+        }
 
-						if(removeDelegate != null){
+        public void RemoveEventListener(GameObject _target, string _eventName, SuperFunctionCallBack0 _callBack)
+        {
 
-							removeDelegate(unit.index);
-						}
-					}
+            RemoveEventListenerReal(_target, _eventName, _callBack);
+        }
 
-					tmpDic.Remove(_eventName);
+        public void RemoveEventListener<T1>(GameObject _target, string _eventName, SuperFunctionCallBack1<T1> _callBack)
+        {
 
-					if(tmpDic.Count == 0){
+            RemoveEventListenerReal(_target, _eventName, _callBack);
+        }
 
-						DestroyControl(_target);
-					}
-				}
-			}
-		}
+        public void RemoveEventListener<T1, T2>(GameObject _target, string _eventName, SuperFunctionCallBack2<T1, T2> _callBack)
+        {
 
-		public void RemoveEventListener(GameObject _target,string _eventName,SuperFunctionCallBack _callBack){
+            RemoveEventListenerReal(_target, _eventName, _callBack);
+        }
 
-			if(dic2.ContainsKey(_target)){
-				
-				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
-				
-				if(tmpDic.ContainsKey(_eventName)){
-					
-					List<SuperFunctionUnitBase> list = tmpDic[_eventName];
+        public void RemoveEventListener<T1, T2, T3>(GameObject _target, string _eventName, SuperFunctionCallBack3<T1, T2, T3> _callBack)
+        {
 
-					for(int i = 0 ; i < list.Count ; i++){
+            RemoveEventListenerReal(_target, _eventName, _callBack);
+        }
 
-						if(list[i] is SuperFunctionUnit){
+        public void RemoveEventListener<T1, T2, T3, T4>(GameObject _target, string _eventName, SuperFunctionCallBack4<T1, T2, T3, T4> _callBack)
+        {
 
-							SuperFunctionUnit unit = list[i] as SuperFunctionUnit;
+            RemoveEventListenerReal(_target, _eventName, _callBack);
+        }
 
-							if(unit.callBack == _callBack){
+        private void RemoveEventListenerReal(GameObject _target, string _eventName, Delegate _callBack)
+        {
 
-								dic.Remove(unit.index);
+            if (dic2.ContainsKey(_target))
+            {
 
-								if(removeDelegate != null){
+                Dictionary<string, List<SuperFunctionUnit>> tmpDic = dic2[_target];
 
-									removeDelegate(unit.index);
-								}
+                if (tmpDic.ContainsKey(_eventName))
+                {
 
-								list.RemoveAt(i);
+                    List<SuperFunctionUnit> list = tmpDic[_eventName];
 
-								break;
-							}
-						}
-					}
+                    for (int i = 0; i < list.Count; i++)
+                    {
 
-					if(list.Count == 0){
+                        SuperFunctionUnit unit = list[i];
 
-						tmpDic.Remove(_eventName);
+                        if (unit.callBack == _callBack)
+                        {
 
-						if(tmpDic.Count == 0){
+                            dic.Remove(unit.index);
 
-							DestroyControl(_target);
-						}
-					}
-				}
-			}
-		}
+                            if (removeDelegate != null)
+                            {
 
-		public void RemoveEventListener<T>(GameObject _target,string _eventName,SuperFunctionCallBackV<T> _callBack)where T : struct{
+                                removeDelegate(unit.index);
+                            }
 
-			if(dic2.ContainsKey(_target)){
-				
-				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
-				
-				if(tmpDic.ContainsKey(_eventName)){
-					
-					List<SuperFunctionUnitBase> list = tmpDic[_eventName];
-					
-					for(int i = 0 ; i < list.Count ; i++){
-						
-						if(list[i] is SuperFunctionUnitV<T>){
-							
-							SuperFunctionUnitV<T> unit = list[i] as SuperFunctionUnitV<T>;
-							
-							if(unit.callBack == _callBack){
-								
-								dic.Remove(unit.index);
+                            list.RemoveAt(i);
 
-								if(removeDelegate != null){
+                            break;
+                        }
+                    }
 
-									removeDelegate(unit.index);
-								}
-								
-								list.RemoveAt(i);
-								
-								break;
-							}
-						}
-					}
-					
-					if(list.Count == 0){
-						
-						tmpDic.Remove(_eventName);
-						
-						if(tmpDic.Count == 0){
-							
-							DestroyControl(_target);
-						}
-					}
-				}
-			}
-		}
+                    if (list.Count == 0)
+                    {
 
-		public void DispatchEvent(GameObject _target,string _eventName,params object[] _datas){
+                        tmpDic.Remove(_eventName);
 
-			if (dic2.ContainsKey (_target)) {
-				
-				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
-				
-				if(tmpDic.ContainsKey(_eventName)){
+                        if (tmpDic.Count == 0)
+                        {
 
-					List<SuperFunctionUnitBase> tmpList = tmpDic[_eventName];
+                            DestroyControl(_target);
+                        }
+                    }
+                }
+            }
+        }
 
-					LinkedList<SuperFunctionUnit> unitList = null;
+        public void DispatchEvent(GameObject _target, string _eventName)
+        {
+            List<SuperFunctionUnit> unitList = DispatchEventReal<SuperFunctionCallBack0>(_target, _eventName);
 
-					for(int i = 0 ; i < tmpList.Count ; i++){
+            if (unitList != null)
+            {
+                for (int i = 0; i < unitList.Count; i++)
+                {
+                    SuperFunctionUnit unit = unitList[i];
 
-						if(tmpList[i] is SuperFunctionUnit){
+                    if (unit.isOnce)
+                    {
+                        RemoveEventListener(unit.index);
+                    }
 
-							SuperFunctionUnit unit = tmpList[i] as SuperFunctionUnit;
+                    SuperFunctionCallBack0 cb = unit.callBack as SuperFunctionCallBack0;
 
-							if(unitList == null){
+                    cb(unit.index);
+                }
+            }
+        }
 
-								unitList = new LinkedList<SuperFunctionUnit>();
-							}
+        public void DispatchEvent<T1>(GameObject _target, string _eventName, T1 t1)
+        {
+            List<SuperFunctionUnit> unitList = DispatchEventReal<SuperFunctionCallBack1<T1>>(_target, _eventName);
 
-							unitList.AddLast(unit);
-						}
-					}
+            if (unitList != null)
+            {
+                for (int i = 0; i < unitList.Count; i++)
+                {
+                    SuperFunctionUnit unit = unitList[i];
 
-					if(unitList != null){
+                    if (unit.isOnce)
+                    {
+                        RemoveEventListener(unit.index);
+                    }
 
-						LinkedList<SuperFunctionUnit>.Enumerator enumerator = unitList.GetEnumerator();
+                    SuperFunctionCallBack1<T1> cb = unit.callBack as SuperFunctionCallBack1<T1>;
 
-						while(enumerator.MoveNext()){
+                    cb(unit.index, t1);
+                }
+            }
+        }
 
-							if(enumerator.Current.isOnce){
+        public void DispatchEvent<T1, T2>(GameObject _target, string _eventName, T1 t1, T2 t2)
+        {
+            List<SuperFunctionUnit> unitList = DispatchEventReal<SuperFunctionCallBack2<T1, T2>>(_target, _eventName);
 
-								RemoveEventListener(enumerator.Current.index);
-							}
+            if (unitList != null)
+            {
+                for (int i = 0; i < unitList.Count; i++)
+                {
+                    SuperFunctionUnit unit = unitList[i];
 
-							enumerator.Current.callBack(enumerator.Current.index,_datas);
-						}
-					}
-				}
-			}
-		}
+                    if (unit.isOnce)
+                    {
+                        RemoveEventListener(unit.index);
+                    }
 
-		public void DispatchEvent<T>(GameObject _target,string _eventName,ref T _v,params object[] _datas) where T : struct{
-			
-			if (dic2.ContainsKey (_target)) {
-				
-				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
-				
-				if(tmpDic.ContainsKey(_eventName)){
-					
-					List<SuperFunctionUnitBase> tmpList = tmpDic[_eventName];
+                    SuperFunctionCallBack2<T1, T2> cb = unit.callBack as SuperFunctionCallBack2<T1, T2>;
 
-					LinkedList<SuperFunctionUnitV<T>> unitList = null;
+                    cb(unit.index, t1, t2);
+                }
+            }
+        }
 
-					for(int i = 0 ; i < tmpList.Count ; i++){
+        public void DispatchEvent<T1, T2, T3>(GameObject _target, string _eventName, T1 t1, T2 t2, T3 t3)
+        {
+            List<SuperFunctionUnit> unitList = DispatchEventReal<SuperFunctionCallBack3<T1, T2, T3>>(_target, _eventName);
 
-						if(tmpList[i] is SuperFunctionUnitV<T>){
-						
-							SuperFunctionUnitV<T> unit = tmpList[i] as SuperFunctionUnitV<T>;
+            if (unitList != null)
+            {
+                for (int i = 0; i < unitList.Count; i++)
+                {
+                    SuperFunctionUnit unit = unitList[i];
 
-							if(unitList == null){
+                    if (unit.isOnce)
+                    {
+                        RemoveEventListener(unit.index);
+                    }
 
-								unitList = new LinkedList<SuperFunctionUnitV<T>>();
-							}
+                    SuperFunctionCallBack3<T1, T2, T3> cb = unit.callBack as SuperFunctionCallBack3<T1, T2, T3>;
 
-							unitList.AddLast(unit);
-						}
-					}
+                    cb(unit.index, t1, t2, t3);
+                }
+            }
+        }
 
-					if(unitList != null){
+        public void DispatchEvent<T1, T2, T3, T4>(GameObject _target, string _eventName, T1 t1, T2 t2, T3 t3, T4 t4)
+        {
+            List<SuperFunctionUnit> unitList = DispatchEventReal<SuperFunctionCallBack4<T1, T2, T3, T4>>(_target, _eventName);
 
-						LinkedList<SuperFunctionUnitV<T>>.Enumerator enumerator = unitList.GetEnumerator();
+            if (unitList != null)
+            {
+                for (int i = 0; i < unitList.Count; i++)
+                {
+                    SuperFunctionUnit unit = unitList[i];
 
-						while(enumerator.MoveNext()){
+                    if (unit.isOnce)
+                    {
+                        RemoveEventListener(unit.index);
+                    }
 
-							if(enumerator.Current.isOnce){
+                    SuperFunctionCallBack4<T1, T2, T3, T4> cb = unit.callBack as SuperFunctionCallBack4<T1, T2, T3, T4>;
 
-								RemoveEventListener(enumerator.Current.index);
-							}
+                    cb(unit.index, t1, t2, t3, t4);
+                }
+            }
+        }
 
-							enumerator.Current.callBack(enumerator.Current.index,ref _v,_datas);
-						}
-					}
-				}
-			}
-		}
+        private List<SuperFunctionUnit> DispatchEventReal<T>(GameObject _target, string _eventName)
+        {
+            List<SuperFunctionUnit> result = null;
 
-		public void DestroyGameObject(GameObject _target){
+            if (dic2.ContainsKey(_target))
+            {
+                Dictionary<string, List<SuperFunctionUnit>> tmpDic = dic2[_target];
 
-			if(dic2.ContainsKey(_target)){
+                if (tmpDic.ContainsKey(_eventName))
+                {
+                    List<SuperFunctionUnit> tmpList = tmpDic[_eventName];
 
-				Dictionary<string,List<SuperFunctionUnitBase>> tmpDic = dic2[_target];
-				
-				dic2.Remove(_target);
+                    for (int i = 0; i < tmpList.Count; i++)
+                    {
+                        SuperFunctionUnit unit = tmpList[i];
 
-				Dictionary<string,List<SuperFunctionUnitBase>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
-				
-				while(enumerator.MoveNext()){
-					
-					List<SuperFunctionUnitBase> tmpList = enumerator.Current;
-					
-					for(int i = 0 ; i < tmpList.Count ; i++){
+                        if (unit.callBack is T)
+                        {
+                            if (result == null)
+                            {
+                                result = new List<SuperFunctionUnit>();
+                            }
 
-						SuperFunctionUnitBase unit = tmpList[i];
+                            result.Add(unit);
+                        }
+                    }
+                }
+            }
 
-						dic.Remove(unit.index);
+            return result;
+        }
 
-						if(removeDelegate != null){
+        public void DestroyGameObject(GameObject _target)
+        {
 
-							removeDelegate(unit.index);
-						}
-					}
-				}
-			}
-		}
+            if (dic2.ContainsKey(_target))
+            {
 
-		private void DestroyControl(GameObject _target){
+                Dictionary<string, List<SuperFunctionUnit>> tmpDic = dic2[_target];
 
-			SuperFunctionControl[] controls = _target.GetComponents<SuperFunctionControl>();
+                dic2.Remove(_target);
 
-			for(int i = 0 ; i < controls.Length ; i++){
-			
-				SuperFunctionControl control = controls[i];
+                Dictionary<string, List<SuperFunctionUnit>>.ValueCollection.Enumerator enumerator = tmpDic.Values.GetEnumerator();
 
-				if(!control.isDestroy){
+                while (enumerator.MoveNext())
+                {
 
-					control.isDestroy = true;
-					
-					GameObject.Destroy(control);
-				}
-			}
+                    List<SuperFunctionUnit> tmpList = enumerator.Current;
 
-			dic2.Remove(_target);
-		}
+                    for (int i = 0; i < tmpList.Count; i++)
+                    {
 
-		private int GetIndex(){
+                        SuperFunctionUnit unit = tmpList[i];
 
-			index++;
+                        dic.Remove(unit.index);
 
-			int result = index;
+                        if (removeDelegate != null)
+                        {
 
-			return result;
-		}
+                            removeDelegate(unit.index);
+                        }
+                    }
+                }
+            }
+        }
 
-		public int GetNum(){
+        private void DestroyControl(GameObject _target)
+        {
 
-			return dic.Count;
-		}
-	}
+            SuperFunctionControl[] controls = _target.GetComponents<SuperFunctionControl>();
+
+            for (int i = 0; i < controls.Length; i++)
+            {
+
+                SuperFunctionControl control = controls[i];
+
+                if (!control.isDestroy)
+                {
+
+                    control.isDestroy = true;
+
+                    GameObject.Destroy(control);
+                }
+            }
+
+            dic2.Remove(_target);
+        }
+
+        private int GetIndex()
+        {
+
+            index++;
+
+            int result = index;
+
+            return result;
+        }
+
+        public int GetNum()
+        {
+
+            return dic.Count;
+        }
+    }
 }

@@ -190,7 +190,7 @@ public class MapCreator : MonoBehaviour
 
                 MapUnit unit = go.GetComponent<MapUnit>();
 
-				SuperFunction.SuperFunctionCallBack click = delegate (int _index, object[] _objs)
+				SuperFunction.SuperFunctionCallBack0 click = delegate (int _index)
                 {
                     MapUnitUpAsButton(unit);
                 };

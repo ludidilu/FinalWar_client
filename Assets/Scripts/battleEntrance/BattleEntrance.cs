@@ -179,7 +179,7 @@ public class BattleEntrance : MonoBehaviour
         }
     }
 
-	private void BattleOver(int _index, object[] _objs)
+	private void BattleOver(int _index)
     {
         gameObject.SetActive(true);
 

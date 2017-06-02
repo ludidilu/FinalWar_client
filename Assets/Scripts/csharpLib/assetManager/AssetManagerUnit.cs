@@ -12,8 +12,8 @@ namespace assetManager{
 		private AssetManagerData data;
 	
 		private int type = -1;
-	
-		private LinkedList<Action<T,string>> callBackList = new LinkedList<Action<T,string>>();
+
+        private List<Action<T, string>> callBackList = new List<Action<T, string>>();
 		private string name;
 
 		public AssetManagerUnit(string _name){
@@ -25,7 +25,7 @@ namespace assetManager{
 
 		public void Load(Action<T,string> _callBack){
 
-			callBackList.AddLast (_callBack);
+			callBackList.Add (_callBack);
 
 			if (type == -1) {
 
@@ -133,21 +133,19 @@ namespace assetManager{
 			
 			AssetManager.Instance.RemoveUnit(name);
 
-			LinkedList<Action<T,string>>.Enumerator enumerator = callBackList.GetEnumerator();
-
 			if(_asset != null){
 
-				while(enumerator.MoveNext()){
-
-					enumerator.Current(_asset,string.Empty);
-				}
+                for (int i = 0; i < callBackList.Count; i++)
+                {
+                    callBackList[i](_asset, string.Empty);
+                }
 
 			}else{
 
-				while(enumerator.MoveNext()){
-					
-					enumerator.Current(null,_msg);
-				}
+                for (int i = 0; i < callBackList.Count; i++)
+                {
+                    callBackList[i](null, _msg);
+                }
 			}
 
 			callBackList.Clear();

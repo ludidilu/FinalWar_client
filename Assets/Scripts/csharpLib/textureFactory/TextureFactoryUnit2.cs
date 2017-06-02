@@ -14,7 +14,7 @@ namespace textureFactory{
 		
 		private bool isDispose = false;
 
-		private LinkedList<KeyValuePair<Action<T,string>,int>> callBackList = new LinkedList<KeyValuePair<Action<T, string>, int>>();
+		private List<KeyValuePair<Action<T,string>,int>> callBackList = new List<KeyValuePair<Action<T, string>, int>>();
 		
 		public TextureFactoryUnit2(string _name){
 			
@@ -27,7 +27,7 @@ namespace textureFactory{
 				
 				type = 0;
 
-				callBackList.AddLast (new KeyValuePair<Action<T, string>, int>(_callBack,_index));
+				callBackList.Add (new KeyValuePair<Action<T, string>, int>(_callBack,_index));
 
 				T[] result = AssetManager.Instance.GetAsset<T> (name,GetAsset);
 
@@ -42,7 +42,7 @@ namespace textureFactory{
 				
 			} else if (type == 0) {
 
-				callBackList.AddLast (new KeyValuePair<Action<T, string>, int>(_callBack,_index));
+				callBackList.Add (new KeyValuePair<Action<T, string>, int>(_callBack,_index));
 				
 				return default(T);
 				
@@ -78,19 +78,19 @@ namespace textureFactory{
 			
 			type = 1;
 
-			LinkedList<KeyValuePair<Action<T,string>,int>>.Enumerator enumerator = callBackList.GetEnumerator();
+            for (int i = 0; i < callBackList.Count; i++)
+            {
+                KeyValuePair<Action<T, string>, int> pair = callBackList[i];
 
-			while(enumerator.MoveNext()){
+                Action<T, string> callBack = pair.Key;
 
-				Action<T,string> callBack = enumerator.Current.Key;
+                if (callBack != null)
+                {
+                    int index = pair.Value;
 
-				if(callBack != null){
-
-					int index = enumerator.Current.Value;
-					
-					callBack(data[index],string.Empty);
-				}
-			}
+                    callBack(data[index], string.Empty);
+                }
+            }
 
 			callBackList.Clear();
 		}

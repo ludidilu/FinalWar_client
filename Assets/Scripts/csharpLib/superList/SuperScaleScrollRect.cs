@@ -42,7 +42,7 @@ namespace superList{
 
 			containerHalfRect = (transform as RectTransform).rect.size / 2;
 
-			SuperFunction.Instance.AddEventListener(ScreenScale.Instance.gameObject,ScreenScale.SCALE_CHANGE,ScaleChange);
+			SuperFunction.Instance.AddEventListener<float,Vector2>(ScreenScale.Instance.gameObject,ScreenScale.SCALE_CHANGE,ScaleChange);
 
 			childWidth = childTransform.rect.width;
 
@@ -65,9 +65,7 @@ namespace superList{
 			SuperDebug.Log("SuperScaleScrollRect  minScale:" + minScale + "   maxScale:" + maxScale);
 		}
 
-		private void ScaleChange(int _index,params object[] _datas){
-
-			float scale = (float)_datas[0];
+		private void ScaleChange(int _index,float scale,Vector2 pos){
 
 			float tmpScale = scale * childTransform.localScale.x;
 
@@ -79,8 +77,6 @@ namespace superList{
 
 				scale = maxScale / childTransform.localScale.x;
 			}
-
-			Vector2 pos = (Vector2)_datas[1];
 
 			pos = pos * (containerHalfRect.x * 2 / Screen.width);
 

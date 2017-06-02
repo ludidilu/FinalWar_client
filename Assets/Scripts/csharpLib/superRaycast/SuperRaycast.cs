@@ -210,7 +210,7 @@ namespace superRaycast{
 			layerIndex = layerIndex & ~(1 << LayerMask.NameToLayer(_layerName));
 		}
 
-		private void CheckBlockByUiHandler(int _index,params object[] _datas){
+		private void CheckBlockByUiHandler(int _index){
 
 			isBlockByUi = true;
 		}

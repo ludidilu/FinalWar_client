@@ -10,6 +10,9 @@ public class JoystickFree3 : MonoBehaviour {
 	
 	[SerializeField]
 	private RectTransform rect;
+
+	[SerializeField]
+	private bool canJoystickMove;
 	
 	private Rect clickArea;
 	
@@ -76,12 +79,15 @@ public class JoystickFree3 : MonoBehaviour {
 			float dis = Vector2.Distance(downPos,Input.mousePosition);
 			
 			if(dis > maxValue){
+
+				if(canJoystickMove){
 				
-				downPos = Vector2.Lerp(downPos,Input.mousePosition,(dis - maxValue) / dis);
+					downPos = Vector2.Lerp(downPos,Input.mousePosition,(dis - maxValue) / dis);
+					
+					FixDownPos();
+				}
 
 				dis = maxValue;
-				
-				FixDownPos();
 			}
 
 			dir = dir.normalized * dis / maxValue;

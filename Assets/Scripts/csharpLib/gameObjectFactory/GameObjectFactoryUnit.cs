@@ -21,9 +21,9 @@ namespace gameObjectFactory
 
 		public int useNum{private set;get;}
 
-		private LinkedList<Action<GameObject,string>> callBackList = new LinkedList<Action<GameObject, string>>();
+		private List<Action<GameObject,string>> callBackList = new List<Action<GameObject, string>>();
 
-		private LinkedList<Action<string>> callBackList2 = new LinkedList<Action<string>>();
+		private List<Action<string>> callBackList2 = new List<Action<string>>();
 
 		public GameObjectFactoryUnit (string _name)
 		{
@@ -46,13 +46,13 @@ namespace gameObjectFactory
 				
 				type = 0;
 				
-				callBackList2.AddLast (_callBack);
+				callBackList2.Add (_callBack);
 				
 				AssetManager.Instance.GetAsset<GameObject> (name, GetResouece);
 				
 			} else if (type == 0) {
 				
-				callBackList2.AddLast (_callBack);
+				callBackList2.Add (_callBack);
 				
 			} else {
 				
@@ -66,7 +66,7 @@ namespace gameObjectFactory
 
 				type = 0;
 
-				callBackList.AddLast (_callBack);
+				callBackList.Add (_callBack);
 
 				AssetManager.Instance.GetAsset<GameObject> (name, GetResouece);
 
@@ -74,7 +74,7 @@ namespace gameObjectFactory
 
 			} else if (type == 0) {
 
-				callBackList.AddLast (_callBack);
+				callBackList.Add (_callBack);
 
 				return null;
 
@@ -97,41 +97,37 @@ namespace gameObjectFactory
 
 			type = 1;
 
-			LinkedList<Action<GameObject,string>>.Enumerator enumerator = callBackList.GetEnumerator();
+            for (int i = 0; i < callBackList.Count; i++)
+            {
+                Action<GameObject, string> callBack = callBackList[i];
 
-			while(enumerator.MoveNext()){
+                if (callBack != null)
+                {
+                    if (_go != null)
+                    {
+                        GameObject result = GameObject.Instantiate(data);
 
-				Action<GameObject,string> callBack = enumerator.Current;
+                        callBack(result, string.Empty);
+                    }
+                    else {
 
-				if(callBack != null){
-
-					if(_go != null){
-
-						GameObject result = GameObject.Instantiate (data);
-						
-						callBack (result,string.Empty);
-
-					}else{
-
-						callBack(null,_msg);
-					}
-				}
-			}
+                        callBack(null, _msg);
+                    }
+                }
+            }
 
 			callBackList.Clear ();
 
-			LinkedList<Action<string>>.Enumerator enumerator2 = callBackList2.GetEnumerator();
-			
-			while(enumerator2.MoveNext()){
-				
-				Action<string> callBack = enumerator2.Current;
-				
-				if(callBack != null){
-					
-					callBack (string.Empty);
-				}
-			}
-			
+            for (int i = 0; i < callBackList2.Count; i++)
+            {
+                Action<string> callBack = callBackList2[i];
+
+                if (callBack != null)
+                {
+                    callBack(string.Empty);
+                }
+            }
+
 			callBackList2.Clear ();
 		}
 

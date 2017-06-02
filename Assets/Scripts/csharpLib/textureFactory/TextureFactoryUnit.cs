@@ -14,7 +14,7 @@ namespace textureFactory{
 
 		private bool isDispose = false;
 
-		private LinkedList<Action<T,string>> callBackList = new LinkedList<Action<T, string>>();
+		private List<Action<T,string>> callBackList = new List<Action<T, string>>();
 
 		public TextureFactoryUnit(string _name){
 			
@@ -27,13 +27,13 @@ namespace textureFactory{
 				
 				type = 0;
 				
-				callBackList.AddLast (_callBack);
+				callBackList.Add (_callBack);
 				
 				return AssetManager.Instance.GetAsset<T> (name,GetAsset);
 
 			} else if (type == 0) {
 				
-				callBackList.AddLast (_callBack);
+				callBackList.Add (_callBack);
 
 				return default(T);
 				
@@ -61,17 +61,16 @@ namespace textureFactory{
 
 			type = 1;
 
-			LinkedList<Action<T,string>>.Enumerator enumerator = callBackList.GetEnumerator();
+            for (int i = 0; i < callBackList.Count; i++)
+            {
+                Action<T, string> callBack = callBackList[i];
 
-			while(enumerator.MoveNext()){
+                if (callBack != null)
+                {
 
-				Action<T,string> callBack = enumerator.Current;
-
-				if(callBack != null){
-
-					callBack(data,string.Empty);
-				}
-			}
+                    callBack(data, string.Empty);
+                }
+            }
 
 			callBackList.Clear();
 		}

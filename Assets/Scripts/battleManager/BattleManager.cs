@@ -197,11 +197,11 @@ public class BattleManager : MonoBehaviour
 
         battle.ClientSetCallBack(_sendDataCallBack, RefreshData, DoAction, BattleQuit);
 
-        SuperFunction.Instance.AddEventListener(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
+		SuperFunction.Instance.AddEventListener<float, Vector2>(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
 
-        SuperFunction.Instance.AddEventListener(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
+		SuperFunction.Instance.AddEventListener<RaycastHit, int>(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
 
-        SuperFunction.Instance.AddEventListener(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
+		SuperFunction.Instance.AddEventListener<RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
 
         //		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
     }
@@ -1458,11 +1458,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-	private void ScaleChange(int _index, object[] _objs)
+	private void ScaleChange(int _index, float _scrollValue, Vector2 _pos)
     {
-		float scrollValue = (float)_objs[0];
+		float scrollValue = _scrollValue;
 
-		Vector2 mousePosition = (Vector2)_objs[1];
+		Vector2 mousePosition = _pos;
 
         if (scrollValue < 1)
         {
@@ -1498,9 +1498,9 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-	private void GetMouseDown(int _index, object[] _objs)
+	private void GetMouseDown(int _index, RaycastHit _hit, int _hitIndex)
     {
-		if ((int)_objs[1] == 0)
+		if (_hitIndex == 0)
         {
             BackgroundDown();
         }
@@ -1522,7 +1522,7 @@ public class BattleManager : MonoBehaviour
         downMapUnit = _mapUnit;
     }
 
-	private void GetMouseMove(int _index, object[] _objs)
+	private void GetMouseMove(int _index, RaycastHit _hit, int _hitIndex)
     {
         if (isDown != DownType.NULL)
         {

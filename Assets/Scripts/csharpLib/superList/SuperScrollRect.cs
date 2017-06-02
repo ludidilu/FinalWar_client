@@ -111,12 +111,12 @@ namespace superList{
 			SuperFunction.Instance.RemoveEventListener(eventDispatcher,CLOSE_MOVE,CloseMove);
 		}
 
-		public void CloseMove(int _index,params object[] _datas){
+		public void CloseMove(int _index){
 			
 			movementType = ScrollRect.MovementType.Clamped;
 		}
 		
-		public void OpenMove(int _index,params object[] _datas){
+		public void OpenMove(int _index){
 			
 			movementType = ScrollRect.MovementType.Elastic;
 		}

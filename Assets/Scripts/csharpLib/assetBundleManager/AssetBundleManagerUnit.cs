@@ -12,14 +12,14 @@ namespace assetBundleManager{
 		private AssetBundle assetBundle;
 		private string name;
 		private int type = -1;
-		private LinkedList<Action<AssetBundle,string>> callBackList;
+		private List<Action<AssetBundle,string>> callBackList;
 		private int useTimes;
 
 		public AssetBundleManagerUnit(string _name){
 
 			name = _name;
 
-			callBackList = new LinkedList<Action<AssetBundle,string>> ();
+			callBackList = new List<Action<AssetBundle,string>> ();
 		}
 
 		public void Load(Action<AssetBundle,string> _callBack){
@@ -32,13 +32,13 @@ namespace assetBundleManager{
 
 				type = 0;
 
-				callBackList.AddLast (_callBack);
+				callBackList.Add (_callBack);
 
 				WWWManager.Instance.Load(AssetBundleManager.path + name,GetAssetBundle);
 
 			} else if (type == 0) {
 
-				callBackList.AddLast (_callBack);
+				callBackList.Add (_callBack);
 
 			} else {
 
@@ -50,23 +50,21 @@ namespace assetBundleManager{
 
 			type = 1;
 
-			LinkedList<Action<AssetBundle,string>>.Enumerator enumerator = callBackList.GetEnumerator();
-
 			if(string.IsNullOrEmpty(_www.error)){
 
 				assetBundle = _www.assetBundle;
 
-				while(enumerator.MoveNext()){
-
-					enumerator.Current(assetBundle,string.Empty);
-				}
+                for (int i = 0; i < callBackList.Count; i++)
+                {
+                    callBackList[i](assetBundle, string.Empty);
+                }
 
 			}else{
 
-				while(enumerator.MoveNext()){
-					
-					enumerator.Current(null,"AssetBundle can not be found:" + name);
-				}
+                for (int i = 0; i < callBackList.Count; i++)
+                {
+                    callBackList[i](null, "AssetBundle can not be found:" + name);
+                }
 			}
 
 			callBackList.Clear ();

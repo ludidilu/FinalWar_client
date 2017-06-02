@@ -29,7 +29,7 @@ public class AnimationEventReceiver : MonoBehaviour {
         {
             EventToTrigger ett = binders[i];
 
-            SuperFunction.SuperFunctionCallBack del = delegate (int _index, object[] _datas)
+			SuperFunction.SuperFunctionCallBack0 del = delegate (int _index)
             {
                 Reset();
 

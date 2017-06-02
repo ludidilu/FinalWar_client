@@ -16,7 +16,7 @@ namespace audio{
 
 		public bool willDispose = true;
 
-		private LinkedList<Action<AudioClip,string>> callBackList = new LinkedList<Action<AudioClip,string>>();
+		private List<Action<AudioClip,string>> callBackList = new List<Action<AudioClip,string>>();
 
 		public AudioFactoryUnit(string _name){
 
@@ -31,13 +31,13 @@ namespace audio{
 				
 				type = 0;
 				
-				callBackList.AddLast (_callBack);
+				callBackList.Add (_callBack);
 				
 				return AssetManager.Instance.GetAsset<AudioClip> (name,GetAsset);
 				
 			} else if (type == 0) {
 				
-				callBackList.AddLast (_callBack);
+				callBackList.Add (_callBack);
 				
 				return null;
 				
@@ -60,18 +60,16 @@ namespace audio{
 			
 			type = 1;
 
-			LinkedList<Action<AudioClip,string>>.Enumerator enumerator = callBackList.GetEnumerator();
+            for (int i = 0; i < callBackList.Count; i++)
+            {
+                Action<AudioClip, string> callBack = callBackList[i];
 
-			while(enumerator.MoveNext()){
+                if (callBack != null)
+                {
+                    callBack(data, _msg);
+                }
+            }
 
-				Action<AudioClip,string> callBack = enumerator.Current;
-
-				if(callBack != null){
-
-					callBack(data,_msg);
-				}
-			}
-			
 			callBackList.Clear();
 		}
 
