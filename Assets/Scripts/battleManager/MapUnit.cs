@@ -29,9 +29,9 @@ public class MapUnit : MonoBehaviour
 
         //		SuperFunction.Instance.AddEventListener (gameObject, SuperRaycast.GetMouseButtonUp, GetMouseUp);
 
-		SuperFunction.Instance.AddEventListener<RaycastHit, int>(gameObject, SuperRaycast.GetMouseEnter, GetMouseEnter);
+		SuperFunction.Instance.AddEventListener(gameObject, SuperRaycast.GetMouseEnter, GetMouseEnter);
 
-		SuperFunction.Instance.AddEventListener<RaycastHit, int>(gameObject, SuperRaycast.GetMouseExit, GetMouseExit);
+		SuperFunction.Instance.AddEventListener(gameObject, SuperRaycast.GetMouseExit, GetMouseExit);
 
         //		SuperFunction.Instance.AddEventListener (gameObject, SuperRaycast.GetMouseClick, GetMouseClick);
     }
@@ -56,12 +56,12 @@ public class MapUnit : MonoBehaviour
     //		SendMessageUpwards ("MapUnitUp", this, SendMessageOptions.DontRequireReceiver);
     //	}
 
-	private void GetMouseEnter(int _index, RaycastHit _hit, int _hitIndex)
+	private void GetMouseEnter(int _index)
     {
         SendMessageUpwards("MapUnitEnter", this, SendMessageOptions.DontRequireReceiver);
     }
 
-	private void GetMouseExit(int _index, RaycastHit _hit, int _hitIndex)
+	private void GetMouseExit(int _index)
     {
         SendMessageUpwards("MapUnitExit", this, SendMessageOptions.DontRequireReceiver);
     }
