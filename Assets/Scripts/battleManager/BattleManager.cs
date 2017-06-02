@@ -10,6 +10,7 @@ using screenScale;
 using superFunction;
 using publicTools;
 using superGraphicRaycast;
+using stepTools;
 
 public class BattleManager : MonoBehaviour
 {
@@ -445,38 +446,38 @@ public class BattleManager : MonoBehaviour
 
     private void CreateCards()
     {
-        Dictionary<int, int> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
-
-        Dictionary<int, int>.Enumerator enumerator = tmpCardDic.GetEnumerator();
+		List<KeyValuePair<int, int>> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
         int index = 0;
 
-        while (enumerator.MoveNext())
-        {
-            if (battle.summon.ContainsKey(enumerator.Current.Key))
-            {
-                continue;
-            }
+		for (int i = 0; i < tmpCardDic.Count; i++) {
 
-            GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroCard"));
+			KeyValuePair<int,int> pair = tmpCardDic [i];
 
-            HeroCard hero = go.GetComponent<HeroCard>();
+			if (battle.summon.ContainsKey(pair.Key))
+			{
+				continue;
+			}
 
-            hero.SetFrameVisible(false);
+			GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroCard"));
 
-            hero.Init(enumerator.Current.Key, enumerator.Current.Value);
+			HeroCard hero = go.GetComponent<HeroCard>();
 
-            cardDic.Add(enumerator.Current.Key, hero);
+			hero.SetFrameVisible(false);
 
-            go.transform.SetParent(cardContainer, false);
+			hero.Init(pair.Key, pair.Value);
 
-            float cardWidth = (go.transform as RectTransform).sizeDelta.x;
-            float cardHeight = (go.transform as RectTransform).sizeDelta.y;
+			cardDic.Add(pair.Key, hero);
 
-            (go.transform as RectTransform).anchoredPosition = new Vector2(-0.5f * cardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * cardContainer.rect.height + cardHeight * 0.5f);
+			go.transform.SetParent(cardContainer, false);
 
-            index++;
-        }
+			float cardWidth = (go.transform as RectTransform).sizeDelta.x;
+			float cardHeight = (go.transform as RectTransform).sizeDelta.y;
+
+			(go.transform as RectTransform).anchoredPosition = new Vector2(-0.5f * cardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * cardContainer.rect.height + cardHeight * 0.5f);
+
+			index++;
+		}
     }
 
     private void CreateSummonHeros()
@@ -860,7 +861,21 @@ public class BattleManager : MonoBehaviour
 
     private HeroBattle AddCardToMap(int _cardUid, int _pos)
     {
-        int cardID = (battle.clientIsMine ? battle.mHandCards : battle.oHandCards)[_cardUid];
+		int cardID = -1;
+
+		List<KeyValuePair<int, int>> list = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
+
+		for (int i = 0; i < list.Count; i++) {
+
+			KeyValuePair<int, int> pair = list [i];
+
+			if (pair.Key == _cardUid) {
+
+				cardID = pair.Value;
+
+				break;
+			}
+		}
 
         GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 
@@ -930,7 +945,7 @@ public class BattleManager : MonoBehaviour
 
 	private void CreateAiAction(){
 
-		HeroAi.Start(battle, battle.clientIsMine, 0.2);
+//		HeroAi.Start(battle, battle.clientIsMine, 0.2);
 		
 		ClearMoves();
 		
@@ -970,52 +985,52 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void DoAction(IEnumerator<IBattleVO> _enumerator)
+	private void DoAction(StepTools<IBattleVO> _step)
     {
         RefreshData();
 
-        DoActionReal(_enumerator);
+		DoActionReal(_step);
     }
 
-	private void DoActionReal(IEnumerator<IBattleVO> _enumerator)
+	private void DoActionReal(StepTools<IBattleVO> _step)
     {
-        if (_enumerator.MoveNext())
-        {
-            Action del = delegate ()
-            {
-                DoActionReal(_enumerator);
-            };
+		if (!_step.isOver) {
 
-			IBattleVO vo = _enumerator.Current;
+			Action del = delegate ()
+			{
+				DoActionReal(_step);
+			};
 
-            if (vo is BattleShootVO)
-            {
-                DoShoot((BattleShootVO)(vo), del);
-            }
-            else if (vo is BattleMoveVO)
-            {
-                DoMove((BattleMoveVO)vo, del);
-            }
-            else if (vo is BattleRushVO)
-            {
-                DoRush((BattleRushVO)vo, del);
-            }
-            else if (vo is BattleAttackVO)
-            {
-                DoAttack((BattleAttackVO)vo, del);
-            }
-            else if (vo is BattleDeathVO)
-            {
-                DoDie((BattleDeathVO)vo, del);
-            }
-            else if (vo is BattleSummonVO)
-            {
-                DoSummon((BattleSummonVO)vo, del);
-            }
-            else if (vo is BattleChangeVO)
-            {
-                DoChange((BattleChangeVO)vo, del);
-            }
+			IBattleVO vo = _step.Step();
+
+			if (vo is BattleShootVO)
+			{
+				DoShoot((BattleShootVO)(vo), del);
+			}
+			else if (vo is BattleMoveVO)
+			{
+				DoMove((BattleMoveVO)vo, del);
+			}
+			else if (vo is BattleRushVO)
+			{
+				DoRush((BattleRushVO)vo, del);
+			}
+			else if (vo is BattleAttackVO)
+			{
+				DoAttack((BattleAttackVO)vo, del);
+			}
+			else if (vo is BattleDeathVO)
+			{
+				DoDie((BattleDeathVO)vo, del);
+			}
+			else if (vo is BattleSummonVO)
+			{
+				DoSummon((BattleSummonVO)vo, del);
+			}
+			else if (vo is BattleChangeVO)
+			{
+				DoChange((BattleChangeVO)vo, del);
+			}
 			else if(vo is BattleAddCardsVO)
 			{
 				DoAddCards((BattleAddCardsVO)vo,del);
@@ -1036,7 +1051,7 @@ public class BattleManager : MonoBehaviour
 			{
 				DoRecoverShield((BattleRecoverShieldVO)vo,del);
 			}
-        }
+		}
     }
 
     private void DoSummon(BattleSummonVO _vo, Action _del)
