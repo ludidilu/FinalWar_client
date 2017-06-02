@@ -987,7 +987,7 @@ public class BattleManager : MonoBehaviour
 
 	private void DoAction(StepTools<IBattleVO> _step)
     {
-        RefreshData();
+//        RefreshData();
 
 		DoActionReal(_step);
     }
