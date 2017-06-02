@@ -273,6 +273,35 @@ public class BattleManager : MonoBehaviour
 		}
     }
 
+	private void RefreshDataBeforeBattle(){
+
+		heroDetail.Hide();
+
+		ClearMapUnits();
+
+		ClearCards();
+
+		ClearSummonHeros();
+
+		ClearHeros();
+
+		ClearMoves();
+
+		CreateMapPanel();
+
+		CreateCards();
+
+//		CreateSummonHeros();
+
+		CreateHeros();
+
+//		CreateMoves();
+
+		CreateMoneyTf();
+
+		RefreshTouchable(battle.GetClientCanAction());
+	}
+
     public void QuitBattle()
     {
         battle.ClientRequestQuitBattle();
@@ -987,7 +1016,7 @@ public class BattleManager : MonoBehaviour
 
 	private void DoAction(StepTools<IBattleVO> _step)
     {
-//        RefreshData();
+		RefreshDataBeforeBattle ();
 
 		DoActionReal(_step);
     }
