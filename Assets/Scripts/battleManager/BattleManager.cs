@@ -994,63 +994,49 @@ public class BattleManager : MonoBehaviour
 
 	private void DoActionReal(StepTools<IBattleVO> _step)
     {
-		if (!_step.isOver) {
+		IBattleVO vo = _step.Step();
 
-			Action del = delegate ()
-			{
-				DoActionReal(_step);
-			};
+		if (_step.isOver) {
 
-			IBattleVO vo = _step.Step();
+			battle.ClientEndBattle ();
 
-			if (vo is BattleShootVO)
-			{
-				DoShoot((BattleShootVO)(vo), del);
-			}
-			else if (vo is BattleMoveVO)
-			{
-				DoMove((BattleMoveVO)vo, del);
-			}
-			else if (vo is BattleRushVO)
-			{
-				DoRush((BattleRushVO)vo, del);
-			}
-			else if (vo is BattleAttackVO)
-			{
-				DoAttack((BattleAttackVO)vo, del);
-			}
-			else if (vo is BattleDeathVO)
-			{
-				DoDie((BattleDeathVO)vo, del);
-			}
-			else if (vo is BattleSummonVO)
-			{
-				DoSummon((BattleSummonVO)vo, del);
-			}
-			else if (vo is BattleChangeVO)
-			{
-				DoChange((BattleChangeVO)vo, del);
-			}
-			else if(vo is BattleAddCardsVO)
-			{
-				DoAddCards((BattleAddCardsVO)vo,del);
-			}
-			else if(vo is BattleDelCardsVO)
-			{
-				DoDelCards((BattleDelCardsVO)vo,del);
-			}
-			else if(vo is BattleMoneyChangeVO)
-			{
-				DoMoneyChange((BattleMoneyChangeVO)vo,del);
-			}
-			else if(vo is BattleLevelUpVO)
-			{
-				DoLevelUp((BattleLevelUpVO)vo,del);
-			}
-			else if(vo is BattleRecoverShieldVO)
-			{
-				DoRecoverShield((BattleRecoverShieldVO)vo,del);
-			}
+			RefreshData ();
+
+			return;
+		}
+
+		Action del = delegate ()
+		{
+			DoActionReal(_step);
+		};
+
+		if (vo is BattleShootVO) {
+			DoShoot ((BattleShootVO)(vo), del);
+		} else if (vo is BattleMoveVO) {
+			DoMove ((BattleMoveVO)vo, del);
+		} else if (vo is BattleRushVO) {
+			DoRush ((BattleRushVO)vo, del);
+		} else if (vo is BattleAttackVO) {
+			DoAttack ((BattleAttackVO)vo, del);
+		} else if (vo is BattleDeathVO) {
+			DoDie ((BattleDeathVO)vo, del);
+		} else if (vo is BattleSummonVO) {
+			DoSummon ((BattleSummonVO)vo, del);
+		} else if (vo is BattleChangeVO) {
+			DoChange ((BattleChangeVO)vo, del);
+		} else if (vo is BattleAddCardsVO) {
+			DoAddCards ((BattleAddCardsVO)vo, del);
+		} else if (vo is BattleDelCardsVO) {
+			DoDelCards ((BattleDelCardsVO)vo, del);
+		} else if (vo is BattleMoneyChangeVO) {
+			DoMoneyChange ((BattleMoneyChangeVO)vo, del);
+		} else if (vo is BattleLevelUpVO) {
+			DoLevelUp ((BattleLevelUpVO)vo, del);
+		} else if (vo is BattleRecoverShieldVO) {
+			DoRecoverShield ((BattleRecoverShieldVO)vo, del);
+		} else {
+
+			throw new Exception ("aaaaaa:" + vo);
 		}
     }
 
