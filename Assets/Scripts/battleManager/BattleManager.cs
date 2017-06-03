@@ -297,7 +297,9 @@ public class BattleManager : MonoBehaviour
 
 //		CreateMoves();
 
-		CreateMoneyTf();
+//		CreateMoneyTf();
+
+		CreateMoneyTfOrigin ();
 
 		RefreshTouchable(battle.GetClientCanAction());
 	}
@@ -541,6 +543,17 @@ public class BattleManager : MonoBehaviour
 
 		moneyTf.text = battle.ClientGetMoney().ToString();
     }
+
+	private void CreateMoneyTfOrigin()
+	{
+		if (!moneyTf.gameObject.activeSelf)
+		{
+
+			moneyTf.gameObject.SetActive(true);
+		}
+
+		moneyTf.text = battle.clientIsMine ? battle.mMoney : battle.oMoney;
+	}
 
     private void CreateMoves()
     {
