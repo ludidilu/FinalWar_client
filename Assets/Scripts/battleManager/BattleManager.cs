@@ -1098,7 +1098,7 @@ public class BattleManager : MonoBehaviour
 
     private void DoSummon(BattleSummonVO _vo, Action _del)
     {
-        CreateMoneyTf();
+        CreateMoneyTfOrigin();
 
         Hero hero = battle.heroMapDic[_vo.pos];
 
