@@ -10,7 +10,7 @@ using screenScale;
 using superFunction;
 using publicTools;
 using superGraphicRaycast;
-using stepTools;
+using superEnumerator;
 
 public class BattleManager : MonoBehaviour
 {
@@ -475,13 +475,15 @@ public class BattleManager : MonoBehaviour
 
     private void CreateCards()
     {
-		List<KeyValuePair<int, int>> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
+		Dictionary<int, int> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
         int index = 0;
 
-		for (int i = 0; i < tmpCardDic.Count; i++) {
+		Dictionary<int, int>.Enumerator enumerator = tmpCardDic.GetEnumerator ();
 
-			KeyValuePair<int,int> pair = tmpCardDic [i];
+		while(enumerator.MoveNext()){
+			
+			KeyValuePair<int,int> pair = enumerator.Current;
 
 			if (battle.summon.ContainsKey(pair.Key))
 			{
@@ -890,21 +892,9 @@ public class BattleManager : MonoBehaviour
 
     private HeroBattle AddCardToMap(int _cardUid, int _pos)
     {
-		int cardID = -1;
+		Dictionary<int, int> list = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
-		List<KeyValuePair<int, int>> list = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
-
-		for (int i = 0; i < list.Count; i++) {
-
-			KeyValuePair<int, int> pair = list [i];
-
-			if (pair.Key == _cardUid) {
-
-				cardID = pair.Value;
-
-				break;
-			}
-		}
+		int cardID = list[_cardUid];
 
         GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 
@@ -1014,58 +1004,82 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-	private void DoAction(StepTools<IBattleVO> _step)
+	private void DoAction(SuperEnumerator<IBattleVO> _step)
     {
 		RefreshDataBeforeBattle ();
 
 		DoActionReal(_step);
     }
 
-	private void DoActionReal(StepTools<IBattleVO> _step)
+	private void DoActionReal(SuperEnumerator<IBattleVO> _step)
     {
-		IBattleVO vo = _step.Step();
+		if (_step.MoveNext ()) {
 
-		if (_step.isOver) {
+			IBattleVO vo = _step.Current;
+
+			Action del = delegate ()
+			{
+				DoActionReal(_step);
+			};
+
+			if (vo is BattleShootVO) {
+				
+				DoShoot ((BattleShootVO)(vo), del);
+
+			} else if (vo is BattleMoveVO) {
+				
+				DoMove ((BattleMoveVO)vo, del);
+
+			} else if (vo is BattleRushVO) {
+				
+				DoRush ((BattleRushVO)vo, del);
+
+			} else if (vo is BattleAttackVO) {
+				
+				DoAttack ((BattleAttackVO)vo, del);
+
+			} else if (vo is BattleDeathVO) {
+				
+				DoDie ((BattleDeathVO)vo, del);
+
+			} else if (vo is BattleSummonVO) {
+				
+				DoSummon ((BattleSummonVO)vo, del);
+
+			} else if (vo is BattleChangeVO) {
+				
+				DoChange ((BattleChangeVO)vo, del);
+
+			} else if (vo is BattleAddCardsVO) {
+				
+				DoAddCards ((BattleAddCardsVO)vo, del);
+
+			} else if (vo is BattleDelCardsVO) {
+				
+				DoDelCards ((BattleDelCardsVO)vo, del);
+
+			} else if (vo is BattleMoneyChangeVO) {
+				
+				DoMoneyChange ((BattleMoneyChangeVO)vo, del);
+
+			} else if (vo is BattleLevelUpVO) {
+				
+				DoLevelUp ((BattleLevelUpVO)vo, del);
+
+			} else if (vo is BattleRecoverShieldVO) {
+				
+				DoRecoverShield ((BattleRecoverShieldVO)vo, del);
+
+			} else {
+
+				throw new Exception ("vo type error:" + vo);
+			}
+
+		} else {
 
 			battle.ClientEndBattle ();
 
 			RefreshData ();
-
-			return;
-		}
-
-		Action del = delegate ()
-		{
-			DoActionReal(_step);
-		};
-
-		if (vo is BattleShootVO) {
-			DoShoot ((BattleShootVO)(vo), del);
-		} else if (vo is BattleMoveVO) {
-			DoMove ((BattleMoveVO)vo, del);
-		} else if (vo is BattleRushVO) {
-			DoRush ((BattleRushVO)vo, del);
-		} else if (vo is BattleAttackVO) {
-			DoAttack ((BattleAttackVO)vo, del);
-		} else if (vo is BattleDeathVO) {
-			DoDie ((BattleDeathVO)vo, del);
-		} else if (vo is BattleSummonVO) {
-			DoSummon ((BattleSummonVO)vo, del);
-		} else if (vo is BattleChangeVO) {
-			DoChange ((BattleChangeVO)vo, del);
-		} else if (vo is BattleAddCardsVO) {
-			DoAddCards ((BattleAddCardsVO)vo, del);
-		} else if (vo is BattleDelCardsVO) {
-			DoDelCards ((BattleDelCardsVO)vo, del);
-		} else if (vo is BattleMoneyChangeVO) {
-			DoMoneyChange ((BattleMoneyChangeVO)vo, del);
-		} else if (vo is BattleLevelUpVO) {
-			DoLevelUp ((BattleLevelUpVO)vo, del);
-		} else if (vo is BattleRecoverShieldVO) {
-			DoRecoverShield ((BattleRecoverShieldVO)vo, del);
-		} else {
-
-			throw new Exception ("aaaaaa:" + vo);
 		}
     }
 
