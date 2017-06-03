@@ -552,7 +552,7 @@ public class BattleManager : MonoBehaviour
 			moneyTf.gameObject.SetActive(true);
 		}
 
-		moneyTf.text = battle.clientIsMine ? battle.mMoney : battle.oMoney;
+		moneyTf.text = battle.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
 	}
 
     private void CreateMoves()
