@@ -6,6 +6,7 @@
 	public int cost;
 	public int heroType;
 	public int attack;
+	public int attackTimes;
 	public int skill;
 
 	public HeroTypeSDS heroTypeFix;
@@ -38,6 +39,11 @@
 	public int GetAttack()
 	{
 		return attack;
+	}
+
+	public int GetAttackTimes()
+	{
+		return attackTimes;
 	}
 
 	public int GetSkill()
