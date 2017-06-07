@@ -7,7 +7,8 @@ using FinalWar;
 
 public class HeroBattle : HeroBase
 {
-
+	[SerializeField]
+	private Image body;
 
     [SerializeField]
     public Transform moveTrans;
@@ -45,6 +46,14 @@ public class HeroBattle : HeroBase
         }
     }
 
+	public bool canAction
+	{
+		get
+		{
+			return hero.canAction == 0;
+		}
+	}
+
     public void Init(int _id)
     {
         HeroSDS heroSDS = StaticData.GetData<HeroSDS>(_id);
@@ -71,19 +80,11 @@ public class HeroBattle : HeroBase
 
         attack.text = sds.GetAttack().ToString();
 
-        RefreshHp();
+		hp.text = hero.nowHp.ToString();
 
-        RefreshShield();
-    }
+		shield.text = hero.nowShield.ToString();
 
-    public void RefreshHp()
-    {
-        hp.text = hero.nowHp.ToString();
-    }
-
-    public void RefreshShield()
-    {
-        shield.text = hero.nowShield.ToString();
+		body.color = hero.canAction == 0 ? Color.white : Color.grey;
     }
 
     public void Shock(List<Vector3> _targets, AnimationCurve _curve, float _shockDis, int _shieldDamage, int _hpDamage)
@@ -138,9 +139,7 @@ public class HeroBattle : HeroBase
 
         ShowHud(str, Color.red, null);
 
-        RefreshShield();
-
-        RefreshHp();
+		RefreshAll();
     }
 
     public void ShowHud(string _str, Color _color, Action _callBack)

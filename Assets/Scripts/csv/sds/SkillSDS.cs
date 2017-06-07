@@ -1,15 +1,21 @@
 ﻿public partial class SkillSDS : CsvBase, ISkillSDS
 {
+	public bool isStop;
 	public int skillEffect;
-	public int[] skillDatas;
+	public int skillData;
+
+	public bool GetIsStop()
+	{
+		return isStop;
+	}
 
 	public SkillEffect GetSkillEffect()
 	{
 		return (SkillEffect)skillEffect;
 	}
 
-	public int[] GetSkillDatas()
+	public int GetSkillData()
 	{
-		return skillDatas;
+		return skillData;
 	}
 }

@@ -767,7 +767,7 @@ public class BattleManager : MonoBehaviour
 
             if (GetNowChooseHero() == null)
             {
-                SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine);
+				SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
 
                 GetNowChooseHero().SetFrameVisible(true);
             }
@@ -777,7 +777,7 @@ public class BattleManager : MonoBehaviour
                 {
                     ClearNowChooseHero();
 
-                    SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine);
+					SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
 
                     GetNowChooseHero().SetFrameVisible(true);
                 }
@@ -1388,9 +1388,7 @@ public class BattleManager : MonoBehaviour
 
             int shieldChange = _vo.shieldChange[i];
 
-            hero.RefreshShield();
-
-            hero.RefreshHp();
+			hero.RefreshAll();
 
 			string str = string.Empty;
 
@@ -1480,7 +1478,7 @@ public class BattleManager : MonoBehaviour
 
 		HeroBattle hero = heroDic[_vo.pos];
 		
-		hero.RefreshShield ();
+		hero.RefreshAll ();
 		
 		_del ();
 	}
