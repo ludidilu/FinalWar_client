@@ -1131,7 +1131,11 @@ public class BattleManager : MonoBehaviour
 
         for (int i = 0; i < _vo.shooters.Count; i++)
         {
-            shooters.Add(heroDic[_vo.shooters[i]]);
+			HeroBattle hero = heroDic [_vo.shooters [i]];
+
+			hero.RefreshAll ();
+
+			shooters.Add(hero);
         }
 
         BattleControl.Instance.Shoot(shooters, heroDic[_vo.stander], _vo.shieldDamage, _vo.hpDamage, _del);
