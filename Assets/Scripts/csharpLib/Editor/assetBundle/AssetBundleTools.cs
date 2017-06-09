@@ -194,6 +194,7 @@ public class AssetBundleTools{
 			for (int i = 0; i < assetNames.Count; i++) {
 				
 				string name = assetNames[i];
+				string abName = assetBundleNames[i];
 				UnityEngine.Object obj = assets[i];
 				List<string> list = result[name];
 				
@@ -207,7 +208,7 @@ public class AssetBundleTools{
 							
 							string assetBundleName = assetBundleNames[assets.IndexOf(dd)];
 							
-							if(!list.Contains(assetBundleName)){
+							if(assetBundleName != abName && !list.Contains(assetBundleName)){
 								
 								list.Add(assetBundleName);
 							}

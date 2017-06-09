@@ -18,6 +18,13 @@
 
 					m_comment += skillSDS.comment + "\n\n";
 				}
+
+				for (int i = 0; i < auras.Length; i++) {
+
+					AuraSDS auraSDS = StaticData.GetData<AuraSDS> (auras [i]);
+
+					m_comment += auraSDS.comment + "\n\n";
+				}
 			}
 
 			return m_comment;
