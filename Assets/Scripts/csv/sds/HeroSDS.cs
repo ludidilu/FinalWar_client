@@ -8,6 +8,7 @@
 	public int attack;
 	public int attackTimes;
 	public int skill;
+	public int[] auras;
 
 	public HeroTypeSDS heroTypeFix;
 
@@ -49,6 +50,11 @@
 	public int GetSkill()
 	{
 		return skill;
+	}
+
+	public int[] GetAuras()
+	{
+		return auras;
 	}
 
 	public override void Fix()
