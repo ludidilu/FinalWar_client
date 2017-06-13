@@ -32,7 +32,7 @@ namespace assetBundleManager{
 			dic = new Dictionary<string, AssetBundleManagerUnit>();
 		}
 
-		public void Load(string _name,Action<AssetBundle,string> _callBack){
+		public void Load(string _name,Action<AssetBundle> _callBack){
 
 			AssetBundleManagerUnit unit;
 

@@ -16,7 +16,7 @@ namespace sceneStart{
 			GameObjectFactory.Instance.GetGameObject(prefabPath,GetGo);
 		}
 
-		private void GetGo(GameObject _go,string _msg){
+		private void GetGo(GameObject _go){
 
 			GameObject.Destroy(gameObject);
 		}

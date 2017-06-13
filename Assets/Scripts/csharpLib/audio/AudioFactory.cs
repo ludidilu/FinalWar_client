@@ -24,12 +24,12 @@ namespace audio{
 
 		private Dictionary<string,AudioFactoryUnit> dic = new Dictionary<string, AudioFactoryUnit>();
 
-		public AudioClip GetClip(string _name,Action<AudioClip,string> _callBack){
+		public AudioClip GetClip(string _name,Action<AudioClip> _callBack){
 
 			return GetClip(_name,_callBack,true);
 		}
 
-		public AudioClip GetClip(string _name,Action<AudioClip,string> _callBack,bool _willDispose){
+		public AudioClip GetClip(string _name,Action<AudioClip> _callBack,bool _willDispose){
 
 			AudioFactoryUnit unit;
 			

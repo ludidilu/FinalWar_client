@@ -29,7 +29,7 @@ namespace animatorFactoty{
 			dic = new Dictionary<string, AnimatorFactoryUnit>();
 		}
 
-		public RuntimeAnimatorController GetAnimator(string _path,Action<RuntimeAnimatorController,string> _callBack){
+		public RuntimeAnimatorController GetAnimator(string _path,Action<RuntimeAnimatorController> _callBack){
 
 			AnimatorFactoryUnit unit;
 			

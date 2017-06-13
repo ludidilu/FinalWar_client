@@ -12,17 +12,17 @@ namespace assetBundleManager{
 		private AssetBundle assetBundle;
 		private string name;
 		private int type = -1;
-		private List<Action<AssetBundle,string>> callBackList;
+		private List<Action<AssetBundle>> callBackList;
 		private int useTimes;
 
 		public AssetBundleManagerUnit(string _name){
 
 			name = _name;
 
-			callBackList = new List<Action<AssetBundle,string>> ();
+			callBackList = new List<Action<AssetBundle>> ();
 		}
 
-		public void Load(Action<AssetBundle,string> _callBack){
+		public void Load(Action<AssetBundle> _callBack){
 
 			useTimes++;
 
@@ -42,7 +42,7 @@ namespace assetBundleManager{
 
 			} else {
 
-				_callBack (assetBundle,string.Empty);
+				_callBack (assetBundle);
 			}
 		}
 
@@ -56,14 +56,14 @@ namespace assetBundleManager{
 
                 for (int i = 0; i < callBackList.Count; i++)
                 {
-                    callBackList[i](assetBundle, string.Empty);
+                    callBackList[i](assetBundle);
                 }
 
 			}else{
 
                 for (int i = 0; i < callBackList.Count; i++)
                 {
-                    callBackList[i](null, "AssetBundle can not be found:" + name);
+                    callBackList[i](null);
                 }
 			}
 

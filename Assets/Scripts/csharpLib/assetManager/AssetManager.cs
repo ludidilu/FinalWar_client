@@ -125,7 +125,7 @@ namespace assetManager
 			AssetManagerDataFactory.SetData(_bw,dataDic);
 		}
 
-		public T GetAsset<T> (string _name, Action<T,string> _callBack) where T:UnityEngine.Object
+		public T GetAsset<T> (string _name, Action<T> _callBack) where T:UnityEngine.Object
 		{
 
 #if USE_ASSETBUNDLE
@@ -168,7 +168,7 @@ namespace assetManager
 #endif
 		}
 
-		public T[] GetAsset<T> (string _name, Action<T[],string> _callBack) where T:UnityEngine.Object
+		public T[] GetAsset<T> (string _name, Action<T[]> _callBack) where T:UnityEngine.Object
 		{
 #if USE_ASSETBUNDLE
 			

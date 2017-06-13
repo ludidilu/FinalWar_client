@@ -143,7 +143,7 @@ namespace audio
 			AudioFactory.Instance.GetClip (_path, GetMusicClip, false);
 		}
 
-		private void GetMusicClip (AudioClip _clip,string _msg)
+		private void GetMusicClip (AudioClip _clip)
 		{
 			musicSource.clip = _clip;
 
@@ -161,7 +161,7 @@ namespace audio
 			}
 		}
 
-		private void GetEffectClip (AudioClip _clip,string _msg)
+		private void GetEffectClip (AudioClip _clip)
 		{
 			script.PlayEffect (_clip);
 		}

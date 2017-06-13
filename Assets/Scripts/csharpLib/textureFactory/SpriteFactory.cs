@@ -35,7 +35,7 @@ namespace textureFactory{
 		
 		internal static bool SetSpriteReal(Image _img,ImageScript _script,string _name,bool _doNotDispose,bool _alphaIn,Action _loadOverCallBack){
 
-			Action<Sprite,string> callBack = delegate(Sprite obj,string _msg) {
+			Action<Sprite> callBack = delegate(Sprite obj) {
 				
 				GetSprite(_img,_script,_name,obj,_loadOverCallBack);
 			};
@@ -53,7 +53,7 @@ namespace textureFactory{
 						ChangeImageAlpha(_img,obj);
 					};
 					
-					Action<Sprite,string> startTween = delegate(Sprite obj,string _msg) {
+					Action<Sprite> startTween = delegate(Sprite obj) {
 						
 						SuperTween.Instance.To(0,1,0.1f,tween,null);
 					};

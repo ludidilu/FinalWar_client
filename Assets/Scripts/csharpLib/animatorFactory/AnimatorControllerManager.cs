@@ -32,7 +32,7 @@ namespace animatorFactoty{
 
 		public static void Init(Action _callBack){
 
-			Action<AnimatorControllerManager,string> callBack = delegate(AnimatorControllerManager obj,string _msg) {
+			Action<AnimatorControllerManager> callBack = delegate(AnimatorControllerManager obj) {
 
 				LoadOK (obj,_callBack);
 			};

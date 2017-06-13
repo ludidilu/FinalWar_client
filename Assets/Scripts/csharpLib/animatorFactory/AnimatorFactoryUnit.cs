@@ -13,7 +13,7 @@ namespace animatorFactoty{
 
 		private int type = -1;
 
-		private List<Action<RuntimeAnimatorController,string>> callBackList = new List<Action<RuntimeAnimatorController,string>> ();
+		private List<Action<RuntimeAnimatorController>> callBackList = new List<Action<RuntimeAnimatorController>> ();
 
 		public int useNum;
 
@@ -22,7 +22,7 @@ namespace animatorFactoty{
 			name = _name;
 		}
 
-		public RuntimeAnimatorController GetAnimator (Action<RuntimeAnimatorController,string> _callBack)
+		public RuntimeAnimatorController GetAnimator (Action<RuntimeAnimatorController> _callBack)
 		{
 			if(type == -1){
 
@@ -42,21 +42,14 @@ namespace animatorFactoty{
 
 				if(_callBack != null){
 
-					if(data != null){
-
-						_callBack(data,string.Empty);
-
-					}else{
-
-						_callBack(null,"AnimatorController load fail:" + name);
-					}
+					_callBack(data);
 				}
 
 				return data;
 			}
 		}
 
-		private void GetAsset(RuntimeAnimatorController _data,string _msg){
+		private void GetAsset(RuntimeAnimatorController _data){
 
 			data = _data;
 
@@ -64,20 +57,10 @@ namespace animatorFactoty{
 
 			type = 1;
 
-			if(_data != null){
-
-                for (int i = 0; i < callBackList.Count; i++)
-                {
-                    callBackList[i](data, string.Empty);
-                }
-
-			}else{
-
-                for (int i = 0; i < callBackList.Count; i++)
-                {
-                    callBackList[i](null, "AnimatorController load fail:" + name);
-                }
-			}
+            for (int i = 0; i < callBackList.Count; i++)
+            {
+                callBackList[i](data);
+            }
 
 			callBackList.Clear();
 		}

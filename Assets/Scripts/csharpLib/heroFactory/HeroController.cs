@@ -337,7 +337,7 @@ namespace heroFactory{
 			GameObjectFactory.Instance.GetGameObject("Assets/Arts/battle/BattleTool/ShadowOne.prefab", ShadowLoadOK); 
 		}
 		
-		private void ShadowLoadOK(GameObject _shadow,string _msg){
+		private void ShadowLoadOK(GameObject _shadow){
 			
 			Shadow = _shadow;
 			Shadow.transform.eulerAngles = new Vector3(90, 0, 0);

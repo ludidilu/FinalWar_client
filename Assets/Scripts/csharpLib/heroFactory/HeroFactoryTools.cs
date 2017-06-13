@@ -33,7 +33,7 @@ namespace heroFactory{
 			int loadNum = CALLBACK_WHEN_ANIMATOR_LOADED ? 3 : 2;//预先加的1  主体皮肤
 			
 			//加载AnimatorController
-			Action<RuntimeAnimatorController,string> callBack2 = delegate(RuntimeAnimatorController result,string _msg) {
+			Action<RuntimeAnimatorController> callBack2 = delegate(RuntimeAnimatorController result) {
 				
 				animatorController = result;
 
@@ -48,7 +48,7 @@ namespace heroFactory{
 			AnimatorFactory.Instance.GetAnimator(_animatorControllerPath, callBack2);
 			
 			//加载主体
-			Action<GameObject,string> callBack = delegate(GameObject _hero,string _msg) {
+			Action<GameObject> callBack = delegate(GameObject _hero) {
 				
 				PublicTools.SetGameObjectVisible(_hero,false);
 				
@@ -77,7 +77,7 @@ namespace heroFactory{
 
 					loadNum++;
 					
-					Action<GameObject,string> weaponCallBack = delegate(GameObject _go,string _msg) {
+					Action<GameObject> weaponCallBack = delegate(GameObject _go) {
 						
 						PublicTools.SetGameObjectVisible(_go,false);
 						
@@ -96,7 +96,7 @@ namespace heroFactory{
 						
 						int particleIndex = i;
 						
-						Action<GameObject,string> mainHandWeaponCallBack = delegate(GameObject _go,string _msg) {
+						Action<GameObject> mainHandWeaponCallBack = delegate(GameObject _go) {
 							
 							PublicTools.SetGameObjectVisible(_go,false);
 							
@@ -113,7 +113,7 @@ namespace heroFactory{
 
 					loadNum++;
 					
-					Action<GameObject,string> weaponCallBack = delegate(GameObject _go,string _msg) {
+					Action<GameObject> weaponCallBack = delegate(GameObject _go) {
 						
 						PublicTools.SetGameObjectVisible(_go,false);
 						
@@ -132,7 +132,7 @@ namespace heroFactory{
 						
 						int particleIndex = i;
 						
-						Action<GameObject,string> offHandWeaponCallBack = delegate(GameObject _go,string _msg) {
+						Action<GameObject> offHandWeaponCallBack = delegate(GameObject _go) {
 							
 							PublicTools.SetGameObjectVisible(_go,false);
 							
@@ -180,7 +180,7 @@ namespace heroFactory{
 					
 					int tmpIndex = i;
 					
-					Action<GameObject,string> callBackx = delegate(GameObject _go,string _msg) {
+					Action<GameObject> callBackx = delegate(GameObject _go) {
 						
 						PublicTools.SetGameObjectVisible(_go,false);
 						

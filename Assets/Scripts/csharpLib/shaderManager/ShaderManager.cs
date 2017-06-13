@@ -34,7 +34,7 @@ public class ShaderManager{
 	
 	public void Init(Action _callBack){
 		
-		Action<AssetBundle,string> del = delegate(AssetBundle obj,string _msg) {
+		Action<AssetBundle> del = delegate(AssetBundle obj) {
 
 			if(assetBundle != null){
 
@@ -42,7 +42,7 @@ public class ShaderManager{
 
 			}else{
 
-				SuperDebug.Log("ShaderManager init fail:" + _msg);
+				SuperDebug.Log("ShaderManager init fail!");
 			}
 			
 			_callBack();

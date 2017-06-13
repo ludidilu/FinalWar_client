@@ -16,14 +16,14 @@ namespace audio{
 
 		public bool willDispose = true;
 
-		private List<Action<AudioClip,string>> callBackList = new List<Action<AudioClip,string>>();
+		private List<Action<AudioClip>> callBackList = new List<Action<AudioClip>>();
 
 		public AudioFactoryUnit(string _name){
 
 			name = _name;
 		}
 
-		public AudioClip GetClip(Action<AudioClip,string> _callBack,bool _willDispose){
+		public AudioClip GetClip(Action<AudioClip> _callBack,bool _willDispose){
 
 			willDispose = willDispose && _willDispose;
 
@@ -45,14 +45,14 @@ namespace audio{
 				
 				if(_callBack != null){
 					
-					_callBack(data,string.Empty);
+					_callBack(data);
 				}
 				
 				return data;
 			}
 		}
 
-		private void GetAsset(AudioClip _data,string _msg){
+		private void GetAsset(AudioClip _data){
 
 			data = _data;
 
@@ -62,11 +62,11 @@ namespace audio{
 
             for (int i = 0; i < callBackList.Count; i++)
             {
-                Action<AudioClip, string> callBack = callBackList[i];
+                Action<AudioClip> callBack = callBackList[i];
 
                 if (callBack != null)
                 {
-                    callBack(data, _msg);
+                    callBack(data);
                 }
             }
 

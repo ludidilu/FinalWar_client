@@ -1,17 +1,13 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using gameObjectFactory;
-using publicTools;
 using assetManager;
 
 using System;
-using superTween;
 
 namespace gameObjectFactory
 {
 
-	public class GameObjectFactoryUnit
+    public class GameObjectFactoryUnit
 	{
 		private string name;
 
@@ -21,26 +17,26 @@ namespace gameObjectFactory
 
 		public int useNum{private set;get;}
 
-		private List<Action<GameObject,string>> callBackList = new List<Action<GameObject, string>>();
+		private List<Action<GameObject>> callBackList = new List<Action<GameObject>>();
 
-		private List<Action<string>> callBackList2 = new List<Action<string>>();
+		private List<Action> callBackList2 = new List<Action>();
 
 		public GameObjectFactoryUnit (string _name)
 		{
 			name = _name;
 		}
 
-		public void PreloadGameObject(Action<string> _callBack){
+		public void PreloadGameObject(Action _callBack){
 
-			Action<string> callBack = delegate(string _msg) {
+			Action callBack = delegate() {
 
-				_callBack(_msg);
+				_callBack();
 			};
 
 			GetGameObject(callBack);
 		}
 
-		private void GetGameObject (Action<string> _callBack){
+		private void GetGameObject (Action _callBack){
 			
 			if (type == -1) {
 				
@@ -56,11 +52,11 @@ namespace gameObjectFactory
 				
 			} else {
 				
-				_callBack (string.Empty);
+				_callBack ();
 			}
 		}
 
-		public GameObject GetGameObject (Action<GameObject,string> _callBack){
+		public GameObject GetGameObject (Action<GameObject> _callBack){
 
 			if (type == -1) {
 
@@ -84,14 +80,14 @@ namespace gameObjectFactory
 
 				if (_callBack != null) {
 
-					_callBack (result,string.Empty);
+					_callBack (result);
 				}
 
 				return result;
 			}
 		}
 
-		private void GetResouece (GameObject _go,string _msg)
+		private void GetResouece (GameObject _go)
 		{
 			data = _go;
 
@@ -99,7 +95,7 @@ namespace gameObjectFactory
 
             for (int i = 0; i < callBackList.Count; i++)
             {
-                Action<GameObject, string> callBack = callBackList[i];
+                Action<GameObject> callBack = callBackList[i];
 
                 if (callBack != null)
                 {
@@ -107,11 +103,11 @@ namespace gameObjectFactory
                     {
                         GameObject result = GameObject.Instantiate(data);
 
-                        callBack(result, string.Empty);
+                        callBack(result);
                     }
                     else {
 
-                        callBack(null, _msg);
+                        callBack(null);
                     }
                 }
             }
@@ -120,11 +116,11 @@ namespace gameObjectFactory
 
             for (int i = 0; i < callBackList2.Count; i++)
             {
-                Action<string> callBack = callBackList2[i];
+                Action callBack = callBackList2[i];
 
                 if (callBack != null)
                 {
-                    callBack(string.Empty);
+                    callBack();
                 }
             }
 

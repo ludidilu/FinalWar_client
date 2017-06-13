@@ -1,154 +1,124 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using assetBundleManager;
-
 using System;
 
-namespace assetManager{
+namespace assetManager
+{
+    public class AssetManagerUnit<T> : IAssetManagerUnit where T : UnityEngine.Object
+    {
+        private AssetManagerData data;
 
-	public class AssetManagerUnit<T> : IAssetManagerUnit where T:UnityEngine.Object {
+        private T asset;
 
-		private AssetManagerData data;
-	
-		private int type = -1;
+        private int type = -1;
 
-        private List<Action<T, string>> callBackList = new List<Action<T, string>>();
-		private string name;
+        private List<Action<T>> callBackList = new List<Action<T>>();
+        private string name;
 
-		public AssetManagerUnit(string _name){
+        public AssetManagerUnit(string _name)
+        {
+            name = _name;
 
-			name = _name;
+            data = AssetManager.Instance.GetData(name);
+        }
 
-			data = AssetManager.Instance.GetData (name);
-		}
+        public void Load(Action<T> _callBack)
+        {
+            if (type == -1)
+            {
+                type = 0;
 
-		public void Load(Action<T,string> _callBack){
+                callBackList.Add(_callBack);
 
-			callBackList.Add (_callBack);
+                StartLoad();
+            }
+            else if (type == 0)
+            {
+                callBackList.Add(_callBack);
+            }
+            else
+            {
+                _callBack(asset);
+            }
+        }
 
-			if (type == -1) {
+        private void StartLoad()
+        {
+            int loadNum = 2;
 
-				type = 0;
+            AssetBundle assetBundle = null;
 
-				StartLoad();
-			}
-		}
+            Action<AssetBundle> callBack = delegate (AssetBundle _assetBundle)
+            {
+                assetBundle = _assetBundle;
 
-		private void StartLoad(){
+                GetAssetBundle(ref loadNum, assetBundle);
+            };
 
-			int loadNum = 2;
+            AssetBundleManager.Instance.Load(data.assetBundle, callBack);
 
-			AssetBundle assetBundle = null;
-
-			string msg = string.Empty;
-
-			Action<AssetBundle,string> callBack = delegate(AssetBundle _assetBundle,string _msg) {
-
-				assetBundle = _assetBundle;
-
-				if(!string.IsNullOrEmpty(_msg)){
-
-					msg += _msg;
-				}
-
-				GetAssetBundle(ref loadNum,assetBundle,msg);
-			};
-
-			AssetBundleManager.Instance.Load (data.assetBundle, callBack);
-
-			if (data.assetBundleDep != null) {
-
-				callBack = delegate(AssetBundle _assetBundle,string _msg) {
-
-					if(!string.IsNullOrEmpty(_msg)){
-						
-						msg += _msg;
-					}
-
-					GetAssetBundle(ref loadNum,assetBundle,msg);
-				};
-
-				for(int i = 0 ; i < data.assetBundleDep.Length ; i++){
-
-					loadNum++;
-
-					AssetBundleManager.Instance.Load (data.assetBundleDep[i], callBack);
-				}
-			}
-
-			GetAssetBundle(ref loadNum,assetBundle,msg);
-		}
-
-		private void GetAssetBundle(ref int _loadNum,AssetBundle _assetBundle,string _msg){
-
-			_loadNum--;
-
-			if (_loadNum == 0) {
-
-				if(string.IsNullOrEmpty(_msg)){
-
-					if(AssetManager.LOADASYNC){
-
-						AssetManager.Instance.script.Load<T>(name,_assetBundle,LoadOver);
-
-					}else{
-
-						string msg = string.Empty;
-
-						T asset = null;
-
-						try{
-
-							asset = _assetBundle.LoadAsset<T>(name);
-
-						}catch(Exception e){
-
-							msg = "Asset加载错误  name:" + name + "   msg:" + e.Message;
-
-						}finally{
-
-							LoadOver(asset,msg);
-						}
-					}
-
-				}else{
-
-					LoadOver(null,_msg);
-				}
-			}
-		}
-
-		private void LoadOver(T _asset,string _msg){
-
-			AssetBundleManager.Instance.Unload(data.assetBundle);
-
-			if(data.assetBundleDep != null){
-
-				for(int i = 0 ; i < data.assetBundleDep.Length ; i++){
-			
-					AssetBundleManager.Instance.Unload(data.assetBundleDep[i]);
-				}
-			}
-			
-			AssetManager.Instance.RemoveUnit(name);
-
-			if(_asset != null){
-
-                for (int i = 0; i < callBackList.Count; i++)
+            if (data.assetBundleDep != null)
+            {
+                callBack = delegate (AssetBundle _assetBundle)
                 {
-                    callBackList[i](_asset, string.Empty);
-                }
+                    GetAssetBundle(ref loadNum, assetBundle);
+                };
 
-			}else{
-
-                for (int i = 0; i < callBackList.Count; i++)
+                for (int i = 0; i < data.assetBundleDep.Length; i++)
                 {
-                    callBackList[i](null, _msg);
-                }
-			}
+                    loadNum++;
 
-			callBackList.Clear();
-		}
-	}
+                    AssetBundleManager.Instance.Load(data.assetBundleDep[i], callBack);
+                }
+            }
+
+            GetAssetBundle(ref loadNum, assetBundle);
+        }
+
+        private void GetAssetBundle(ref int _loadNum, AssetBundle _assetBundle)
+        {
+            _loadNum--;
+
+            if (_loadNum == 0)
+            {
+                if (AssetManager.LOADASYNC)
+                {
+                    AssetManager.Instance.script.Load<T>(name, _assetBundle, LoadOver);
+                }
+                else {
+
+                    T asset = _assetBundle.LoadAsset<T>(name);
+
+                    LoadOver(asset);
+                }
+            }
+        }
+
+        private void LoadOver(T _asset)
+        {
+            type = 1;
+
+            asset = _asset;
+
+            for (int i = 0; i < callBackList.Count; i++)
+            {
+                callBackList[i](_asset);
+            }
+
+            callBackList.Clear();
+
+            AssetBundleManager.Instance.Unload(data.assetBundle);
+
+            if (data.assetBundleDep != null)
+            {
+                for (int i = 0; i < data.assetBundleDep.Length; i++)
+                {
+                    AssetBundleManager.Instance.Unload(data.assetBundleDep[i]);
+                }
+            }
+
+            AssetManager.Instance.RemoveUnit(name);
+        }
+    }
 }

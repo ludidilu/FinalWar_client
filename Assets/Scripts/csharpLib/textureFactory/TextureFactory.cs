@@ -27,12 +27,12 @@ namespace textureFactory{
 		public Dictionary<string,ITextureFactoryUnit> dic  = new Dictionary<string, ITextureFactoryUnit>();
 		public Dictionary<string,ITextureFactoryUnit> dicWillDispose  = new Dictionary<string, ITextureFactoryUnit>();
 
-		public T GetTexture<T> (string _name,Action<T,string> _callBack,bool _doNotDispose) where T:UnityEngine.Object {
+		public T GetTexture<T> (string _name,Action<T> _callBack,bool _doNotDispose) where T:UnityEngine.Object {
 
 			return GetTexture(_name,0,_callBack,_doNotDispose);
 		}
 
-		public T GetTexture<T> (string _name,int _index,Action<T,string> _callBack,bool _doNotDispose) where T:UnityEngine.Object {
+		public T GetTexture<T> (string _name,int _index,Action<T> _callBack,bool _doNotDispose) where T:UnityEngine.Object {
 			
 			TextureFactoryUnit2<T> unit;
 			

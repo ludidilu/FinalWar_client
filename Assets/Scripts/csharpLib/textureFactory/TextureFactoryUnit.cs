@@ -14,14 +14,14 @@ namespace textureFactory{
 
 		private bool isDispose = false;
 
-		private List<Action<T,string>> callBackList = new List<Action<T, string>>();
+		private List<Action<T>> callBackList = new List<Action<T>>();
 
 		public TextureFactoryUnit(string _name){
 			
 			name = _name;
 		}
 
-		public T GetTexture(Action<T,string> _callBack){
+		public T GetTexture(Action<T> _callBack){
 
 			if (type == -1) {
 				
@@ -41,14 +41,14 @@ namespace textureFactory{
 
 				if(_callBack != null){
 
-					_callBack(data,string.Empty);
+					_callBack(data);
 				}
 
 				return data;
 			}
 		}
 
-		private void GetAsset(T _data,string _msg){
+		private void GetAsset(T _data){
 
 			if(isDispose){
 
@@ -63,12 +63,11 @@ namespace textureFactory{
 
             for (int i = 0; i < callBackList.Count; i++)
             {
-                Action<T, string> callBack = callBackList[i];
+                Action<T> callBack = callBackList[i];
 
                 if (callBack != null)
                 {
-
-                    callBack(data, string.Empty);
+                    callBack(data);
                 }
             }
 

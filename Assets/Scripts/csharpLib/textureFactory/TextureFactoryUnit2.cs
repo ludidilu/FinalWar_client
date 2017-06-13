@@ -14,20 +14,20 @@ namespace textureFactory{
 		
 		private bool isDispose = false;
 
-		private List<KeyValuePair<Action<T,string>,int>> callBackList = new List<KeyValuePair<Action<T, string>, int>>();
+		private List<KeyValuePair<Action<T>,int>> callBackList = new List<KeyValuePair<Action<T>, int>>();
 		
 		public TextureFactoryUnit2(string _name){
 			
 			name = _name;
 		}
 		
-		public T GetTexture(int _index,Action<T,string> _callBack){
+		public T GetTexture(int _index,Action<T> _callBack){
 			
 			if (type == -1) {
 				
 				type = 0;
 
-				callBackList.Add (new KeyValuePair<Action<T, string>, int>(_callBack,_index));
+				callBackList.Add (new KeyValuePair<Action<T>, int>(_callBack,_index));
 
 				T[] result = AssetManager.Instance.GetAsset<T> (name,GetAsset);
 
@@ -42,7 +42,7 @@ namespace textureFactory{
 				
 			} else if (type == 0) {
 
-				callBackList.Add (new KeyValuePair<Action<T, string>, int>(_callBack,_index));
+				callBackList.Add (new KeyValuePair<Action<T>, int>(_callBack,_index));
 				
 				return default(T);
 				
@@ -50,14 +50,14 @@ namespace textureFactory{
 				
 				if(_callBack != null){
 					
-					_callBack(data[_index],string.Empty);
+					_callBack(data[_index]);
 				}
 				
 				return data[_index];
 			}
 		}
 		
-		private void GetAsset(T[] _data,string _msg){
+		private void GetAsset(T[] _data){
 
 			if(_data.Length < 1){
 
@@ -80,15 +80,15 @@ namespace textureFactory{
 
             for (int i = 0; i < callBackList.Count; i++)
             {
-                KeyValuePair<Action<T, string>, int> pair = callBackList[i];
+                KeyValuePair<Action<T>, int> pair = callBackList[i];
 
-                Action<T, string> callBack = pair.Key;
+                Action<T> callBack = pair.Key;
 
                 if (callBack != null)
                 {
                     int index = pair.Value;
 
-                    callBack(data[index], string.Empty);
+                    callBack(data[index]);
                 }
             }
 

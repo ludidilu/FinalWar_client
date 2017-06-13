@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
-namespace gameObjectFactory{
+namespace gameObjectFactory
+{
 
-	public class GameObjectFactory{
+    public class GameObjectFactory{
 
 		public Dictionary<string,GameObjectFactoryUnit> dic = new Dictionary<string, GameObjectFactoryUnit>();
 
@@ -24,24 +24,17 @@ namespace gameObjectFactory{
 			}
 		}
 
-		public void PreloadGameObjects(string[] _paths,Action<string> _callBack){
+		public void PreloadGameObjects(string[] _paths,Action _callBack){
 
 			int loadNum = _paths.Length;
 
-			string msg = string.Empty;
-
-			Action<string> callBack = delegate(string _msg) {
+			Action callBack = delegate() {
 
 				loadNum--;
 
-				if(!string.IsNullOrEmpty(_msg)){
-
-					msg += _msg;
-				}
-
 				if(loadNum == 0){
 
-					_callBack(msg);
+					_callBack();
 				}
 			};
 
@@ -51,7 +44,7 @@ namespace gameObjectFactory{
 			}
 		}
 
-		public void PreloadGameObject(string _path,Action<string> _callBack){
+		public void PreloadGameObject(string _path,Action _callBack){
 
 			GameObjectFactoryUnit unit;
 			
@@ -69,7 +62,7 @@ namespace gameObjectFactory{
 			unit.PreloadGameObject (_callBack);
 		}
 
-		public GameObject GetGameObject(string _path,Action<GameObject,string> _callBack){
+		public GameObject GetGameObject(string _path,Action<GameObject> _callBack){
 			
 			GameObjectFactoryUnit unit;
 			
