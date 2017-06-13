@@ -4,8 +4,7 @@
 	public int thread;
 	public bool canDoDamageWhenDefense;
 	public bool canDoDamageWhenSupport;
-	public bool willBeDamageByDefense;
-	public bool willBeDamageBySupport;
+	public int attackType;
 	public bool canLendDamageWhenSupport;
 
 	public bool GetCanDoAction()
@@ -28,14 +27,9 @@
 		return canDoDamageWhenSupport;
 	}
 
-	public bool GetWillBeDamageByDefense()
+	public AttackType GetAttackType()
 	{
-		return willBeDamageByDefense;
-	}
-
-	public bool GetWillBeDamageBySupport()
-	{
-		return willBeDamageBySupport;
+		return (AttackType)attackType;
 	}
 
 	public bool GetCanLendDamageWhenSupport()
