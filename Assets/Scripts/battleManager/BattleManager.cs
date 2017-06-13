@@ -233,7 +233,7 @@ public class BattleManager : MonoBehaviour
 
         CreateMapPanel();
 
-        CreateCards();
+        CreateCards(true);
 
         CreateSummonHeros();
 
@@ -289,7 +289,7 @@ public class BattleManager : MonoBehaviour
 
 		CreateMapPanel();
 
-		CreateCards();
+		CreateCards(false);
 
 //		CreateSummonHeros();
 
@@ -475,7 +475,7 @@ public class BattleManager : MonoBehaviour
 		battleContainer.localPosition = Vector3.zero;
     }
 
-    private void CreateCards()
+	private void CreateCards(bool _hideInSummon)
     {
 		Dictionary<int, int> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
@@ -487,7 +487,7 @@ public class BattleManager : MonoBehaviour
 			
 			KeyValuePair<int,int> pair = enumerator.Current;
 
-			if (battle.summon.ContainsKey(pair.Key))
+			if (_hideInSummon && battle.summon.ContainsKey(pair.Key))
 			{
 				continue;
 			}
@@ -793,7 +793,7 @@ public class BattleManager : MonoBehaviour
 				
 				ClearCards();
 				
-				CreateCards();
+				CreateCards(true);
 				
 				ClearSummonHeros();
 				
@@ -863,7 +863,7 @@ public class BattleManager : MonoBehaviour
 
 			ClearCards ();
 
-			CreateCards ();
+			CreateCards (true);
 
 			ClearSummonHeros ();
 
@@ -881,7 +881,7 @@ public class BattleManager : MonoBehaviour
 
         ClearCards();
 
-        CreateCards();
+        CreateCards(true);
 
         ClearSummonHeros();
 
@@ -989,7 +989,7 @@ public class BattleManager : MonoBehaviour
 		
 		ClearCards();
 		
-		CreateCards();
+		CreateCards(true);
 	}
 
     private void RefreshTouchable(bool _canAction)
@@ -1122,7 +1122,7 @@ public class BattleManager : MonoBehaviour
 
         ClearCards();
 
-        CreateCards();
+        CreateCards(false);
     }
 
     private void DoShoot(BattleShootVO _vo, Action _del)
@@ -1441,7 +1441,7 @@ public class BattleManager : MonoBehaviour
 
 			ClearCards ();
 			
-			CreateCards ();
+			CreateCards (true);
 		}
 
 		_del ();
@@ -1453,7 +1453,7 @@ public class BattleManager : MonoBehaviour
 
 			ClearCards ();
 			
-			CreateCards ();
+			CreateCards (true);
 		}
 
 		_del ();
