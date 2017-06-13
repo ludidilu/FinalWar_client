@@ -149,20 +149,9 @@ namespace assetManager
 
 #else
 
-			string msg;
-
 			T data = AssetDatabase.LoadAssetAtPath<T> (_name);
 
-			if(data == null){
-
-				msg = "Resource load fail:" + _name;
-
-			}else{
-
-				msg = string.Empty;
-			}
-
-			_callBack (data,msg);
+			_callBack (data);
 
 			return data;
 #endif
@@ -190,20 +179,8 @@ namespace assetManager
 			return null;
 			
 #else
-
-			string msg;
-			
 			UnityEngine.Object[] datas = AssetDatabase.LoadAllAssetsAtPath (_name);
 			
-			if(datas == null){
-				
-				msg = "Resource load fail:" + _name;
-
-			}else{
-
-				msg = string.Empty;
-			}
-
 			List<T> tmpList = new List<T>();
 
 			for(int i = 0 ; i < datas.Length ; i++){
@@ -218,7 +195,7 @@ namespace assetManager
 
 			T[] result = tmpList.ToArray();
 
-			_callBack (result,msg);
+			_callBack (result);
 			
 			return result;
 

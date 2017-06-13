@@ -35,7 +35,7 @@ namespace effect{
 			}
 		}
 
-#if UNITY_5_2_2 || UNITY_5_2_3 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5
+#if UNITY_5_2_2 || UNITY_5_2_3 || UNITY_5_3 || UNITY_5_4 || UNITY_5_5 || UNITY_5_6
 		public override void ModifyMesh (VertexHelper vh)
 		{
 			if (!IsActive ()){
