@@ -114,7 +114,7 @@ namespace gameObjectFactory
 
 		public void Dispose(bool _force){
 
-			List<string> delKeyList = new List<string> ();
+			List<string> delKeyList = null;
 
 			Dictionary<string,GameObjectFactoryUnit>.Enumerator enumerator = dic.GetEnumerator();
 
@@ -126,14 +126,22 @@ namespace gameObjectFactory
 
 					pair.Value.Dispose ();
 
+                    if(delKeyList == null)
+                    {
+                        delKeyList = new List<string>();
+                    }
+
 					delKeyList.Add (pair.Key);
 				}
 			}
 
-			for(int i = 0 ; i < delKeyList.Count ; i++){
-
-				dic.Remove(delKeyList[i]);
-			}
+            if(delKeyList != null)
+            {
+                for (int i = 0; i < delKeyList.Count; i++)
+                {
+                    dic.Remove(delKeyList[i]);
+                }
+            }
 		}
 	}
 }
