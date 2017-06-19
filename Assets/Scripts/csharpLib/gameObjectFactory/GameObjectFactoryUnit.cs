@@ -26,17 +26,7 @@ namespace gameObjectFactory
 			name = _name;
 		}
 
-		public void PreloadGameObject(Action _callBack){
-
-			Action callBack = delegate() {
-
-				_callBack();
-			};
-
-			GetGameObject(callBack);
-		}
-
-		private void GetGameObject (Action _callBack){
+        public void GetGameObject (Action _callBack){
 			
 			if (type == -1) {
 				

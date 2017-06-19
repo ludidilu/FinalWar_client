@@ -59,7 +59,7 @@ namespace gameObjectFactory
 				unit = dic [_path];
 			}
 			
-			unit.PreloadGameObject (_callBack);
+			unit.GetGameObject (_callBack);
 		}
 
 		public GameObject GetGameObject(string _path,Action<GameObject> _callBack){
