@@ -80,36 +80,22 @@ public class HeroBattle : HeroBase
 
         attack.text = sds.GetAttack().ToString();
 
-		hp.text = hero.nowHp.ToString();
+		int nowShield;
 
-		shield.text = hero.nowShield.ToString();
+		int nowHp;
+
+		hero.ProcessDamage (out nowShield, out nowHp);
+
+		hp.text = nowHp.ToString();
+
+		shield.text = nowShield.ToString();
 
 		body.color = hero.canAction == 0 ? Color.white : Color.grey;
     }
 
-    public void Shock(List<Vector3> _targets, AnimationCurve _curve, float _shockDis, int _shieldDamage, int _hpDamage)
+    public void Shock(Vector3 _target, AnimationCurve _curve, float _shockDis, int _damage)
     {
-        Vector3 shockVector = Vector3.zero;
-
-        for (int i = 0; i < _targets.Count; i++)
-        {
-            shockVector += (transform.localPosition - _targets[i]).normalized;
-        }
-
-        if (shockVector == Vector3.zero)
-        {
-            Vector3 v2 = transform.localPosition - _targets[0];
-
-            float angle = Mathf.Atan2(v2.y, v2.x);
-
-            angle += Mathf.PI * 0.5f;
-
-            shockVector = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * _shockDis;
-        }
-        else
-        {
-            shockVector = shockVector.normalized * _shockDis;
-        }
+		Vector3 shockVector = (transform.localPosition - _target).normalized * _shockDis;
 
         Action<float> shockToDel = delegate (float obj)
         {
@@ -120,22 +106,7 @@ public class HeroBattle : HeroBase
 
         SuperTween.Instance.To(0, 1, 1, shockToDel, null);
 
-        string str = string.Empty;
-
-        if (_shieldDamage < 0)
-        {
-            str += "<color=\"#FFFF00\">" + _shieldDamage + "</color>";
-
-            if (_hpDamage < 0)
-            {
-                str += "   ";
-            }
-        }
-
-        if (_hpDamage < 0)
-        {
-            str += "<color=\"#FF0000\">" + _hpDamage + "</color>";
-        }
+		string  str = "<color=\"#FF0000\">" + _damage + "</color>";
 
         ShowHud(str, Color.red, null);
 

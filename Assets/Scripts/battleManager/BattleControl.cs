@@ -39,86 +39,32 @@ public class BattleControl : MonoBehaviour
         Instance = this;
     }
 
-    public void Rush(List<HeroBattle> _attackers, List<List<HeroBattle>> _helpers, HeroBattle _stander, int _shieldDamage, int _hpDamage, Action _callBack)
+    public void Rush(HeroBattle _attacker, HeroBattle _stander, int _damage, Action _callBack)
     {
-		Action<float> supportToDel = delegate (float obj)
-		{
-			for (int i = 0; i < _helpers.Count; i++)
-			{
-				List<HeroBattle> tmpList = _helpers[i];
-				
-				for(int m = 0 ; m < tmpList.Count ; m++){
-					
-					HeroBattle tmpHero = tmpList[m];
-					
-					Vector3 v = Vector3.Lerp(tmpHero.transform.localPosition, _attackers[i].transform.localPosition, obj);
-					
-					tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
-				}
-			}
-		};
-		
-		SuperTween.Instance.To(0, 0.5f, 0.5f, supportToDel, null);
-		
-		Action<float> resetToDel = delegate (float obj)
-		{
-			for (int i = 0; i < _helpers.Count; i++)
-			{
-				List<HeroBattle> tmpList = _helpers[i];
-				
-				for(int m = 0 ; m < tmpList.Count ; m++){
-					
-					HeroBattle tmpHero = tmpList[m];
-					
-					Vector3 v = Vector3.Lerp(_attackers[i].transform.localPosition, tmpHero.transform.localPosition, obj);
-					
-					tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
-				}
-			}
-		};
-		
-		Action resetDel = delegate ()
-		{
-			SuperTween.Instance.To(0.5f, 1, 0.5f, resetToDel, null);
-		};
-
         bool getHit = false;
 
         Action<float> moveToDel = delegate (float obj)
         {
             float value = attackCurve.Evaluate(obj);
 
-            for (int i = 0; i < _attackers.Count; i++)
-            {
-                HeroBattle attacker = _attackers[i];
+			Vector3 vv = Vector3.LerpUnclamped(_attacker.transform.localPosition, _stander.transform.localPosition, value);
 
-				Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, _stander.transform.localPosition, value);
-
-				attacker.moveTrans.localPosition = vv - attacker.transform.localPosition;
-            }
+			_attacker.moveTrans.localPosition = vv - _attacker.transform.localPosition;
 
             if (!getHit && obj > hitPercent)
             {
                 getHit = true;
 
-                if (_shieldDamage < 0 || _hpDamage < 0)
+				if (_damage < 0)
                 {
-                    List<Vector3> vList = new List<Vector3>();
-
-                    for (int m = 0; m < _attackers.Count; m++)
-                    {
-
-                        vList.Add(_attackers[m].transform.localPosition);
-                    }
-
-                    _stander.Shock(vList, shockCurve, shockDis, _shieldDamage, _hpDamage);
+					_stander.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _damage);
                 }
             }
         };
 
-		SuperTween.Instance.To(0, 1, 1, moveToDel, resetDel);
+		SuperTween.Instance.To(0, 1, 1, moveToDel, null);
 
-        if (_shieldDamage < 0 || _hpDamage < 0)
+        if (_damage < 0)
         {
             SuperTween.Instance.DelayCall(2.5f, _callBack);
         }
@@ -128,82 +74,51 @@ public class BattleControl : MonoBehaviour
         }
     }
 
-    public void Shoot(List<HeroBattle> _shooters, HeroBattle _stander, int _shieldDamage, int _hpDamage, Action _callBack)
+    public void Shoot(HeroBattle _shooter, HeroBattle _stander, int _damage, Action _callBack)
     {
-        GameObject[] arrows = new GameObject[_shooters.Count];
+		float angle = Mathf.Atan2(_stander.transform.localPosition.y - _shooter.transform.localPosition.y, _stander.transform.localPosition.x - _shooter.transform.localPosition.x);
 
-        float[] angles = new float[_shooters.Count];
+        angle += Mathf.PI * 0.5f;
 
-        for (int i = 0; i < _shooters.Count; i++)
-        {
-            HeroBattle shooter = _shooters[i];
+        GameObject arrow = GameObject.Instantiate<GameObject>(arrowResources);
 
-            float angle = Mathf.Atan2(_stander.transform.localPosition.y - shooter.transform.localPosition.y, _stander.transform.localPosition.x - shooter.transform.localPosition.x);
+		arrow.transform.SetParent(_shooter.transform.parent, false);
 
-            angle += Mathf.PI * 0.5f;
+		arrow.transform.localPosition = _shooter.transform.localPosition;
 
-            GameObject arrow = GameObject.Instantiate<GameObject>(arrowResources);
-
-            arrow.transform.SetParent(shooter.transform.parent, false);
-
-            arrow.transform.localPosition = shooter.transform.localPosition;
-
-            arrow.SetActive(false);
-
-            arrows[i] = arrow;
-
-            angles[i] = angle;
-        }
+        arrow.SetActive(false);
 
         Action<float> shootToDel = delegate (float obj)
         {
             float v = shootCurve.Evaluate(obj);
 
-            for (int i = 0; i < arrows.Length; i++)
+            if (!arrow.activeSelf)
             {
-                GameObject arrow = arrows[i];
-
-                float angle = angles[i];
-
-                if (!arrow.activeSelf)
-                {
-                    arrow.SetActive(true);
-                }
-
-                Vector3 targetPos = Vector3.Lerp(_shooters[i].transform.localPosition, _stander.transform.localPosition, obj);
-
-                targetPos += new Vector3(Mathf.Cos(angle) * v * shootFix, Mathf.Sin(angle) * v * shootFix, 0);
-
-                (arrow.transform as RectTransform).localEulerAngles = new Vector3(0, 0, Mathf.Atan2(targetPos.y - arrow.transform.localPosition.y, targetPos.x - arrow.transform.localPosition.x) * 180 / Mathf.PI);
-
-                arrow.transform.localPosition = targetPos;
+                arrow.SetActive(true);
             }
+
+            Vector3 targetPos = Vector3.Lerp(_shooter.transform.localPosition, _stander.transform.localPosition, obj);
+
+            targetPos += new Vector3(Mathf.Cos(angle) * v * shootFix, Mathf.Sin(angle) * v * shootFix, 0);
+
+            (arrow.transform as RectTransform).localEulerAngles = new Vector3(0, 0, Mathf.Atan2(targetPos.y - arrow.transform.localPosition.y, targetPos.x - arrow.transform.localPosition.x) * 180 / Mathf.PI);
+
+            arrow.transform.localPosition = targetPos;
         };
 
         Action shootOverDel = delegate ()
         {
-            for (int i = 0; i < arrows.Length; i++)
+            GameObject.Destroy(arrow);
+
+			if (_damage < 0)
             {
-                GameObject.Destroy(arrows[i]);
-            }
-
-            if (_shieldDamage < 0 || _hpDamage < 0)
-            {
-                List<Vector3> vList = new List<Vector3>();
-
-                for (int m = 0; m < _shooters.Count; m++)
-                {
-
-                    vList.Add(_shooters[m].transform.localPosition);
-                }
-
-                _stander.Shock(vList, shockCurve, shockDis, _shieldDamage, _hpDamage);
+				_stander.Shock(_shooter.transform.localPosition, shockCurve, shockDis, _damage);
             }
         };
 
         SuperTween.Instance.To(0, 1, 1, shootToDel, shootOverDel);
 
-        if (_shieldDamage < 0 || _hpDamage < 0)
+        if (_damage < 0)
         {
             SuperTween.Instance.DelayCall(3f, _callBack);
         }

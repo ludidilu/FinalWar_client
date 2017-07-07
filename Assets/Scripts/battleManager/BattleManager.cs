@@ -1017,18 +1017,18 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-	private void DoAction(SuperEnumerator<IBattleVO> _step)
+	private void DoAction(SuperEnumerator<ValueType> _step)
     {
 		RefreshDataBeforeBattle ();
 
 		DoActionReal(_step);
     }
 
-	private void DoActionReal(SuperEnumerator<IBattleVO> _step)
+	private void DoActionReal(SuperEnumerator<ValueType> _step)
     {
 		if (_step.MoveNext ()) {
 
-			IBattleVO vo = _step.Current;
+			ValueType vo = _step.Current;
 
 			Action del = delegate ()
 			{
@@ -1059,10 +1059,6 @@ public class BattleManager : MonoBehaviour
 				
 				DoSummon ((BattleSummonVO)vo, del);
 
-			} else if (vo is BattleChangeVO) {
-				
-				DoChange ((BattleChangeVO)vo, del);
-
 			} else if (vo is BattleAddCardsVO) {
 				
 				DoAddCards ((BattleAddCardsVO)vo, del);
@@ -1078,10 +1074,6 @@ public class BattleManager : MonoBehaviour
 			} else if (vo is BattleLevelUpVO) {
 				
 				DoLevelUp ((BattleLevelUpVO)vo, del);
-
-			} else if (vo is BattleRecoverShieldVO) {
-				
-				DoRecoverShield ((BattleRecoverShieldVO)vo, del);
 
 			} else {
 
@@ -1127,18 +1119,7 @@ public class BattleManager : MonoBehaviour
 
     private void DoShoot(BattleShootVO _vo, Action _del)
     {
-        List<HeroBattle> shooters = new List<HeroBattle>();
-
-        for (int i = 0; i < _vo.shooters.Count; i++)
-        {
-			HeroBattle hero = heroDic [_vo.shooters [i]];
-
-			hero.RefreshAll ();
-
-			shooters.Add(hero);
-        }
-
-        BattleControl.Instance.Shoot(shooters, heroDic[_vo.stander], _vo.shieldDamage, _vo.hpDamage, _del);
+		BattleControl.Instance.Shoot(heroDic[_vo.shooter], heroDic[_vo.stander], _vo.damage, _del);
     }
 
     private void DoMove(BattleMoveVO _vo, Action _del)
@@ -1282,32 +1263,7 @@ public class BattleManager : MonoBehaviour
 
     private void DoRush(BattleRushVO _vo, Action _del)
     {
-        List<HeroBattle> attackers = new List<HeroBattle>();
-
-        HeroBattle stander = heroDic[_vo.stander];
-
-        for (int i = 0; i < _vo.attackers.Count; i++)
-        {
-            attackers.Add(heroDic[_vo.attackers[i]]);
-        }
-
-		List<List<HeroBattle>> helpers = new List<List<HeroBattle>> ();
-
-		for (int i = 0; i < _vo.helpers.Count; i++) 
-		{
-			List<int> tmpList2 = _vo.helpers[i];
-
-			List<HeroBattle> tmpList = new List<HeroBattle>();
-
-			helpers.Add(tmpList);
-
-			for (int m = 0 ; m < tmpList2.Count ; m++)
-			{
-				tmpList.Add(heroDic[tmpList2[m]]);
-			}
-		}
-
-		BattleControl.Instance.Rush(attackers, helpers, stander, 0, _vo.hpDamage, _del);
+		BattleControl.Instance.Rush(heroDic[_vo.attacker], heroDic[_vo.stander], _vo.damage, _del);
     }
 
     private void DoAttack(BattleAttackVO _vo, Action _del)
@@ -1380,61 +1336,6 @@ public class BattleManager : MonoBehaviour
 		}
     }
 
-    private void DoChange(BattleChangeVO _vo, Action _del)
-    {
-        for (int i = 0; i < _vo.pos.Count; i++)
-        {
-            int pos = _vo.pos[i];
-
-            HeroBattle hero = heroDic[pos];
-
-            int hpChange = _vo.hpChange[i];
-
-            int shieldChange = _vo.shieldChange[i];
-
-			hero.RefreshAll();
-
-			string str = string.Empty;
-
-			if(shieldChange > 0)
-			{
-				str += "<color=\"#0000FF\">+" + shieldChange + "</color>";
-				
-				if (hpChange != 0)
-				{
-					str += "   ";
-				}
-			}
-            else if (shieldChange < 0)
-            {
-                str += "<color=\"#FFFF00\">" + shieldChange + "</color>";
-
-                if (hpChange != 0)
-                {
-                    str += "   ";
-                }
-            }
-
-            if (hpChange > 0)
-            {
-                str += "<color=\"#00FF00\">+" + hpChange + "</color>";
-            }
-            else if (hpChange < 0)
-            {
-                str += "<color=\"#FF0000\">" + hpChange + "</color>";
-            }
-
-            if (i == 0)
-            {
-                hero.ShowHud(str, Color.white, _del);
-            }
-            else
-            {
-                hero.ShowHud(str, Color.white, null);
-            }
-        }
-    }
-
 	private void DoAddCards(BattleAddCardsVO _vo, Action _del){
 
 		if (_vo.isMine == battle.clientIsMine) {
@@ -1475,15 +1376,6 @@ public class BattleManager : MonoBehaviour
 
 		hero.RefreshAll ();
 
-		_del ();
-	}
-
-	private void DoRecoverShield(BattleRecoverShieldVO _vo, Action _del){
-
-		HeroBattle hero = heroDic[_vo.pos];
-		
-		hero.RefreshAll ();
-		
 		_del ();
 	}
 
