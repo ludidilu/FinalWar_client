@@ -128,6 +128,16 @@ public class BattleControl : MonoBehaviour
         }
     }
 
+	public void PrepareAttack(Vector3 _posV, HeroBattle _attacker, HeroBattle _defender, HeroBattle _supporter, Action _del){
+
+
+
+		Action<float> dele = delegate(float obj) {
+		
+
+		};
+	}
+
     public void Attack(List<HeroBattle> _attackers, List<List<HeroBattle>> _helpers, Vector3 _targetPos, HeroBattle _defender, List<HeroBattle> _supporters, int _defenderShieldDamage, int _defenderHpDamage, List<int> _supportersShieldDamage, List<int> _supportersHpDamage, List<int> _attackersShieldDamage, List<int> _attackersHpDamage, Action _callBack)
     {
         Action<float> supportToDel = delegate (float obj)
