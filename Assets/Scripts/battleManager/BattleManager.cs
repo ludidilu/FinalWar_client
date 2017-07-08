@@ -1122,6 +1122,44 @@ public class BattleManager : MonoBehaviour
 		BattleControl.Instance.Shoot(heroDic[_vo.shooter], heroDic[_vo.stander], _vo.damage, _del);
     }
 
+	private void DoPrepareAttack(BattlePrepareAttackVO _vo, Action _del){
+
+		HeroBattle attacker = heroDic [_vo.attacker];
+
+		HeroBattle defender = heroDic [_vo.defender];
+
+		List<HeroBattle> attackerSupporters;
+
+		if (_vo.attackerSupperters != null) {
+
+			attackerSupporters = new List<HeroBattle> ();
+
+			for (int i = 0; i < _vo.attackerSupperters.Count; i++) {
+
+				attackerSupporters.Add (heroDic [_vo.attackerSupperters [i]]);
+			}
+
+		} else {
+
+			attackerSupporters = null;
+		}
+
+		if (_vo.defender == _vo.pos) {
+
+			defender = heroDic [_vo.defender];
+
+			supporter = null;
+
+		} else {
+
+			defender = null;
+
+			supporter = heroDic [_vo.defender];
+		}
+
+		BattleControl.Instance.PrepareAttack (pos, attacker, defender, supporter, _del);
+	}
+
     private void DoMove(BattleMoveVO _vo, Action _del)
     {
         if (_vo.moves.Count > 0)
