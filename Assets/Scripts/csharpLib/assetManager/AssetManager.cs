@@ -46,7 +46,9 @@ namespace assetManager
 
 		private Dictionary<string,AssetManagerData> dataDic;
 
-		public AssetManager ()
+        public Func<string, Type, string> getAssetPathDelegate;
+
+        public AssetManager ()
 		{
 			dic = new Dictionary<string, IAssetManagerUnit> ();
 
@@ -125,61 +127,93 @@ namespace assetManager
 			AssetManagerDataFactory.SetData(_bw,dataDic);
 		}
 
-		public T GetAsset<T> (string _name, Action<T> _callBack) where T:UnityEngine.Object
+		public void GetAsset<T> (string _name, Action<T> _callBack) where T:UnityEngine.Object
 		{
+            string assetName;
+
+            if (getAssetPathDelegate != null)
+            {
+                string tmpName = getAssetPathDelegate(_name, typeof(T));
+
+                if (!string.IsNullOrEmpty(tmpName))
+                {
+                    assetName = tmpName;
+                }
+                else
+                {
+                    assetName = _name;
+                }
+            }
+            else
+            {
+                assetName = _name;
+            }
 
 #if USE_ASSETBUNDLE
 
-			AssetManagerUnit<T> unit;
+            AssetManagerUnit<T> unit;
 			
-			if (!dic.ContainsKey (_name)) {
+			if (!dic.ContainsKey (assetName)) {
 				
-				unit = new AssetManagerUnit<T> (_name);
+				unit = new AssetManagerUnit<T> (assetName);
 				
-				dic.Add(_name,unit);
+				dic.Add(assetName, unit);
 				
 			} else {
 				
-				unit = dic [_name] as AssetManagerUnit<T>;
+				unit = dic [assetName] as AssetManagerUnit<T>;
 			}
 			
 			unit.Load (_callBack);
-
-			return null;
-
 #else
 
-			T data = AssetDatabase.LoadAssetAtPath<T> (_name);
+			T data = AssetDatabase.LoadAssetAtPath<T> (assetName);
 
 			_callBack (data);
-
-			return data;
 #endif
-		}
+        }
 
-		public T[] GetAsset<T> (string _name, Action<T[]> _callBack) where T:UnityEngine.Object
+        public void GetAsset<T> (string _name, Action<T[]> _callBack) where T:UnityEngine.Object
 		{
+            string assetName;
+
+            if (getAssetPathDelegate != null)
+            {
+                string tmpName = getAssetPathDelegate(_name, typeof(T));
+
+                if (!string.IsNullOrEmpty(tmpName))
+                {
+                    assetName = tmpName;
+                }
+                else
+                {
+                    assetName = _name;
+                }
+            }
+            else
+            {
+                assetName = _name;
+            }
+
 #if USE_ASSETBUNDLE
+
+            AssetManagerUnit2<T> unit;
 			
-			AssetManagerUnit2<T> unit;
-			
-			if (!dic.ContainsKey (_name)) {
+			if (!dic.ContainsKey (assetName)) {
 				
-				unit = new AssetManagerUnit2<T> (_name);
+				unit = new AssetManagerUnit2<T> (assetName);
 				
-				dic.Add(_name,unit);
+				dic.Add(assetName, unit);
 				
 			} else {
 				
-				unit = dic [_name] as AssetManagerUnit2<T>;
+				unit = dic [assetName] as AssetManagerUnit2<T>;
 			}
 			
 			unit.Load (_callBack);
-			
-			return null;
-			
+
 #else
-			UnityEngine.Object[] datas = AssetDatabase.LoadAllAssetsAtPath (_name);
+			UnityEngine.Object[] datas = AssetDatabase.LoadAllAssetsAtPath (assetName);
 			
 			List<T> tmpList = new List<T>();
 
@@ -196,10 +230,7 @@ namespace assetManager
 			T[] result = tmpList.ToArray();
 
 			_callBack (result);
-			
-			return result;
-
 #endif
-		}
-	}
+        }
+    }
 }
