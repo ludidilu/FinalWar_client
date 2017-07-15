@@ -337,6 +337,52 @@ public class BattleControl : MonoBehaviour
         _callBack();
     }
 
+    public IEnumerator Counter(int _index, Vector3 _targetPos, HeroBattle _attacker, HeroBattle _defender, int _damage, Action _callBack)
+    {
+        bool getHit = false;
+
+        Action<float> attackerToDel = delegate (float obj)
+        {
+            float value = attackCurve.Evaluate(obj);
+
+            Vector3 vv = Vector3.LerpUnclamped(_attacker.transform.localPosition, _targetPos, value);
+
+            _attacker.moveTrans.localPosition = vv - _attacker.transform.localPosition;
+
+            if (!getHit && obj > hitPercent)
+            {
+                getHit = true;
+
+                if (_attackerDamage < 0)
+                {
+                    _defender.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _attackerDamage);
+                }
+
+                if (_defenderDamage < 0)
+                {
+                    _attacker.Shock(_targetPos, shockCurve, shockDis, _attackerDamage);
+                }
+            }
+        };
+
+        SuperSequenceControl.To(0f, 1f, 1f, attackerToDel, _index);
+
+        yield return null;
+
+        if (_attackerDamage < 0 || _defenderDamage < 0)
+        {
+            SuperSequenceControl.DelayCall(1.5f, _index);
+        }
+        else
+        {
+            SuperSequenceControl.DelayCall(1f, _index);
+        }
+
+        yield return null;
+
+        _callBack();
+    }
+
     public void Attack(List<HeroBattle> _attackers, List<List<HeroBattle>> _helpers, Vector3 _targetPos, HeroBattle _defender, List<HeroBattle> _supporters, int _defenderShieldDamage, int _defenderHpDamage, List<int> _supportersShieldDamage, List<int> _supportersHpDamage, List<int> _attackersShieldDamage, List<int> _attackersHpDamage, Action _callBack)
     {
         //        Action<float> supportToDel = delegate (float obj)
