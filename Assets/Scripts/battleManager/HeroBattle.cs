@@ -7,8 +7,8 @@ using FinalWar;
 
 public class HeroBattle : HeroBase
 {
-	[SerializeField]
-	private Image body;
+    [SerializeField]
+    private Image body;
 
     [SerializeField]
     public Transform moveTrans;
@@ -46,13 +46,13 @@ public class HeroBattle : HeroBase
         }
     }
 
-	public bool canAction
-	{
-		get
-		{
-			return hero.canAction == 0;
-		}
-	}
+    public bool canAction
+    {
+        get
+        {
+            return hero.canAction == 0;
+        }
+    }
 
     public void Init(int _id)
     {
@@ -69,33 +69,33 @@ public class HeroBattle : HeroBase
 
     public void Init(Hero _hero)
     {
-		hero = _hero;
+        hero = _hero;
 
-		RefreshAll ();
-	}
+        RefreshAll();
+    }
 
-	public void RefreshAll()
-	{
+    public void RefreshAll()
+    {
         InitCard(hero.sds as HeroSDS);
 
         attack.text = sds.GetAttack().ToString();
 
-		int nowShield;
+        int nowShield;
 
-		int nowHp;
+        int nowHp;
 
-		hero.ProcessDamage (out nowShield, out nowHp);
+        hero.ProcessDamage(out nowShield, out nowHp);
 
-		hp.text = nowHp.ToString();
+        hp.text = nowHp.ToString();
 
-		shield.text = nowShield.ToString();
+        shield.text = nowShield.ToString();
 
-		body.color = hero.canAction == 0 ? Color.white : Color.grey;
+        body.color = hero.canAction == 0 ? Color.white : Color.grey;
     }
 
     public void Shock(Vector3 _target, AnimationCurve _curve, float _shockDis, int _damage)
     {
-		Vector3 shockVector = (transform.localPosition - _target).normalized * _shockDis;
+        Vector3 shockVector = (transform.localPosition - _target).normalized * _shockDis;
 
         Action<float> shockToDel = delegate (float obj)
         {
@@ -106,16 +106,14 @@ public class HeroBattle : HeroBase
 
         SuperTween.Instance.To(0, 1, 1, shockToDel, null);
 
-		string  str = "<color=\"#FF0000\">" + _damage + "</color>";
+        ShowHud(_damage.ToString(), Color.red, null);
 
-        ShowHud(str, Color.red, null);
-
-		RefreshAll();
+        RefreshAll();
     }
 
     public void ShowHud(string _str, Color _color, Action _callBack)
     {
-        GameObject go = GameObject.Instantiate<GameObject>(BattleControl.Instance.damageNumResources);
+        GameObject go = Instantiate<GameObject>(BattleControl.Instance.damageNumResources);
 
         go.transform.SetParent(transform.parent, false);
 
@@ -130,7 +128,7 @@ public class HeroBattle : HeroBase
     {
         Action dieOver = delegate ()
         {
-            GameObject.Destroy(gameObject);
+            Destroy(gameObject);
 
             if (_del != null)
             {

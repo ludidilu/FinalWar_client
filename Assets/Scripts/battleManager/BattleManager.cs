@@ -11,6 +11,7 @@ using superFunction;
 using publicTools;
 using superGraphicRaycast;
 using superEnumerator;
+using superSequenceControl;
 
 public class BattleManager : MonoBehaviour
 {
@@ -24,7 +25,7 @@ public class BattleManager : MonoBehaviour
     private const float scaleStep = 0.95f;
     private const float minScale = 0.7f;
     private const float maxScale = 1.4f;
-	private const int defaultMapHeight = 5;
+    private const int defaultMapHeight = 5;
 
     [SerializeField]
     private Camera mainCamera;
@@ -53,8 +54,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private RectTransform battleContainer;
 
-	[SerializeField]
-	private RectTransform battleScaleContainer;
+    [SerializeField]
+    private RectTransform battleScaleContainer;
 
     [SerializeField]
     private RectTransform battleContentContainer;
@@ -198,11 +199,11 @@ public class BattleManager : MonoBehaviour
 
         battle.ClientSetCallBack(_sendDataCallBack, RefreshData, DoAction, BattleQuit);
 
-		SuperFunction.Instance.AddEventListener<float, Vector2>(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
+        SuperFunction.Instance.AddEventListener<float, Vector2>(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
 
-		SuperFunction.Instance.AddEventListener<RaycastHit, int>(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
+        SuperFunction.Instance.AddEventListener<RaycastHit, int>(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
 
-		SuperFunction.Instance.AddEventListener<RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
+        SuperFunction.Instance.AddEventListener<RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
 
         //		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
     }
@@ -245,64 +246,74 @@ public class BattleManager : MonoBehaviour
 
         RefreshTouchable(battle.GetClientCanAction());
 
-        if (battle.mWin && battle.oWin) {
+        if (battle.mWin && battle.oWin)
+        {
 
-			Alert ("Draw!", BattleOver);
+            Alert("Draw!", BattleOver);
 
-		} else if (battle.mWin) {
+        }
+        else if (battle.mWin)
+        {
 
-			if (battle.clientIsMine) {
+            if (battle.clientIsMine)
+            {
 
-				Alert ("You win!", BattleOver);
+                Alert("You win!", BattleOver);
 
-			} else {
+            }
+            else {
 
-				Alert ("You lose!", BattleOver);
-			}
+                Alert("You lose!", BattleOver);
+            }
 
-		} else if (battle.oWin) {
+        }
+        else if (battle.oWin)
+        {
 
-			if (battle.clientIsMine) {
+            if (battle.clientIsMine)
+            {
 
-				Alert ("You lose!", BattleOver);
+                Alert("You lose!", BattleOver);
 
-			} else {
+            }
+            else {
 
-				Alert ("You win!", BattleOver);
-			}
-		}
+                Alert("You win!", BattleOver);
+            }
+        }
     }
 
-	private void RefreshDataBeforeBattle(){
+    private void RefreshDataBeforeBattle()
+    {
 
-		heroDetail.Hide();
+        heroDetail.Hide();
 
-		ClearMapUnits();
+        ClearMapUnits();
 
-		ClearCards();
+        ClearCards();
 
-		ClearSummonHeros();
+        ClearSummonHeros();
 
-		ClearHeros();
+        ClearHeros();
 
-		ClearMoves();
+        ClearMoves();
 
-		CreateMapPanel();
+        CreateMapPanel();
 
-		CreateCards(false);
+        CreateCards(false);
 
-//		CreateSummonHeros();
+        //		CreateSummonHeros();
 
-		CreateHeros();
+        CreateHeros();
 
-//		CreateMoves();
+        //		CreateMoves();
 
-//		CreateMoneyTf();
+        //		CreateMoneyTf();
 
-		CreateMoneyTfOrigin ();
+        CreateMoneyTfOrigin();
 
-		RefreshTouchable(battle.GetClientCanAction());
-	}
+        RefreshTouchable(battle.GetClientCanAction());
+    }
 
     public void QuitBattle()
     {
@@ -320,7 +331,7 @@ public class BattleManager : MonoBehaviour
 
         gameObject.SetActive(false);
 
-		SuperFunction.Instance.DispatchEvent(gameObject, BATTLE_OVER);
+        SuperFunction.Instance.DispatchEvent(gameObject, BATTLE_OVER);
     }
 
     private void ClearMapUnits()
@@ -394,14 +405,15 @@ public class BattleManager : MonoBehaviour
 
         MeshRenderer mr = mapGo.GetComponent<MeshRenderer>();
 
-		Color[] colorArr = new Color[battle.mapData.dic.Count];
+        Color[] colorArr = new Color[battle.mapData.dic.Count];
 
-		Action<int, Color> dele = delegate(int arg1, Color arg2) {
+        Action<int, Color> dele = delegate (int arg1, Color arg2)
+        {
 
-			colorArr[arg1] = arg2;
+            colorArr[arg1] = arg2;
 
-			mr.material.SetColorArray("colors",colorArr);
-		};
+            mr.material.SetColorArray("colors", colorArr);
+        };
 
         mr.material = new Material(Shader.Find("Unlit/MapUnit"));
 
@@ -439,7 +451,7 @@ public class BattleManager : MonoBehaviour
 
                 mapUnitDic.Add(index, unit);
 
-				unit.Init(index, index2, dele);
+                unit.Init(index, index2, dele);
 
                 SetMapUnitColor(unit);
 
@@ -466,51 +478,52 @@ public class BattleManager : MonoBehaviour
 
         battleContentContainer.localPosition = new Vector3(-0.5f * (battle.mapData.mapWidth * mapUnitWidth * sqrt3 * 2) + mapUnitWidth * sqrt3, mapContainerYFix + 0.5f * (battle.mapData.mapHeight * mapUnitWidth * 3 + mapUnitWidth) - mapUnitWidth * 2, 0);
 
-		float baseScale = (float)defaultMapHeight / battle.mapData.mapHeight;
+        float baseScale = (float)defaultMapHeight / battle.mapData.mapHeight;
 
-		battleScaleContainer.localScale = new Vector3 (baseScale, baseScale, baseScale);
+        battleScaleContainer.localScale = new Vector3(baseScale, baseScale, baseScale);
 
-		battleContainer.localScale = Vector3.one;
+        battleContainer.localScale = Vector3.one;
 
-		battleContainer.localPosition = Vector3.zero;
+        battleContainer.localPosition = Vector3.zero;
     }
 
-	private void CreateCards(bool _hideInSummon)
+    private void CreateCards(bool _hideInSummon)
     {
-		Dictionary<int, int> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
+        Dictionary<int, int> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
         int index = 0;
 
-		Dictionary<int, int>.Enumerator enumerator = tmpCardDic.GetEnumerator ();
+        Dictionary<int, int>.Enumerator enumerator = tmpCardDic.GetEnumerator();
 
-		while(enumerator.MoveNext()){
-			
-			KeyValuePair<int,int> pair = enumerator.Current;
+        while (enumerator.MoveNext())
+        {
 
-			if (_hideInSummon && battle.summon.ContainsKey(pair.Key))
-			{
-				continue;
-			}
+            KeyValuePair<int, int> pair = enumerator.Current;
 
-			GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroCard"));
+            if (_hideInSummon && battle.summon.ContainsKey(pair.Key))
+            {
+                continue;
+            }
 
-			HeroCard hero = go.GetComponent<HeroCard>();
+            GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroCard"));
 
-			hero.SetFrameVisible(false);
+            HeroCard hero = go.GetComponent<HeroCard>();
 
-			hero.Init(pair.Key, pair.Value);
+            hero.SetFrameVisible(false);
 
-			cardDic.Add(pair.Key, hero);
+            hero.Init(pair.Key, pair.Value);
 
-			go.transform.SetParent(cardContainer, false);
+            cardDic.Add(pair.Key, hero);
 
-			float cardWidth = (go.transform as RectTransform).sizeDelta.x;
-			float cardHeight = (go.transform as RectTransform).sizeDelta.y;
+            go.transform.SetParent(cardContainer, false);
 
-			(go.transform as RectTransform).anchoredPosition = new Vector2(-0.5f * cardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * cardContainer.rect.height + cardHeight * 0.5f);
+            float cardWidth = (go.transform as RectTransform).sizeDelta.x;
+            float cardHeight = (go.transform as RectTransform).sizeDelta.y;
 
-			index++;
-		}
+            (go.transform as RectTransform).anchoredPosition = new Vector2(-0.5f * cardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * cardContainer.rect.height + cardHeight * 0.5f);
+
+            index++;
+        }
     }
 
     private void CreateSummonHeros()
@@ -541,19 +554,19 @@ public class BattleManager : MonoBehaviour
             moneyTf.gameObject.SetActive(true);
         }
 
-		moneyTf.text = battle.ClientGetMoney().ToString();
+        moneyTf.text = battle.ClientGetMoney().ToString();
     }
 
-	private void CreateMoneyTfOrigin()
-	{
-		if (!moneyTf.gameObject.activeSelf)
-		{
+    private void CreateMoneyTfOrigin()
+    {
+        if (!moneyTf.gameObject.activeSelf)
+        {
 
-			moneyTf.gameObject.SetActive(true);
-		}
+            moneyTf.gameObject.SetActive(true);
+        }
 
-		moneyTf.text = battle.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
-	}
+        moneyTf.text = battle.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
+    }
 
     private void CreateMoves()
     {
@@ -602,9 +615,9 @@ public class BattleManager : MonoBehaviour
 
         MapUnit end = mapUnitDic[_end];
 
-		go.transform.localPosition = (start.transform.localPosition + end.transform.localPosition) * 0.5f;
+        go.transform.localPosition = (start.transform.localPosition + end.transform.localPosition) * 0.5f;
 
-		float angle = Mathf.Atan2(end.transform.localPosition.y - start.transform.localPosition.y, end.transform.localPosition.x - start.transform.localPosition.x);
+        float angle = Mathf.Atan2(end.transform.localPosition.y - start.transform.localPosition.y, end.transform.localPosition.x - start.transform.localPosition.x);
 
         Quaternion q = new Quaternion();
 
@@ -631,9 +644,9 @@ public class BattleManager : MonoBehaviour
 
         MapUnit end = mapUnitDic[_end];
 
-		go.transform.localPosition = (start.transform.localPosition + end.transform.localPosition) * 0.5f;
+        go.transform.localPosition = (start.transform.localPosition + end.transform.localPosition) * 0.5f;
 
-		float angle = Mathf.Atan2(end.transform.localPosition.y - start.transform.localPosition.y, end.transform.localPosition.x - start.transform.localPosition.x);
+        float angle = Mathf.Atan2(end.transform.localPosition.y - start.transform.localPosition.y, end.transform.localPosition.x - start.transform.localPosition.x);
 
         Quaternion q = new Quaternion();
 
@@ -641,9 +654,9 @@ public class BattleManager : MonoBehaviour
 
         go.transform.localRotation = q;
 
-		float scale = Vector3.Distance (start.transform.localPosition, end.transform.localPosition) / (mapUnitWidth * sqrt3 * 4);
+        float scale = Vector3.Distance(start.transform.localPosition, end.transform.localPosition) / (mapUnitWidth * sqrt3 * 4);
 
-		go.transform.localScale = new Vector3 (scale, scale, scale);
+        go.transform.localScale = new Vector3(scale, scale, scale);
 
         arrow.SetColor(_color);
 
@@ -682,17 +695,18 @@ public class BattleManager : MonoBehaviour
     {
         if (isDoingHeroAction)
         {
-			if(GetNowChooseHero().pos != _mapUnit.index){
+            if (GetNowChooseHero().pos != _mapUnit.index)
+            {
 
-				if (battle.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
-				{
-					ClearMoves();
-					
-					CreateMoves();
-				}
-			}
-		}
-	}
+                if (battle.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
+                {
+                    ClearMoves();
+
+                    CreateMoves();
+                }
+            }
+        }
+    }
 
     public void MapUnitExit(MapUnit _mapUnit)
     {
@@ -767,7 +781,7 @@ public class BattleManager : MonoBehaviour
 
             if (GetNowChooseHero() == null)
             {
-				SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
+                SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
 
                 GetNowChooseHero().SetFrameVisible(true);
             }
@@ -777,7 +791,7 @@ public class BattleManager : MonoBehaviour
                 {
                     ClearNowChooseHero();
 
-					SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
+                    SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
 
                     GetNowChooseHero().SetFrameVisible(true);
                 }
@@ -785,24 +799,26 @@ public class BattleManager : MonoBehaviour
         }
         else if (GetNowChooseCard() != null)
         {
-			bool b = SummonHero(GetNowChooseCard().cardUid, _mapUnit.index);
+            bool b = SummonHero(GetNowChooseCard().cardUid, _mapUnit.index);
 
-			if(b){
+            if (b)
+            {
 
-				CreateMoneyTf();
-				
-				ClearCards();
-				
-				CreateCards(true);
-				
-				ClearSummonHeros();
-				
-				CreateSummonHeros();
+                CreateMoneyTf();
 
-			}else{
+                ClearCards();
 
-				ClearNowChooseHero();
-			}
+                CreateCards(true);
+
+                ClearSummonHeros();
+
+                CreateSummonHeros();
+
+            }
+            else {
+
+                ClearNowChooseHero();
+            }
         }
         else
         {
@@ -857,20 +873,21 @@ public class BattleManager : MonoBehaviour
     {
         bool b = battle.ClientRequestSummon(_cardUid, _pos);
 
-		if (b) {
+        if (b)
+        {
 
-			CreateMoneyTf ();
+            CreateMoneyTf();
 
-			ClearCards ();
+            ClearCards();
 
-			CreateCards (true);
+            CreateCards(true);
 
-			ClearSummonHeros ();
+            ClearSummonHeros();
 
-			CreateSummonHeros ();
-		}
+            CreateSummonHeros();
+        }
 
-		return b;
+        return b;
     }
 
     private void UnsummonHero(int _cardUid)
@@ -905,9 +922,9 @@ public class BattleManager : MonoBehaviour
 
     private HeroBattle AddCardToMap(int _cardUid, int _pos)
     {
-		Dictionary<int, int> list = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
+        Dictionary<int, int> list = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
-		int cardID = list[_cardUid];
+        int cardID = list[_cardUid];
 
         GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 
@@ -937,7 +954,7 @@ public class BattleManager : MonoBehaviour
         _heroCard.transform.localScale = new Vector3(heroScale, heroScale, heroScale);
     }
 
-    
+
     public void ActionBtClick()
     {
         ClearNowChooseCard();
@@ -964,33 +981,34 @@ public class BattleManager : MonoBehaviour
         }
         else if (Input.GetKeyUp(KeyCode.A))
         {
-			CreateAiAction();
+            CreateAiAction();
         }
 
-//		if (actionBt.activeSelf) {
-//
-//			CreateAiAction();
-//
-//			ActionBtClick();
-//		}
+        //		if (actionBt.activeSelf) {
+        //
+        //			CreateAiAction();
+        //
+        //			ActionBtClick();
+        //		}
     }
 
-	private void CreateAiAction(){
+    private void CreateAiAction()
+    {
 
-//		HeroAi.Start(battle, battle.clientIsMine, 0.2);
-		
-		ClearMoves();
-		
-		CreateMoves();
-		
-		ClearSummonHeros();
-		
-		CreateSummonHeros();
-		
-		ClearCards();
-		
-		CreateCards(true);
-	}
+        //		HeroAi.Start(battle, battle.clientIsMine, 0.2);
+
+        ClearMoves();
+
+        CreateMoves();
+
+        ClearSummonHeros();
+
+        CreateSummonHeros();
+
+        ClearCards();
+
+        CreateCards(true);
+    }
 
     private void RefreshTouchable(bool _canAction)
     {
@@ -1017,75 +1035,97 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-	private void DoAction(SuperEnumerator<ValueType> _step)
+    private void DoAction(SuperEnumerator<ValueType> _step)
     {
-		RefreshDataBeforeBattle ();
+        RefreshDataBeforeBattle();
 
-		DoActionReal(_step);
+        DoActionReal(_step);
     }
 
-	private void DoActionReal(SuperEnumerator<ValueType> _step)
+    private void DoActionReal(SuperEnumerator<ValueType> _step)
     {
-		if (_step.MoveNext ()) {
+        if (_step.MoveNext())
+        {
 
-			ValueType vo = _step.Current;
+            ValueType vo = _step.Current;
 
-			Action del = delegate ()
-			{
-				DoActionReal(_step);
-			};
+            Action del = delegate ()
+            {
+                DoActionReal(_step);
+            };
 
-			if (vo is BattleShootVO) {
-				
-				DoShoot ((BattleShootVO)(vo), del);
+            if (vo is BattleShootVO)
+            {
 
-			} else if (vo is BattleMoveVO) {
-				
-				DoMove ((BattleMoveVO)vo, del);
+                DoShoot((BattleShootVO)(vo), del);
 
-			} else if (vo is BattleRushVO) {
-				
-				DoRush ((BattleRushVO)vo, del);
+            }
+            else if (vo is BattleMoveVO)
+            {
 
-			} else if (vo is BattleAttackVO) {
-				
-				DoAttack ((BattleAttackVO)vo, del);
+                DoMove((BattleMoveVO)vo, del);
 
-			} else if (vo is BattleDeathVO) {
-				
-				DoDie ((BattleDeathVO)vo, del);
+            }
+            else if (vo is BattleRushVO)
+            {
 
-			} else if (vo is BattleSummonVO) {
-				
-				DoSummon ((BattleSummonVO)vo, del);
+                DoRush((BattleRushVO)vo, del);
 
-			} else if (vo is BattleAddCardsVO) {
-				
-				DoAddCards ((BattleAddCardsVO)vo, del);
+            }
+            else if (vo is BattleAttackVO)
+            {
 
-			} else if (vo is BattleDelCardsVO) {
-				
-				DoDelCards ((BattleDelCardsVO)vo, del);
+                DoAttack((BattleAttackVO)vo, del);
 
-			} else if (vo is BattleMoneyChangeVO) {
-				
-				DoMoneyChange ((BattleMoneyChangeVO)vo, del);
+            }
+            else if (vo is BattleDeathVO)
+            {
 
-			} else if (vo is BattleLevelUpVO) {
-				
-				DoLevelUp ((BattleLevelUpVO)vo, del);
+                DoDie((BattleDeathVO)vo, del);
 
-			} else {
+            }
+            else if (vo is BattleSummonVO)
+            {
 
-				throw new Exception ("vo type error:" + vo);
-			}
+                DoSummon((BattleSummonVO)vo, del);
 
-		} else {
+            }
+            else if (vo is BattleAddCardsVO)
+            {
 
-			battle.ClientEndBattle ();
+                DoAddCards((BattleAddCardsVO)vo, del);
 
-			RefreshData ();
-		}
+            }
+            else if (vo is BattleDelCardsVO)
+            {
+
+                DoDelCards((BattleDelCardsVO)vo, del);
+
+            }
+            else if (vo is BattleMoneyChangeVO)
+            {
+
+                DoMoneyChange((BattleMoneyChangeVO)vo, del);
+
+            }
+            else if (vo is BattleLevelUpVO)
+            {
+
+                DoLevelUp((BattleLevelUpVO)vo, del);
+
+            }
+            else {
+
+                throw new Exception("vo type error:" + vo);
+            }
+
+        }
+        else {
+
+            battle.ClientEndBattle();
+
+            RefreshData();
+        }
     }
 
     private void DoSummon(BattleSummonVO _vo, Action _del)
@@ -1119,49 +1159,56 @@ public class BattleManager : MonoBehaviour
 
     private void DoShoot(BattleShootVO _vo, Action _del)
     {
-		BattleControl.Instance.Shoot(heroDic[_vo.shooter], heroDic[_vo.stander], _vo.damage, _del);
+        SuperSequenceControl.Start(BattleControl.Instance.Shoot, heroDic[_vo.shooter], heroDic[_vo.stander], _vo.damage, _del);
     }
 
-	private void DoPrepareAttack(BattlePrepareAttackVO _vo, Action _del){
+    private void DoPrepareAttack(BattlePrepareAttackVO _vo, Action _del)
+    {
 
-		HeroBattle attacker = heroDic [_vo.attacker];
+        HeroBattle attacker = heroDic[_vo.attacker];
 
-		HeroBattle defender = heroDic [_vo.defender];
+        HeroBattle defender = heroDic[_vo.defender];
 
-		List<HeroBattle> attackerSupporters;
+        List<HeroBattle> attackerSupporters;
 
-		if (_vo.attackerSupperters != null) {
+        if (_vo.attackerSupperters != null)
+        {
 
-			attackerSupporters = new List<HeroBattle> ();
+            attackerSupporters = new List<HeroBattle>();
 
-			for (int i = 0; i < _vo.attackerSupperters.Count; i++) {
+            for (int i = 0; i < _vo.attackerSupperters.Count; i++)
+            {
 
-				attackerSupporters.Add (heroDic [_vo.attackerSupperters [i]]);
-			}
+                attackerSupporters.Add(heroDic[_vo.attackerSupperters[i]]);
+            }
 
-		} else {
+        }
+        else {
 
-			attackerSupporters = null;
-		}
+            attackerSupporters = null;
+        }
 
-		List<HeroBattle> defenderSupporters;
+        List<HeroBattle> defenderSupporters;
 
-		if (_vo.defenderSupporters != null) {
+        if (_vo.defenderSupporters != null)
+        {
 
-			defenderSupporters = new List<HeroBattle> ();
+            defenderSupporters = new List<HeroBattle>();
 
-			for (int i = 0; i < _vo.defenderSupporters.Count; i++) {
+            for (int i = 0; i < _vo.defenderSupporters.Count; i++)
+            {
 
-				defenderSupporters.Add (heroDic [_vo.defenderSupporters [i]]);
-			}
+                defenderSupporters.Add(heroDic[_vo.defenderSupporters[i]]);
+            }
 
-		} else {
+        }
+        else {
 
-			defenderSupporters = null;
-		}
+            defenderSupporters = null;
+        }
 
-//		BattleControl.Instance.PrepareAttack (mapUnitDic[_vo.pos], attacker, defender, attackerSupporters, defenderSupporters, _vo.attackerSpeed, _vo.defenderSpeed, _del);
-	}
+        //		BattleControl.Instance.PrepareAttack (mapUnitDic[_vo.pos], attacker, defender, attackerSupporters, defenderSupporters, _vo.attackerSpeed, _vo.defenderSpeed, _del);
+    }
 
     private void DoMove(BattleMoveVO _vo, Action _del)
     {
@@ -1222,11 +1269,11 @@ public class BattleManager : MonoBehaviour
 
                 Vector3 startPos = mapUnitDic[pair.Key].transform.localPosition;
 
-				Vector3 endPos = mapUnitDic[pair.Value].transform.localPosition;
+                Vector3 endPos = mapUnitDic[pair.Value].transform.localPosition;
 
                 Action<float> toDel = delegate (float obj)
                 {
-					hero.transform.localPosition = Vector3.Lerp(startPos, endPos, obj);
+                    hero.transform.localPosition = Vector3.Lerp(startPos, endPos, obj);
                 };
 
                 if (i == 0)
@@ -1304,121 +1351,129 @@ public class BattleManager : MonoBehaviour
 
     private void DoRush(BattleRushVO _vo, Action _del)
     {
-		BattleControl.Instance.Rush(heroDic[_vo.attacker], heroDic[_vo.stander], _vo.damage, _del);
+        SuperSequenceControl.Start(BattleControl.Instance.Rush, heroDic[_vo.attacker], heroDic[_vo.stander], _vo.damage, _del);
     }
 
     private void DoAttack(BattleAttackVO _vo, Action _del)
     {
-//        Vector3 pos = mapUnitDic[_vo.defender].transform.localPosition;
-//
-//        List<HeroBattle> attackers = new List<HeroBattle>();
-//
-//		List<List<HeroBattle>> helpers = new List<List<HeroBattle>> ();
-//
-//        List<HeroBattle> supporters = new List<HeroBattle>();
-//
-//        for (int i = 0; i < _vo.attackers.Count; i++)
-//        {
-//            attackers.Add(heroDic[_vo.attackers[i]]);
-//
-//			List<int> tmpList = _vo.helpers[i];
-//
-//			List<HeroBattle> tmpList2 = new List<HeroBattle>();
-//			
-//			helpers.Add(tmpList2);
-//			
-//			for (int m = 0 ; m < tmpList.Count ; m++)
-//			{
-//				tmpList2.Add(heroDic[tmpList[m]]);
-//			}
-//        }
-//
-//        for (int i = 0; i < _vo.supporters.Count; i++)
-//        {
-//            supporters.Add(heroDic[_vo.supporters[i]]);
-//        }
-//
-//        HeroBattle defender;
-//
-//        if (heroDic.ContainsKey(_vo.defender))
-//        {
-//            defender = heroDic[_vo.defender];
-//        }
-//        else
-//        {
-//            defender = null;
-//        }
-//
-//		BattleControl.Instance.Attack(attackers, helpers, pos, defender, supporters, _vo.defenderShieldDamage, _vo.defenderHpDamage, _vo.supportersShieldDamage, _vo.supportersHpDamage, _vo.attackersShieldDamage, _vo.attackersHpDamage, _del);
+        //        Vector3 pos = mapUnitDic[_vo.defender].transform.localPosition;
+        //
+        //        List<HeroBattle> attackers = new List<HeroBattle>();
+        //
+        //		List<List<HeroBattle>> helpers = new List<List<HeroBattle>> ();
+        //
+        //        List<HeroBattle> supporters = new List<HeroBattle>();
+        //
+        //        for (int i = 0; i < _vo.attackers.Count; i++)
+        //        {
+        //            attackers.Add(heroDic[_vo.attackers[i]]);
+        //
+        //			List<int> tmpList = _vo.helpers[i];
+        //
+        //			List<HeroBattle> tmpList2 = new List<HeroBattle>();
+        //			
+        //			helpers.Add(tmpList2);
+        //			
+        //			for (int m = 0 ; m < tmpList.Count ; m++)
+        //			{
+        //				tmpList2.Add(heroDic[tmpList[m]]);
+        //			}
+        //        }
+        //
+        //        for (int i = 0; i < _vo.supporters.Count; i++)
+        //        {
+        //            supporters.Add(heroDic[_vo.supporters[i]]);
+        //        }
+        //
+        //        HeroBattle defender;
+        //
+        //        if (heroDic.ContainsKey(_vo.defender))
+        //        {
+        //            defender = heroDic[_vo.defender];
+        //        }
+        //        else
+        //        {
+        //            defender = null;
+        //        }
+        //
+        //		BattleControl.Instance.Attack(attackers, helpers, pos, defender, supporters, _vo.defenderShieldDamage, _vo.defenderHpDamage, _vo.supportersShieldDamage, _vo.supportersHpDamage, _vo.attackersShieldDamage, _vo.attackersHpDamage, _del);
     }
 
     private void DoDie(BattleDeathVO _vo, Action _del)
     {
-		bool getDie = false;
+        bool getDie = false;
 
-		for (int i = 0; i < _vo.deads.Count; i++) {
+        for (int i = 0; i < _vo.deads.Count; i++)
+        {
 
-			int pos = _vo.deads[i];
+            int pos = _vo.deads[i];
 
-			HeroBattle hero = heroDic[pos];
+            HeroBattle hero = heroDic[pos];
 
-			heroDic.Remove(pos);
+            heroDic.Remove(pos);
 
-			if (!getDie)
-			{
-				getDie = true;
+            if (!getDie)
+            {
+                getDie = true;
 
-				hero.Die(_del);
-			}
-			else
-			{
-				hero.Die(null);
-			}
-		}
+                hero.Die(_del);
+            }
+            else
+            {
+                hero.Die(null);
+            }
+        }
     }
 
-	private void DoAddCards(BattleAddCardsVO _vo, Action _del){
+    private void DoAddCards(BattleAddCardsVO _vo, Action _del)
+    {
 
-		if (_vo.isMine == battle.clientIsMine) {
+        if (_vo.isMine == battle.clientIsMine)
+        {
 
-			ClearCards ();
-			
-			CreateCards (true);
-		}
+            ClearCards();
 
-		_del ();
-	}
+            CreateCards(true);
+        }
 
-	private void DoDelCards(BattleDelCardsVO _vo, Action _del){
+        _del();
+    }
 
-		if (_vo.isMine == battle.clientIsMine) {
+    private void DoDelCards(BattleDelCardsVO _vo, Action _del)
+    {
 
-			ClearCards ();
-			
-			CreateCards (true);
-		}
+        if (_vo.isMine == battle.clientIsMine)
+        {
 
-		_del ();
-	}
+            ClearCards();
 
-	private void DoMoneyChange(BattleMoneyChangeVO _vo, Action _del){
+            CreateCards(true);
+        }
 
-		if (_vo.isMine == battle.clientIsMine) {
+        _del();
+    }
 
-			CreateMoneyTf ();
-		}
+    private void DoMoneyChange(BattleMoneyChangeVO _vo, Action _del)
+    {
 
-		_del ();
-	}
+        if (_vo.isMine == battle.clientIsMine)
+        {
 
-	private void DoLevelUp(BattleLevelUpVO _vo, Action _del){
+            CreateMoneyTf();
+        }
 
-		HeroBattle hero = heroDic[_vo.pos];
+        _del();
+    }
 
-		hero.RefreshAll ();
+    private void DoLevelUp(BattleLevelUpVO _vo, Action _del)
+    {
 
-		_del ();
-	}
+        HeroBattle hero = heroDic[_vo.pos];
+
+        hero.RefreshAll();
+
+        _del();
+    }
 
     private void FixBattleContainerRect()
     {
@@ -1448,11 +1503,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-	private void ScaleChange(int _index, float _scrollValue, Vector2 _pos)
+    private void ScaleChange(int _index, float _scrollValue, Vector2 _pos)
     {
-		float scrollValue = _scrollValue;
+        float scrollValue = _scrollValue;
 
-		Vector2 mousePosition = _pos;
+        Vector2 mousePosition = _pos;
 
         if (scrollValue < 1)
         {
@@ -1488,9 +1543,9 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-	private void GetMouseDown(int _index, RaycastHit _hit, int _hitIndex)
+    private void GetMouseDown(int _index, RaycastHit _hit, int _hitIndex)
     {
-		if (_hitIndex == 0)
+        if (_hitIndex == 0)
         {
             BackgroundDown();
         }
@@ -1512,7 +1567,7 @@ public class BattleManager : MonoBehaviour
         downMapUnit = _mapUnit;
     }
 
-	private void GetMouseMove(int _index, RaycastHit _hit, int _hitIndex)
+    private void GetMouseMove(int _index, RaycastHit _hit, int _hitIndex)
     {
         if (isDown != DownType.NULL)
         {
@@ -1582,8 +1637,9 @@ public class BattleManager : MonoBehaviour
         alertPanel.Alert(_str, _callBack);
     }
 
-	void Start(){
+    void Start()
+    {
 
-		gameObject.SetActive (false);
-	}
+        gameObject.SetActive(false);
+    }
 }
