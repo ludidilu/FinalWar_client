@@ -95,13 +95,15 @@ public class HeroBattle : HeroBase
 
     public void Shock(Vector3 _target, AnimationCurve _curve, float _shockDis, int _damage)
     {
-        Vector3 shockVector = (transform.localPosition - _target).normalized * _shockDis;
+        Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(moveTrans.localPosition));
+
+        Vector3 shockVector = (pos - _target).normalized * _shockDis;
 
         Action<float> shockToDel = delegate (float obj)
         {
             float value = _curve.Evaluate(obj);
 
-            shockTrans.localPosition = moveTrans.localPosition - shockVector * value;
+            shockTrans.localPosition = shockVector * value;
         };
 
         SuperTween.Instance.To(0, 1, 1, shockToDel, null);
@@ -113,11 +115,13 @@ public class HeroBattle : HeroBase
 
     public void ShowHud(string _str, Color _color, Action _callBack)
     {
-        GameObject go = Instantiate<GameObject>(BattleControl.Instance.damageNumResources);
+        GameObject go = Instantiate(BattleControl.Instance.damageNumResources);
 
         go.transform.SetParent(transform.parent, false);
 
-        go.transform.localPosition = transform.localPosition;
+        Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(moveTrans.localPosition));
+
+        go.transform.localPosition = pos;
 
         DamageNum damageNum = go.GetComponent<DamageNum>();
 
