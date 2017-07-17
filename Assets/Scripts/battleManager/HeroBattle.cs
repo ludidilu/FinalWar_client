@@ -93,6 +93,16 @@ public class HeroBattle : HeroBase
         body.color = hero.canAction == 0 ? Color.white : Color.grey;
     }
 
+    public void RefreshAttackWithoutShield()
+    {
+        attack.text = hero.GetDamageWithoutShield().ToString();
+    }
+
+    public void RefreshAttack()
+    {
+        attack.text = hero.GetDamage().ToString();
+    }
+
     public void Shock(Vector3 _target, AnimationCurve _curve, float _shockDis, int _damage)
     {
         Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(moveTrans.localPosition));

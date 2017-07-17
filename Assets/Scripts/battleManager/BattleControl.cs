@@ -43,6 +43,8 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Rush(int _index, HeroBattle _attacker, HeroBattle _stander, int _damage, Action _callBack)
     {
+        _attacker.RefreshAttack();
+
         bool getHit = false;
 
         Action<float> moveToDel = delegate (float obj)
@@ -252,6 +254,8 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Attack(int _index, Vector3 _targetPos, HeroBattle _attacker, HeroBattle _defender, int _damage, Action _callBack)
     {
+        _attacker.RefreshAttack();
+
         bool getHit = false;
 
         Action<float> attackerToDel = delegate (float obj)
@@ -291,8 +295,12 @@ public class BattleControl : MonoBehaviour
         _callBack();
     }
 
-    public IEnumerator AttackAndCounter(int _index, Vector3 _targetPos, HeroBattle _attacker, HeroBattle _defender, int _attackerDamage, int _defenderDamage, Action _callBack)
+    public IEnumerator AttackAndCounter(int _index, Vector3 _targetPos, HeroBattle _attacker, HeroBattle _defender, int _attackDamage, int _defenseDamage, Action _callBack)
     {
+        _attacker.RefreshAttack();
+
+        _defender.RefreshAttack();
+
         bool getHit = false;
 
         Action<float> attackerToDel = delegate (float obj)
@@ -307,14 +315,14 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_attackerDamage < 0)
+                if (_attackDamage < 0)
                 {
-                    _defender.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _attackerDamage);
+                    _defender.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _attackDamage);
                 }
 
-                if(_defenderDamage < 0)
+                if (_defenseDamage < 0)
                 {
-                    _attacker.Shock(_targetPos, shockCurve, shockDis, _attackerDamage);
+                    _attacker.Shock(_targetPos, shockCurve, shockDis, _defenseDamage);
                 }
             }
         };
@@ -323,7 +331,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_attackerDamage < 0 || _defenderDamage < 0)
+        if (_attackDamage < 0 || _defenseDamage < 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
@@ -339,6 +347,8 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Counter(int _index, Vector3 _targetPos, HeroBattle _attacker, HeroBattle _defender, int _damage, Action _callBack)
     {
+        _attacker.RefreshAttack();
+
         bool getHit = false;
 
         Action<float> attackerToDel = delegate (float obj)
@@ -376,120 +386,5 @@ public class BattleControl : MonoBehaviour
         yield return null;
 
         _callBack();
-    }
-
-    public void Attack(List<HeroBattle> _attackers, List<List<HeroBattle>> _helpers, Vector3 _targetPos, HeroBattle _defender, List<HeroBattle> _supporters, int _defenderShieldDamage, int _defenderHpDamage, List<int> _supportersShieldDamage, List<int> _supportersHpDamage, List<int> _attackersShieldDamage, List<int> _attackersHpDamage, Action _callBack)
-    {
-        //        Action<float> supportToDel = delegate (float obj)
-        //        {
-        //            for (int i = 0; i < _supporters.Count; i++)
-        //            {
-        //				HeroBattle tmpHero = _supporters[i];
-        //
-        //				Vector3 v = Vector3.Lerp(tmpHero.transform.localPosition, _targetPos, obj);
-        //
-        //				tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
-        //            }
-        //
-        //			for (int i = 0; i < _helpers.Count; i++)
-        //			{
-        //				List<HeroBattle> tmpList = _helpers[i];
-        //				
-        //				for(int m = 0 ; m < tmpList.Count ; m++){
-        //					
-        //					HeroBattle tmpHero = tmpList[m];
-        //					
-        //					Vector3 v = Vector3.Lerp(tmpHero.transform.localPosition, _attackers[i].transform.localPosition, obj);
-        //					
-        //					tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
-        //				}
-        //			}
-        //        };
-        //
-        //        SuperTween.Instance.To(0, 0.5f, 0.5f, supportToDel, null);
-        //
-        //        Action<float> resetToDel = delegate (float obj)
-        //        {
-        //            for (int i = 0; i < _supporters.Count; i++)
-        //            {
-        //				HeroBattle tmpHero = _supporters[i];
-        //
-        //				Vector3 v = Vector3.Lerp(_targetPos, tmpHero.transform.localPosition, obj);
-        //
-        //				tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
-        //            }
-        //
-        //			for (int i = 0; i < _helpers.Count; i++)
-        //			{
-        //				List<HeroBattle> tmpList = _helpers[i];
-        //				
-        //				for(int m = 0 ; m < tmpList.Count ; m++){
-        //					
-        //					HeroBattle tmpHero = tmpList[m];
-        //					
-        //					Vector3 v = Vector3.Lerp(_attackers[i].transform.localPosition, tmpHero.transform.localPosition, obj);
-        //					
-        //					tmpHero.moveTrans.transform.localPosition = v - tmpHero.transform.localPosition;
-        //				}
-        //			}
-        //        };
-        //
-        //        Action resetDel = delegate ()
-        //        {
-        //            SuperTween.Instance.To(0.5f, 1, 0.5f, resetToDel, null);
-        //
-        //            SuperTween.Instance.DelayCall(2, _callBack);
-        //        };
-        //
-        //        List<Vector3> vList = new List<Vector3>();
-        //
-        //        for (int m = 0; m < _attackers.Count; m++)
-        //        {
-        //            vList.Add(_attackers[m].transform.localPosition);
-        //        }
-        //
-        //        bool getHit = false;
-        //
-        //        Action<float> moveToDel = delegate (float obj)
-        //        {
-        //            float value = attackCurve.Evaluate(obj);
-        //
-        //            for (int i = 0; i < _attackers.Count; i++)
-        //            {
-        //                HeroBattle attacker = _attackers[i];
-        //
-        //				Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, _targetPos, value);
-        //
-        //				attacker.moveTrans.localPosition = vv - attacker.transform.localPosition;
-        //            }
-        //
-        //            if (!getHit && obj > hitPercent)
-        //            {
-        //                getHit = true;
-        //
-        //                if (_defender != null && (_defenderShieldDamage < 0 || _defenderHpDamage < 0))
-        //                {
-        //                    _defender.Shock(vList, shockCurve, shockDis, _defenderShieldDamage, _defenderHpDamage);
-        //                }
-        //
-        //                for (int i = 0; i < _attackers.Count; i++)
-        //                {
-        //                    if (_attackersShieldDamage[i] < 0 || _attackersHpDamage[i] < 0)
-        //                    {
-        //                        _attackers[i].Shock(new List<Vector3>() { _targetPos }, shockCurve, shockDis, _attackersShieldDamage[i], _attackersHpDamage[i]);
-        //                    }
-        //                }
-        //
-        //                for (int i = 0; i < _supporters.Count; i++)
-        //                {
-        //                    if (_supportersShieldDamage[i] < 0 || _supportersHpDamage[i] < 0)
-        //                    {
-        //                        _supporters[i].Shock(vList, shockCurve, shockDis, _supportersShieldDamage[i], _supportersHpDamage[i]);
-        //                    }
-        //                }
-        //            }
-        //        };
-        //
-        //        SuperTween.Instance.To(0, 1, 1, moveToDel, resetDel);
     }
 }

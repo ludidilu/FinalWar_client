@@ -1046,7 +1046,6 @@ public class BattleManager : MonoBehaviour
     {
         if (_step.MoveNext())
         {
-
             ValueType vo = _step.Current;
 
             Action del = delegate ()
@@ -1056,69 +1055,60 @@ public class BattleManager : MonoBehaviour
 
             if (vo is BattleShootVO)
             {
-
                 DoShoot((BattleShootVO)(vo), del);
-
             }
             else if (vo is BattleMoveVO)
             {
-
                 DoMove((BattleMoveVO)vo, del);
-
             }
             else if (vo is BattleRushVO)
             {
-
                 DoRush((BattleRushVO)vo, del);
-
             }
             else if (vo is BattleAttackVO)
             {
-
                 DoAttack((BattleAttackVO)vo, del);
-
+            }
+            else if (vo is BattlePrepareAttackVO)
+            {
+                DoPrepareAttack((BattlePrepareAttackVO)vo, del);
+            }
+            else if (vo is BattleAttackAndCounterVO)
+            {
+                DoAttackAndCounter((BattleAttackAndCounterVO)vo, del);
+            }
+            else if (vo is BattleCounterVO)
+            {
+                DoCounter((BattleCounterVO)vo, del);
             }
             else if (vo is BattleDeathVO)
             {
-
                 DoDie((BattleDeathVO)vo, del);
-
             }
             else if (vo is BattleSummonVO)
             {
-
                 DoSummon((BattleSummonVO)vo, del);
-
             }
             else if (vo is BattleAddCardsVO)
             {
-
                 DoAddCards((BattleAddCardsVO)vo, del);
-
             }
             else if (vo is BattleDelCardsVO)
             {
-
                 DoDelCards((BattleDelCardsVO)vo, del);
-
             }
             else if (vo is BattleMoneyChangeVO)
             {
-
                 DoMoneyChange((BattleMoneyChangeVO)vo, del);
-
             }
             else if (vo is BattleLevelUpVO)
             {
-
                 DoLevelUp((BattleLevelUpVO)vo, del);
-
             }
             else {
 
                 throw new Exception("vo type error:" + vo);
             }
-
         }
         else {
 
@@ -1317,7 +1307,6 @@ public class BattleManager : MonoBehaviour
         if (mapUnitType == MapData.MapUnitType.RIVER)
         {
             _unit.SetMainColor(riverColor);
-
         }
         else if (mapUnitType == MapData.MapUnitType.HILL)
         {
@@ -1357,13 +1346,22 @@ public class BattleManager : MonoBehaviour
         SuperSequenceControl.Start(BattleControl.Instance.Attack, mapUnitDic[_vo.pos].transform.localPosition, heroDic[_vo.attacker], heroDic[_vo.defender], _vo.damage, _del);
     }
 
+    private void DoCounter(BattleCounterVO _vo, Action _del)
+    {
+        SuperSequenceControl.Start(BattleControl.Instance.Counter, mapUnitDic[_vo.pos].transform.localPosition, heroDic[_vo.attacker], heroDic[_vo.defender], _vo.damage, _del);
+    }
+
+    private void DoAttackAndCounter(BattleAttackAndCounterVO _vo, Action _del)
+    {
+        SuperSequenceControl.Start(BattleControl.Instance.AttackAndCounter, mapUnitDic[_vo.pos].transform.localPosition, heroDic[_vo.attacker], heroDic[_vo.defender], _vo.attackDamage, _vo.defenseDamage, _del);
+    }
+
     private void DoDie(BattleDeathVO _vo, Action _del)
     {
         bool getDie = false;
 
         for (int i = 0; i < _vo.deads.Count; i++)
         {
-
             int pos = _vo.deads[i];
 
             HeroBattle hero = heroDic[pos];
@@ -1385,10 +1383,8 @@ public class BattleManager : MonoBehaviour
 
     private void DoAddCards(BattleAddCardsVO _vo, Action _del)
     {
-
         if (_vo.isMine == battle.clientIsMine)
         {
-
             ClearCards();
 
             CreateCards(true);
@@ -1399,10 +1395,8 @@ public class BattleManager : MonoBehaviour
 
     private void DoDelCards(BattleDelCardsVO _vo, Action _del)
     {
-
         if (_vo.isMine == battle.clientIsMine)
         {
-
             ClearCards();
 
             CreateCards(true);
@@ -1413,10 +1407,8 @@ public class BattleManager : MonoBehaviour
 
     private void DoMoneyChange(BattleMoneyChangeVO _vo, Action _del)
     {
-
         if (_vo.isMine == battle.clientIsMine)
         {
-
             CreateMoneyTf();
         }
 
@@ -1425,7 +1417,6 @@ public class BattleManager : MonoBehaviour
 
     private void DoLevelUp(BattleLevelUpVO _vo, Action _del)
     {
-
         HeroBattle hero = heroDic[_vo.pos];
 
         hero.RefreshAll();
