@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-//using superTween;
 using System;
 using System.Collections.Generic;
 using System.Collections;
 using superSequenceControl;
+using FinalWar;
 
 public class BattleControl : MonoBehaviour
 {
@@ -41,9 +41,13 @@ public class BattleControl : MonoBehaviour
         Instance = this;
     }
 
-    public IEnumerator Rush(int _index, HeroBattle _attacker, HeroBattle _stander, int _damage, Action _callBack)
+    public IEnumerator Rush(int _index, int _lastIndex, BattleRushVO _vo)
     {
-        _attacker.RefreshAttack();
+        HeroBattle attacker = BattleManager.Instance.heroDic[_vo.attacker];
+
+        HeroBattle stander = BattleManager.Instance.heroDic[_vo.stander];
+
+        attacker.RefreshAttack();
 
         bool getHit = false;
 
@@ -51,17 +55,17 @@ public class BattleControl : MonoBehaviour
         {
             float value = attackCurve.Evaluate(obj);
 
-            Vector3 vv = Vector3.LerpUnclamped(_attacker.transform.localPosition, _stander.transform.localPosition, value);
+            Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, stander.transform.localPosition, value);
 
-            _attacker.moveTrans.localPosition = vv - _attacker.transform.localPosition;
+            attacker.moveTrans.localPosition = vv - attacker.transform.localPosition;
 
             if (!getHit && obj > hitPercent)
             {
                 getHit = true;
 
-                if (_damage < 0)
+                if (_vo.damage < 0)
                 {
-                    _stander.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _damage);
+                    stander.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage);
                 }
             }
         };
@@ -70,7 +74,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_damage < 0)
+        if (_vo.damage < 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
@@ -81,20 +85,24 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        _callBack();
+        SuperSequenceControl.MoveNext(_lastIndex);
     }
 
-    public IEnumerator Shoot(int _index, HeroBattle _shooter, HeroBattle _stander, int _damage, Action _callBack)
+    public IEnumerator Shoot(int _index, int _lastIndex, BattleShootVO _vo)
     {
-        float angle = Mathf.Atan2(_stander.transform.localPosition.y - _shooter.transform.localPosition.y, _stander.transform.localPosition.x - _shooter.transform.localPosition.x);
+        HeroBattle shooter = BattleManager.Instance.heroDic[_vo.shooter];
+
+        HeroBattle stander = BattleManager.Instance.heroDic[_vo.stander];
+
+        float angle = Mathf.Atan2(stander.transform.localPosition.y - shooter.transform.localPosition.y, stander.transform.localPosition.x - shooter.transform.localPosition.x);
 
         angle += Mathf.PI * 0.5f;
 
         GameObject arrow = GameObject.Instantiate<GameObject>(arrowResources);
 
-        arrow.transform.SetParent(_shooter.transform.parent, false);
+        arrow.transform.SetParent(shooter.transform.parent, false);
 
-        arrow.transform.localPosition = _shooter.transform.localPosition;
+        arrow.transform.localPosition = shooter.transform.localPosition;
 
         arrow.SetActive(false);
 
@@ -107,7 +115,7 @@ public class BattleControl : MonoBehaviour
                 arrow.SetActive(true);
             }
 
-            Vector3 targetPos = Vector3.Lerp(_shooter.transform.localPosition, _stander.transform.localPosition, obj);
+            Vector3 targetPos = Vector3.Lerp(shooter.transform.localPosition, stander.transform.localPosition, obj);
 
             targetPos += new Vector3(Mathf.Cos(angle) * v * shootFix, Mathf.Sin(angle) * v * shootFix, 0);
 
@@ -122,12 +130,12 @@ public class BattleControl : MonoBehaviour
 
         Destroy(arrow);
 
-        if (_damage < 0)
+        if (_vo.damage < 0)
         {
-            _stander.Shock(_shooter.transform.localPosition, shockCurve, shockDis, _damage);
+            stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.damage);
         }
 
-        if (_damage < 0)
+        if (_vo.damage < 0)
         {
             SuperSequenceControl.DelayCall(2f, _index);
         }
@@ -138,45 +146,79 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        _callBack();
+        SuperSequenceControl.MoveNext(_lastIndex);
     }
 
-    public IEnumerator PrepareAttack(int _index, Vector3 _pos, HeroBattle _attacker, HeroBattle _defender, HeroBattle _supporter, List<HeroBattle> _attackerSupporters, List<HeroBattle> _defenderSupporters, int _attackerSpeed, int _defenderSpeed, Action _del)
+    public IEnumerator PrepareAttack(int _index, int _lastIndex, BattlePrepareAttackVO _vo)
     {
+        Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
+
+        HeroBattle attacker = BattleManager.Instance.heroDic[_vo.attacker];
+
         HeroBattle defenderReal;
 
-        if (_supporter != null)
+        HeroBattle defender = null;
+
+        HeroBattle supporter = null;
+
+        if (_vo.pos == _vo.defender)
         {
-            defenderReal = _supporter;
+            defenderReal = defender = BattleManager.Instance.heroDic[_vo.defender];
         }
         else
         {
-            defenderReal = _defender;
+            defenderReal = supporter = BattleManager.Instance.heroDic[_vo.defender];
+
+            BattleManager.Instance.heroDic.TryGetValue(_vo.pos, out defender);
+        }
+
+        List<HeroBattle> attackerSupporters = null;
+
+        if (_vo.attackerSupperters != null)
+        {
+            attackerSupporters = new List<HeroBattle>();
+
+            for (int i = 0; i < _vo.attackerSupperters.Count; i++)
+            {
+                attackerSupporters.Add(BattleManager.Instance.heroDic[_vo.attackerSupperters[i]]);
+            }
+        }
+
+        List<HeroBattle> defenderSupporters = null;
+
+        if (_vo.defenderSupporters != null)
+        {
+            defenderSupporters = new List<HeroBattle>();
+
+            for (int i = 0; i < _vo.defenderSupporters.Count; i++)
+            {
+                defenderSupporters.Add(BattleManager.Instance.heroDic[_vo.defenderSupporters[i]]);
+            }
         }
 
         Action<float> supportersMove = null;
 
-        if (_attackerSupporters != null || _defenderSupporters != null)
+        if (attackerSupporters != null || defenderSupporters != null)
         {
             supportersMove = delegate (float obj)
             {
-                if (_attackerSupporters != null)
+                if (attackerSupporters != null)
                 {
-                    for (int i = 0; i < _attackerSupporters.Count; i++)
+                    for (int i = 0; i < attackerSupporters.Count; i++)
                     {
-                        HeroBattle hero = _attackerSupporters[i];
+                        HeroBattle hero = attackerSupporters[i];
 
-                        Vector3 v = Vector3.Lerp(hero.transform.localPosition, _attacker.transform.localPosition, obj);
+                        Vector3 v = Vector3.Lerp(hero.transform.localPosition, attacker.transform.localPosition, obj);
 
                         hero.moveTrans.transform.localPosition = v - hero.transform.localPosition;
                     }
                 }
 
-                if (_defenderSupporters != null)
+                if (defenderSupporters != null)
                 {
-                    for (int i = 0; i < _defenderSupporters.Count; i++)
+                    for (int i = 0; i < defenderSupporters.Count; i++)
                     {
-                        HeroBattle hero = _defenderSupporters[i];
+                        HeroBattle hero = defenderSupporters[i];
 
                         Vector3 v = Vector3.Lerp(hero.transform.localPosition, defenderReal.transform.localPosition, obj);
 
@@ -195,34 +237,34 @@ public class BattleControl : MonoBehaviour
             SuperSequenceControl.MoveNext(_index);
         };
 
-        _attacker.ShowHud("aa", Color.blue, dele0);
+        attacker.ShowHud("aa", Color.blue, dele0);
 
         defenderReal.ShowHud("bb", Color.blue, null);
 
         yield return null;
 
-        if (defenderReal == _supporter)
+        if (defenderReal == supporter)
         {
             if (supportersMove != null)
             {
                 SuperSequenceControl.To(0.5f, 0f, 0.5f, supportersMove, 0);
             }
 
-            if (_defender != null)
+            if (defender != null)
             {
-                Vector3 v1 = (_defender.transform.localPosition - _attacker.transform.localPosition).normalized;
+                Vector3 v1 = (defender.transform.localPosition - attacker.transform.localPosition).normalized;
 
-                Vector3 v2 = (_defender.transform.localPosition - _supporter.transform.localPosition).normalized;
+                Vector3 v2 = (defender.transform.localPosition - supporter.transform.localPosition).normalized;
 
                 Vector3 v3 = v1 + v2;
 
-                Vector3 targetPos = _defender.transform.localPosition + v3.normalized * Vector3.Distance(_defender.transform.localPosition, _attacker.transform.localPosition) * 0.5f;
+                Vector3 tmpPos = defender.transform.localPosition + v3.normalized * Vector3.Distance(defender.transform.localPosition, attacker.transform.localPosition) * 0.5f;
 
                 Action<float> defenderToDel = delegate (float _value)
                 {
-                    Vector3 v = Vector3.Lerp(_defender.transform.localPosition, targetPos, _value);
+                    Vector3 v = Vector3.Lerp(defender.transform.localPosition, tmpPos, _value);
 
-                    _defender.moveTrans.localPosition = v - _defender.transform.localPosition;
+                    defender.moveTrans.localPosition = v - defender.transform.localPosition;
                 };
 
                 SuperSequenceControl.To(0f, 1f, 0.5f, defenderToDel, 0);
@@ -230,9 +272,9 @@ public class BattleControl : MonoBehaviour
 
             Action<float> supporterToDel = delegate (float _value)
             {
-                Vector3 v = Vector3.Lerp(_supporter.transform.localPosition, _pos, _value);
+                Vector3 v = Vector3.Lerp(supporter.transform.localPosition, targetPos, _value);
 
-                _supporter.moveTrans.localPosition = v - _supporter.transform.localPosition;
+                supporter.moveTrans.localPosition = v - supporter.transform.localPosition;
             };
 
             SuperSequenceControl.To(0f, 1f, 0.5f, supporterToDel, _index);
@@ -249,12 +291,18 @@ public class BattleControl : MonoBehaviour
             }
         }
 
-        _del();
+        SuperSequenceControl.MoveNext(_lastIndex);
     }
 
-    public IEnumerator Attack(int _index, Vector3 _targetPos, HeroBattle _attacker, HeroBattle _defender, int _damage, Action _callBack)
+    public IEnumerator Attack(int _index, int _lastIndex, BattleAttackVO _vo)
     {
-        _attacker.RefreshAttack();
+        HeroBattle attacker = BattleManager.Instance.heroDic[_vo.attacker];
+
+        HeroBattle defender = BattleManager.Instance.heroDic[_vo.defender];
+
+        Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
+
+        attacker.RefreshAttack();
 
         bool getHit = false;
 
@@ -262,17 +310,17 @@ public class BattleControl : MonoBehaviour
         {
             float value = attackCurve.Evaluate(obj);
 
-            Vector3 vv = Vector3.LerpUnclamped(_attacker.transform.localPosition, _targetPos, value);
+            Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, targetPos, value);
 
-            _attacker.moveTrans.localPosition = vv - _attacker.transform.localPosition;
+            attacker.moveTrans.localPosition = vv - attacker.transform.localPosition;
 
             if (!getHit && obj > hitPercent)
             {
                 getHit = true;
 
-                if (_damage < 0)
+                if (_vo.damage < 0)
                 {
-                    _defender.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _damage);
+                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage);
                 }
             }
         };
@@ -281,7 +329,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_damage < 0)
+        if (_vo.damage < 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
@@ -292,14 +340,22 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        _callBack();
+        attacker.RefreshAttackWithoutShield();
+
+        SuperSequenceControl.MoveNext(_lastIndex);
     }
 
-    public IEnumerator AttackAndCounter(int _index, Vector3 _targetPos, HeroBattle _attacker, HeroBattle _defender, int _attackDamage, int _defenseDamage, Action _callBack)
+    public IEnumerator AttackAndCounter(int _index, int _lastIndex, BattleAttackAndCounterVO _vo)
     {
-        _attacker.RefreshAttack();
+        HeroBattle attacker = BattleManager.Instance.heroDic[_vo.attacker];
 
-        _defender.RefreshAttack();
+        HeroBattle defender = BattleManager.Instance.heroDic[_vo.defender];
+
+        Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
+
+        attacker.RefreshAttack();
+
+        defender.RefreshAttack();
 
         bool getHit = false;
 
@@ -307,22 +363,22 @@ public class BattleControl : MonoBehaviour
         {
             float value = attackCurve.Evaluate(obj);
 
-            Vector3 vv = Vector3.LerpUnclamped(_attacker.transform.localPosition, _targetPos, value);
+            Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, targetPos, value);
 
-            _attacker.moveTrans.localPosition = vv - _attacker.transform.localPosition;
+            attacker.moveTrans.localPosition = vv - attacker.transform.localPosition;
 
             if (!getHit && obj > hitPercent)
             {
                 getHit = true;
 
-                if (_attackDamage < 0)
+                if (_vo.attackDamage < 0)
                 {
-                    _defender.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _attackDamage);
+                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.attackDamage);
                 }
 
-                if (_defenseDamage < 0)
+                if (_vo.defenseDamage < 0)
                 {
-                    _attacker.Shock(_targetPos, shockCurve, shockDis, _defenseDamage);
+                    attacker.Shock(targetPos, shockCurve, shockDis, _vo.defenseDamage);
                 }
             }
         };
@@ -331,7 +387,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_attackDamage < 0 || _defenseDamage < 0)
+        if (_vo.attackDamage < 0 || _vo.defenseDamage < 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
@@ -342,12 +398,22 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        _callBack();
+        attacker.RefreshAttackWithoutShield();
+
+        defender.RefreshAttackWithoutShield();
+
+        SuperSequenceControl.MoveNext(_lastIndex);
     }
 
-    public IEnumerator Counter(int _index, Vector3 _targetPos, HeroBattle _attacker, HeroBattle _defender, int _damage, Action _callBack)
+    public IEnumerator Counter(int _index, int _lastIndex, BattleCounterVO _vo)
     {
-        _attacker.RefreshAttack();
+        Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
+
+        HeroBattle attacker = BattleManager.Instance.heroDic[_vo.attacker];
+
+        HeroBattle defender = BattleManager.Instance.heroDic[_vo.defender];
+
+        attacker.RefreshAttack();
 
         bool getHit = false;
 
@@ -355,17 +421,17 @@ public class BattleControl : MonoBehaviour
         {
             float value = attackCurve.Evaluate(obj);
 
-            Vector3 vv = Vector3.LerpUnclamped(_targetPos, _defender.transform.localPosition, value);
+            Vector3 vv = Vector3.LerpUnclamped(targetPos, defender.transform.localPosition, value);
 
-            _attacker.moveTrans.localPosition = vv - _attacker.transform.localPosition;
+            attacker.moveTrans.localPosition = vv - attacker.transform.localPosition;
 
             if (!getHit && obj > hitPercent)
             {
                 getHit = true;
 
-                if (_damage < 0)
+                if (_vo.damage < 0)
                 {
-                    _defender.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _damage);
+                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage);
                 }
             }
         };
@@ -374,7 +440,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_damage < 0)
+        if (_vo.damage < 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
@@ -385,6 +451,142 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        _callBack();
+        attacker.RefreshAttackWithoutShield();
+
+        SuperSequenceControl.MoveNext(_lastIndex);
     }
+
+    public IEnumerator Move(int _index, int _lastIndex, BattleMoveVO _vo)
+    {
+        List<KeyValuePair<int, int>> tmpList = new List<KeyValuePair<int, int>>();
+
+        List<KeyValuePair<int, int>> tmpList2 = new List<KeyValuePair<int, int>>();
+
+        Dictionary<int, HeroBattle> tmpDic = new Dictionary<int, HeroBattle>();
+
+        Dictionary<int, int> moves = _vo.moves;
+
+        while (moves.Count > 0)
+        {
+            Dictionary<int, int>.Enumerator enumerator = moves.GetEnumerator();
+
+            enumerator.MoveNext();
+
+            tmpList.Add(enumerator.Current);
+
+            while (tmpList.Count > 0)
+            {
+                KeyValuePair<int, int> pair = tmpList[0];
+
+                moves.Remove(pair.Key);
+
+                tmpList.RemoveAt(0);
+
+                tmpList2.Add(pair);
+
+                if (moves.ContainsKey(pair.Value))
+                {
+                    tmpList.Add(new KeyValuePair<int, int>(pair.Value, moves[pair.Value]));
+                }
+
+                if (moves.ContainsValue(pair.Key))
+                {
+                    enumerator = moves.GetEnumerator();
+
+                    while (enumerator.MoveNext())
+                    {
+                        if (enumerator.Current.Value == pair.Key)
+                        {
+                            tmpList.Add(enumerator.Current);
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < tmpList2.Count; i++)
+            {
+                KeyValuePair<int, int> pair = tmpList2[i];
+
+                HeroBattle hero = BattleManager.Instance.heroDic[pair.Key];
+
+                tmpDic.Add(pair.Key, hero);
+
+                BattleManager.Instance.heroDic.Remove(pair.Key);
+
+                Vector3 startPos = BattleManager.Instance.mapUnitDic[pair.Key].transform.localPosition;
+
+                Vector3 endPos = BattleManager.Instance.mapUnitDic[pair.Value].transform.localPosition;
+
+                Action<float> toDel = delegate (float obj)
+                {
+                    hero.transform.localPosition = Vector3.Lerp(startPos, endPos, obj);
+                };
+
+                if (i == 0)
+                {
+                    SuperSequenceControl.To(0f, 1f, 1f, toDel, _index);
+                }
+                else
+                {
+                    SuperSequenceControl.To(0f, 1f, 1f, toDel, 0);
+                }
+            }
+
+            yield return null;
+
+            for (int l = 0; l < tmpList2.Count; l++)
+            {
+                KeyValuePair<int, int> pair = tmpList2[l];
+
+                BattleManager.Instance.heroDic.Add(pair.Value, tmpDic[pair.Key]);
+
+                int index = pair.Value;
+
+                MapUnit unit = BattleManager.Instance.mapUnitDic[index];
+
+                BattleManager.Instance.SetMapUnitColor(unit);
+            }
+
+            tmpList.Clear();
+
+            tmpList2.Clear();
+
+            tmpDic.Clear();
+        }
+
+        SuperSequenceControl.MoveNext(_lastIndex);
+    }
+
+    public IEnumerator Die(int _index, int _lastIndex, BattleDeathVO _vo)
+    {
+        Action dele = delegate ()
+        {
+            SuperSequenceControl.MoveNext(_index);
+        };
+
+        for (int i = 0; i < _vo.deads.Count; i++)
+        {
+            int pos = _vo.deads[i];
+
+            HeroBattle hero = BattleManager.Instance.heroDic[pos];
+
+            BattleManager.Instance.heroDic.Remove(pos);
+
+            if (i == 0)
+            {
+                hero.Die(dele);
+            }
+            else
+            {
+                hero.Die(null);
+            }
+        }
+
+        yield return null;
+
+        SuperSequenceControl.MoveNext(_lastIndex);
+    }
+    
 }

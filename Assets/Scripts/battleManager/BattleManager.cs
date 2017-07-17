@@ -89,11 +89,11 @@ public class BattleManager : MonoBehaviour
 
     private Battle battle;
 
-    private Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
+    public Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
+
+    public Dictionary<int, HeroBattle> heroDic = new Dictionary<int, HeroBattle>();
 
     private Dictionary<int, HeroCard> cardDic = new Dictionary<int, HeroCard>();
-
-    private Dictionary<int, HeroBattle> heroDic = new Dictionary<int, HeroBattle>();
 
     private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
 
@@ -104,6 +104,13 @@ public class BattleManager : MonoBehaviour
     private Vector2 lastPos;
 
     private GameObject mapGo;
+
+    public static BattleManager Instance { get; private set; }
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     private enum DownType
     {
@@ -1039,86 +1046,109 @@ public class BattleManager : MonoBehaviour
     {
         RefreshDataBeforeBattle();
 
-        DoActionReal(_step);
+        SuperSequenceControl.Start(DoActionReal, _step);
     }
 
-    private void DoActionReal(SuperEnumerator<ValueType> _step)
+    private System.Collections.IEnumerator DoActionReal(int _index, SuperEnumerator<ValueType> _step)
     {
-        if (_step.MoveNext())
+        while (_step.MoveNext())
         {
             ValueType vo = _step.Current;
 
-            Action del = delegate ()
-            {
-                DoActionReal(_step);
-            };
-
             if (vo is BattleShootVO)
             {
-                DoShoot((BattleShootVO)(vo), del);
+                SuperSequenceControl.Start(BattleControl.Instance.Shoot, _index, (BattleShootVO)vo);
+
+                yield return null;
             }
             else if (vo is BattleMoveVO)
             {
-                DoMove((BattleMoveVO)vo, del);
+                SuperSequenceControl.Start(BattleControl.Instance.Move, _index, (BattleMoveVO)vo);
+
+                yield return null;
             }
             else if (vo is BattleRushVO)
             {
-                DoRush((BattleRushVO)vo, del);
+                SuperSequenceControl.Start(BattleControl.Instance.Rush, _index, (BattleRushVO)vo);
+
+                yield return null;
             }
             else if (vo is BattleAttackVO)
             {
-                DoAttack((BattleAttackVO)vo, del);
+                SuperSequenceControl.Start(BattleControl.Instance.Attack, _index, (BattleAttackVO)vo);
+
+                yield return null;
             }
             else if (vo is BattlePrepareAttackVO)
             {
-                DoPrepareAttack((BattlePrepareAttackVO)vo, del);
+                SuperSequenceControl.Start(BattleControl.Instance.PrepareAttack, _index, (BattlePrepareAttackVO)vo);
+
+                yield return null;
             }
             else if (vo is BattleAttackAndCounterVO)
             {
-                DoAttackAndCounter((BattleAttackAndCounterVO)vo, del);
+                SuperSequenceControl.Start(BattleControl.Instance.AttackAndCounter, _index, (BattleAttackAndCounterVO)vo);
+
+                yield return null;
             }
             else if (vo is BattleCounterVO)
             {
-                DoCounter((BattleCounterVO)vo, del);
+                SuperSequenceControl.Start(BattleControl.Instance.Counter, _index, (BattleCounterVO)vo);
+
+                yield return null;
             }
             else if (vo is BattleDeathVO)
             {
-                DoDie((BattleDeathVO)vo, del);
+                SuperSequenceControl.Start(BattleControl.Instance.Die, _index, (BattleDeathVO)vo);
+
+                yield return null;
             }
             else if (vo is BattleSummonVO)
             {
-                DoSummon((BattleSummonVO)vo, del);
+                SuperSequenceControl.Start(DoSummon, _index, (BattleSummonVO)vo);
+
+                yield return null;
             }
             else if (vo is BattleAddCardsVO)
             {
-                DoAddCards((BattleAddCardsVO)vo, del);
+                DoAddCards((BattleAddCardsVO)vo);
             }
             else if (vo is BattleDelCardsVO)
             {
-                DoDelCards((BattleDelCardsVO)vo, del);
+                DoDelCards((BattleDelCardsVO)vo);
             }
             else if (vo is BattleMoneyChangeVO)
             {
-                DoMoneyChange((BattleMoneyChangeVO)vo, del);
+                DoMoneyChange((BattleMoneyChangeVO)vo);
             }
             else if (vo is BattleLevelUpVO)
             {
-                DoLevelUp((BattleLevelUpVO)vo, del);
+                DoLevelUp((BattleLevelUpVO)vo);
             }
-            else {
-
+            else if (vo is BattlePrepareRushVO)
+            {
+                DoPrepareRush();
+            }
+            else if (vo is BattleRushOverVO)
+            {
+                DoRushOver();
+            }
+            else if (vo is BattleRecoverVO)
+            {
+                DoRecover();
+            }
+            else
+            {
                 throw new Exception("vo type error:" + vo);
             }
         }
-        else {
 
-            battle.ClientEndBattle();
+        battle.ClientEndBattle();
 
-            RefreshData();
-        }
+        RefreshData();
     }
 
-    private void DoSummon(BattleSummonVO _vo, Action _del)
+    private System.Collections.IEnumerator DoSummon(int _index, int _lastIndex, BattleSummonVO _vo)
     {
         CreateMoneyTfOrigin();
 
@@ -1135,170 +1165,22 @@ public class BattleManager : MonoBehaviour
             heroBattle.transform.localScale = new Vector3(scale, scale, scale);
         };
 
-        Action endDel = delegate ()
-        {
-            SuperTween.Instance.DelayCall(0.5f, _del);
-        };
-
-        SuperTween.Instance.To(10, 1, 0.5f, toDel, endDel);
+        SuperSequenceControl.To(10f, 1f, 0.5f, toDel, _index);
 
         ClearCards();
 
         CreateCards(false);
+
+        yield return null;
+
+        SuperSequenceControl.DelayCall(0.5f, _index);
+
+        yield return null;
+
+        SuperSequenceControl.MoveNext(_lastIndex);
     }
 
-    private void DoShoot(BattleShootVO _vo, Action _del)
-    {
-        SuperSequenceControl.Start(BattleControl.Instance.Shoot, heroDic[_vo.shooter], heroDic[_vo.stander], _vo.damage, _del);
-    }
-
-    private void DoPrepareAttack(BattlePrepareAttackVO _vo, Action _del)
-    {
-        HeroBattle attacker = heroDic[_vo.attacker];
-
-        HeroBattle defender = null;
-
-        HeroBattle supporter = null;
-
-        if (_vo.pos == _vo.defender)
-        {
-            defender = heroDic[_vo.defender];
-        }
-        else
-        {
-            supporter = heroDic[_vo.defender];
-
-            heroDic.TryGetValue(_vo.pos, out defender);
-        }
-
-        List<HeroBattle> attackerSupporters = null;
-
-        if (_vo.attackerSupperters != null)
-        {
-            attackerSupporters = new List<HeroBattle>();
-
-            for (int i = 0; i < _vo.attackerSupperters.Count; i++)
-            {
-                attackerSupporters.Add(heroDic[_vo.attackerSupperters[i]]);
-            }
-        }
-
-        List<HeroBattle> defenderSupporters = null;
-
-        if (_vo.defenderSupporters != null)
-        {
-            defenderSupporters = new List<HeroBattle>();
-
-            for (int i = 0; i < _vo.defenderSupporters.Count; i++)
-            {
-                defenderSupporters.Add(heroDic[_vo.defenderSupporters[i]]);
-            }
-        }
-
-        SuperSequenceControl.Start(BattleControl.Instance.PrepareAttack, mapUnitDic[_vo.pos].transform.localPosition, attacker, defender, supporter, attackerSupporters, defenderSupporters, _vo.attackerSpeed, _vo.defenderSpeed, _del);
-    }
-
-    private void DoMove(BattleMoveVO _vo, Action _del)
-    {
-        if (_vo.moves.Count > 0)
-        {
-            List<KeyValuePair<int, int>> tmpList = new List<KeyValuePair<int, int>>();
-
-            List<KeyValuePair<int, int>> tmpList2 = new List<KeyValuePair<int, int>>();
-
-            Dictionary<int, int>.Enumerator enumerator = _vo.moves.GetEnumerator();
-
-            enumerator.MoveNext();
-
-            tmpList.Add(enumerator.Current);
-
-            while (tmpList.Count > 0)
-            {
-                KeyValuePair<int, int> pair = tmpList[0];
-
-                _vo.moves.Remove(pair.Key);
-
-                tmpList.RemoveAt(0);
-
-                tmpList2.Add(pair);
-
-                if (_vo.moves.ContainsKey(pair.Value))
-                {
-                    tmpList.Add(new KeyValuePair<int, int>(pair.Value, _vo.moves[pair.Value]));
-                }
-
-                if (_vo.moves.ContainsValue(pair.Key))
-                {
-                    enumerator = _vo.moves.GetEnumerator();
-
-                    while (enumerator.MoveNext())
-                    {
-                        if (enumerator.Current.Value == pair.Key)
-                        {
-                            tmpList.Add(enumerator.Current);
-
-                            break;
-                        }
-                    }
-                }
-            }
-
-            Dictionary<int, HeroBattle> tmpDic = new Dictionary<int, HeroBattle>();
-
-            for (int i = 0; i < tmpList2.Count; i++)
-            {
-                KeyValuePair<int, int> pair = tmpList2[i];
-
-                HeroBattle hero = heroDic[pair.Key];
-
-                tmpDic.Add(pair.Key, hero);
-
-                heroDic.Remove(pair.Key);
-
-                Vector3 startPos = mapUnitDic[pair.Key].transform.localPosition;
-
-                Vector3 endPos = mapUnitDic[pair.Value].transform.localPosition;
-
-                Action<float> toDel = delegate (float obj)
-                {
-                    hero.transform.localPosition = Vector3.Lerp(startPos, endPos, obj);
-                };
-
-                if (i == 0)
-                {
-                    Action del = delegate ()
-                    {
-                        for (int l = 0; l < tmpList2.Count; l++)
-                        {
-                            pair = tmpList2[l];
-
-                            heroDic.Add(pair.Value, tmpDic[pair.Key]);
-
-                            int index = pair.Value;
-
-                            MapUnit unit = mapUnitDic[index];
-
-                            SetMapUnitColor(unit);
-                        }
-
-                        DoMove(_vo, _del);
-                    };
-
-                    SuperTween.Instance.To(0, 1, 1, toDel, del);
-                }
-                else
-                {
-                    SuperTween.Instance.To(0, 1, 1, toDel, null);
-                }
-            }
-        }
-        else
-        {
-            _del();
-        }
-    }
-
-    private void SetMapUnitColor(MapUnit _unit)
+    public void SetMapUnitColor(MapUnit _unit)
     {
         int index = _unit.index;
 
@@ -1336,52 +1218,27 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void DoRush(BattleRushVO _vo, Action _del)
+    private void DoPrepareRush()
     {
-        SuperSequenceControl.Start(BattleControl.Instance.Rush, heroDic[_vo.attacker], heroDic[_vo.stander], _vo.damage, _del);
-    }
+        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator = heroDic.Values.GetEnumerator();
 
-    private void DoAttack(BattleAttackVO _vo, Action _del)
-    {
-        SuperSequenceControl.Start(BattleControl.Instance.Attack, mapUnitDic[_vo.pos].transform.localPosition, heroDic[_vo.attacker], heroDic[_vo.defender], _vo.damage, _del);
-    }
-
-    private void DoCounter(BattleCounterVO _vo, Action _del)
-    {
-        SuperSequenceControl.Start(BattleControl.Instance.Counter, mapUnitDic[_vo.pos].transform.localPosition, heroDic[_vo.attacker], heroDic[_vo.defender], _vo.damage, _del);
-    }
-
-    private void DoAttackAndCounter(BattleAttackAndCounterVO _vo, Action _del)
-    {
-        SuperSequenceControl.Start(BattleControl.Instance.AttackAndCounter, mapUnitDic[_vo.pos].transform.localPosition, heroDic[_vo.attacker], heroDic[_vo.defender], _vo.attackDamage, _vo.defenseDamage, _del);
-    }
-
-    private void DoDie(BattleDeathVO _vo, Action _del)
-    {
-        bool getDie = false;
-
-        for (int i = 0; i < _vo.deads.Count; i++)
+        while (enumerator.MoveNext())
         {
-            int pos = _vo.deads[i];
-
-            HeroBattle hero = heroDic[pos];
-
-            heroDic.Remove(pos);
-
-            if (!getDie)
-            {
-                getDie = true;
-
-                hero.Die(_del);
-            }
-            else
-            {
-                hero.Die(null);
-            }
+            enumerator.Current.RefreshAttack();
         }
     }
 
-    private void DoAddCards(BattleAddCardsVO _vo, Action _del)
+    private void DoRushOver()
+    {
+        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator = heroDic.Values.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            enumerator.Current.RefreshAttackWithoutShield();
+        }
+    }
+
+    private void DoAddCards(BattleAddCardsVO _vo)
     {
         if (_vo.isMine == battle.clientIsMine)
         {
@@ -1389,11 +1246,9 @@ public class BattleManager : MonoBehaviour
 
             CreateCards(true);
         }
-
-        _del();
     }
 
-    private void DoDelCards(BattleDelCardsVO _vo, Action _del)
+    private void DoDelCards(BattleDelCardsVO _vo)
     {
         if (_vo.isMine == battle.clientIsMine)
         {
@@ -1401,27 +1256,35 @@ public class BattleManager : MonoBehaviour
 
             CreateCards(true);
         }
-
-        _del();
     }
 
-    private void DoMoneyChange(BattleMoneyChangeVO _vo, Action _del)
+    private void DoMoneyChange(BattleMoneyChangeVO _vo)
     {
         if (_vo.isMine == battle.clientIsMine)
         {
             CreateMoneyTf();
         }
-
-        _del();
     }
 
-    private void DoLevelUp(BattleLevelUpVO _vo, Action _del)
+    private void DoLevelUp(BattleLevelUpVO _vo)
     {
         HeroBattle hero = heroDic[_vo.pos];
 
-        hero.RefreshAll();
+        hero.RefreshHpAndShield();
 
-        _del();
+        hero.RefreshAttackWithoutShield();
+    }
+
+    private void DoRecover()
+    {
+        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator = heroDic.Values.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            enumerator.Current.RefreshHpAndShield();
+
+            enumerator.Current.RefreshAttackWithoutShield();
+        }
     }
 
     private void FixBattleContainerRect()

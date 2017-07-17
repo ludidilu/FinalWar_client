@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using superTween;
 using System;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using FinalWar;
 
@@ -71,14 +70,14 @@ public class HeroBattle : HeroBase
     {
         hero = _hero;
 
-        RefreshAll();
+        RefreshHpAndShield();
+
+        RefreshAttackWithoutShield();
     }
 
-    public void RefreshAll()
+    public void RefreshHpAndShield()
     {
         InitCard(hero.sds as HeroSDS);
-
-        attack.text = sds.GetAttack().ToString();
 
         int nowShield;
 
@@ -120,7 +119,7 @@ public class HeroBattle : HeroBase
 
         ShowHud(_damage.ToString(), Color.red, null);
 
-        RefreshAll();
+        RefreshHpAndShield();
     }
 
     public void ShowHud(string _str, Color _color, Action _callBack)
