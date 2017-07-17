@@ -63,7 +63,7 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_vo.damage < 0)
+                if (_vo.damage != 0)
                 {
                     stander.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage);
                 }
@@ -74,7 +74,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_vo.damage < 0)
+        if (_vo.damage != 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
@@ -130,19 +130,16 @@ public class BattleControl : MonoBehaviour
 
         Destroy(arrow);
 
-        if (_vo.damage < 0)
-        {
-            stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.damage);
-        }
+		if (_vo.damage != 0) {
+			
+			stander.Shock (shooter.transform.localPosition, shockCurve, shockDis, _vo.damage);
 
-        if (_vo.damage < 0)
-        {
-            SuperSequenceControl.DelayCall(2f, _index);
-        }
-        else
-        {
-            SuperSequenceControl.DelayCall(1f, _index);
-        }
+			SuperSequenceControl.DelayCall (1.5f, _index);
+
+		} else {
+
+			SuperSequenceControl.DelayCall(1f, _index);
+		}
 
         yield return null;
 
@@ -318,7 +315,7 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_vo.damage < 0)
+                if (_vo.damage != 0)
                 {
                     defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage);
                 }
@@ -329,7 +326,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_vo.damage < 0)
+        if (_vo.damage != 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
@@ -371,12 +368,12 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_vo.attackDamage < 0)
+                if (_vo.attackDamage != 0)
                 {
                     defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.attackDamage);
                 }
 
-                if (_vo.defenseDamage < 0)
+                if (_vo.defenseDamage != 0)
                 {
                     attacker.Shock(targetPos, shockCurve, shockDis, _vo.defenseDamage);
                 }
@@ -387,7 +384,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_vo.attackDamage < 0 || _vo.defenseDamage < 0)
+        if (_vo.attackDamage != 0 || _vo.defenseDamage != 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
@@ -429,7 +426,7 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_vo.damage < 0)
+                if (_vo.damage != 0)
                 {
                     defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage);
                 }
@@ -440,7 +437,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_vo.damage < 0)
+        if (_vo.damage != 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
