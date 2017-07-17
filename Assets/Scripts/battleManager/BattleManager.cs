@@ -1164,50 +1164,48 @@ public class BattleManager : MonoBehaviour
 
     private void DoPrepareAttack(BattlePrepareAttackVO _vo, Action _del)
     {
-
         HeroBattle attacker = heroDic[_vo.attacker];
 
-        HeroBattle defender = heroDic[_vo.defender];
+        HeroBattle defender = null;
 
-        List<HeroBattle> attackerSupporters;
+        HeroBattle supporter = null;
+
+        if (_vo.pos == _vo.defender)
+        {
+            defender = heroDic[_vo.defender];
+        }
+        else
+        {
+            supporter = heroDic[_vo.defender];
+
+            heroDic.TryGetValue(_vo.pos, out defender);
+        }
+
+        List<HeroBattle> attackerSupporters = null;
 
         if (_vo.attackerSupperters != null)
         {
-
             attackerSupporters = new List<HeroBattle>();
 
             for (int i = 0; i < _vo.attackerSupperters.Count; i++)
             {
-
                 attackerSupporters.Add(heroDic[_vo.attackerSupperters[i]]);
             }
-
-        }
-        else {
-
-            attackerSupporters = null;
         }
 
-        List<HeroBattle> defenderSupporters;
+        List<HeroBattle> defenderSupporters = null;
 
         if (_vo.defenderSupporters != null)
         {
-
             defenderSupporters = new List<HeroBattle>();
 
             for (int i = 0; i < _vo.defenderSupporters.Count; i++)
             {
-
                 defenderSupporters.Add(heroDic[_vo.defenderSupporters[i]]);
             }
-
-        }
-        else {
-
-            defenderSupporters = null;
         }
 
-        //		BattleControl.Instance.PrepareAttack (mapUnitDic[_vo.pos], attacker, defender, attackerSupporters, defenderSupporters, _vo.attackerSpeed, _vo.defenderSpeed, _del);
+        SuperSequenceControl.Start(BattleControl.Instance.PrepareAttack, mapUnitDic[_vo.pos].transform.localPosition, attacker, defender, supporter, attackerSupporters, defenderSupporters, _vo.attackerSpeed, _vo.defenderSpeed, _del);
     }
 
     private void DoMove(BattleMoveVO _vo, Action _del)
@@ -1356,47 +1354,7 @@ public class BattleManager : MonoBehaviour
 
     private void DoAttack(BattleAttackVO _vo, Action _del)
     {
-        //        Vector3 pos = mapUnitDic[_vo.defender].transform.localPosition;
-        //
-        //        List<HeroBattle> attackers = new List<HeroBattle>();
-        //
-        //		List<List<HeroBattle>> helpers = new List<List<HeroBattle>> ();
-        //
-        //        List<HeroBattle> supporters = new List<HeroBattle>();
-        //
-        //        for (int i = 0; i < _vo.attackers.Count; i++)
-        //        {
-        //            attackers.Add(heroDic[_vo.attackers[i]]);
-        //
-        //			List<int> tmpList = _vo.helpers[i];
-        //
-        //			List<HeroBattle> tmpList2 = new List<HeroBattle>();
-        //			
-        //			helpers.Add(tmpList2);
-        //			
-        //			for (int m = 0 ; m < tmpList.Count ; m++)
-        //			{
-        //				tmpList2.Add(heroDic[tmpList[m]]);
-        //			}
-        //        }
-        //
-        //        for (int i = 0; i < _vo.supporters.Count; i++)
-        //        {
-        //            supporters.Add(heroDic[_vo.supporters[i]]);
-        //        }
-        //
-        //        HeroBattle defender;
-        //
-        //        if (heroDic.ContainsKey(_vo.defender))
-        //        {
-        //            defender = heroDic[_vo.defender];
-        //        }
-        //        else
-        //        {
-        //            defender = null;
-        //        }
-        //
-        //		BattleControl.Instance.Attack(attackers, helpers, pos, defender, supporters, _vo.defenderShieldDamage, _vo.defenderHpDamage, _vo.supportersShieldDamage, _vo.supportersHpDamage, _vo.attackersShieldDamage, _vo.attackersHpDamage, _del);
+        SuperSequenceControl.Start(BattleControl.Instance.Attack, mapUnitDic[_vo.pos].transform.localPosition, heroDic[_vo.attacker], heroDic[_vo.defender], _vo.damage, _del);
     }
 
     private void DoDie(BattleDeathVO _vo, Action _del)

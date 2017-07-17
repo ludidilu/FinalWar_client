@@ -228,7 +228,7 @@ public class BattleControl : MonoBehaviour
 
             Action<float> supporterToDel = delegate (float _value)
             {
-                Vector3 v = Vector3.Lerp(_supporter.transform.localPosition, _defender.transform.localPosition, _value);
+                Vector3 v = Vector3.Lerp(_supporter.transform.localPosition, _pos, _value);
 
                 _supporter.moveTrans.localPosition = v - _supporter.transform.localPosition;
             };
@@ -345,7 +345,7 @@ public class BattleControl : MonoBehaviour
         {
             float value = attackCurve.Evaluate(obj);
 
-            Vector3 vv = Vector3.LerpUnclamped(_attacker.transform.localPosition, _targetPos, value);
+            Vector3 vv = Vector3.LerpUnclamped(_targetPos, _defender.transform.localPosition, value);
 
             _attacker.moveTrans.localPosition = vv - _attacker.transform.localPosition;
 
@@ -353,14 +353,9 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_attackerDamage < 0)
+                if (_damage < 0)
                 {
-                    _defender.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _attackerDamage);
-                }
-
-                if (_defenderDamage < 0)
-                {
-                    _attacker.Shock(_targetPos, shockCurve, shockDis, _attackerDamage);
+                    _defender.Shock(_attacker.transform.localPosition, shockCurve, shockDis, _damage);
                 }
             }
         };
@@ -369,7 +364,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_attackerDamage < 0 || _defenderDamage < 0)
+        if (_damage < 0)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
