@@ -268,7 +268,8 @@ public class BattleManager : MonoBehaviour
                 Alert("You win!", BattleOver);
 
             }
-            else {
+            else
+            {
 
                 Alert("You lose!", BattleOver);
             }
@@ -283,7 +284,8 @@ public class BattleManager : MonoBehaviour
                 Alert("You lose!", BattleOver);
 
             }
-            else {
+            else
+            {
 
                 Alert("You win!", BattleOver);
             }
@@ -1104,6 +1106,12 @@ public class BattleManager : MonoBehaviour
             else if (vo is BattleSummonVO)
             {
                 SuperSequenceControl.Start(DoSummon, _index, (BattleSummonVO)vo);
+
+                yield return null;
+            }
+            else if (vo is BattleAttackOverVO)
+            {
+                SuperSequenceControl.Start(BattleControl.Instance.AttackOver, _index, (BattleAttackOverVO)vo);
 
                 yield return null;
             }
