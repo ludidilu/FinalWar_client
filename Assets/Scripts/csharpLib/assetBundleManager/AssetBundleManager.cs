@@ -1,65 +1,59 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-
 using System;
 
-namespace assetBundleManager{
-
-	public class AssetBundleManager{
-
+namespace assetBundleManager
+{
+    public class AssetBundleManager
+    {
 		public const string path = "assetbundle/";
 
-		private static AssetBundleManager _Instance;
+        private static AssetBundleManager _Instance;
 
-		public static AssetBundleManager Instance {
+        public static AssetBundleManager Instance
+        {
+            get
+            {
+                if (_Instance == null)
+                {
+                    _Instance = new AssetBundleManager();
+                }
 
-			get {
+                return _Instance;
+            }
+        }
 
-				if (_Instance == null) {
+        public Dictionary<string, AssetBundleManagerUnit> dic;
 
-					_Instance = new AssetBundleManager ();
-				}
+        public AssetBundleManager()
+        {
+            dic = new Dictionary<string, AssetBundleManagerUnit>();
+        }
 
-				return _Instance;
-			}
-		}
+        public AssetBundle Load(string _name, Action<AssetBundle> _callBack)
+        {
+            AssetBundleManagerUnit unit;
 
-		public Dictionary<string,AssetBundleManagerUnit> dic;
+            if(!dic.TryGetValue(_name, out unit))
+            {
+                unit = new AssetBundleManagerUnit(_name);
 
-		public AssetBundleManager(){
+                dic.Add(_name, unit);
+            }
 
-			dic = new Dictionary<string, AssetBundleManagerUnit>();
-		}
+            return unit.Load(_callBack);
+        }
 
-		public void Load(string _name,Action<AssetBundle> _callBack){
+        public void Remove(string _name)
+        {
+            dic.Remove(_name);
+        }
 
-			AssetBundleManagerUnit unit;
+        public void Unload(string _name)
+        {
+            //			SuperDebug.Log ("Unload assetBundle:" + _name);
 
-			if (!dic.ContainsKey (_name)) {
-
-				unit = new AssetBundleManagerUnit (_name);
-
-				dic.Add (_name, unit);
-
-			} else {
-
-				unit = dic [_name];
-			}
-
-			unit.Load (_callBack);
-		}
-
-		public void Remove(string _name){
-
-			dic.Remove (_name);
-		}
-
-		public void Unload(string _name){
-
-//			SuperDebug.Log ("Unload assetBundle:" + _name);
-
-			dic[_name].Unload();
-		}
-	}
+            dic[_name].Unload();
+        }
+    }
 }

@@ -446,7 +446,7 @@ public class BattleManager : MonoBehaviour
                     continue;
                 }
 
-                GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("MapUnit"));
+                GameObject go = Instantiate(Resources.Load<GameObject>("MapUnit"));
 
                 go.transform.SetParent(mapContainer, false);
 
@@ -466,7 +466,7 @@ public class BattleManager : MonoBehaviour
 
                 if (mapUnitType == MapData.MapUnitType.RIVER || mapUnitType == MapData.MapUnitType.HILL)
                 {
-                    GameObject.Destroy(unit.GetComponent<Collider>());
+                    Destroy(unit.GetComponent<Collider>());
                 }
 
                 index++;
@@ -512,7 +512,7 @@ public class BattleManager : MonoBehaviour
                 continue;
             }
 
-            GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroCard"));
+            GameObject go = Instantiate(Resources.Load<GameObject>("HeroCard"));
 
             HeroCard hero = go.GetComponent<HeroCard>();
 
@@ -810,7 +810,6 @@ public class BattleManager : MonoBehaviour
 
             if (b)
             {
-
                 CreateMoneyTf();
 
                 ClearCards();
@@ -820,10 +819,9 @@ public class BattleManager : MonoBehaviour
                 ClearSummonHeros();
 
                 CreateSummonHeros();
-
             }
-            else {
-
+            else
+            {
                 ClearNowChooseHero();
             }
         }

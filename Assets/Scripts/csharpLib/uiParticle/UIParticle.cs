@@ -5,15 +5,13 @@ using publicTools;
 [RequireComponent(typeof(ParticleSystem))]
 public class UIParticle : Graphic
 {
+    private static ParticleSystem.Particle[] p = new ParticleSystem.Particle[1000];
+
     private ParticleSystem ps;
 
     private ParticleSystemRenderer psr;
 
-    private ParticleSystem.Particle[] p;
-
     private float fix;
-
-    private UIVertex[] vertexPool;
 
     private Camera m_camera;
 
@@ -24,20 +22,38 @@ public class UIParticle : Graphic
     private Vector2[] uv;
     private int[] triangles;
 
+    private Transform tmpTrans;
+
+    private float minSize;
+
+    private float maxSize;
+
     protected override void Start()
     {
-
         base.Start();
 
         m_camera = canvas.worldCamera;
 
-        canvasRectSizeDelta = (rectTransform.root as RectTransform).sizeDelta;
+        canvasRectSizeDelta = (canvas.rootCanvas.transform as RectTransform).sizeDelta;
 
         Vector2 pos0 = PublicTools.WorldPositionToCanvasPosition(m_camera, canvasRectSizeDelta, new Vector3(0, 0, 0));
 
         Vector2 pos1 = PublicTools.WorldPositionToCanvasPosition(m_camera, canvasRectSizeDelta, new Vector3(1, 0, 0));
 
         fix = Mathf.Abs(pos0.x - pos1.x);
+
+        if (psr.renderMode == ParticleSystemRenderMode.Billboard)
+        {
+            Vector3 vvv = m_camera.ScreenToWorldPoint(new Vector3(0, 0, 0));
+
+            Vector3 vvv2 = m_camera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
+
+            float screenSize = vvv2.x - vvv.x;
+
+            minSize = screenSize * psr.minParticleSize;
+
+            maxSize = screenSize * psr.maxParticleSize;
+        }
     }
 
     protected override void Awake()
@@ -47,8 +63,6 @@ public class UIParticle : Graphic
         ps = GetComponent<ParticleSystem>();
 
         psr = GetComponent<ParticleSystemRenderer>();
-
-        p = new ParticleSystem.Particle[ps.main.maxParticles];
 
         base.raycastTarget = false;
 
@@ -98,7 +112,14 @@ public class UIParticle : Graphic
             triangles[5] = 3;
         }
 
-        vertexPool = new UIVertex[vertexCount];
+        if (psr.renderMode == ParticleSystemRenderMode.Stretch)
+        {
+            GameObject gg = new GameObject();
+
+            tmpTrans = gg.transform;
+
+            tmpTrans.SetParent(transform, false);
+        }
 
         psr.enabled = false;
     }
@@ -166,6 +187,11 @@ public class UIParticle : Graphic
 
             Vector3 size = pp.GetCurrentSize3D(ps);
 
+            if (psr.renderMode == ParticleSystemRenderMode.Billboard)
+            {
+                size = new Vector3(Mathf.Clamp(size.x, minSize, maxSize), Mathf.Clamp(size.y, minSize, maxSize), Mathf.Clamp(size.z, minSize, maxSize));
+            }
+
             Color color = pp.GetCurrentColor(ps);
 
             Vector3 pos;
@@ -182,11 +208,11 @@ public class UIParticle : Graphic
                 {
                     size = size * fix;
 
-                    size = new Vector3(size.x * canvas.transform.localScale.x / transform.lossyScale.x * transform.localScale.x, size.y * canvas.transform.localScale.y / transform.lossyScale.y * transform.localScale.y, size.z * canvas.transform.localScale.z / transform.lossyScale.z * transform.localScale.z);
+                    size = new Vector3(size.x * canvas.rootCanvas.transform.localScale.x / transform.lossyScale.x * transform.localScale.x, size.y * canvas.rootCanvas.transform.localScale.y / transform.lossyScale.y * transform.localScale.y, size.z * canvas.transform.localScale.z / transform.lossyScale.z * transform.localScale.z);
 
                     pos = PublicTools.WorldPositionToCanvasPosition(m_camera, canvasRectSizeDelta, tp);
 
-                    pos = new Vector3(pos.x * canvas.transform.localScale.x / transform.lossyScale.x, pos.y * canvas.transform.localScale.y / transform.lossyScale.y);
+                    pos = new Vector3(pos.x * canvas.rootCanvas.transform.localScale.x / transform.lossyScale.x, pos.y * canvas.rootCanvas.transform.localScale.y / transform.lossyScale.y);
                 }
             }
             else
@@ -201,13 +227,13 @@ public class UIParticle : Graphic
                 {
                     size = size * fix;
 
-                    size = new Vector3(size.x * canvas.transform.localScale.x / transform.lossyScale.x * transform.localScale.x, size.y * canvas.transform.localScale.y / transform.lossyScale.y * transform.localScale.y, size.z * canvas.transform.localScale.z / transform.lossyScale.z * transform.localScale.z);
+                    size = new Vector3(size.x * canvas.rootCanvas.transform.localScale.x / transform.lossyScale.x * transform.localScale.x, size.y * canvas.rootCanvas.transform.localScale.y / transform.lossyScale.y * transform.localScale.y, size.z * canvas.transform.localScale.z / transform.lossyScale.z * transform.localScale.z);
 
                     pos = matrix.MultiplyPoint3x4(pp.position);
 
                     pos = PublicTools.WorldPositionToCanvasPosition(m_camera, canvasRectSizeDelta, pos);
 
-                    pos = new Vector3(pos.x * canvas.transform.localScale.x / transform.lossyScale.x * transform.localScale.x, pos.y * canvas.transform.localScale.y / transform.lossyScale.y * transform.localScale.y);
+                    pos = new Vector3(pos.x * canvas.rootCanvas.transform.localScale.x / transform.lossyScale.x * transform.localScale.x, pos.y * canvas.rootCanvas.transform.localScale.y / transform.lossyScale.y * transform.localScale.y);
                 }
             }
 
@@ -242,7 +268,11 @@ public class UIParticle : Graphic
                 }
                 else if (ps.textureSheetAnimation.frameOverTime.mode == ParticleSystemCurveMode.TwoConstants)
                 {
-                    frame = (int)(Mathf.Clamp((float)pp.randomSeed / uint.MaxValue, ps.textureSheetAnimation.frameOverTime.constantMin, ps.textureSheetAnimation.frameOverTime.constantMax) * frameNum);
+                    Random.InitState((int)pp.randomSeed);
+
+                    frame = (int)(Random.Range(ps.textureSheetAnimation.frameOverTime.constantMin, ps.textureSheetAnimation.frameOverTime.constantMax) * frameNum);
+
+                    //frame = (int)(Mathf.Clamp(Random.value, ps.textureSheetAnimation.frameOverTime.constantMin, ps.textureSheetAnimation.frameOverTime.constantMax) * frameNum);
                 }
                 else if (ps.textureSheetAnimation.frameOverTime.mode == ParticleSystemCurveMode.Constant)
                 {
@@ -272,44 +302,86 @@ public class UIParticle : Graphic
                 vFixPlus = 0;
             }
 
+            Vector3 scale = Vector3.one;
 
-            for (int m = 0; m < vertexCount; m++)
+            Quaternion qq;
+
+            if (psr.renderMode == ParticleSystemRenderMode.Billboard)
             {
-                UIVertex v = UIVertex.simpleVert;
+                qq = Quaternion.AngleAxis(pp.rotation, Vector3.back);
+            }
+            else if (psr.renderMode == ParticleSystemRenderMode.Mesh)
+            {
+                qq = Quaternion.AngleAxis(pp.rotation, pp.axisOfRotation);
+            }
+            else if (psr.renderMode == ParticleSystemRenderMode.Stretch)
+            {
+                Vector3 vv = matrix.inverse.MultiplyPoint3x4(pos);
 
-                v.color = color;
+                tmpTrans.localPosition = vv;
 
-                if (ps.main.simulationSpace == ParticleSystemSimulationSpace.World)
+                float lengthScale = transform.lossyScale.x / transform.lossyScale.z * psr.lengthScale;
+
+                if (ps.main.simulationSpace == ParticleSystemSimulationSpace.Local)
                 {
-                    v.position = new Vector3(pos.x + vertices[m].x * size.x, pos.y + vertices[m].y * size.y, 0);
+                    tmpTrans.LookAt(transform.TransformPoint(vv + pp.velocity), Vector3.back);
 
-                    v.position = matrix.inverse.MultiplyPoint3x4(v.position);
+                    tmpTrans.localPosition = tmpTrans.localPosition - transform.InverseTransformDirection(tmpTrans.forward) * lengthScale * 0.5f;
+
+                    tmpTrans.Rotate(Vector3.up, 90f);
+
+                    tmpTrans.Rotate(Vector3.left, -90f);
+
+                    qq = tmpTrans.localRotation;
                 }
                 else
                 {
-                    if (psr.renderMode == ParticleSystemRenderMode.Billboard)
-                    {
-                        v.position = new Vector3(pos.x + vertices[m].x * size.x, pos.y + vertices[m].y * size.y, 0);
+                    tmpTrans.LookAt(transform.TransformPoint(vv) + pp.velocity, Vector3.back);
 
-                        v.position = matrix.inverse.MultiplyPoint3x4(v.position);
-                    }
-                    else
-                    {
-                        Vector3 vv = matrix.MultiplyPoint3x4(vertices[m]);
+                    tmpTrans.localPosition = tmpTrans.localPosition - transform.InverseTransformDirection(tmpTrans.forward) * lengthScale * 0.5f;
 
-                        v.position = new Vector3(pos.x + vv.x * size.x, pos.y + vv.y * size.y, 0);
+                    tmpTrans.Rotate(Vector3.up, 90f);
 
-                        v.position = matrix.inverse.MultiplyPoint3x4(v.position);
-                    }
+                    tmpTrans.Rotate(Vector3.left, -90f);
+
+                    qq = tmpTrans.rotation;
                 }
+
+                pos = matrix.MultiplyPoint3x4(tmpTrans.localPosition);
+
+                scale.x = lengthScale;
+            }
+            else
+            {
+                throw new System.Exception("error!");
+            }
+
+            Matrix4x4 mm = Matrix4x4.TRS(Vector3.zero, qq, scale);
+
+            if (ps.main.simulationSpace == ParticleSystemSimulationSpace.Local && psr.renderMode != ParticleSystemRenderMode.Billboard)
+            {
+                mm = matrix * mm;
+            }
+
+            for (int m = 0; m < vertexCount; m++)
+            {
+                Color nowColor = color;
+
+                //Color nowColor = Color.clear;
+
+                Vector3 vv = mm.MultiplyPoint3x4(vertices[m]);
+
+                //vv = new Vector3(pos.x + vv.x * size.x, pos.y + vv.y * size.y, pos.z + vv.z * size.z);
+
+                vv = new Vector3(pos.x + vv.x * size.x, pos.y + vv.y * size.y, 0);
+
+                Vector3 nowPos = matrix.inverse.MultiplyPoint3x4(vv);
 
                 Vector2 tmpUv = uv[m];
 
-                v.uv0 = new Vector2(tmpUv.x * uFix + uFixPlus, tmpUv.y * vFix + vFixPlus);
+                Vector2 nowUv = new Vector2(tmpUv.x * uFix + uFixPlus, tmpUv.y * vFix + vFixPlus);
 
-                vertexPool[m] = v;
-
-                vh.AddVert(v);
+                vh.AddVert(nowPos, nowColor, nowUv);
             }
 
             for (int m = 0; m < triangles.Length / 3; m++)

@@ -128,16 +128,16 @@ public class BattleControl : MonoBehaviour
 
         Destroy(arrow);
 
-		if (_vo.damage != 0) {
-			
-			stander.Shock (shooter.transform.localPosition, shockCurve, shockDis, _vo.damage);
+        if (_vo.damage != 0)
+        {
+            stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.damage);
 
-			SuperSequenceControl.DelayCall (1.5f, _index);
-
-		} else {
-
-			SuperSequenceControl.DelayCall(1f, _index);
-		}
+            SuperSequenceControl.DelayCall(1.5f, _index);
+        }
+        else
+        {
+            SuperSequenceControl.DelayCall(1f, _index);
+        }
 
         yield return null;
 
@@ -479,9 +479,11 @@ public class BattleControl : MonoBehaviour
 
                 tmpList2.Add(pair);
 
-                if (moves.ContainsKey(pair.Value))
+                int tmpIndex;
+
+                if (moves.TryGetValue(pair.Value, out tmpIndex))
                 {
-                    tmpList.Add(new KeyValuePair<int, int>(pair.Value, moves[pair.Value]));
+                    tmpList.Add(new KeyValuePair<int, int>(pair.Value, tmpIndex));
                 }
 
                 if (moves.ContainsValue(pair.Key))
