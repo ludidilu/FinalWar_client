@@ -47,8 +47,6 @@ public class BattleControl : MonoBehaviour
 
         HeroBattle stander = BattleManager.Instance.heroDic[_vo.stander];
 
-        attacker.RefreshAttack();
-
         bool getHit = false;
 
         Action<float> moveToDel = delegate (float obj)
@@ -299,7 +297,7 @@ public class BattleControl : MonoBehaviour
 
         Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
 
-        attacker.RefreshAttack();
+        attacker.RefreshAttack(_vo.damage);
 
         bool getHit = false;
 
@@ -350,9 +348,9 @@ public class BattleControl : MonoBehaviour
 
         Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
 
-        attacker.RefreshAttack();
+        attacker.RefreshAttack(_vo.attackDamage);
 
-        defender.RefreshAttack();
+        defender.RefreshAttack(_vo.defenseDamage);
 
         bool getHit = false;
 
@@ -410,7 +408,7 @@ public class BattleControl : MonoBehaviour
 
         HeroBattle defender = BattleManager.Instance.heroDic[_vo.defender];
 
-        attacker.RefreshAttack();
+        attacker.RefreshAttack(_vo.damage);
 
         bool getHit = false;
 
@@ -585,5 +583,4 @@ public class BattleControl : MonoBehaviour
 
         SuperSequenceControl.MoveNext(_lastIndex);
     }
-    
 }

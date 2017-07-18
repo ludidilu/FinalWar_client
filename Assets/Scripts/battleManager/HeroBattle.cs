@@ -102,6 +102,11 @@ public class HeroBattle : HeroBase
         attack.text = hero.GetDamage().ToString();
     }
 
+    public void RefreshAttack(int _attack)
+    {
+        attack.text = _attack.ToString();
+    }
+
     public void Shock(Vector3 _target, AnimationCurve _curve, float _shockDis, int _damage)
     {
         Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(moveTrans.localPosition));
