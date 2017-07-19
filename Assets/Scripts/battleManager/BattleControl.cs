@@ -232,9 +232,9 @@ public class BattleControl : MonoBehaviour
             SuperSequenceControl.MoveNext(_index);
         };
 
-        attacker.ShowHud("aa", Color.blue, dele0);
+        attacker.ShowHud(_vo.attackerSpeed.ToString(), Color.blue, dele0);
 
-        defenderReal.ShowHud("bb", Color.blue, null);
+        defenderReal.ShowHud(_vo.defenderSpeed.ToString(), Color.blue, null);
 
         yield return null;
 
