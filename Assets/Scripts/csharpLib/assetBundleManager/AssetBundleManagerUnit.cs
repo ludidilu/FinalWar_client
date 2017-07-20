@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using superTween;
 using System.Collections.Generic;
 using wwwManager;
 using System;
@@ -92,8 +91,6 @@ namespace assetBundleManager
             if (useTimes == 0)
             {
                 //				SuperDebug.Log ("dispose assetBundle:" + name);
-
-                //SuperTween.Instance.NextFrameCall(assetBundle.Unload, false);//unload assetbundle in next frame or atlas in assetbundle will be disposed
 
                 assetBundle.Unload(false);
 
