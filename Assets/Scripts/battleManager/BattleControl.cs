@@ -63,7 +63,7 @@ public class BattleControl : MonoBehaviour
 
                 if (_vo.damage != 0)
                 {
-                    stander.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage);
+                    stander.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage, Color.red);
                 }
             }
         };
@@ -128,16 +128,34 @@ public class BattleControl : MonoBehaviour
 
         Destroy(arrow);
 
-        if (_vo.damage != 0)
+        switch (_vo.effect)
         {
-            stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.damage);
+            case SkillEffect.DAMAGE:
 
-            SuperSequenceControl.DelayCall(1.5f, _index);
+                stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.data, Color.red);
+
+                break;
+
+            case SkillEffect.HP_DAMAGE:
+
+                stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.data, Color.yellow);
+
+                break;
+
+            case SkillEffect.SHIELD_DAMAGE:
+
+                stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.data, Color.blue);
+
+                break;
+
+            default:
+
+                stander.ShowHud(_vo.effect.ToString(), Color.black, null);
+
+                break;
         }
-        else
-        {
-            SuperSequenceControl.DelayCall(1f, _index);
-        }
+
+        SuperSequenceControl.DelayCall(1.5f, _index);
 
         yield return null;
 
@@ -317,7 +335,7 @@ public class BattleControl : MonoBehaviour
 
                 if (_vo.damage != 0)
                 {
-                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage);
+                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage, Color.red);
                 }
             }
         };
@@ -370,12 +388,12 @@ public class BattleControl : MonoBehaviour
 
                 if (_vo.attackDamage != 0)
                 {
-                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.attackDamage);
+                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.attackDamage, Color.red);
                 }
 
                 if (_vo.defenseDamage != 0)
                 {
-                    attacker.Shock(targetPos, shockCurve, shockDis, _vo.defenseDamage);
+                    attacker.Shock(targetPos, shockCurve, shockDis, _vo.defenseDamage, Color.red);
                 }
             }
         };
@@ -428,7 +446,7 @@ public class BattleControl : MonoBehaviour
 
                 if (_vo.damage != 0)
                 {
-                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage);
+                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage, Color.red);
                 }
             }
         };

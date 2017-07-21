@@ -107,7 +107,7 @@ public class HeroBattle : HeroBase
         attack.text = _attack.ToString();
     }
 
-    public void Shock(Vector3 _target, AnimationCurve _curve, float _shockDis, int _damage)
+    public void Shock(Vector3 _target, AnimationCurve _curve, float _shockDis, int _damage, Color _color)
     {
         Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(moveTrans.localPosition));
 
@@ -122,7 +122,7 @@ public class HeroBattle : HeroBase
 
         SuperTween.Instance.To(0, 1, 1, shockToDel, null);
 
-		ShowHud((-_damage).ToString(), Color.red, null);
+		ShowHud((-_damage).ToString(), _color, null);
 
         RefreshHpAndShield();
     }
