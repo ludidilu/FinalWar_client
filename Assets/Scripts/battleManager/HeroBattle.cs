@@ -49,7 +49,7 @@ public class HeroBattle : HeroBase
     {
         get
         {
-            return hero.canAction == 0;
+            return hero.GetCanAction();
         }
     }
 
@@ -89,7 +89,7 @@ public class HeroBattle : HeroBase
 
         shield.text = nowShield.ToString();
 
-        body.color = hero.canAction == 0 ? Color.white : Color.grey;
+        body.color = hero.GetCanAction() ? Color.white : Color.grey;
     }
 
     public void RefreshAttackWithoutShield()
