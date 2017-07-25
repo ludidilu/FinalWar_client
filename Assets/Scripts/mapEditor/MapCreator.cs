@@ -3,8 +3,6 @@ using UnityEngine.UI;
 using System.IO;
 using superRaycast;
 using superFunction;
-using System;
-using System.Collections.Generic;
 
 #if UNITY_EDITOR
 
@@ -150,13 +148,6 @@ public class MapCreator : MonoBehaviour
     private void InitMapData(int _mapWidth, int _mapHeight)
     {
         mapData = new MapData(_mapWidth, _mapHeight);
-
-        //		for (int i = 0; i < mapData.size; i++) {
-        //			
-        //			mapData.dic.Add(i,MapData.MapUnitType.HILL);
-        //
-        //			mapData.moveMap.Add(i,new KeyValuePair<int, int>(-1,-1));
-        //		}
     }
 
     public void CreateMapPanel()
@@ -238,69 +229,6 @@ public class MapCreator : MonoBehaviour
         }
 
         mapContainer.transform.localPosition = new Vector3(-0.5f * (mapData.mapWidth * unitWidth * sqrt3 * 2) + unitWidth * sqrt3, 0.5f * (mapData.mapHeight * unitWidth * 3 + unitWidth) - unitWidth * 2, 0);
-
-        index = 0;
-
-        for (int i = 0; i < mapData.mapHeight; i++)
-        {
-            for (int m = 0; m < mapData.mapWidth; m++)
-            {
-                if (i % 2 == 1 && m == mapData.mapWidth - 1)
-                {
-                    continue;
-                }
-
-                GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
-
-                go.transform.SetParent(arrowContainer, false);
-
-                arrows[index] = go;
-
-                if (mapData.moveMap.ContainsKey(index))
-                {
-                    if (mapData.moveMap[index].Key != -1)
-                    {
-                        ShowArrow(index, mapData.moveMap[index].Key);
-                    }
-                    else
-                    {
-                        HideArrow(index);
-                    }
-                }
-                else
-                {
-                    HideArrow(index);
-                }
-
-                index++;
-            }
-        }
-    }
-
-    private void ShowArrow(int _start, int _end)
-    {
-        GameObject go = arrows[_start];
-
-        MapUnit start = units[_start];
-
-        MapUnit end = units[_end];
-
-        go.transform.position = (start.transform.position + end.transform.position) * 0.5f;
-
-        float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y, end.transform.position.x - start.transform.position.x);
-
-        Quaternion q = new Quaternion();
-
-        q.eulerAngles = new Vector3(0, 0, angle * 180 / Mathf.PI);
-
-        go.transform.localRotation = q;
-
-        go.SetActive(true);
-    }
-
-    private void HideArrow(int _pos)
-    {
-        arrows[_pos].SetActive(false);
     }
 
     public void SaveMap()
@@ -350,44 +278,6 @@ public class MapCreator : MonoBehaviour
             return false;
         }
 
-        Dictionary<int, MapData.MapUnitType>.Enumerator enumerator = mapData.dic.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            if (enumerator.Current.Value != MapData.MapUnitType.RIVER && enumerator.Current.Value != MapData.MapUnitType.HILL)
-            {
-                KeyValuePair<int, int> pair = mapData.moveMap[enumerator.Current.Key];
-
-                if (enumerator.Current.Key == mapData.mBase)
-                {
-                    if (pair.Key == -1)
-                    {
-                        Debug.Log("moveMap error pos=" + enumerator.Current.Key);
-
-                        return false;
-                    }
-                }
-                else if (enumerator.Current.Key == mapData.oBase)
-                {
-                    if (pair.Value == -1)
-                    {
-                        Debug.Log("moveMap error pos=" + enumerator.Current.Key);
-
-                        return false;
-                    }
-                }
-                else if (enumerator.Current.Value == MapData.MapUnitType.M_AREA || enumerator.Current.Value == MapData.MapUnitType.O_AREA)
-                {
-                    if (pair.Key == -1 || pair.Value == -1)
-                    {
-                        Debug.Log("moveMap error pos=" + enumerator.Current.Key);
-
-                        return false;
-                    }
-                }
-            }
-        }
-
         return true;
     }
 
@@ -396,130 +286,8 @@ public class MapCreator : MonoBehaviour
         nowMapType = (MapType)_index;
     }
 
-    private int downPos = -1;
-
-    private bool hasExit = false;
-
-    public void MapUnitDown(MapUnit _unit)
+    private void MapUnitUpAsButton(MapUnit _unit)
     {
-        hasExit = false;
-
-        if (mapData.dic.ContainsKey(_unit.index))
-        {
-            MapData.MapUnitType mapUnitType = mapData.dic[_unit.index];
-
-            if (mapUnitType == MapData.MapUnitType.M_AREA || mapUnitType == MapData.MapUnitType.O_AREA)
-            {
-                downPos = _unit.index;
-            }
-        }
-    }
-
-    public void MapUnitEnter(MapUnit _unit)
-    {
-        if (downPos != -1)
-        {
-            if (mapData.dic.ContainsKey(_unit.index))
-            {
-                MapData.MapUnitType mapUnitType = mapData.dic[_unit.index];
-
-                if (mapUnitType == MapData.MapUnitType.M_AREA || mapUnitType == MapData.MapUnitType.O_AREA)
-                {
-                    if (BattlePublicTools.GetDistance(mapData.mapWidth, downPos, _unit.index) == 1)
-                    {
-                        if (showMyTarget)
-                        {
-                            mapData.moveMap[downPos] = new KeyValuePair<int, int>(_unit.index, mapData.moveMap[downPos].Value);
-                        }
-                        else
-                        {
-                            mapData.moveMap[downPos] = new KeyValuePair<int, int>(mapData.moveMap[downPos].Key, _unit.index);
-                        }
-
-                        ShowArrow(downPos, _unit.index);
-                    }
-                }
-            }
-        }
-    }
-
-    public void MapUnitExit(MapUnit _unit)
-    {
-        hasExit = true;
-
-        if (downPos != -1)
-        {
-            if (showMyTarget)
-            {
-                if (mapData.moveMap[downPos].Key == _unit.index)
-                {
-                    mapData.moveMap[downPos] = new KeyValuePair<int, int>(-1, mapData.moveMap[downPos].Value);
-
-                    HideArrow(downPos);
-                }
-            }
-            else
-            {
-                if (mapData.moveMap[downPos].Value == _unit.index)
-                {
-                    mapData.moveMap[downPos] = new KeyValuePair<int, int>(mapData.moveMap[downPos].Key, -1);
-
-                    HideArrow(downPos);
-                }
-            }
-        }
-    }
-
-    void Update()
-    {
-        if (Input.GetMouseButtonUp(0))
-        {
-            downPos = -1;
-        }
-    }
-
-    public void Switch()
-    {
-        showMyTarget = !showMyTarget;
-
-        switchBtText.text = showMyTarget ? "M" : "O";
-
-        Dictionary<int, KeyValuePair<int, int>>.Enumerator enumerator = mapData.moveMap.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            if (showMyTarget)
-            {
-                if (enumerator.Current.Value.Key != -1)
-                {
-                    ShowArrow(enumerator.Current.Key, enumerator.Current.Value.Key);
-                }
-                else
-                {
-                    HideArrow(enumerator.Current.Key);
-                }
-            }
-            else
-            {
-                if (enumerator.Current.Value.Value != -1)
-                {
-                    ShowArrow(enumerator.Current.Key, enumerator.Current.Value.Value);
-                }
-                else
-                {
-                    HideArrow(enumerator.Current.Key);
-                }
-            }
-        }
-    }
-
-    public void MapUnitUpAsButton(MapUnit _unit)
-    {
-        if (hasExit)
-        {
-            return;
-        }
-
         _unit.SetMainColor(bts[(int)nowMapType].color);
 
         switch (nowMapType)
@@ -529,50 +297,6 @@ public class MapCreator : MonoBehaviour
                 if (mapData.dic.ContainsKey(_unit.index))
                 {
                     mapData.dic.Remove(_unit.index);
-                }
-
-                HideArrow(_unit.index);
-
-                if (mapData.moveMap.ContainsKey(_unit.index))
-                {
-                    mapData.moveMap.Remove(_unit.index);
-                }
-
-                List<int> mDel = new List<int>();
-
-                List<int> oDel = new List<int>();
-
-                foreach (KeyValuePair<int, KeyValuePair<int, int>> pair in mapData.moveMap)
-                {
-                    if (pair.Value.Key == _unit.index)
-                    {
-                        mDel.Add(pair.Key);
-                    }
-
-                    if (pair.Value.Value == _unit.index)
-                    {
-                        oDel.Add(pair.Key);
-                    }
-                }
-
-                for (int i = 0; i < mDel.Count; i++)
-                {
-                    mapData.moveMap[mDel[i]] = new KeyValuePair<int, int>(-1, mapData.moveMap[mDel[i]].Value);
-
-                    if (showMyTarget)
-                    {
-                        HideArrow(mDel[i]);
-                    }
-                }
-
-                for (int i = 0; i < oDel.Count; i++)
-                {
-                    mapData.moveMap[oDel[i]] = new KeyValuePair<int, int>(mapData.moveMap[oDel[i]].Key, -1);
-
-                    if (!showMyTarget)
-                    {
-                        HideArrow(oDel[i]);
-                    }
                 }
 
                 if (mapData.mBase == _unit.index)
@@ -598,11 +322,6 @@ public class MapCreator : MonoBehaviour
                     mapData.dic.Add(_unit.index, MapData.MapUnitType.M_AREA);
                 }
 
-                if (!mapData.moveMap.ContainsKey(_unit.index))
-                {
-                    mapData.moveMap.Add(_unit.index, new KeyValuePair<int, int>(-1, -1));
-                }
-
                 if (mapData.mBase == _unit.index)
                 {
                     mapData.mBase = -1;
@@ -626,11 +345,6 @@ public class MapCreator : MonoBehaviour
                     mapData.dic.Add(_unit.index, MapData.MapUnitType.O_AREA);
                 }
 
-                if (!mapData.moveMap.ContainsKey(_unit.index))
-                {
-                    mapData.moveMap.Add(_unit.index, new KeyValuePair<int, int>(-1, -1));
-                }
-
                 if (mapData.mBase == _unit.index)
                 {
                     mapData.mBase = -1;
@@ -652,11 +366,6 @@ public class MapCreator : MonoBehaviour
                 else
                 {
                     mapData.dic.Add(_unit.index, MapData.MapUnitType.M_AREA);
-                }
-
-                if (!mapData.moveMap.ContainsKey(_unit.index))
-                {
-                    mapData.moveMap.Add(_unit.index, new KeyValuePair<int, int>(-1, -1));
                 }
 
                 if (mapData.mBase != _unit.index)
@@ -687,11 +396,6 @@ public class MapCreator : MonoBehaviour
                     mapData.dic.Add(_unit.index, MapData.MapUnitType.O_AREA);
                 }
 
-                if (!mapData.moveMap.ContainsKey(_unit.index))
-                {
-                    mapData.moveMap.Add(_unit.index, new KeyValuePair<int, int>(-1, -1));
-                }
-
                 if (mapData.mBase == _unit.index)
                 {
                     mapData.mBase = -1;
@@ -720,50 +424,6 @@ public class MapCreator : MonoBehaviour
                     mapData.dic.Add(_unit.index, MapData.MapUnitType.RIVER);
                 }
 
-                HideArrow(_unit.index);
-
-                if (mapData.moveMap.ContainsKey(_unit.index))
-                {
-                    mapData.moveMap.Remove(_unit.index);
-                }
-
-                mDel = new List<int>();
-
-                oDel = new List<int>();
-
-                foreach (KeyValuePair<int, KeyValuePair<int, int>> pair in mapData.moveMap)
-                {
-                    if (pair.Value.Key == _unit.index)
-                    {
-                        mDel.Add(pair.Key);
-                    }
-
-                    if (pair.Value.Value == _unit.index)
-                    {
-                        oDel.Add(pair.Key);
-                    }
-                }
-
-                for (int i = 0; i < mDel.Count; i++)
-                {
-                    mapData.moveMap[mDel[i]] = new KeyValuePair<int, int>(-1, mapData.moveMap[mDel[i]].Value);
-
-                    if (showMyTarget)
-                    {
-                        HideArrow(mDel[i]);
-                    }
-                }
-
-                for (int i = 0; i < oDel.Count; i++)
-                {
-                    mapData.moveMap[oDel[i]] = new KeyValuePair<int, int>(mapData.moveMap[oDel[i]].Key, -1);
-
-                    if (!showMyTarget)
-                    {
-                        HideArrow(oDel[i]);
-                    }
-                }
-
                 if (mapData.mBase == _unit.index)
                 {
                     mapData.mBase = -1;
@@ -785,50 +445,6 @@ public class MapCreator : MonoBehaviour
                 else
                 {
                     mapData.dic.Add(_unit.index, MapData.MapUnitType.HILL);
-                }
-
-                HideArrow(_unit.index);
-
-                if (mapData.moveMap.ContainsKey(_unit.index))
-                {
-                    mapData.moveMap.Remove(_unit.index);
-                }
-
-                mDel = new List<int>();
-
-                oDel = new List<int>();
-
-                foreach (KeyValuePair<int, KeyValuePair<int, int>> pair in mapData.moveMap)
-                {
-                    if (pair.Value.Key == _unit.index)
-                    {
-                        mDel.Add(pair.Key);
-                    }
-
-                    if (pair.Value.Value == _unit.index)
-                    {
-                        oDel.Add(pair.Key);
-                    }
-                }
-
-                for (int i = 0; i < mDel.Count; i++)
-                {
-                    mapData.moveMap[mDel[i]] = new KeyValuePair<int, int>(-1, mapData.moveMap[mDel[i]].Value);
-
-                    if (showMyTarget)
-                    {
-                        HideArrow(mDel[i]);
-                    }
-                }
-
-                for (int i = 0; i < oDel.Count; i++)
-                {
-                    mapData.moveMap[oDel[i]] = new KeyValuePair<int, int>(mapData.moveMap[oDel[i]].Key, -1);
-
-                    if (!showMyTarget)
-                    {
-                        HideArrow(oDel[i]);
-                    }
                 }
 
                 if (mapData.mBase == _unit.index)

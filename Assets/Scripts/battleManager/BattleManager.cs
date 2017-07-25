@@ -2,7 +2,6 @@
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using superTween;
 using System;
 using FinalWar;
 using superRaycast;
@@ -354,7 +353,7 @@ public class BattleManager : MonoBehaviour
 
         while (enumerator.MoveNext())
         {
-            GameObject.Destroy(enumerator.Current.gameObject);
+            Destroy(enumerator.Current.gameObject);
         }
 
         mapUnitDic.Clear();
@@ -408,7 +407,7 @@ public class BattleManager : MonoBehaviour
 
     private void CreateMapPanel()
     {
-        mapGo = GameObject.Instantiate(Resources.Load<GameObject>("MapGo"));
+        mapGo = Instantiate(Resources.Load<GameObject>("MapGo"));
 
         mapGo.transform.SetParent(mapContainer, false);
 
@@ -418,7 +417,6 @@ public class BattleManager : MonoBehaviour
 
         Action<int, Color> dele = delegate (int arg1, Color arg2)
         {
-
             colorArr[arg1] = arg2;
 
             mr.material.SetColorArray("colors", colorArr);
@@ -457,6 +455,27 @@ public class BattleManager : MonoBehaviour
                 go.transform.localScale = new Vector3(mapUnitScale, mapUnitScale, mapUnitScale);
 
                 MapUnit unit = go.GetComponent<MapUnit>();
+
+                SuperFunction.SuperFunctionCallBack2<RaycastHit, int> tmpDele = delegate (int _index, RaycastHit _hit, int _hitIndex)
+                {
+                    MapUnitDown(unit);
+                };
+
+                SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseButtonDown, tmpDele);
+
+                SuperFunction.SuperFunctionCallBack0 tmpDele2 = delegate (int _index0)
+                {
+                    MapUnitEnter(unit);
+                };
+
+                SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseEnter, tmpDele2);
+
+                tmpDele2 = delegate (int _index0)
+                {
+                    MapUnitExit(unit);
+                };
+
+                SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseExit, tmpDele2);
 
                 mapUnitDic.Add(index, unit);
 
@@ -672,7 +691,7 @@ public class BattleManager : MonoBehaviour
         return go;
     }
 
-    public void MapUnitDown(MapUnit _mapUnit)
+    private void MapUnitDown(MapUnit _mapUnit)
     {
         MapUnitDownReal(_mapUnit);
 
@@ -700,7 +719,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void MapUnitEnter(MapUnit _mapUnit)
+    private void MapUnitEnter(MapUnit _mapUnit)
     {
         if (isDoingHeroAction)
         {
@@ -717,7 +736,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void MapUnitExit(MapUnit _mapUnit)
+    private void MapUnitExit(MapUnit _mapUnit)
     {
         if (isDoingHeroAction)
         {
@@ -749,7 +768,7 @@ public class BattleManager : MonoBehaviour
     //		}
     //	}
 
-    public void MapUnitUpAsButton(MapUnit _mapUnit)
+    private void MapUnitUpAsButton(MapUnit _mapUnit)
     {
         if (mouseHasExited)
         {

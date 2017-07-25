@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using superFunction;
-using superRaycast;
 using System;
 
 public class MapUnit : MonoBehaviour
@@ -12,62 +10,23 @@ public class MapUnit : MonoBehaviour
 
     private int index2;
 
-	private Action<int, Color> setColorCb;
+    private Action<int, Color> setColorCb;
 
-	public void Init(int _index, int _index2, Action<int, Color> _setColorCb)
+    public void Init(int _index, int _index2, Action<int, Color> _setColorCb)
     {
         index = _index;
         index2 = _index2;
 
-		setColorCb = _setColorCb;
-    }
-
-    // Use this for initialization
-    void Awake()
-    {
-		SuperFunction.Instance.AddEventListener<RaycastHit, int>(gameObject, SuperRaycast.GetMouseButtonDown, GetMouseDown);
-
-        //		SuperFunction.Instance.AddEventListener (gameObject, SuperRaycast.GetMouseButtonUp, GetMouseUp);
-
-		SuperFunction.Instance.AddEventListener(gameObject, SuperRaycast.GetMouseEnter, GetMouseEnter);
-
-		SuperFunction.Instance.AddEventListener(gameObject, SuperRaycast.GetMouseExit, GetMouseExit);
-
-        //		SuperFunction.Instance.AddEventListener (gameObject, SuperRaycast.GetMouseClick, GetMouseClick);
+        setColorCb = _setColorCb;
     }
 
     public void SetMainColor(Color _color)
     {
         mainMr.material.SetColor("_Color", _color);
 
-		if (setColorCb != null)
+        if (setColorCb != null)
         {
-			setColorCb (index2, _color);
+            setColorCb(index2, _color);
         }
-    }
-
-	private void GetMouseDown(int _index, RaycastHit _hit, int _hitIndex)
-    {
-        SendMessageUpwards("MapUnitDown", this, SendMessageOptions.DontRequireReceiver);
-    }
-
-    //	private void GetMouseUp(SuperEvent e){
-    //
-    //		SendMessageUpwards ("MapUnitUp", this, SendMessageOptions.DontRequireReceiver);
-    //	}
-
-	private void GetMouseEnter(int _index)
-    {
-        SendMessageUpwards("MapUnitEnter", this, SendMessageOptions.DontRequireReceiver);
-    }
-
-	private void GetMouseExit(int _index)
-    {
-        SendMessageUpwards("MapUnitExit", this, SendMessageOptions.DontRequireReceiver);
-    }
-
-	private void GetMouseClick(int _index, RaycastHit _hit, int _hitIndex)
-    {
-        SendMessageUpwards("MapUnitUpAsButton", this, SendMessageOptions.DontRequireReceiver);
     }
 }
