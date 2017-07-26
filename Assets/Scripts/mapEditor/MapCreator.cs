@@ -181,7 +181,7 @@ public class MapCreator : MonoBehaviour
 
                 MapUnit unit = go.GetComponent<MapUnit>();
 
-				SuperFunction.SuperFunctionCallBack0 click = delegate (int _index)
+				SuperFunction.SuperFunctionCallBack3<bool, RaycastHit, int> click = delegate (int _index, bool _blockByUI, RaycastHit _hit, int _hitIndex)
                 {
                     MapUnitUpAsButton(unit);
                 };

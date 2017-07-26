@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 using superSequenceControl;
 using FinalWar;
+using System.Linq;
 
 public class BattleControl : MonoBehaviour
 {
@@ -526,11 +527,7 @@ public class BattleControl : MonoBehaviour
 
         while (moves.Count > 0)
         {
-            Dictionary<int, int>.Enumerator enumerator = moves.GetEnumerator();
-
-            enumerator.MoveNext();
-
-            tmpList.Add(enumerator.Current);
+            tmpList.Add(moves.ElementAt(0));
 
             while (tmpList.Count > 0)
             {
@@ -547,20 +544,19 @@ public class BattleControl : MonoBehaviour
                 if (moves.TryGetValue(pair.Value, out tmpIndex))
                 {
                     tmpList.Add(new KeyValuePair<int, int>(pair.Value, tmpIndex));
+
+                    moves.Remove(pair.Value);
                 }
 
-                if (moves.ContainsValue(pair.Key))
+                Dictionary<int, int>.Enumerator enumerator = moves.GetEnumerator();
+
+                while (enumerator.MoveNext())
                 {
-                    enumerator = moves.GetEnumerator();
-
-                    while (enumerator.MoveNext())
+                    if (enumerator.Current.Value == pair.Key)
                     {
-                        if (enumerator.Current.Value == pair.Key)
-                        {
-                            tmpList.Add(enumerator.Current);
+                        tmpList.Add(enumerator.Current);
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }
