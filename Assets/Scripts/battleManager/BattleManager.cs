@@ -191,8 +191,6 @@ public class BattleManager : MonoBehaviour
 
         SuperRaycast.SetIsOpen(true, "a");
 
-        SuperRaycast.checkBlockByUi = true;
-
         Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS>();
 
         Dictionary<int, SkillSDS> skillDic = StaticData.GetDic<SkillSDS>();
@@ -207,9 +205,9 @@ public class BattleManager : MonoBehaviour
 
         SuperFunction.Instance.AddEventListener<float, Vector2>(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
 
-        SuperFunction.Instance.AddEventListener<RaycastHit, int>(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
+        SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
 
-        SuperFunction.Instance.AddEventListener<RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
+        SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
 
         //		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
     }
@@ -456,23 +454,32 @@ public class BattleManager : MonoBehaviour
 
                 MapUnit unit = go.GetComponent<MapUnit>();
 
-                SuperFunction.SuperFunctionCallBack2<RaycastHit, int> tmpDele = delegate (int _index, RaycastHit _hit, int _hitIndex)
+                SuperFunction.SuperFunctionCallBack3<bool, RaycastHit, int> tmpDele = delegate (int _index, bool _blockByUI, RaycastHit _hit, int _hitIndex)
                 {
-                    MapUnitDown(unit);
+                    if (!_blockByUI)
+                    {
+                        MapUnitDown(unit);
+                    }
                 };
 
                 SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseButtonDown, tmpDele);
 
-                SuperFunction.SuperFunctionCallBack0 tmpDele2 = delegate (int _index0)
+                tmpDele = delegate (int _index, bool _blockByUI, RaycastHit _hit, int _hitIndex)
                 {
-                    MapUnitEnter(unit);
+                    if (!_blockByUI)
+                    {
+                        MapUnitEnter(unit);
+                    }
                 };
 
-                SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseEnter, tmpDele2);
+                SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseEnter, tmpDele);
 
-                tmpDele2 = delegate (int _index0)
+                SuperFunction.SuperFunctionCallBack1<bool> tmpDele2 = delegate (int _index0, bool _blockByUI)
                 {
-                    MapUnitExit(unit);
+                    if (!_blockByUI)
+                    {
+                        MapUnitExit(unit);
+                    }
                 };
 
                 SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseExit, tmpDele2);
@@ -1380,19 +1387,14 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void GetMouseDown(int _index, RaycastHit _hit, int _hitIndex)
+    private void GetMouseDown(int _index, bool _blockByUI, RaycastHit _hit, int _hitIndex)
     {
-        if (_hitIndex == 0)
+        if (!_blockByUI && _hitIndex == 0)
         {
-            BackgroundDown();
+            downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
+
+            isDown = DownType.BACKGROUND;
         }
-    }
-
-    private void BackgroundDown()
-    {
-        downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
-
-        isDown = DownType.BACKGROUND;
     }
 
     private void MapUnitDownReal(MapUnit _mapUnit)
@@ -1404,11 +1406,14 @@ public class BattleManager : MonoBehaviour
         downMapUnit = _mapUnit;
     }
 
-    private void GetMouseMove(int _index, RaycastHit _hit, int _hitIndex)
+    private void GetMouseMove(int _index, bool _blockByUI, RaycastHit _hit, int _hitIndex)
     {
         if (isDown != DownType.NULL)
         {
-            BackgroundMove();
+            if (!_blockByUI || hasMove)
+            {
+                BackgroundMove();
+            }
         }
     }
 
@@ -1419,8 +1424,6 @@ public class BattleManager : MonoBehaviour
         if (!hasMove && Vector2.Distance(nowPos, downPos) > 10)
         {
             hasMove = true;
-
-            SuperRaycast.checkBlockByUi = false;
         }
 
         if (!isDoingHeroAction && hasMove && battleContainer.localScale.x > 1)
@@ -1450,8 +1453,6 @@ public class BattleManager : MonoBehaviour
             }
             else
             {
-                SuperRaycast.checkBlockByUi = true;
-
                 hasMove = false;
             }
 
