@@ -257,13 +257,15 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
+        if (supportersMove != null)
+        {
+            SuperSequenceControl.To(0.5f, 0f, 0.5f, supportersMove, _index);
+
+            yield return null;
+        }
+
         if (defenderReal == supporter)
         {
-            if (supportersMove != null)
-            {
-                SuperSequenceControl.To(0.5f, 0f, 0.5f, supportersMove, 0);
-            }
-
             if (defender != null)
             {
                 Vector3 v1 = (defender.transform.localPosition - attacker.transform.localPosition).normalized;
@@ -296,15 +298,6 @@ public class BattleControl : MonoBehaviour
             SuperSequenceControl.To(0f, 1f, 0.5f, supporterToDel, _index);
 
             yield return null;
-        }
-        else
-        {
-            if (supportersMove != null)
-            {
-                SuperSequenceControl.To(0.5f, 0f, 0.5f, supportersMove, _index);
-
-                yield return null;
-            }
         }
 
         SuperSequenceControl.MoveNext(_lastIndex);
