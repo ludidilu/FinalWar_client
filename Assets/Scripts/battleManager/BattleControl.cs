@@ -556,6 +556,8 @@ public class BattleControl : MonoBehaviour
                     {
                         tmpList.Add(enumerator.Current);
 
+                        moves.Remove(enumerator.Current.Key);
+
                         break;
                     }
                 }
