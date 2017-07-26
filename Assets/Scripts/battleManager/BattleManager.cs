@@ -656,7 +656,7 @@ public class BattleManager : MonoBehaviour
 
         Quaternion q = new Quaternion();
 
-        q.eulerAngles = new Vector3(0, 0, angle * 180 / Mathf.PI);
+        q.eulerAngles = new Vector3(0, 0, angle * Mathf.Rad2Deg);
 
         go.transform.localRotation = q;
 
@@ -685,7 +685,7 @@ public class BattleManager : MonoBehaviour
 
         Quaternion q = new Quaternion();
 
-        q.eulerAngles = new Vector3(0, 0, angle * 180 / Mathf.PI);
+        q.eulerAngles = new Vector3(0, 0, angle * Mathf.Rad2Deg);
 
         go.transform.localRotation = q;
 
