@@ -10,19 +10,19 @@ using UnityEditor;
 
 #endif
 
+public enum MapType
+{
+    MYPOS,
+    MYBASE,
+    OPPPOS,
+    OPPBASE,
+    RIVER,
+    HILL,
+    NULL
+}
+
 public class MapCreator : MonoBehaviour
 {
-    private enum MapType
-    {
-        MYPOS,
-        MYBASE,
-        OPPPOSE,
-        OPPBASE,
-        RIVER,
-        HILL,
-        NULL
-    }
-
     [SerializeField]
     private GameObject choosePanel;
 
@@ -50,15 +50,6 @@ public class MapCreator : MonoBehaviour
     [SerializeField]
     private Image[] bts;
 
-    [SerializeField]
-    private GameObject btShow;
-
-    [SerializeField]
-    private Text switchBtText;
-
-    [SerializeField]
-    private RectTransform arrowContainer;
-
     private static readonly float sqrt3 = Mathf.Sqrt(3);
 
     private MapUnit[] units;
@@ -69,22 +60,7 @@ public class MapCreator : MonoBehaviour
 
     private bool showMyTarget = true;
 
-    private MapType m_nowMapType;
-
-    private MapType nowMapType
-    {
-        get
-        {
-            return m_nowMapType;
-        }
-
-        set
-        {
-            m_nowMapType = value;
-
-            (btShow.transform as RectTransform).anchoredPosition = (bts[(int)m_nowMapType].transform as RectTransform).anchoredPosition;
-        }
-    }
+    private MapType nowMapType;
 
     void Awake()
     {
@@ -152,7 +128,7 @@ public class MapCreator : MonoBehaviour
 
     public void CreateMapPanel()
     {
-        nowMapType = MapType.MYPOS;
+        nowMapType = MapType.NULL;
 
         int size = mapData.mapWidth * mapData.mapHeight - mapData.mapHeight / 2;
 
@@ -208,7 +184,7 @@ public class MapCreator : MonoBehaviour
                     }
                     else if (mapData.dic[index] == MapData.MapUnitType.O_AREA)
                     {
-                        unit.SetMainColor(bts[(int)MapType.OPPPOSE].color);
+                        unit.SetMainColor(bts[(int)MapType.OPPPOS].color);
                     }
                     else if (mapData.dic[index] == MapData.MapUnitType.RIVER)
                     {
@@ -281,9 +257,12 @@ public class MapCreator : MonoBehaviour
         return true;
     }
 
-    public void BtClick(int _index)
+    public void BtClick(MapCreatorBt _go)
     {
-        nowMapType = (MapType)_index;
+        if (_go.toggle.isOn)
+        {
+            nowMapType = (MapType)_go.mapType;
+        }
     }
 
     private void MapUnitUpAsButton(MapUnit _unit)
@@ -334,7 +313,7 @@ public class MapCreator : MonoBehaviour
 
                 break;
 
-            case MapType.OPPPOSE:
+            case MapType.OPPPOS:
 
                 if (mapData.dic.ContainsKey(_unit.index))
                 {
@@ -405,7 +384,7 @@ public class MapCreator : MonoBehaviour
                 {
                     if (mapData.oBase != -1)
                     {
-                        units[mapData.oBase].SetMainColor(bts[(int)MapType.OPPPOSE].color);
+                        units[mapData.oBase].SetMainColor(bts[(int)MapType.OPPPOS].color);
                     }
 
                     mapData.oBase = _unit.index;

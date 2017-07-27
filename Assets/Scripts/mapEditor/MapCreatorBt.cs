@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class MapCreatorBt : MonoBehaviour, IPointerClickHandler
+public class MapCreatorBt : MonoBehaviour
 {
     [SerializeField]
-    private int index;
+    public MapType mapType;
 
-    public void OnPointerClick(PointerEventData _data)
-    {
-        SendMessageUpwards("BtClick", index, SendMessageOptions.DontRequireReceiver);
-    }
+    [SerializeField]
+    public Toggle toggle;
 }
