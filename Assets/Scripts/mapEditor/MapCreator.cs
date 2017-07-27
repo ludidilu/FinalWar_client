@@ -159,7 +159,10 @@ public class MapCreator : MonoBehaviour
 
 				SuperFunction.SuperFunctionCallBack3<bool, RaycastHit, int> click = delegate (int _index, bool _blockByUI, RaycastHit _hit, int _hitIndex)
                 {
-                    MapUnitUpAsButton(unit);
+                    if (!_blockByUI)
+                    {
+                        MapUnitUpAsButton(unit);
+                    }
                 };
 
                 SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseClick, click);
