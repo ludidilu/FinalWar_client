@@ -753,7 +753,7 @@ public class BattleManager : MonoBehaviour
             {
                 KeyValuePair<int, int> pair = battle.action[i];
 
-                if (pair.Key == GetNowChooseHero().pos)
+                if (pair.Key == GetNowChooseHero().pos && _mapUnit.index == pair.Value)
                 {
                     battle.ClientRequestUnaction(GetNowChooseHero().pos);
 
