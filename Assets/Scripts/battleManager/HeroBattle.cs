@@ -70,6 +70,13 @@ public class HeroBattle : HeroBase
     {
         hero = _hero;
 
+        RefreshAll();
+    }
+
+    public void RefreshAll()
+    {
+        InitCard(hero.sds as HeroSDS);
+
         RefreshHpAndShield();
 
         RefreshAttackWithoutShield();
@@ -77,8 +84,6 @@ public class HeroBattle : HeroBase
 
     public void RefreshHpAndShield()
     {
-        InitCard(hero.sds as HeroSDS);
-
         int nowShield;
 
         int nowHp;
@@ -122,7 +127,7 @@ public class HeroBattle : HeroBase
 
         SuperTween.Instance.To(0, 1, 1, shockToDel, null);
 
-		ShowHud((-_damage).ToString(), _color, null);
+        ShowHud((-_damage).ToString(), _color, null);
 
         RefreshHpAndShield();
     }
@@ -160,5 +165,13 @@ public class HeroBattle : HeroBase
     private void DieTo(float _v)
     {
         canvasGroup.alpha = _v;
+    }
+
+    public void CheckLevelUp()
+    {
+        if (sds != hero.sds)
+        {
+            RefreshAll();
+        }
     }
 }

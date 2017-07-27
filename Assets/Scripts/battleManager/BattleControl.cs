@@ -591,7 +591,11 @@ public class BattleControl : MonoBehaviour
             {
                 KeyValuePair<int, int> pair = tmpList2[l];
 
-                BattleManager.Instance.heroDic.Add(pair.Value, tmpDic[pair.Key]);
+                HeroBattle hero = tmpDic[pair.Key];
+
+                BattleManager.Instance.heroDic.Add(pair.Value, hero);
+
+                hero.CheckLevelUp();
 
                 int index = pair.Value;
 

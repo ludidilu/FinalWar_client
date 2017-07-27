@@ -1153,10 +1153,6 @@ public class BattleManager : MonoBehaviour
             {
                 DoMoneyChange((BattleMoneyChangeVO)vo);
             }
-            else if (vo is BattleLevelUpVO)
-            {
-                DoLevelUp((BattleLevelUpVO)vo);
-            }
             else if (vo is BattlePrepareRushVO)
             {
                 DoPrepareRush();
@@ -1296,15 +1292,6 @@ public class BattleManager : MonoBehaviour
         {
             CreateMoneyTf();
         }
-    }
-
-    private void DoLevelUp(BattleLevelUpVO _vo)
-    {
-        HeroBattle hero = heroDic[_vo.pos];
-
-        hero.RefreshHpAndShield();
-
-        hero.RefreshAttackWithoutShield();
     }
 
     private void DoRecover()
