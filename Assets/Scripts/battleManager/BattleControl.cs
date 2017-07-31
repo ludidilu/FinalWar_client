@@ -91,6 +91,8 @@ public class BattleControl : MonoBehaviour
     {
         HeroBattle shooter = BattleManager.Instance.heroDic[_vo.shooter];
 
+        shooter.RefreshHpAndShield();
+
         HeroBattle stander = BattleManager.Instance.heroDic[_vo.stander];
 
         float angle = Mathf.Atan2(stander.transform.localPosition.y - shooter.transform.localPosition.y, stander.transform.localPosition.x - shooter.transform.localPosition.x);
@@ -149,11 +151,46 @@ public class BattleControl : MonoBehaviour
 
                 break;
 
-            default:
+            case SkillEffect.DISABLE_MOVE:
+            case SkillEffect.DISABLE_RECOVER_SHIELD:
+            case SkillEffect.FIX_SPEED:
 
                 stander.ShowHud(_vo.effect.ToString(), Color.black, null);
 
                 break;
+
+            case SkillEffect.DISABLE_ACTION:
+
+                stander.ShowHud(_vo.effect.ToString(), Color.black, null);
+
+                stander.RefreshHpAndShield();
+
+                break;
+
+            case SkillEffect.FIX_ATTACK:
+
+                stander.ShowHud(_vo.effect.ToString(), Color.black, null);
+
+                stander.RefreshAttackWithoutShield();
+
+                break;
+
+            case SkillEffect.SILENCE:
+
+                stander.ShowHud(_vo.effect.ToString(), Color.black, null);
+
+                Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator = BattleManager.Instance.heroDic.Values.GetEnumerator();
+
+                while (enumerator.MoveNext())
+                {
+                    enumerator.Current.RefreshAttackWithoutShield();
+                }
+
+                break;
+
+            default:
+
+                throw new Exception("Unknown SkillEffect:" + _vo.effect.ToString());
         }
 
         SuperSequenceControl.DelayCall(1.5f, _index);
