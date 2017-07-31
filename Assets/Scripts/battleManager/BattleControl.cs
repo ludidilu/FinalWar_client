@@ -153,7 +153,6 @@ public class BattleControl : MonoBehaviour
 
             case SkillEffect.DISABLE_MOVE:
             case SkillEffect.DISABLE_RECOVER_SHIELD:
-            case SkillEffect.FIX_SPEED:
 
                 stander.ShowHud(_vo.effect.ToString(), Color.black, null);
 
@@ -169,9 +168,15 @@ public class BattleControl : MonoBehaviour
 
             case SkillEffect.FIX_ATTACK:
 
-                stander.ShowHud(_vo.effect.ToString(), Color.black, null);
+                stander.ShowHud(_vo.effect.ToString() + _vo.data, Color.black, null);
 
                 stander.RefreshAttackWithoutShield();
+
+                break;
+
+            case SkillEffect.FIX_SPEED:
+
+                stander.ShowHud(_vo.effect.ToString() + _vo.data, Color.black, null);
 
                 break;
 
