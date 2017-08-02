@@ -38,22 +38,13 @@ namespace superFunction
 
         private int index = 0;
 
-        private Action<int> removeDelegate;
+        private Queue<List<SuperFunctionUnit>> pool = new Queue<List<SuperFunctionUnit>>();
+        private Queue<Dictionary<string, List<SuperFunctionUnit>>> pool2 = new Queue<Dictionary<string, List<SuperFunctionUnit>>>();
 
         public SuperFunction()
         {
             dic = new Dictionary<int, SuperFunctionUnit>();
             dic2 = new Dictionary<GameObject, Dictionary<string, List<SuperFunctionUnit>>>();
-        }
-
-        public void AddRemoveDelegate(Action<int> _dele)
-        {
-            removeDelegate += _dele;
-        }
-
-        public void RemoveRemoveDelegate(Action<int> _dele)
-        {
-            removeDelegate -= _dele;
         }
 
         public int AddOnceEventListener(GameObject _target, string _eventName, SuperFunctionCallBack0 _callBack)
@@ -170,7 +161,7 @@ namespace superFunction
             {
                 _target.AddComponent<SuperFunctionControl>();
 
-                tmpDic = new Dictionary<string, List<SuperFunctionUnit>>();
+                tmpDic = GetDic();
 
                 dic2.Add(_target, tmpDic);
             }
@@ -179,7 +170,7 @@ namespace superFunction
 
             if (!tmpDic.TryGetValue(_eventName, out tmpList))
             {
-                tmpList = new List<SuperFunctionUnit>();
+                tmpList = GetList();
 
                 tmpDic.Add(_eventName, tmpList);
             }
@@ -197,23 +188,30 @@ namespace superFunction
             {
                 dic.Remove(_index);
 
-                if (removeDelegate != null)
-                {
-                    removeDelegate(_index);
-                }
-
                 Dictionary<string, List<SuperFunctionUnit>> tmpDic = dic2[unit.target];
 
                 List<SuperFunctionUnit> tmpList = tmpDic[unit.eventName];
 
-                tmpList.Remove(unit);
+                for (int i = 0; i < tmpList.Count; i++)
+                {
+                    if (tmpList[i].index == unit.index)
+                    {
+                        tmpList.RemoveAt(i);
+
+                        break;
+                    }
+                }
 
                 if (tmpList.Count == 0)
                 {
+                    ReleaseList(tmpList);
+
                     tmpDic.Remove(unit.eventName);
 
                     if (tmpDic.Count == 0)
                     {
+                        ReleaseDic(tmpDic);
+
                         DestroyControl(unit.target);
                     }
                 }
@@ -239,14 +237,16 @@ namespace superFunction
                         SuperFunctionUnit unit = tmpList[i];
 
                         dic.Remove(unit.index);
-
-                        if (removeDelegate != null)
-                        {
-
-                            removeDelegate(unit.index);
-                        }
                     }
+
+                    tmpList.Clear();
+
+                    ReleaseList(tmpList);
                 }
+
+                tmpDic.Clear();
+
+                ReleaseDic(tmpDic);
             }
         }
 
@@ -265,17 +265,18 @@ namespace superFunction
                         SuperFunctionUnit unit = list[i];
 
                         dic.Remove(unit.index);
-
-                        if (removeDelegate != null)
-                        {
-                            removeDelegate(unit.index);
-                        }
                     }
+
+                    list.Clear();
+
+                    ReleaseList(list);
 
                     tmpDic.Remove(_eventName);
 
                     if (tmpDic.Count == 0)
                     {
+                        ReleaseDic(tmpDic);
+
                         DestroyControl(_target);
                     }
                 }
@@ -350,11 +351,6 @@ namespace superFunction
                         {
                             dic.Remove(unit.index);
 
-                            if (removeDelegate != null)
-                            {
-                                removeDelegate(unit.index);
-                            }
-
                             list.RemoveAt(i);
 
                             break;
@@ -363,10 +359,14 @@ namespace superFunction
 
                     if (list.Count == 0)
                     {
+                        ReleaseList(list);
+
                         tmpDic.Remove(_eventName);
 
                         if (tmpDic.Count == 0)
                         {
+                            ReleaseDic(tmpDic);
+
                             DestroyControl(_target);
                         }
                     }
@@ -393,6 +393,10 @@ namespace superFunction
 
                     cb(unit.index);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -415,6 +419,10 @@ namespace superFunction
 
                     cb(unit.index, t1);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -437,6 +445,10 @@ namespace superFunction
 
                     cb(unit.index, t1, t2);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -459,6 +471,10 @@ namespace superFunction
 
                     cb(unit.index, t1, t2, t3);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -481,6 +497,10 @@ namespace superFunction
 
                     cb(unit.index, t1, t2, t3, t4);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -503,6 +523,10 @@ namespace superFunction
 
                     cb(unit.index, ref _t);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -525,6 +549,10 @@ namespace superFunction
 
                     cb(unit.index, ref _t, _t1);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -547,6 +575,10 @@ namespace superFunction
 
                     cb(unit.index, ref _t, _t1, _t2);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -569,6 +601,10 @@ namespace superFunction
 
                     cb(unit.index, ref _t, _t1, _t2, _t3);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -591,6 +627,10 @@ namespace superFunction
 
                     cb(unit.index, ref _t, _t1, _t2, _t3, _t4);
                 }
+
+                unitList.Clear();
+
+                ReleaseList(unitList);
             }
         }
 
@@ -614,7 +654,7 @@ namespace superFunction
                         {
                             if (result == null)
                             {
-                                result = new List<SuperFunctionUnit>();
+                                result = GetList();
                             }
 
                             result.Add(unit);
@@ -645,13 +685,16 @@ namespace superFunction
                         SuperFunctionUnit unit = tmpList[i];
 
                         dic.Remove(unit.index);
-
-                        if (removeDelegate != null)
-                        {
-                            removeDelegate(unit.index);
-                        }
                     }
+
+                    tmpList.Clear();
+
+                    ReleaseList(tmpList);
                 }
+
+                tmpDic.Clear();
+
+                ReleaseDic(tmpDic);
             }
         }
 
@@ -681,6 +724,44 @@ namespace superFunction
             int result = index;
 
             return result;
+        }
+
+        private List<SuperFunctionUnit> GetList()
+        {
+            if (pool.Count > 0)
+            {
+                return pool.Dequeue();
+            }
+            else
+            {
+                List<SuperFunctionUnit> list = new List<SuperFunctionUnit>();
+
+                return list;
+            }
+        }
+
+        private void ReleaseList(List<SuperFunctionUnit> _list)
+        {
+            pool.Enqueue(_list);
+        }
+
+        private Dictionary<string, List<SuperFunctionUnit>> GetDic()
+        {
+            if (pool2.Count > 0)
+            {
+                return pool2.Dequeue();
+            }
+            else
+            {
+                Dictionary<string, List<SuperFunctionUnit>> dic = new Dictionary<string, List<SuperFunctionUnit>>();
+
+                return dic;
+            }
+        }
+
+        private void ReleaseDic(Dictionary<string, List<SuperFunctionUnit>> _dic)
+        {
+            pool2.Enqueue(_dic);
         }
 
         public int GetNum()
