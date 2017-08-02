@@ -1165,6 +1165,14 @@ public class BattleManager : MonoBehaviour
             {
                 DoRecover();
             }
+            else if (vo is BattleRoundStartVO)
+            {
+                DoRecover();
+            }
+            else if (vo is BattleRoundOverVO)
+            {
+                DoRecover();
+            }
             else
             {
                 throw new Exception("vo type error:" + vo);
