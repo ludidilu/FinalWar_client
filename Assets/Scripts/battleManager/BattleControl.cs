@@ -637,7 +637,7 @@ public class BattleControl : MonoBehaviour
 
                 BattleManager.Instance.heroDic.Add(pair.Value, hero);
 
-                hero.CheckLevelUp();
+                hero.RefreshAll();
 
                 int index = pair.Value;
 

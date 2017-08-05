@@ -166,12 +166,4 @@ public class HeroBattle : HeroBase
     {
         canvasGroup.alpha = _v;
     }
-
-    public void CheckLevelUp()
-    {
-        if (sds != hero.sds)
-        {
-            RefreshAll();
-        }
-    }
 }
