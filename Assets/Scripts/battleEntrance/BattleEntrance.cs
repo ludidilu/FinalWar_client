@@ -31,9 +31,11 @@ public class BattleEntrance : MonoBehaviour
 
         Map.Init();
 
-		StaticData.Load<HeroTypeSDS> ("heroType");
+        StaticData.Load<HeroTypeSDS>("heroType");
 
         StaticData.Load<HeroSDS>("hero");
+
+        StaticData.Load<EffectSDS>("effect");
 
         StaticData.Load<SkillSDS>("skill");
 
@@ -43,7 +45,7 @@ public class BattleEntrance : MonoBehaviour
 
         battleManager.Init(SendBattleAction);
 
-		Connection.Instance.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ReceiveData, ConfigDictionary.Instance.uid);
+        Connection.Instance.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ReceiveData, ConfigDictionary.Instance.uid);
     }
 
     private void ReceiveData(byte[] _bytes)
@@ -179,7 +181,7 @@ public class BattleEntrance : MonoBehaviour
         }
     }
 
-	private void BattleOver(int _index)
+    private void BattleOver(int _index)
     {
         gameObject.SetActive(true);
 

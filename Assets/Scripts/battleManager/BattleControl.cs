@@ -62,10 +62,7 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_vo.damage != 0)
-                {
-                    stander.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage, Color.red);
-                }
+                SuperSequenceControl.MoveNext(_index);
             }
         };
 
@@ -73,18 +70,23 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_vo.damage != 0)
+        bool shock = stander.TakeEffect(_vo.effectList);
+
+        if (shock)
         {
-            SuperSequenceControl.DelayCall(1.5f, _index);
-        }
-        else
-        {
-            SuperSequenceControl.DelayCall(1.0f, _index);
+            stander.Shock(attacker.transform.localPosition, shockCurve, shockDis);
         }
 
         yield return null;
 
-        SuperSequenceControl.MoveNext(_lastIndex);
+        if (shock)
+        {
+            SuperSequenceControl.DelayCall(1.5f, _lastIndex);
+        }
+        else
+        {
+            SuperSequenceControl.DelayCall(1.0f, _lastIndex);
+        }
     }
 
     public IEnumerator Shoot(int _index, int _lastIndex, BattleShootVO _vo)
@@ -131,78 +133,16 @@ public class BattleControl : MonoBehaviour
 
         Destroy(arrow);
 
-        switch (_vo.effect)
+        bool shock = stander.TakeEffect(_vo.effectList);
+
+        if (shock)
         {
-            case SkillEffect.DAMAGE:
-
-                stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.data, Color.red);
-
-                break;
-
-            case SkillEffect.HP_DAMAGE:
-
-                stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.data, Color.yellow);
-
-                break;
-
-            case SkillEffect.SHIELD_DAMAGE:
-
-                stander.Shock(shooter.transform.localPosition, shockCurve, shockDis, _vo.data, Color.blue);
-
-                break;
-
-            case SkillEffect.DISABLE_MOVE:
-            case SkillEffect.DISABLE_RECOVER_SHIELD:
-
-                stander.ShowHud(_vo.effect.ToString(), Color.black, null);
-
-                break;
-
-            case SkillEffect.DISABLE_ACTION:
-
-                stander.ShowHud(_vo.effect.ToString(), Color.black, null);
-
-                stander.RefreshHpAndShield();
-
-                break;
-
-            case SkillEffect.FIX_ATTACK:
-
-                stander.ShowHud(_vo.effect.ToString() + _vo.data, Color.black, null);
-
-                stander.RefreshAttackWithoutShield();
-
-                break;
-
-            case SkillEffect.FIX_SPEED:
-
-                stander.ShowHud(_vo.effect.ToString() + _vo.data, Color.black, null);
-
-                break;
-
-            case SkillEffect.SILENCE:
-
-                stander.ShowHud(_vo.effect.ToString(), Color.black, null);
-
-                Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator = BattleManager.Instance.heroDic.Values.GetEnumerator();
-
-                while (enumerator.MoveNext())
-                {
-                    enumerator.Current.RefreshAttackWithoutShield();
-                }
-
-                break;
-
-            default:
-
-                throw new Exception("Unknown SkillEffect:" + _vo.effect.ToString());
+            SuperSequenceControl.DelayCall(1.5f, _lastIndex);
         }
-
-        SuperSequenceControl.DelayCall(1.5f, _index);
-
-        yield return null;
-
-        SuperSequenceControl.MoveNext(_lastIndex);
+        else
+        {
+            SuperSequenceControl.DelayCall(1.0f, _lastIndex);
+        }
     }
 
     public IEnumerator PrepareAttack(int _index, int _lastIndex, BattlePrepareAttackVO _vo)
@@ -293,9 +233,9 @@ public class BattleControl : MonoBehaviour
             SuperSequenceControl.MoveNext(_index);
         };
 
-        attacker.ShowHud(_vo.attackerSpeed.ToString(), Color.blue, dele0);
+        attacker.ShowHud(_vo.attackerSpeed.ToString(), Color.grey, 0, dele0);
 
-        defenderReal.ShowHud(_vo.defenderSpeed.ToString(), Color.blue, null);
+        defenderReal.ShowHud(_vo.defenderSpeed.ToString(), Color.grey, 0, null);
 
         yield return null;
 

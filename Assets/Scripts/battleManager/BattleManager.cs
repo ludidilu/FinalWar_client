@@ -197,7 +197,9 @@ public class BattleManager : MonoBehaviour
 
         Dictionary<int, AuraSDS> auraDic = StaticData.GetDic<AuraSDS>();
 
-        Battle.Init(Map.mapDataDic, heroDic, skillDic, auraDic);
+        Dictionary<int, EffectSDS> effectDic = StaticData.GetDic<EffectSDS>();
+
+        Battle.Init(Map.mapDataDic, heroDic, skillDic, auraDic, effectDic);
 
         battle = new Battle();
 

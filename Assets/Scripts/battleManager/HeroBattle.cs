@@ -3,6 +3,7 @@ using superTween;
 using System;
 using UnityEngine.UI;
 using FinalWar;
+using System.Collections.Generic;
 
 public class HeroBattle : HeroBase
 {
@@ -112,7 +113,7 @@ public class HeroBattle : HeroBase
         attack.text = _attack.ToString();
     }
 
-    public void Shock(Vector3 _target, AnimationCurve _curve, float _shockDis, int _damage, Color _color)
+    public void Shock(Vector3 _target, AnimationCurve _curve, float _shockDis)
     {
         Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(moveTrans.localPosition));
 
@@ -126,13 +127,9 @@ public class HeroBattle : HeroBase
         };
 
         SuperTween.Instance.To(0, 1, 1, shockToDel, null);
-
-        ShowHud((-_damage).ToString(), _color, null);
-
-        RefreshHpAndShield();
     }
 
-    public void ShowHud(string _str, Color _color, Action _callBack)
+    public void ShowHud(string _str, Color _color, float _yFix, Action _callBack)
     {
         GameObject go = Instantiate(BattleControl.Instance.damageNumResources);
 
@@ -140,11 +137,89 @@ public class HeroBattle : HeroBase
 
         Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(moveTrans.localPosition));
 
-        go.transform.localPosition = pos;
+        go.transform.localPosition = new Vector3(pos.x, pos.y + _yFix, pos.z);
 
         DamageNum damageNum = go.GetComponent<DamageNum>();
 
         damageNum.Init(_str, _color, _callBack);
+    }
+
+    public bool TakeEffect(List<BattleHeroEffectVO> _list)
+    {
+        bool shock = false;
+
+        for (int i = 0; i < _list.Count; i++)
+        {
+            BattleHeroEffectVO effectVO = _list[i];
+
+            switch (effectVO.effect)
+            {
+                case Effect.DAMAGE:
+
+                    shock = true;
+
+                    ShowHud((-effectVO.data).ToString(), Color.red, i * 20, null);
+
+                    break;
+
+                case Effect.SHIELD_CHANGE:
+
+                    if (effectVO.data > 0)
+                    {
+                        ShowHud("+" + effectVO.data.ToString(), Color.yellow, i * 20, null);
+                    }
+                    else
+                    {
+                        shock = true;
+
+                        ShowHud(effectVO.data.ToString(), Color.yellow, i * 20, null);
+                    }
+
+                    break;
+
+                case Effect.HP_CHANGE:
+
+                    if (effectVO.data > 0)
+                    {
+                        ShowHud("+" + effectVO.data.ToString(), Color.blue, i * 20, null);
+                    }
+                    else
+                    {
+                        shock = true;
+
+                        ShowHud(effectVO.data.ToString(), Color.blue, i * 20, null);
+                    }
+
+                    break;
+
+                case Effect.FIX_ATTACK:
+                case Effect.FIX_SPEED:
+
+                    if (effectVO.data > 0)
+                    {
+                        ShowHud(effectVO.effect.ToString() + " +" + effectVO.data.ToString(), Color.black, i * 20, null);
+                    }
+                    else
+                    {
+                        ShowHud(effectVO.effect.ToString() + " " + effectVO.data.ToString(), Color.black, i * 20, null);
+                    }
+
+                    break;
+
+                case Effect.DISABLE_ACTION:
+                case Effect.DISABLE_MOVE:
+                case Effect.DISABLE_RECOVER_SHIELD:
+                case Effect.SILENCE:
+
+                    ShowHud(effectVO.effect.ToString(), Color.black, i * 20, null);
+
+                    break;
+            }
+        }
+
+        RefreshHpAndShield();
+
+        return shock;
     }
 
     public void Die(Action _del)
