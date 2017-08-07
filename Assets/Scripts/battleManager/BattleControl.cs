@@ -79,14 +79,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (shock)
-        {
-            SuperSequenceControl.DelayCall(1.5f, _lastIndex);
-        }
-        else
-        {
-            SuperSequenceControl.DelayCall(1.0f, _lastIndex);
-        }
+        SuperSequenceControl.DelayCall(2.0f, _lastIndex);
     }
 
     public IEnumerator Shoot(int _index, int _lastIndex, BattleShootVO _vo)
@@ -135,14 +128,7 @@ public class BattleControl : MonoBehaviour
 
         bool shock = stander.TakeEffect(_vo.effectList);
 
-        if (shock)
-        {
-            SuperSequenceControl.DelayCall(1.5f, _lastIndex);
-        }
-        else
-        {
-            SuperSequenceControl.DelayCall(1.0f, _lastIndex);
-        }
+        SuperSequenceControl.DelayCall(2.0f, _lastIndex);
     }
 
     public IEnumerator PrepareAttack(int _index, int _lastIndex, BattlePrepareAttackVO _vo)
@@ -326,14 +312,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (shock)
-        {
-            SuperSequenceControl.DelayCall(1.5f, _index);
-        }
-        else
-        {
-            SuperSequenceControl.DelayCall(1f, _index);
-        }
+        SuperSequenceControl.DelayCall(2.0f, _index);
 
         yield return null;
 
@@ -392,14 +371,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (defenderShock || attackerShock)
-        {
-            SuperSequenceControl.DelayCall(1.5f, _index);
-        }
-        else
-        {
-            SuperSequenceControl.DelayCall(1.0f, _index);
-        }
+        SuperSequenceControl.DelayCall(2.0f, _index);
 
         yield return null;
 
@@ -451,14 +423,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (shock)
-        {
-            SuperSequenceControl.DelayCall(1.5f, _index);
-        }
-        else
-        {
-            SuperSequenceControl.DelayCall(1.0f, _index);
-        }
+        SuperSequenceControl.DelayCall(2.0f, _index);
 
         yield return null;
 
@@ -674,13 +639,6 @@ public class BattleControl : MonoBehaviour
             shock = shock || b;
         }
 
-        if (shock)
-        {
-            SuperSequenceControl.DelayCall(1.5f, _lastIndex);
-        }
-        else
-        {
-            SuperSequenceControl.DelayCall(1.0f, _lastIndex);
-        }
+        SuperSequenceControl.DelayCall(2.0f, _lastIndex);
     }
 }
