@@ -35,6 +35,9 @@ public class BattleControl : MonoBehaviour
     [SerializeField]
     public GameObject damageNumResources;
 
+    [SerializeField]
+    public float hudHeight;
+
     public static BattleControl Instance { get; private set; }
 
     void Awake()
@@ -56,7 +59,7 @@ public class BattleControl : MonoBehaviour
 
             Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, stander.transform.localPosition, value);
 
-            attacker.moveTrans.localPosition = attacker.transform.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
+            attacker.moveTrans.localPosition = attacker.hudTrans.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
 
             if (!getHit && obj > hitPercent)
             {
@@ -74,7 +77,7 @@ public class BattleControl : MonoBehaviour
 
         if (shock)
         {
-            stander.Shock(attacker.transform.localPosition, shockCurve, shockDis);
+            stander.Shock(attacker, shockCurve, shockDis);
         }
 
         yield return null;
@@ -126,7 +129,7 @@ public class BattleControl : MonoBehaviour
 
         Destroy(arrow);
 
-        bool shock = stander.TakeEffect(_vo.effectList);
+        stander.TakeEffect(_vo.effectList);
 
         SuperSequenceControl.DelayCall(2.0f, _lastIndex);
     }
@@ -192,7 +195,7 @@ public class BattleControl : MonoBehaviour
 
                         Vector3 v = Vector3.Lerp(hero.transform.localPosition, attacker.transform.localPosition, obj);
 
-                        hero.moveTrans.localPosition = hero.transform.InverseTransformPoint(hero.transform.parent.TransformPoint(v));
+                        hero.moveTrans.localPosition = hero.hudTrans.InverseTransformPoint(hero.transform.parent.TransformPoint(v));
                     }
                 }
 
@@ -204,7 +207,7 @@ public class BattleControl : MonoBehaviour
 
                         Vector3 v = Vector3.Lerp(hero.transform.localPosition, defenderReal.transform.localPosition, obj);
 
-                        hero.moveTrans.localPosition = hero.transform.InverseTransformPoint(hero.transform.parent.TransformPoint(v));
+                        hero.moveTrans.localPosition = hero.hudTrans.InverseTransformPoint(hero.transform.parent.TransformPoint(v));
                     }
                 }
             };
@@ -248,7 +251,7 @@ public class BattleControl : MonoBehaviour
                 {
                     Vector3 v = Vector3.Lerp(defender.transform.localPosition, tmpPos, _value);
 
-                    defender.moveTrans.localPosition = defender.transform.InverseTransformPoint(defender.transform.parent.TransformPoint(v));
+                    defender.moveTrans.localPosition = defender.hudTrans.InverseTransformPoint(defender.transform.parent.TransformPoint(v));
                 };
 
                 SuperSequenceControl.To(0f, 1f, 0.5f, defenderToDel, 0);
@@ -258,7 +261,7 @@ public class BattleControl : MonoBehaviour
             {
                 Vector3 v = Vector3.Lerp(supporter.transform.localPosition, targetPos, _value);
 
-                supporter.moveTrans.localPosition = supporter.transform.InverseTransformPoint(supporter.transform.parent.TransformPoint(v));
+                supporter.hudTrans.localPosition = supporter.transform.InverseTransformPoint(supporter.transform.parent.TransformPoint(v));
             };
 
             supporter.transform.SetAsLastSibling();
@@ -289,7 +292,7 @@ public class BattleControl : MonoBehaviour
 
             Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, targetPos, value);
 
-            attacker.moveTrans.localPosition = attacker.transform.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
+            attacker.moveTrans.localPosition = attacker.hudTrans.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
 
             if (!getHit && obj > hitPercent)
             {
@@ -307,7 +310,7 @@ public class BattleControl : MonoBehaviour
 
         if (shock)
         {
-            defender.Shock(attacker.transform.localPosition, shockCurve, shockDis);
+            defender.Shock(attacker, shockCurve, shockDis);
         }
 
         yield return null;
@@ -341,7 +344,7 @@ public class BattleControl : MonoBehaviour
 
             Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, targetPos, value);
 
-            attacker.moveTrans.localPosition = attacker.transform.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
+            attacker.moveTrans.localPosition = attacker.hudTrans.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
 
             if (!getHit && obj > hitPercent)
             {
@@ -359,14 +362,14 @@ public class BattleControl : MonoBehaviour
 
         if (defenderShock)
         {
-            defender.Shock(attacker.transform.localPosition, shockCurve, shockDis);
+            defender.Shock(attacker, shockCurve, shockDis);
         }
 
         bool attackerShock = attacker.TakeEffect(_vo.attackerEffectList);
 
         if (attackerShock)
         {
-            attacker.Shock(defender.transform.localPosition, shockCurve, shockDis);
+            attacker.Shock(defender, shockCurve, shockDis);
         }
 
         yield return null;
@@ -400,7 +403,7 @@ public class BattleControl : MonoBehaviour
 
             Vector3 vv = Vector3.LerpUnclamped(targetPos, defender.transform.localPosition, value);
 
-            attacker.moveTrans.localPosition = attacker.transform.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
+            attacker.moveTrans.localPosition = attacker.hudTrans.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
 
             if (!getHit && obj > hitPercent)
             {
@@ -418,7 +421,7 @@ public class BattleControl : MonoBehaviour
 
         if (shock)
         {
-            defender.Shock(attacker.transform.localPosition, shockCurve, shockDis);
+            defender.Shock(attacker, shockCurve, shockDis);
         }
 
         yield return null;
@@ -438,13 +441,13 @@ public class BattleControl : MonoBehaviour
         {
             HeroBattle supporter = BattleManager.Instance.heroDic[_vo.defender];
 
-            Vector3 startPos = supporter.moveTrans.localPosition;
+            Vector3 startPos = supporter.hudTrans.localPosition;
 
             Action<float> dele = delegate (float _value)
             {
                 Vector3 v = Vector3.Lerp(startPos, Vector3.zero, _value);
 
-                supporter.moveTrans.localPosition = v;
+                supporter.hudTrans.localPosition = v;
             };
 
             SuperSequenceControl.To(0f, 1f, 0.5f, dele, _index);
@@ -624,21 +627,24 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        Dictionary<int, List<BattleHeroEffectVO>>.Enumerator enumerator = _vo.data.GetEnumerator();
-
-        bool shock = false;
-
-        while (enumerator.MoveNext())
+        if (_vo.data != null)
         {
-            HeroBattle targetHero = BattleManager.Instance.heroDic[enumerator.Current.Key];
+            Dictionary<int, List<BattleHeroEffectVO>>.Enumerator enumerator = _vo.data.GetEnumerator();
 
-            targetHero.RefreshAttackWithoutShield();
+            while (enumerator.MoveNext())
+            {
+                HeroBattle targetHero = BattleManager.Instance.heroDic[enumerator.Current.Key];
 
-            bool b = targetHero.TakeEffect(enumerator.Current.Value);
+                targetHero.RefreshAttackWithoutShield();
 
-            shock = shock || b;
+                bool b = targetHero.TakeEffect(enumerator.Current.Value);
+            }
+
+            SuperSequenceControl.DelayCall(2.0f, _lastIndex);
         }
-
-        SuperSequenceControl.DelayCall(2.0f, _lastIndex);
+        else
+        {
+            SuperSequenceControl.MoveNext(_lastIndex);
+        }
     }
 }
