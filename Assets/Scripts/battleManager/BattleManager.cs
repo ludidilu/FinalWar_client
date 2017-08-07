@@ -1160,7 +1160,9 @@ public class BattleManager : MonoBehaviour
             }
             else if (vo is BattleTriggerAuraVO)
             {
+                SuperSequenceControl.Start(BattleControl.Instance.TriggerAura, _index, (BattleTriggerAuraVO)vo);
 
+                yield return null;
             }
             else
             {

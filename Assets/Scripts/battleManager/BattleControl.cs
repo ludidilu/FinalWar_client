@@ -648,6 +648,39 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator TriggerAura(int _index, int _lastIndex, BattleTriggerAuraVO _vo)
     {
+        HeroBattle hero = BattleManager.Instance.heroDic[_vo.pos];
 
+        Action<float> dele = delegate (float _value)
+        {
+            hero.shockTrans.localRotation = Quaternion.Euler(0, _value, 0);
+        };
+
+        SuperSequenceControl.To(0, 720, 0.5f, dele, _index);
+
+        yield return null;
+
+        Dictionary<int, List<BattleHeroEffectVO>>.Enumerator enumerator = _vo.data.GetEnumerator();
+
+        bool shock = false;
+
+        while (enumerator.MoveNext())
+        {
+            HeroBattle targetHero = BattleManager.Instance.heroDic[enumerator.Current.Key];
+
+            targetHero.RefreshAttackWithoutShield();
+
+            bool b = targetHero.TakeEffect(enumerator.Current.Value);
+
+            shock = shock || b;
+        }
+
+        if (shock)
+        {
+            SuperSequenceControl.DelayCall(1.5f, _lastIndex);
+        }
+        else
+        {
+            SuperSequenceControl.DelayCall(1.0f, _lastIndex);
+        }
     }
 }
