@@ -309,10 +309,7 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_vo.damage != 0)
-                {
-                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage, Color.red);
-                }
+                SuperSequenceControl.MoveNext(_index);
             }
         };
 
@@ -320,7 +317,16 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_vo.damage != 0)
+        bool shock = defender.TakeEffect(_vo.effectList);
+
+        if (shock)
+        {
+            defender.Shock(attacker.transform.localPosition, shockCurve, shockDis);
+        }
+
+        yield return null;
+
+        if (shock)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
@@ -362,15 +368,7 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_vo.attackDamage != 0)
-                {
-                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.attackDamage, Color.red);
-                }
-
-                if (_vo.defenseDamage != 0)
-                {
-                    attacker.Shock(targetPos, shockCurve, shockDis, _vo.defenseDamage, Color.red);
-                }
+                SuperSequenceControl.MoveNext(_index);
             }
         };
 
@@ -378,13 +376,29 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_vo.attackDamage != 0 || _vo.defenseDamage != 0)
+        bool defenderShock = defender.TakeEffect(_vo.defenderEffectList);
+
+        if (defenderShock)
+        {
+            defender.Shock(attacker.transform.localPosition, shockCurve, shockDis);
+        }
+
+        bool attackerShock = attacker.TakeEffect(_vo.attackerEffectList);
+
+        if (attackerShock)
+        {
+            attacker.Shock(defender.transform.localPosition, shockCurve, shockDis);
+        }
+
+        yield return null;
+
+        if (defenderShock || attackerShock)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
         else
         {
-            SuperSequenceControl.DelayCall(1f, _index);
+            SuperSequenceControl.DelayCall(1.0f, _index);
         }
 
         yield return null;
@@ -420,10 +434,7 @@ public class BattleControl : MonoBehaviour
             {
                 getHit = true;
 
-                if (_vo.damage != 0)
-                {
-                    defender.Shock(attacker.transform.localPosition, shockCurve, shockDis, _vo.damage, Color.red);
-                }
+                SuperSequenceControl.MoveNext(_index);
             }
         };
 
@@ -431,13 +442,22 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        if (_vo.damage != 0)
+        bool shock = defender.TakeEffect(_vo.effectList);
+
+        if (shock)
+        {
+            defender.Shock(attacker.transform.localPosition, shockCurve, shockDis);
+        }
+
+        yield return null;
+
+        if (shock)
         {
             SuperSequenceControl.DelayCall(1.5f, _index);
         }
         else
         {
-            SuperSequenceControl.DelayCall(1f, _index);
+            SuperSequenceControl.DelayCall(1.0f, _index);
         }
 
         yield return null;
@@ -624,5 +644,10 @@ public class BattleControl : MonoBehaviour
         yield return null;
 
         SuperSequenceControl.MoveNext(_lastIndex);
+    }
+
+    public IEnumerator TriggerAura(int _index, int _lastIndex, BattleTriggerAuraVO _vo)
+    {
+
     }
 }

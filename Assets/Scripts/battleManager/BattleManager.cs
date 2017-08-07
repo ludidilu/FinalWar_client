@@ -254,38 +254,27 @@ public class BattleManager : MonoBehaviour
 
         if (battle.mWin && battle.oWin)
         {
-
             Alert("Draw!", BattleOver);
-
         }
         else if (battle.mWin)
         {
-
             if (battle.clientIsMine)
             {
-
                 Alert("You win!", BattleOver);
-
             }
             else
             {
-
                 Alert("You lose!", BattleOver);
             }
-
         }
         else if (battle.oWin)
         {
-
             if (battle.clientIsMine)
             {
-
                 Alert("You lose!", BattleOver);
-
             }
             else
             {
-
                 Alert("You win!", BattleOver);
             }
         }
@@ -293,7 +282,6 @@ public class BattleManager : MonoBehaviour
 
     private void RefreshDataBeforeBattle()
     {
-
         heroDetail.Hide();
 
         ClearMapUnits();
@@ -534,7 +522,6 @@ public class BattleManager : MonoBehaviour
 
         while (enumerator.MoveNext())
         {
-
             KeyValuePair<int, int> pair = enumerator.Current;
 
             if (_hideInSummon && battle.summon.ContainsKey(pair.Key))
@@ -587,7 +574,6 @@ public class BattleManager : MonoBehaviour
     {
         if (!moneyTf.gameObject.activeSelf)
         {
-
             moneyTf.gameObject.SetActive(true);
         }
 
@@ -598,7 +584,6 @@ public class BattleManager : MonoBehaviour
     {
         if (!moneyTf.gameObject.activeSelf)
         {
-
             moneyTf.gameObject.SetActive(true);
         }
 
@@ -734,7 +719,6 @@ public class BattleManager : MonoBehaviour
         {
             if (GetNowChooseHero().pos != _mapUnit.index)
             {
-
                 if (battle.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
                 {
                     ClearMoves();
@@ -910,7 +894,6 @@ public class BattleManager : MonoBehaviour
 
         if (b)
         {
-
             CreateMoneyTf();
 
             ClearCards();
@@ -1174,6 +1157,10 @@ public class BattleManager : MonoBehaviour
             else if (vo is BattleRoundOverVO)
             {
                 DoRecover();
+            }
+            else if (vo is BattleTriggerAuraVO)
+            {
+
             }
             else
             {
@@ -1474,7 +1461,6 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
-
         gameObject.SetActive(false);
     }
 }
