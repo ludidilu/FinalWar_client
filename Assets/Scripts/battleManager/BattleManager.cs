@@ -86,6 +86,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private AlertPanel alertPanel;
 
+    private Battle_client battle_client;
+
     private Battle battle;
 
     public Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
@@ -183,13 +185,15 @@ public class BattleManager : MonoBehaviour
         Debug.Log(_str);
     }
 
-    public void Init(Action<MemoryStream> _sendDataCallBack)
+    public void Init(double[] _randomPool, Action<MemoryStream> _sendDataCallBack)
     {
         Log.Init(WriteLog);
 
         SuperRaycast.SetCamera(mainCamera);
 
         SuperRaycast.SetIsOpen(true, "a");
+
+        Dictionary<int, MapSDS> mapDic = StaticData.GetDic<MapSDS>();
 
         Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS>();
 
@@ -199,11 +203,13 @@ public class BattleManager : MonoBehaviour
 
         Dictionary<int, EffectSDS> effectDic = StaticData.GetDic<EffectSDS>();
 
-        Battle.Init(Map.mapDataDic, heroDic, skillDic, auraDic, effectDic);
+        Battle.Init(_randomPool, mapDic, heroDic, skillDic, auraDic, effectDic);
 
-        battle = new Battle();
+        battle_client = new Battle_client();
 
-        battle.ClientSetCallBack(_sendDataCallBack, RefreshData, DoAction, BattleQuit);
+        battle_client.ClientSetCallBack(_sendDataCallBack, RefreshData, DoAction, BattleQuit);
+
+        battle = battle_client.battle;
 
         SuperFunction.Instance.AddEventListener<float, Vector2>(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
 
@@ -216,7 +222,7 @@ public class BattleManager : MonoBehaviour
 
     public void ReceiveData(byte[] _bytes)
     {
-        battle.ClientGetPackage(_bytes);
+        battle_client.ClientGetPackage(_bytes);
     }
 
     private void RefreshData()
@@ -250,7 +256,7 @@ public class BattleManager : MonoBehaviour
 
         CreateMoneyTf();
 
-        RefreshTouchable(battle.GetClientCanAction());
+        RefreshTouchable(battle_client.GetClientCanAction());
 
         if (battle.mWin && battle.oWin)
         {
@@ -258,7 +264,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (battle.mWin)
         {
-            if (battle.clientIsMine)
+            if (battle_client.clientIsMine)
             {
                 Alert("You win!", BattleOver);
             }
@@ -269,7 +275,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (battle.oWin)
         {
-            if (battle.clientIsMine)
+            if (battle_client.clientIsMine)
             {
                 Alert("You lose!", BattleOver);
             }
@@ -308,12 +314,12 @@ public class BattleManager : MonoBehaviour
 
         CreateMoneyTfOrigin();
 
-        RefreshTouchable(battle.GetClientCanAction());
+        RefreshTouchable(battle_client.GetClientCanAction());
     }
 
     public void QuitBattle()
     {
-        battle.ClientRequestQuitBattle();
+        battle_client.ClientRequestQuitBattle();
     }
 
     private void BattleQuit()
@@ -514,17 +520,17 @@ public class BattleManager : MonoBehaviour
 
     private void CreateCards(bool _hideInSummon)
     {
-        Dictionary<int, int> tmpCardDic = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
+        List<int> handCards = battle_client.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
         int index = 0;
 
-        Dictionary<int, int>.Enumerator enumerator = tmpCardDic.GetEnumerator();
-
-        while (enumerator.MoveNext())
+        for (int i = 0; i < handCards.Count; i++)
         {
-            KeyValuePair<int, int> pair = enumerator.Current;
+            int uid = handCards[i];
 
-            if (_hideInSummon && battle.summon.ContainsKey(pair.Key))
+            int id = battle.GetCard(uid);
+
+            if (_hideInSummon && battle.GetSummonContainsKey(uid))
             {
                 continue;
             }
@@ -535,9 +541,9 @@ public class BattleManager : MonoBehaviour
 
             hero.SetFrameVisible(false);
 
-            hero.Init(pair.Key, pair.Value);
+            hero.Init(uid, id);
 
-            cardDic.Add(pair.Key, hero);
+            cardDic.Add(uid, hero);
 
             go.transform.SetParent(cardContainer, false);
 
@@ -552,7 +558,7 @@ public class BattleManager : MonoBehaviour
 
     private void CreateSummonHeros()
     {
-        Dictionary<int, int>.Enumerator enumerator2 = battle.summon.GetEnumerator();
+        Dictionary<int, int>.Enumerator enumerator2 = battle.GetSummonEnumerator();
 
         while (enumerator2.MoveNext())
         {
@@ -577,7 +583,7 @@ public class BattleManager : MonoBehaviour
             moneyTf.gameObject.SetActive(true);
         }
 
-        moneyTf.text = battle.ClientGetMoney().ToString();
+        moneyTf.text = battle_client.ClientGetMoney().ToString();
     }
 
     private void CreateMoneyTfOrigin()
@@ -587,7 +593,7 @@ public class BattleManager : MonoBehaviour
             moneyTf.gameObject.SetActive(true);
         }
 
-        moneyTf.text = battle.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
+        moneyTf.text = battle_client.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
     }
 
     private void CreateMoves()
@@ -691,9 +697,11 @@ public class BattleManager : MonoBehaviour
 
         if (nowChooseHeroCanAction)
         {
-            for (int i = 0; i < battle.action.Count; i++)
+            Dictionary<int, int>.Enumerator enumerator = battle.GetActionEnumerator();
+
+            while (enumerator.MoveNext())
             {
-                KeyValuePair<int, int> pair = battle.action[i];
+                KeyValuePair<int, int> pair = enumerator.Current;
 
                 if (pair.Key == GetNowChooseHero().pos)
                 {
@@ -719,7 +727,7 @@ public class BattleManager : MonoBehaviour
         {
             if (GetNowChooseHero().pos != _mapUnit.index)
             {
-                if (battle.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
+                if (battle_client.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
                 {
                     ClearMoves();
 
@@ -735,13 +743,15 @@ public class BattleManager : MonoBehaviour
         {
             mouseHasExited = true;
 
-            for (int i = 0; i < battle.action.Count; i++)
+            Dictionary<int, int>.Enumerator enumerator = battle.GetActionEnumerator();
+
+            while (enumerator.MoveNext())
             {
-                KeyValuePair<int, int> pair = battle.action[i];
+                KeyValuePair<int, int> pair = enumerator.Current;
 
                 if (pair.Key == GetNowChooseHero().pos && _mapUnit.index == pair.Value)
                 {
-                    battle.ClientRequestUnaction(GetNowChooseHero().pos);
+                    battle_client.ClientRequestUnaction(GetNowChooseHero().pos);
 
                     ClearMoves();
 
@@ -768,7 +778,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        if (battle.summon.ContainsValue(_mapUnit.index))
+        if (battle.GetSummonContainsKey(_mapUnit.index))
         {
             HeroBattle summonHero = summonHeroDic[_mapUnit.index];
 
@@ -802,7 +812,7 @@ public class BattleManager : MonoBehaviour
 
             if (GetNowChooseHero() == null)
             {
-                SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
+                SetNowChooseHero(nowHero, nowHero.isMine == battle_client.clientIsMine && nowHero.canAction);
 
                 GetNowChooseHero().SetFrameVisible(true);
             }
@@ -812,7 +822,7 @@ public class BattleManager : MonoBehaviour
                 {
                     ClearNowChooseHero();
 
-                    SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
+                    SetNowChooseHero(nowHero, nowHero.isMine == battle_client.clientIsMine && nowHero.canAction);
 
                     GetNowChooseHero().SetFrameVisible(true);
                 }
@@ -890,7 +900,7 @@ public class BattleManager : MonoBehaviour
 
     private bool SummonHero(int _cardUid, int _pos)
     {
-        bool b = battle.ClientRequestSummon(_cardUid, _pos);
+        bool b = battle_client.ClientRequestSummon(_cardUid, _pos);
 
         if (b)
         {
@@ -910,7 +920,7 @@ public class BattleManager : MonoBehaviour
 
     private void UnsummonHero(int _cardUid)
     {
-        battle.ClientRequestUnsummon(_cardUid);
+        battle_client.ClientRequestUnsummon(_cardUid);
 
         CreateMoneyTf();
 
@@ -940,9 +950,7 @@ public class BattleManager : MonoBehaviour
 
     private HeroBattle AddCardToMap(int _cardUid, int _pos)
     {
-        Dictionary<int, int> list = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
-
-        int cardID = list[_cardUid];
+        int cardID = battle.GetCard(_cardUid);
 
         GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 
@@ -979,9 +987,9 @@ public class BattleManager : MonoBehaviour
 
         ClearNowChooseHero();
 
-        battle.ClientRequestDoAction();
+        battle_client.ClientRequestDoAction();
 
-        RefreshTouchable(battle.GetClientCanAction());
+        RefreshTouchable(battle_client.GetClientCanAction());
     }
 
     // Update is called once per frame
@@ -994,7 +1002,7 @@ public class BattleManager : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.F5))
         {
-            battle.ClientRequestRefreshData();
+            battle_client.ClientRequestRefreshData();
 
         }
         else if (Input.GetKeyUp(KeyCode.A))
@@ -1130,10 +1138,6 @@ public class BattleManager : MonoBehaviour
             {
                 DoAddCards((BattleAddCardsVO)vo);
             }
-            else if (vo is BattleDelCardsVO)
-            {
-                DoDelCards((BattleDelCardsVO)vo);
-            }
             else if (vo is BattleMoneyChangeVO)
             {
                 DoMoneyChange((BattleMoneyChangeVO)vo);
@@ -1170,7 +1174,7 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        battle.ClientEndBattle();
+        battle_client.ClientEndBattle();
 
         RefreshData();
     }
@@ -1221,9 +1225,9 @@ public class BattleManager : MonoBehaviour
         {
             _unit.SetMainColor(hillColor);
         }
-        else if (battle.GetPosIsMine(index) == battle.clientIsMine)
+        else if (battle.GetPosIsMine(index) == battle_client.clientIsMine)
         {
-            if ((!battle.clientIsMine && index == battle.mapData.oBase) || (battle.clientIsMine && index == battle.mapData.mBase))
+            if ((!battle_client.clientIsMine && index == battle.mapData.oBase) || (battle_client.clientIsMine && index == battle.mapData.mBase))
             {
                 _unit.SetMainColor(myBaseColor);
             }
@@ -1234,7 +1238,7 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            if ((!battle.clientIsMine && index == battle.mapData.mBase) || (battle.clientIsMine && index == battle.mapData.oBase))
+            if ((!battle_client.clientIsMine && index == battle.mapData.mBase) || (battle_client.clientIsMine && index == battle.mapData.oBase))
             {
                 _unit.SetMainColor(oppBaseColor);
             }
@@ -1267,17 +1271,7 @@ public class BattleManager : MonoBehaviour
 
     private void DoAddCards(BattleAddCardsVO _vo)
     {
-        if (_vo.isMine == battle.clientIsMine)
-        {
-            ClearCards();
-
-            CreateCards(true);
-        }
-    }
-
-    private void DoDelCards(BattleDelCardsVO _vo)
-    {
-        if (_vo.isMine == battle.clientIsMine)
+        if (_vo.isMine == battle_client.clientIsMine)
         {
             ClearCards();
 
@@ -1287,7 +1281,7 @@ public class BattleManager : MonoBehaviour
 
     private void DoMoneyChange(BattleMoneyChangeVO _vo)
     {
-        if (_vo.isMine == battle.clientIsMine)
+        if (_vo.isMine == battle_client.clientIsMine)
         {
             CreateMoneyTf();
         }

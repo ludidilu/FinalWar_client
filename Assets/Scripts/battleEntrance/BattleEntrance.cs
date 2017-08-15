@@ -21,15 +21,13 @@ public class BattleEntrance : MonoBehaviour
 
     void Awake()
     {
-        ConfigDictionary.Instance.LoadLocalConfig(Application.streamingAssetsPath + "/local.xml");
+        ConfigDictionary.Instance.LoadLocalConfig(Path.Combine(Application.streamingAssetsPath, "local.xml"));
 
         StaticData.path = ConfigDictionary.Instance.table_path;
 
         StaticData.Dispose();
 
         StaticData.Load<MapSDS>("map");
-
-        Map.Init();
 
         StaticData.Load<HeroTypeSDS>("heroType");
 
@@ -43,7 +41,7 @@ public class BattleEntrance : MonoBehaviour
 
         SuperFunction.Instance.AddEventListener(battleManager.gameObject, BattleManager.BATTLE_OVER, BattleOver);
 
-        battleManager.Init(SendBattleAction);
+        battleManager.Init(GetRandomPool(), SendBattleAction);
 
         Connection.Instance.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ReceiveData, ConfigDictionary.Instance.uid);
     }
@@ -66,13 +64,11 @@ public class BattleEntrance : MonoBehaviour
 
                         if (!battleManager.gameObject.activeSelf)
                         {
-
                             battleManager.gameObject.SetActive(true);
                         }
 
                         if (gameObject.activeSelf)
                         {
-
                             gameObject.SetActive(false);
                         }
 
@@ -84,13 +80,11 @@ public class BattleEntrance : MonoBehaviour
 
                         if (battleManager.gameObject.activeSelf)
                         {
-
                             battleManager.gameObject.SetActive(false);
                         }
 
                         if (!gameObject.activeSelf)
                         {
-
                             gameObject.SetActive(true);
                         }
 
@@ -108,13 +102,11 @@ public class BattleEntrance : MonoBehaviour
 
                         if (battleManager.gameObject.activeSelf)
                         {
-
                             battleManager.gameObject.SetActive(false);
                         }
 
                         if (!gameObject.activeSelf)
                         {
-
                             gameObject.SetActive(true);
                         }
 
@@ -194,15 +186,48 @@ public class BattleEntrance : MonoBehaviour
         btCancel.SetActive(false);
     }
 
-    // Use this for initialization
-    void Start()
+    private static double[] GetRandomPool()
     {
+        using (FileStream fs = new FileStream(Path.Combine(ConfigDictionary.Instance.random_path, "random.dat"), FileMode.Open))
+        {
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                int num = br.ReadInt32();
 
+                double[] result = new double[num];
+
+                for (int i = 0; i < num; i++)
+                {
+                    result[i] = br.ReadDouble();
+                }
+
+                return result;
+            }
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public static void SetRandomPool(int _num)
     {
+        FileInfo fi = new FileInfo(Path.Combine(ConfigDictionary.Instance.random_path, "random.dat"));
 
+        if (fi.Exists)
+        {
+            fi.Delete();
+        }
+
+        using (FileStream fs = fi.Create())
+        {
+            using (BinaryWriter bw = new BinaryWriter(fs))
+            {
+                System.Random random = new System.Random();
+
+                bw.Write(_num);
+
+                for (int i = 0; i < _num; i++)
+                {
+                    bw.Write(random.NextDouble());
+                }
+            }
+        }
     }
 }
