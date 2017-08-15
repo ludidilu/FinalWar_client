@@ -27,7 +27,7 @@ public class MapSDS : CsvBase, IMapSDS
     {
         mapData = new MapData();
 
-        using (FileStream fs = new FileStream(ConfigDictionary.Instance.map_path + name, FileMode.Open))
+        using (FileStream fs = new FileStream(Path.Combine(ConfigDictionary.Instance.map_path, name), FileMode.Open))
         {
             using (BinaryReader br = new BinaryReader(fs))
             {

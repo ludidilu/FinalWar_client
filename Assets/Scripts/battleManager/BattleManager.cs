@@ -11,6 +11,7 @@ using publicTools;
 using superGraphicRaycast;
 using superEnumerator;
 using superSequenceControl;
+using FinalWar;
 
 public class BattleManager : MonoBehaviour
 {
@@ -183,7 +184,7 @@ public class BattleManager : MonoBehaviour
         Debug.Log(_str);
     }
 
-    public void Init(double[] _randomPool, Action<MemoryStream> _sendDataCallBack)
+    public void Init(Action<MemoryStream> _sendDataCallBack)
     {
         Log.Init(WriteLog);
 
@@ -201,7 +202,7 @@ public class BattleManager : MonoBehaviour
 
         Dictionary<int, EffectSDS> effectDic = StaticData.GetDic<EffectSDS>();
 
-        Battle.Init(_randomPool, mapDic, heroDic, skillDic, auraDic, effectDic);
+        Battle.Init(mapDic, heroDic, skillDic, auraDic, effectDic);
 
         battle.ClientSetCallBack(_sendDataCallBack, RefreshData, DoAction, BattleQuit);
 
@@ -249,33 +250,6 @@ public class BattleManager : MonoBehaviour
         CreateMoneyTf();
 
         RefreshTouchable(battle.GetClientCanAction());
-
-        if (battle.mWin && battle.oWin)
-        {
-            Alert("Draw!", BattleOver);
-        }
-        else if (battle.mWin)
-        {
-            if (battle.clientIsMine)
-            {
-                Alert("You win!", BattleOver);
-            }
-            else
-            {
-                Alert("You lose!", BattleOver);
-            }
-        }
-        else if (battle.oWin)
-        {
-            if (battle.clientIsMine)
-            {
-                Alert("You lose!", BattleOver);
-            }
-            else
-            {
-                Alert("You win!", BattleOver);
-            }
-        }
     }
 
     private void RefreshDataBeforeBattle()
@@ -314,8 +288,49 @@ public class BattleManager : MonoBehaviour
         battle.ClientRequestQuitBattle();
     }
 
-    private void BattleQuit()
+    private void BattleQuit(Battle.BattleResult _result)
     {
+        switch (_result)
+        {
+            case Battle.BattleResult.DRAW:
+
+                Alert("Draw!", BattleOver);
+
+                break;
+
+            case Battle.BattleResult.M_WIN:
+
+                if (battle.clientIsMine)
+                {
+                    Alert("You win!", BattleOver);
+                }
+                else
+                {
+                    Alert("You lose!", BattleOver);
+                }
+
+                break;
+
+            case Battle.BattleResult.O_WIN:
+
+                if (battle.clientIsMine)
+                {
+                    Alert("You lose!", BattleOver);
+                }
+                else
+                {
+                    Alert("You win!", BattleOver);
+                }
+
+                break;
+
+            default:
+
+                Alert("Quit!", BattleOver);
+
+                break;
+        }
+
         Alert("Battle quit!", BattleOver);
     }
 
@@ -1157,8 +1172,6 @@ public class BattleManager : MonoBehaviour
                 throw new Exception("vo type error:" + vo);
             }
         }
-
-        battle.ClientEndBattle();
 
         RefreshData();
     }

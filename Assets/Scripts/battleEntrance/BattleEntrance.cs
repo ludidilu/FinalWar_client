@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.IO;
 using superFunction;
+using FinalWar;
 
 public class BattleEntrance : MonoBehaviour
 {
@@ -23,6 +24,14 @@ public class BattleEntrance : MonoBehaviour
     {
         ConfigDictionary.Instance.LoadLocalConfig(Path.Combine(Application.streamingAssetsPath, "local.xml"));
 
+        using (FileStream fs = new FileStream(Path.Combine(ConfigDictionary.Instance.random_path, "random.dat"), FileMode.Open))
+        {
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                BattleRandomPool.Load(br);
+            }
+        }
+
         StaticData.path = ConfigDictionary.Instance.table_path;
 
         StaticData.Dispose();
@@ -41,7 +50,7 @@ public class BattleEntrance : MonoBehaviour
 
         SuperFunction.Instance.AddEventListener(battleManager.gameObject, BattleManager.BATTLE_OVER, BattleOver);
 
-        battleManager.Init(GetRandomPool(), SendBattleAction);
+        battleManager.Init(SendBattleAction);
 
         Connection.Instance.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ReceiveData, ConfigDictionary.Instance.uid);
     }
@@ -184,50 +193,5 @@ public class BattleEntrance : MonoBehaviour
         btPVE.SetActive(true);
 
         btCancel.SetActive(false);
-    }
-
-    private static double[] GetRandomPool()
-    {
-        using (FileStream fs = new FileStream(Path.Combine(ConfigDictionary.Instance.random_path, "random.dat"), FileMode.Open))
-        {
-            using (BinaryReader br = new BinaryReader(fs))
-            {
-                int num = br.ReadInt32();
-
-                double[] result = new double[num];
-
-                for (int i = 0; i < num; i++)
-                {
-                    result[i] = br.ReadDouble();
-                }
-
-                return result;
-            }
-        }
-    }
-
-    public static void SetRandomPool(int _num)
-    {
-        FileInfo fi = new FileInfo(Path.Combine(ConfigDictionary.Instance.random_path, "random.dat"));
-
-        if (fi.Exists)
-        {
-            fi.Delete();
-        }
-
-        using (FileStream fs = fi.Create())
-        {
-            using (BinaryWriter bw = new BinaryWriter(fs))
-            {
-                System.Random random = new System.Random();
-
-                bw.Write(_num);
-
-                for (int i = 0; i < _num; i++)
-                {
-                    bw.Write(random.NextDouble());
-                }
-            }
-        }
     }
 }
