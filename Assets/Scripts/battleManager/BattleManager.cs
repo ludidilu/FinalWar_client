@@ -86,9 +86,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private AlertPanel alertPanel;
 
-    private Battle_client battle_client;
-
-    private Battle battle;
+    private Battle battle = new Battle();
 
     public Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
 
@@ -205,24 +203,18 @@ public class BattleManager : MonoBehaviour
 
         Battle.Init(_randomPool, mapDic, heroDic, skillDic, auraDic, effectDic);
 
-        battle_client = new Battle_client();
-
-        battle_client.ClientSetCallBack(_sendDataCallBack, RefreshData, DoAction, BattleQuit);
-
-        battle = battle_client.battle;
+        battle.ClientSetCallBack(_sendDataCallBack, RefreshData, DoAction, BattleQuit);
 
         SuperFunction.Instance.AddEventListener<float, Vector2>(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
 
         SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
 
         SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
-
-        //		SuperFunction.Instance.AddEventListener (backGround, SuperRaycast.GetMouseButtonUp, GetMouseUp);
     }
 
     public void ReceiveData(byte[] _bytes)
     {
-        battle_client.ClientGetPackage(_bytes);
+        battle.ClientGetPackage(_bytes);
     }
 
     private void RefreshData()
@@ -256,7 +248,7 @@ public class BattleManager : MonoBehaviour
 
         CreateMoneyTf();
 
-        RefreshTouchable(battle_client.GetClientCanAction());
+        RefreshTouchable(battle.GetClientCanAction());
 
         if (battle.mWin && battle.oWin)
         {
@@ -264,7 +256,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (battle.mWin)
         {
-            if (battle_client.clientIsMine)
+            if (battle.clientIsMine)
             {
                 Alert("You win!", BattleOver);
             }
@@ -275,7 +267,7 @@ public class BattleManager : MonoBehaviour
         }
         else if (battle.oWin)
         {
-            if (battle_client.clientIsMine)
+            if (battle.clientIsMine)
             {
                 Alert("You lose!", BattleOver);
             }
@@ -314,12 +306,12 @@ public class BattleManager : MonoBehaviour
 
         CreateMoneyTfOrigin();
 
-        RefreshTouchable(battle_client.GetClientCanAction());
+        RefreshTouchable(battle.GetClientCanAction());
     }
 
     public void QuitBattle()
     {
-        battle_client.ClientRequestQuitBattle();
+        battle.ClientRequestQuitBattle();
     }
 
     private void BattleQuit()
@@ -520,7 +512,7 @@ public class BattleManager : MonoBehaviour
 
     private void CreateCards(bool _hideInSummon)
     {
-        List<int> handCards = battle_client.clientIsMine ? battle.mHandCards : battle.oHandCards;
+        List<int> handCards = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
 
         int index = 0;
 
@@ -583,7 +575,7 @@ public class BattleManager : MonoBehaviour
             moneyTf.gameObject.SetActive(true);
         }
 
-        moneyTf.text = battle_client.ClientGetMoney().ToString();
+        moneyTf.text = battle.ClientGetMoney().ToString();
     }
 
     private void CreateMoneyTfOrigin()
@@ -593,7 +585,7 @@ public class BattleManager : MonoBehaviour
             moneyTf.gameObject.SetActive(true);
         }
 
-        moneyTf.text = battle_client.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
+        moneyTf.text = battle.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
     }
 
     private void CreateMoves()
@@ -633,7 +625,7 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateArrow(int _start, int _end, Color _color, int _index)
     {
-        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
+        GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
 
         Arrow arrow = go.GetComponent<Arrow>();
 
@@ -662,7 +654,7 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateShootArrow(int _start, int _end, Color _color)
     {
-        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("ShootArrow"));
+        GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("ShootArrow"));
 
         ShootArrow arrow = go.GetComponent<ShootArrow>();
 
@@ -727,7 +719,7 @@ public class BattleManager : MonoBehaviour
         {
             if (GetNowChooseHero().pos != _mapUnit.index)
             {
-                if (battle_client.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
+                if (battle.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
                 {
                     ClearMoves();
 
@@ -751,7 +743,7 @@ public class BattleManager : MonoBehaviour
 
                 if (pair.Key == GetNowChooseHero().pos && _mapUnit.index == pair.Value)
                 {
-                    battle_client.ClientRequestUnaction(GetNowChooseHero().pos);
+                    battle.ClientRequestUnaction(GetNowChooseHero().pos);
 
                     ClearMoves();
 
@@ -762,14 +754,6 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
-
-    //	public void MapUnitUp(MapUnit _mapUnit){
-    //
-    //		if (movingHeroPos != -1) {
-    //
-    //			movingHeroPos = -1;
-    //		}
-    //	}
 
     private void MapUnitUpAsButton(MapUnit _mapUnit)
     {
@@ -812,7 +796,7 @@ public class BattleManager : MonoBehaviour
 
             if (GetNowChooseHero() == null)
             {
-                SetNowChooseHero(nowHero, nowHero.isMine == battle_client.clientIsMine && nowHero.canAction);
+                SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
 
                 GetNowChooseHero().SetFrameVisible(true);
             }
@@ -822,7 +806,7 @@ public class BattleManager : MonoBehaviour
                 {
                     ClearNowChooseHero();
 
-                    SetNowChooseHero(nowHero, nowHero.isMine == battle_client.clientIsMine && nowHero.canAction);
+                    SetNowChooseHero(nowHero, nowHero.isMine == battle.clientIsMine && nowHero.canAction);
 
                     GetNowChooseHero().SetFrameVisible(true);
                 }
@@ -900,7 +884,7 @@ public class BattleManager : MonoBehaviour
 
     private bool SummonHero(int _cardUid, int _pos)
     {
-        bool b = battle_client.ClientRequestSummon(_cardUid, _pos);
+        bool b = battle.ClientRequestSummon(_cardUid, _pos);
 
         if (b)
         {
@@ -920,7 +904,7 @@ public class BattleManager : MonoBehaviour
 
     private void UnsummonHero(int _cardUid)
     {
-        battle_client.ClientRequestUnsummon(_cardUid);
+        battle.ClientRequestUnsummon(_cardUid);
 
         CreateMoneyTf();
 
@@ -987,9 +971,9 @@ public class BattleManager : MonoBehaviour
 
         ClearNowChooseHero();
 
-        battle_client.ClientRequestDoAction();
+        battle.ClientRequestDoAction();
 
-        RefreshTouchable(battle_client.GetClientCanAction());
+        RefreshTouchable(battle.GetClientCanAction());
     }
 
     // Update is called once per frame
@@ -1002,7 +986,7 @@ public class BattleManager : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.F5))
         {
-            battle_client.ClientRequestRefreshData();
+            battle.ClientRequestRefreshData();
 
         }
         else if (Input.GetKeyUp(KeyCode.A))
@@ -1174,7 +1158,7 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        battle_client.ClientEndBattle();
+        battle.ClientEndBattle();
 
         RefreshData();
     }
@@ -1225,9 +1209,9 @@ public class BattleManager : MonoBehaviour
         {
             _unit.SetMainColor(hillColor);
         }
-        else if (battle.GetPosIsMine(index) == battle_client.clientIsMine)
+        else if (battle.GetPosIsMine(index) == battle.clientIsMine)
         {
-            if ((!battle_client.clientIsMine && index == battle.mapData.oBase) || (battle_client.clientIsMine && index == battle.mapData.mBase))
+            if ((!battle.clientIsMine && index == battle.mapData.oBase) || (battle.clientIsMine && index == battle.mapData.mBase))
             {
                 _unit.SetMainColor(myBaseColor);
             }
@@ -1238,7 +1222,7 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            if ((!battle_client.clientIsMine && index == battle.mapData.mBase) || (battle_client.clientIsMine && index == battle.mapData.oBase))
+            if ((!battle.clientIsMine && index == battle.mapData.mBase) || (battle.clientIsMine && index == battle.mapData.oBase))
             {
                 _unit.SetMainColor(oppBaseColor);
             }
@@ -1271,7 +1255,7 @@ public class BattleManager : MonoBehaviour
 
     private void DoAddCards(BattleAddCardsVO _vo)
     {
-        if (_vo.isMine == battle_client.clientIsMine)
+        if (_vo.isMine == battle.clientIsMine)
         {
             ClearCards();
 
@@ -1281,7 +1265,7 @@ public class BattleManager : MonoBehaviour
 
     private void DoMoneyChange(BattleMoneyChangeVO _vo)
     {
-        if (_vo.isMine == battle_client.clientIsMine)
+        if (_vo.isMine == battle.clientIsMine)
         {
             CreateMoneyTf();
         }
