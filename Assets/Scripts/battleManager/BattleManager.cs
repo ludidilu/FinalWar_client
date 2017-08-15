@@ -280,7 +280,7 @@ public class BattleManager : MonoBehaviour
 
         CreateMoneyTfOrigin();
 
-        RefreshTouchable(battle.GetClientCanAction());
+        //RefreshTouchable(battle.GetClientCanAction());
     }
 
     public void QuitBattle()
