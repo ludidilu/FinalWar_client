@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-public class MapSDS : CsvBase, IMapSDS
+﻿public class MapSDS : CsvBase, IMapSDS
 {
     public string name;
     public int[] heroPos;
@@ -13,6 +11,11 @@ public class MapSDS : CsvBase, IMapSDS
         return mapData;
     }
 
+    public void SetMapData(MapData _mapData)
+    {
+        mapData = _mapData;
+    }
+
     public int[] GetHeroPos()
     {
         return heroPos;
@@ -21,19 +24,6 @@ public class MapSDS : CsvBase, IMapSDS
     public int[] GetHeroID()
     {
         return heroID;
-    }
-
-    public override void Fix()
-    {
-        mapData = new MapData();
-
-        using (FileStream fs = new FileStream(Path.Combine(ConfigDictionary.Instance.map_path, name), FileMode.Open))
-        {
-            using (BinaryReader br = new BinaryReader(fs))
-            {
-                mapData.GetData(br);
-            }
-        }
     }
 }
 

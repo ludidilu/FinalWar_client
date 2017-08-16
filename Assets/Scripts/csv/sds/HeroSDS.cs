@@ -9,7 +9,20 @@
     public int skill;
     public int[] auras;
 
-    public HeroTypeSDS heroTypeFix;
+    private HeroTypeSDS m_heroTypeFix;
+
+    public HeroTypeSDS heroTypeFix
+    {
+        get
+        {
+            if (m_heroTypeFix == null)
+            {
+                m_heroTypeFix = StaticData.GetData<HeroTypeSDS>(heroType);
+            }
+
+            return m_heroTypeFix;
+        }
+    }
 
     public int GetID()
     {
@@ -49,11 +62,6 @@
     public int[] GetAuras()
     {
         return auras;
-    }
-
-    public override void Fix()
-    {
-        heroTypeFix = StaticData.GetData<HeroTypeSDS>(heroType);
     }
 }
 

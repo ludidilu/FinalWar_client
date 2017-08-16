@@ -1,14 +1,13 @@
 ﻿using UnityEditor;
 using System.IO;
-using UnityEngine;
 using FinalWar;
 
-public class CreateRandomDat
+public class CreateRandomDatTool
 {
     [MenuItem("Create random.dat/Do")]
     public static void Start()
     {
-        ConfigDictionary.Instance.LoadLocalConfig(Path.Combine(Application.streamingAssetsPath, "local.xml"));
+        ResourceLoader.LoadConfigLocal();
 
         FileInfo fi = new FileInfo(Path.Combine(ConfigDictionary.Instance.random_path, "random.dat"));
 
