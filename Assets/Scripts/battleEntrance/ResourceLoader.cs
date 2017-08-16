@@ -134,7 +134,7 @@ public static class ResourceLoader
 
     private static void LoadMap()
     {
-        MapManager.Load(OneLoadOver);
+        MapSDS.Load(OneLoadOver);
     }
 
     private static void OneLoadOver()

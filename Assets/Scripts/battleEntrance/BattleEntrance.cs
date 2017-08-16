@@ -22,32 +22,11 @@ public class BattleEntrance : MonoBehaviour
 
     void Awake()
     {
-        ConfigDictionary.Instance.LoadLocalConfig(Path.Combine(Application.streamingAssetsPath, "local.xml"));
+        ResourceLoader.Load(LoadOver);
+    }
 
-        using (FileStream fs = new FileStream(Path.Combine(ConfigDictionary.Instance.random_path, "random.dat"), FileMode.Open))
-        {
-            using (BinaryReader br = new BinaryReader(fs))
-            {
-                BattleRandomPool.Load(br);
-            }
-        }
-
-        StaticData.path = ConfigDictionary.Instance.table_path;
-
-        StaticData.Dispose();
-
-        StaticData.Load<MapSDS>("map");
-
-        StaticData.Load<HeroTypeSDS>("heroType");
-
-        StaticData.Load<HeroSDS>("hero");
-
-        StaticData.Load<EffectSDS>("effect");
-
-        StaticData.Load<SkillSDS>("skill");
-
-        StaticData.Load<AuraSDS>("aura");
-
+    private void LoadOver()
+    {
         SuperFunction.Instance.AddEventListener(battleManager.gameObject, BattleManager.BATTLE_OVER, BattleOver);
 
         battleManager.Init(SendBattleAction);
