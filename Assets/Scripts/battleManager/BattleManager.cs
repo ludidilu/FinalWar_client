@@ -11,7 +11,6 @@ using publicTools;
 using superGraphicRaycast;
 using superEnumerator;
 using superSequenceControl;
-using FinalWar;
 
 public class BattleManager : MonoBehaviour
 {
@@ -87,7 +86,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private AlertPanel alertPanel;
 
-    private Battle battle = new Battle();
+    private Battle_client battle = new Battle_client();
 
     public Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
 
