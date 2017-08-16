@@ -102,7 +102,7 @@ public class BattleManager : MonoBehaviour
 
     private Vector2 lastPos;
 
-    private GameObject mapGo;
+    //private GameObject mapGo;
 
     public static BattleManager Instance { get; private set; }
 
@@ -344,10 +344,10 @@ public class BattleManager : MonoBehaviour
 
     private void ClearMapUnits()
     {
-        if (mapGo != null)
-        {
-            Destroy(mapGo);
-        }
+        //if (mapGo != null)
+        //{
+        //    Destroy(mapGo);
+        //}
 
         Dictionary<int, MapUnit>.ValueCollection.Enumerator enumerator = mapUnitDic.Values.GetEnumerator();
 
@@ -407,28 +407,7 @@ public class BattleManager : MonoBehaviour
 
     private void CreateMapPanel()
     {
-        mapGo = Instantiate(Resources.Load<GameObject>("MapGo"));
-
-        mapGo.transform.SetParent(mapContainer, false);
-
-        MeshRenderer mr = mapGo.GetComponent<MeshRenderer>();
-
-        Color[] colorArr = new Color[battle.mapData.dic.Count];
-
-        Action<int, Color> dele = delegate (int arg1, Color arg2)
-        {
-            colorArr[arg1] = arg2;
-
-            mr.material.SetColorArray("colors", colorArr);
-        };
-
-        mr.material = new Material(Shader.Find("Unlit/MapUnit"));
-
-        GameObject[] gos = new GameObject[battle.mapData.dic.Count];
-
         int index = 0;
-
-        int index2 = 0;
 
         for (int i = 0; i < battle.mapData.mapHeight; i++)
         {
@@ -488,7 +467,7 @@ public class BattleManager : MonoBehaviour
 
                 mapUnitDic.Add(index, unit);
 
-                unit.Init(index, index2, dele);
+                unit.Init(index);
 
                 SetMapUnitColor(unit);
 
@@ -500,18 +479,8 @@ public class BattleManager : MonoBehaviour
                 }
 
                 index++;
-
-                gos[index2] = go;
-
-                index2++;
             }
         }
-
-        Mesh mesh = PublicTools.CombineMeshs(gos);
-
-        MeshFilter mf = mapGo.GetComponent<MeshFilter>();
-
-        mf.mesh = mesh;
 
         battleContentContainer.localPosition = new Vector3(-0.5f * (battle.mapData.mapWidth * mapUnitWidth * sqrt3 * 2) + mapUnitWidth * sqrt3, mapContainerYFix + 0.5f * (battle.mapData.mapHeight * mapUnitWidth * 3 + mapUnitWidth) - mapUnitWidth * 2, 0);
 
@@ -639,7 +608,7 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateArrow(int _start, int _end, Color _color, int _index)
     {
-        GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("Arrow"));
+        GameObject go = Instantiate(Resources.Load<GameObject>("Arrow"));
 
         Arrow arrow = go.GetComponent<Arrow>();
 
@@ -668,7 +637,7 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateShootArrow(int _start, int _end, Color _color)
     {
-        GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("ShootArrow"));
+        GameObject go = Instantiate(Resources.Load<GameObject>("ShootArrow"));
 
         ShootArrow arrow = go.GetComponent<ShootArrow>();
 

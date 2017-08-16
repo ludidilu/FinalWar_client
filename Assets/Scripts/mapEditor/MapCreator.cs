@@ -169,7 +169,7 @@ public class MapCreator : MonoBehaviour
 
                 units[index] = unit;
 
-                unit.Init(index, 0, null);
+                unit.Init(index);
 
                 if (mapData.dic.ContainsKey(index))
                 {
