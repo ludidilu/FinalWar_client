@@ -109,7 +109,7 @@ public static class ResourceLoader
             _callBack();
         }
 #else
-        StaticData.LoadCsvDataFromFile(OneLoadOver, LoadCsv.Init);
+        StaticData.LoadCsvDataFromFile(_callBack, LoadCsv.Init);
 #endif
     }
 

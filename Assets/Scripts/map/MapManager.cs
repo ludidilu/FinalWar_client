@@ -5,6 +5,7 @@ using System.IO;
 using wwwManager;
 using UnityEngine;
 using System.Threading;
+using thread;
 #endif
 
 public static class MapManager
@@ -79,21 +80,16 @@ public static class MapManager
                 br.BaseStream.Dispose();
             };
 
-            Func<bool> check = delegate ()
-            {
-                return mapData.dic.Count != 0 && mapData.dic.Count == mapData.neighbourPosMap.Count;
-            };
-
             Action<WWW> dele = delegate (WWW _www)
             {
                 MemoryStream ms = new MemoryStream(_www.bytes);
 
                 BinaryReader br = new BinaryReader(ms);
 
-                thread.ThreadScript.Instance.Add(getData, br, oneLoadOver, check);
+                ThreadScript.Instance.Add(getData, br, oneLoadOver);
             };
 
-            WWWManager.Instance.Load("/map/" + mapName + ".map", dele);
+            WWWManager.Instance.Load("/map/" + mapName, dele);
 #endif
         }
 
