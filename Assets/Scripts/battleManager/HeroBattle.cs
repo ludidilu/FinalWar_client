@@ -1,15 +1,11 @@
-﻿using UnityEngine;
-using superTween;
-using System;
-using UnityEngine.UI;
-using FinalWar;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
+using FinalWar;
+using superTween;
 
 public class HeroBattle : HeroBase
 {
-    [SerializeField]
-    private Image body;
-
     [SerializeField]
     public Transform hudTrans;
 
@@ -20,16 +16,28 @@ public class HeroBattle : HeroBase
     public Transform shockTrans;
 
     [SerializeField]
-    private CanvasGroup canvasGroup;
+    public Transform zTrans;
 
     [SerializeField]
-    private Text hp;
+    private MeshColorControl frame;
 
     [SerializeField]
-    private Text shield;
+    private MeshColorControl body;
 
     [SerializeField]
-    private Text attack;
+    private TextMesh shield;
+
+    [SerializeField]
+    private TextMesh hp;
+
+    [SerializeField]
+    private TextMesh attack;
+
+    [SerializeField]
+    private TextMesh heroType;
+
+    [SerializeField]
+    private TextMesh heroName;
 
     private Hero hero;
 
@@ -55,6 +63,30 @@ public class HeroBattle : HeroBase
         {
             return hero.GetCanAction();
         }
+    }
+
+    protected void InitCard(HeroSDS _heroSDS)
+    {
+        sds = _heroSDS;
+
+        heroName.text = sds.name;
+
+        heroType.text = _heroSDS.heroTypeFix.name;
+    }
+
+    public void SetFrameVisible(bool _visible)
+    {
+        frame.gameObject.SetActive(_visible);
+    }
+
+    public void SetFrameColor(Color _color)
+    {
+        frame.SetColor(_color);
+    }
+
+    void Start()
+    {
+        SetFrameColor(new Color(1, 0, 0, 0.3f));
     }
 
     public void Init(int _id)
@@ -98,7 +130,7 @@ public class HeroBattle : HeroBase
 
         shield.text = nowShield.ToString();
 
-        body.color = hero.GetCanAction() ? Color.white : Color.grey;
+        body.SetColor(hero.GetCanAction() ? Color.white : Color.grey);
     }
 
     public void RefreshAttackWithoutShield()
@@ -240,6 +272,22 @@ public class HeroBattle : HeroBase
 
     private void DieTo(float _v)
     {
-        canvasGroup.alpha = _v;
+        Color color = frame.GetColor();
+
+        frame.SetColor(new Color(color.r, color.g, color.b, _v));
+
+        color = body.GetColor();
+
+        body.SetColor(new Color(color.r, color.g, color.b, _v));
+
+        shield.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
+
+        attack.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
+
+        hp.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
+
+        heroName.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
+
+        heroType.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
     }
 }

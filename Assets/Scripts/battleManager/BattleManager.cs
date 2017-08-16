@@ -11,6 +11,7 @@ using publicTools;
 using superGraphicRaycast;
 using superEnumerator;
 using superSequenceControl;
+using System.Collections;
 
 public class BattleManager : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class BattleManager : MonoBehaviour
 
     private const float mapUnitWidth = 30;
     private const float mapUnitScale = 55;
-    private const float heroScale = 0.8f;
+    private const float heroScale = 80.0f;
     private const float mapContainerYFix = 60;
     private static readonly float sqrt3 = Mathf.Sqrt(3);
     private const float scaleStep = 0.95f;
@@ -745,7 +746,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        if (battle.GetSummonContainsKey(_mapUnit.index))
+        if (battle.GetSummonContainsValue(_mapUnit.index))
         {
             HeroBattle summonHero = summonHeroDic[_mapUnit.index];
 
@@ -1035,7 +1036,7 @@ public class BattleManager : MonoBehaviour
         SuperSequenceControl.Start(DoActionReal, _step);
     }
 
-    private System.Collections.IEnumerator DoActionReal(int _index, SuperEnumerator<ValueType> _step)
+    private IEnumerator DoActionReal(int _index, SuperEnumerator<ValueType> _step)
     {
         while (_step.MoveNext())
         {
@@ -1144,7 +1145,7 @@ public class BattleManager : MonoBehaviour
         RefreshData();
     }
 
-    private System.Collections.IEnumerator DoSummon(int _index, int _lastIndex, BattleSummonVO _vo)
+    private IEnumerator DoSummon(int _index, int _lastIndex, BattleSummonVO _vo)
     {
         CreateMoneyTfOrigin();
 

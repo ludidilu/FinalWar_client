@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
 public class HeroDetail : MonoBehaviour
@@ -29,8 +28,6 @@ public class HeroDetail : MonoBehaviour
 	private GameObject commentContainer;
 
     private HeroBase hero;
-
-	private int levelUpID;
 
     public void Show(HeroBase _hero)
     {
