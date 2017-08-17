@@ -1,4 +1,4 @@
-﻿Shader "Custom/UI/Arrow"
+﻿Shader "Custom/Arrow"
 {
 	Properties
 	{
