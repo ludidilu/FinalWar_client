@@ -63,4 +63,5 @@ Assets/StreamingAssets.meta
 /UnityVS.tstd_client.CSharp.Editor.csproj
 /UnityVS.tstd_client.sln
 /UnityVS.tstd_client.CSharp.csproj
-Assets/Plugins/*.meta
+Assets/Plugins/*
+Assets/Plugins.meta
