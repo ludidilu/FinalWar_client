@@ -600,7 +600,7 @@ public class BattleManager : MonoBehaviour
 
             for (int i = 0; i < cellData.shooters.Count; i++)
             {
-                GameObject go = CreateShootArrow(cellData.shooters[i].pos, pos, Color.yellow);
+                GameObject go = CreateShootArrow(cellData.shooters[i].pos, pos, new Color(1, 1, 0, 0.7f));
 
                 arrowList.Add(go);
             }
