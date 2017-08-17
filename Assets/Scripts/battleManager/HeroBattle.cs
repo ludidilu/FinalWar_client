@@ -164,13 +164,13 @@ public class HeroBattle : HeroBase
 
     public void ShowHud(string _str, Color _color, float _yFix, Action _callBack)
     {
-        GameObject go = Instantiate(BattleControl.Instance.damageNumResources);
+        GameObject go = Instantiate(Resources.Load<GameObject>("DamageNum"));
 
-        go.transform.SetParent(transform.parent, false);
+        go.transform.SetParent(BattleManager.Instance.arrowContainer, false);
 
         Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(hudTrans.localPosition));
 
-        go.transform.localPosition = new Vector3(pos.x, pos.y + _yFix, pos.z);
+        go.transform.localPosition = new Vector3(pos.x, pos.y + _yFix, 0);
 
         DamageNum damageNum = go.GetComponent<DamageNum>();
 

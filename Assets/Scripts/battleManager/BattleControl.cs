@@ -30,12 +30,6 @@ public class BattleControl : MonoBehaviour
     private AnimationCurve shockCurve;
 
     [SerializeField]
-    private GameObject arrowResources;
-
-    [SerializeField]
-    public GameObject damageNumResources;
-
-    [SerializeField]
     public float hudHeight;
 
     public static BattleControl Instance { get; private set; }
@@ -97,9 +91,9 @@ public class BattleControl : MonoBehaviour
 
         angle += Mathf.PI * 0.5f;
 
-        GameObject arrow = GameObject.Instantiate<GameObject>(arrowResources);
+        GameObject arrow = Instantiate(Resources.Load<GameObject>("DamageArrow"));
 
-        arrow.transform.SetParent(shooter.transform.parent, false);
+        arrow.transform.SetParent(BattleManager.Instance.arrowContainer, false);
 
         arrow.transform.localPosition = shooter.transform.localPosition;
 
@@ -118,7 +112,7 @@ public class BattleControl : MonoBehaviour
 
             targetPos += new Vector3(Mathf.Cos(angle) * v * shootFix, Mathf.Sin(angle) * v * shootFix, 0);
 
-            (arrow.transform as RectTransform).localEulerAngles = new Vector3(0, 0, Mathf.Atan2(targetPos.y - arrow.transform.localPosition.y, targetPos.x - arrow.transform.localPosition.x) * Mathf.Rad2Deg);
+            arrow.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(targetPos.y - arrow.transform.localPosition.y, targetPos.x - arrow.transform.localPosition.x) * Mathf.Rad2Deg);
 
             arrow.transform.localPosition = targetPos;
         };

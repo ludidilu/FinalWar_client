@@ -70,7 +70,7 @@ public class BattleManager : MonoBehaviour
     private RectTransform heroContainer;
 
     [SerializeField]
-    private RectTransform arrowContainer;
+    public RectTransform arrowContainer;
 
     [SerializeField]
     private Text moneyTf;
@@ -1160,6 +1160,8 @@ public class BattleManager : MonoBehaviour
             float scale = heroScale * obj;
 
             heroBattle.transform.localScale = new Vector3(scale, scale, scale);
+
+            heroBattle.transform.localPosition = new Vector3(heroBattle.transform.localPosition.x, heroBattle.transform.localPosition.y, 100 * (1 - obj));
         };
 
         SuperSequenceControl.To(10f, 1f, 0.5f, toDel, _index);

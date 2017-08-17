@@ -1,14 +1,10 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System;
 
 public class DamageNum : MonoBehaviour
 {
     [SerializeField]
-    private Text text;
-
-    [SerializeField]
-    private CanvasGroup group;
+    private TextMesh text;
 
     [SerializeField]
     private AnimationCurve posCurve;
@@ -38,13 +34,7 @@ public class DamageNum : MonoBehaviour
 
         callBack = _callBack;
 
-        startY = (transform as RectTransform).anchoredPosition.y;
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-
+        startY = transform.localPosition.y;
     }
 
     // Update is called once per frame
@@ -56,7 +46,7 @@ public class DamageNum : MonoBehaviour
 
         if (percent > 1)
         {
-            GameObject.Destroy(gameObject);
+            Destroy(gameObject);
 
             if (callBack != null)
             {
@@ -67,11 +57,11 @@ public class DamageNum : MonoBehaviour
         {
             float value = posCurve.Evaluate(percent);
 
-            (transform as RectTransform).anchoredPosition = new Vector2((transform as RectTransform).anchoredPosition.x, startY + value * height);
+            transform.localPosition = new Vector3(transform.localPosition.x, startY + value * height, 0);
 
             value = alphaCurve.Evaluate(percent);
 
-            group.alpha = value;
+            text.color = new Color(text.color.r, text.color.g, text.color.b, value);
         }
     }
 }
