@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 #if USE_ASSETBUNDLE
 using wwwManager;
+using thread;
+using System.Threading;
 #endif
 using FinalWar;
 
@@ -22,11 +23,13 @@ public static class ResourceLoader
 
     private static void ConfigLoadOver()
     {
-        num = 3;
+        num = 4;
 
         LoadRandomData(OneLoadOver);
 
         LoadTables(LoadMap);
+
+        LoadAiData(OneLoadOver);
 
         OneLoadOver();
     }
@@ -135,6 +138,59 @@ public static class ResourceLoader
     private static void LoadMap()
     {
         MapSDS.Load(OneLoadOver);
+    }
+
+    private static void LoadAiData(Action _callBack)
+    {
+#if !USE_ASSETBUNDLE
+
+        string actionStr = File.ReadAllText(ConfigDictionary.Instance.ai_path + "ai_action.xml");
+        string summonStr = File.ReadAllText(ConfigDictionary.Instance.ai_path + "ai_summon.xml");
+
+        BattleAi.Init(actionStr, summonStr);
+
+        if (_callBack != null)
+        {
+            _callBack();
+        }
+#else
+        string actionStr = string.Empty;
+        string summonStr = string.Empty;
+
+        ThreadStart threadDele = delegate ()
+        {
+            BattleAi.Init(actionStr, summonStr);
+        };
+
+        Action dele = delegate ()
+        {
+            ThreadScript.Instance.Add(threadDele, _callBack);
+        };
+
+        Action<WWW> getActionStr = delegate (WWW _www)
+        {
+            actionStr = _www.text;
+
+            if (!string.IsNullOrEmpty(summonStr))
+            {
+                dele();
+            }
+        };
+
+        Action<WWW> getSummonStr = delegate (WWW _www)
+        {
+            summonStr = _www.text;
+
+            if (!string.IsNullOrEmpty(actionStr))
+            {
+                dele();
+            }
+        };
+
+        WWWManager.Instance.Load("/map/ai_action.xml", getActionStr);
+
+        WWWManager.Instance.Load("/map/ai_summon.xml", getSummonStr);
+#endif
     }
 
     private static void OneLoadOver()

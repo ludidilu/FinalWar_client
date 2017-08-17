@@ -586,14 +586,14 @@ public class BattleManager : MonoBehaviour
 
             for (int i = 0; i < cellData.attackers.Count; i++)
             {
-                GameObject go = CreateArrow(cellData.attackers[i].pos, pos, Color.red, i);
+                GameObject go = CreateArrow(cellData.attackers[i].pos, pos, new Color(1, 0, 0, 0.7f), i);
 
                 arrowList.Add(go);
             }
 
             for (int i = 0; i < cellData.supporters.Count; i++)
             {
-                GameObject go = CreateArrow(cellData.supporters[i].pos, pos, Color.green, i);
+                GameObject go = CreateArrow(cellData.supporters[i].pos, pos, new Color(0, 1, 0, 0.7f), i);
 
                 arrowList.Add(go);
             }
