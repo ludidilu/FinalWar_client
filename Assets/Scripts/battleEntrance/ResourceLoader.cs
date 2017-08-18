@@ -6,9 +6,9 @@ using wwwManager;
 using thread;
 using System.Threading;
 using assetManager;
-using gameObjectFactory;
 #endif
 using FinalWar;
+using gameObjectFactory;
 
 public static class ResourceLoader
 {
@@ -35,7 +35,7 @@ public static class ResourceLoader
 
     private static void ConfigLoadOver()
     {
-        num = 5;
+        num = 7;
 
         LoadRandomData();
 
@@ -197,14 +197,27 @@ public static class ResourceLoader
 
     private static void LoadPrefabs()
     {
+        Action<GameObject> goDele = delegate (GameObject _go)
+        {
+            OneLoadOver();
+        };
+
 #if !USE_ASSETBUNDLE
 
         OneLoadOver();
+
+        GameObjectFactory.Instance.GetGameObject("Assets/Resource/BattleManager.prefab", goDele);
+
+        GameObjectFactory.Instance.GetGameObject("Assets/Resource/BattleControl.prefab", goDele);
 #else
 
         Action dele = delegate ()
         {
             GameObjectFactory.Instance.PreloadGameObjects(preloadPrefabs, OneLoadOver);
+
+            GameObjectFactory.Instance.GetGameObject("Assets/Resource/BattleManager.prefab", goDele);
+
+            GameObjectFactory.Instance.GetGameObject("Assets/Resource/BattleControl.prefab", goDele);
         };
 
         AssetManager.Instance.Init(dele);

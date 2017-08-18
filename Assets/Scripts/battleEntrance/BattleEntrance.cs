@@ -1,13 +1,9 @@
 ﻿using UnityEngine;
 using System.IO;
 using superFunction;
-using FinalWar;
 
 public class BattleEntrance : MonoBehaviour
 {
-    [SerializeField]
-    private BattleManager battleManager;
-
     [SerializeField]
     private GameObject panel;
 
@@ -27,9 +23,9 @@ public class BattleEntrance : MonoBehaviour
 
     private void LoadOver()
     {
-        SuperFunction.Instance.AddEventListener(battleManager.gameObject, BattleManager.BATTLE_OVER, BattleOver);
+        SuperFunction.Instance.AddEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_OVER, BattleOver);
 
-        battleManager.Init(SendBattleAction);
+        BattleManager.Instance.Init(SendBattleAction);
 
         Connection.Instance.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ReceiveData, ConfigDictionary.Instance.uid);
     }
@@ -50,9 +46,9 @@ public class BattleEntrance : MonoBehaviour
 
                         byte[] bytes = br.ReadBytes(length);
 
-                        if (!battleManager.gameObject.activeSelf)
+                        if (!BattleManager.Instance.gameObject.activeSelf)
                         {
-                            battleManager.gameObject.SetActive(true);
+                            BattleManager.Instance.gameObject.SetActive(true);
                         }
 
                         if (gameObject.activeSelf)
@@ -60,15 +56,15 @@ public class BattleEntrance : MonoBehaviour
                             gameObject.SetActive(false);
                         }
 
-                        battleManager.ReceiveData(bytes);
+                        BattleManager.Instance.ReceiveData(bytes);
 
                         break;
 
                     case 1:
 
-                        if (battleManager.gameObject.activeSelf)
+                        if (BattleManager.Instance.gameObject.activeSelf)
                         {
-                            battleManager.gameObject.SetActive(false);
+                            BattleManager.Instance.gameObject.SetActive(false);
                         }
 
                         if (!gameObject.activeSelf)
@@ -88,9 +84,9 @@ public class BattleEntrance : MonoBehaviour
 
                     case 2:
 
-                        if (battleManager.gameObject.activeSelf)
+                        if (BattleManager.Instance.gameObject.activeSelf)
                         {
-                            battleManager.gameObject.SetActive(false);
+                            BattleManager.Instance.gameObject.SetActive(false);
                         }
 
                         if (!gameObject.activeSelf)
