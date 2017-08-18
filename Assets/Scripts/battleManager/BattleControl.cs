@@ -5,6 +5,7 @@ using System.Collections;
 using superSequenceControl;
 using FinalWar;
 using System.Linq;
+using gameObjectFactory;
 
 public class BattleControl : MonoBehaviour
 {
@@ -91,7 +92,9 @@ public class BattleControl : MonoBehaviour
 
         angle += Mathf.PI * 0.5f;
 
-        GameObject arrow = Instantiate(Resources.Load<GameObject>("DamageArrow"));
+        //GameObject arrow = Instantiate(Resources.Load<GameObject>("DamageArrow"));
+
+        GameObject arrow = GameObjectFactory.Instance.GetGameObject("Assets/Resource/DamageArrow.prefab", null);
 
         arrow.transform.SetParent(BattleManager.Instance.arrowContainer, false);
 

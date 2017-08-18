@@ -5,11 +5,23 @@ using System.IO;
 using wwwManager;
 using thread;
 using System.Threading;
+using assetManager;
+using gameObjectFactory;
 #endif
 using FinalWar;
 
 public static class ResourceLoader
 {
+    private static readonly string[] preloadPrefabs = new string[] {
+        "Assets/Resource/Arrow.prefab",
+        "Assets/Resource/DamageArrow.prefab",
+        "Assets/Resource/DamageNum.prefab",
+        "Assets/Resource/HeroBattle.prefab",
+        "Assets/Resource/HeroCard.prefab",
+        "Assets/Resource/MapUnit.prefab",
+        "Assets/Resource/ShootArrow.prefab"
+    };
+
     private static Action callBack;
 
     private static int num;
@@ -23,13 +35,15 @@ public static class ResourceLoader
 
     private static void ConfigLoadOver()
     {
-        num = 4;
+        num = 5;
 
-        LoadRandomData(OneLoadOver);
+        LoadRandomData();
 
-        LoadTables(LoadMap);
+        LoadTables();
 
-        LoadAiData(OneLoadOver);
+        LoadAiData();
+
+        LoadPrefabs();
 
         OneLoadOver();
     }
@@ -64,7 +78,7 @@ public static class ResourceLoader
         ConfigDictionary.Instance.LoadLocalConfig(Path.Combine(Application.streamingAssetsPath, "local.xml"));
     }
 
-    public static void LoadRandomData(Action _callBack)
+    private static void LoadRandomData()
     {
 #if !USE_ASSETBUNDLE
 
@@ -74,10 +88,7 @@ public static class ResourceLoader
             {
                 BattleRandomPool.Load(br);
 
-                if (_callBack != null)
-                {
-                    _callBack();
-                }
+                OneLoadOver();
             }
         }
 #else
@@ -89,10 +100,7 @@ public static class ResourceLoader
                 {
                     BattleRandomPool.Load(br);
 
-                    if (_callBack != null)
-                    {
-                        _callBack();
-                    }
+                    OneLoadOver();
                 }
             }
         };
@@ -101,18 +109,15 @@ public static class ResourceLoader
 #endif
     }
 
-    public static void LoadTables(Action _callBack)
+    private static void LoadTables()
     {
 #if !USE_ASSETBUNDLE
 
         LoadTablesLocal();
 
-        if (_callBack != null)
-        {
-            _callBack();
-        }
+        LoadMap();
 #else
-        StaticData.LoadCsvDataFromFile(_callBack, LoadCsv.Init);
+        StaticData.LoadCsvDataFromFile(LoadMap, LoadCsv.Init);
 #endif
     }
 
@@ -140,7 +145,7 @@ public static class ResourceLoader
         MapSDS.Load(OneLoadOver);
     }
 
-    private static void LoadAiData(Action _callBack)
+    private static void LoadAiData()
     {
 #if !USE_ASSETBUNDLE
 
@@ -149,10 +154,7 @@ public static class ResourceLoader
 
         BattleAi.Init(actionStr, summonStr);
 
-        if (_callBack != null)
-        {
-            _callBack();
-        }
+        OneLoadOver();
 #else
         string actionStr = string.Empty;
         string summonStr = string.Empty;
@@ -164,7 +166,7 @@ public static class ResourceLoader
 
         Action dele = delegate ()
         {
-            ThreadScript.Instance.Add(threadDele, _callBack);
+            ThreadScript.Instance.Add(threadDele, OneLoadOver);
         };
 
         Action<WWW> getActionStr = delegate (WWW _www)
@@ -187,9 +189,25 @@ public static class ResourceLoader
             }
         };
 
-        WWWManager.Instance.Load("/map/ai_action.xml", getActionStr);
+        WWWManager.Instance.Load("/ai/ai_action.xml", getActionStr);
 
-        WWWManager.Instance.Load("/map/ai_summon.xml", getSummonStr);
+        WWWManager.Instance.Load("/ai/ai_summon.xml", getSummonStr);
+#endif
+    }
+
+    private static void LoadPrefabs()
+    {
+#if !USE_ASSETBUNDLE
+
+        OneLoadOver();
+#else
+
+        Action dele = delegate ()
+        {
+            GameObjectFactory.Instance.PreloadGameObjects(preloadPrefabs, OneLoadOver);
+        };
+
+        AssetManager.Instance.Init(dele);
 #endif
     }
 

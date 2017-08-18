@@ -62,6 +62,8 @@ public class MapCreator : MonoBehaviour
 
     private MapType nowMapType;
 
+#if UNITY_EDITOR
+
     void Awake()
     {
         SuperRaycast.SetCamera(Camera.main);
@@ -78,9 +80,6 @@ public class MapCreator : MonoBehaviour
 
     public void LoadMap()
     {
-
-#if UNITY_EDITOR
-
         string path = EditorUtility.OpenFilePanel("a", "a", "map");
 
         if (!string.IsNullOrEmpty(path))
@@ -101,8 +100,6 @@ public class MapCreator : MonoBehaviour
                 }
             }
         }
-
-#endif
     }
 
     public void ConfirmMapSize()
@@ -147,7 +144,7 @@ public class MapCreator : MonoBehaviour
                     continue;
                 }
 
-                GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("MapUnit"));
+                GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resource/MapUnit.prefab"));
 
                 go.transform.SetParent(mapContainer, false);
 
@@ -217,8 +214,6 @@ public class MapCreator : MonoBehaviour
             return;
         }
 
-#if UNITY_EDITOR
-
         string path = EditorUtility.SaveFilePanel("a", "a", "", "map");
 
         if (!string.IsNullOrEmpty(path))
@@ -238,7 +233,6 @@ public class MapCreator : MonoBehaviour
                 }
             }
         }
-#endif
     }
 
     private bool CheckMap()
@@ -442,4 +436,5 @@ public class MapCreator : MonoBehaviour
                 break;
         }
     }
+#endif
 }

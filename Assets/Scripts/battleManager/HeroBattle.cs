@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FinalWar;
 using superTween;
+using gameObjectFactory;
 
 public class HeroBattle : HeroBase
 {
@@ -164,7 +165,9 @@ public class HeroBattle : HeroBase
 
     public void ShowHud(string _str, Color _color, float _yFix, Action _callBack)
     {
-        GameObject go = Instantiate(Resources.Load<GameObject>("DamageNum"));
+        //GameObject go = Instantiate(Resources.Load<GameObject>("DamageNum"));
+
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/DamageNum.prefab", null);
 
         go.transform.SetParent(BattleManager.Instance.arrowContainer, false);
 

@@ -12,6 +12,7 @@ using superGraphicRaycast;
 using superEnumerator;
 using superSequenceControl;
 using System.Collections;
+using gameObjectFactory;
 
 public class BattleManager : MonoBehaviour
 {
@@ -378,7 +379,7 @@ public class BattleManager : MonoBehaviour
 
         while (enumerator2.MoveNext())
         {
-            GameObject.Destroy(enumerator2.Current.gameObject);
+            Destroy(enumerator2.Current.gameObject);
         }
 
         summonHeroDic.Clear();
@@ -390,7 +391,7 @@ public class BattleManager : MonoBehaviour
 
         while (enumerator2.MoveNext())
         {
-            GameObject.Destroy(enumerator2.Current.gameObject);
+            Destroy(enumerator2.Current.gameObject);
         }
 
         heroDic.Clear();
@@ -400,7 +401,7 @@ public class BattleManager : MonoBehaviour
     {
         for (int i = 0; i < arrowList.Count; i++)
         {
-            GameObject.Destroy(arrowList[i]);
+            Destroy(arrowList[i]);
         }
 
         arrowList.Clear();
@@ -426,7 +427,9 @@ public class BattleManager : MonoBehaviour
                     continue;
                 }
 
-                GameObject go = Instantiate(Resources.Load<GameObject>("MapUnit"));
+                //GameObject go = Instantiate(Resources.Load<GameObject>("MapUnit"));
+
+                GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/MapUnit.prefab", null);
 
                 go.transform.SetParent(mapContainer, false);
 
@@ -511,7 +514,9 @@ public class BattleManager : MonoBehaviour
                 continue;
             }
 
-            GameObject go = Instantiate(Resources.Load<GameObject>("HeroCard"));
+            //GameObject go = Instantiate(Resources.Load<GameObject>("HeroCard"));
+
+            GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/HeroCard.prefab", null);
 
             HeroCard hero = go.GetComponent<HeroCard>();
 
@@ -609,7 +614,9 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateArrow(int _start, int _end, Color _color, int _index)
     {
-        GameObject go = Instantiate(Resources.Load<GameObject>("Arrow"));
+        //GameObject go = Instantiate(Resources.Load<GameObject>("Arrow"));
+
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/Arrow.prefab", null);
 
         Arrow arrow = go.GetComponent<Arrow>();
 
@@ -638,7 +645,9 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateShootArrow(int _start, int _end, Color _color)
     {
-        GameObject go = Instantiate(Resources.Load<GameObject>("ShootArrow"));
+        //GameObject go = Instantiate(Resources.Load<GameObject>("ShootArrow"));
+
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/ShootArrow.prefab", null);
 
         ShootArrow arrow = go.GetComponent<ShootArrow>();
 
@@ -903,7 +912,9 @@ public class BattleManager : MonoBehaviour
 
     private HeroBattle AddHeroToMap(Hero _hero)
     {
-        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
+        //GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
+
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/HeroBattle.prefab", null);
 
         HeroBattle hero = go.GetComponent<HeroBattle>();
 
@@ -920,7 +931,9 @@ public class BattleManager : MonoBehaviour
     {
         int cardID = battle.GetCard(_cardUid);
 
-        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
+        //GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
+
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/HeroBattle.prefab", null);
 
         HeroBattle hero = go.GetComponent<HeroBattle>();
 
