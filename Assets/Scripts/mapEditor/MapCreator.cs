@@ -162,7 +162,9 @@ public class MapCreator : MonoBehaviour
                     }
                 };
 
-                SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseClick, click);
+                //SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseClick, click);
+
+                SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseEnter, click);
 
                 units[index] = unit;
 

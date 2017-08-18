@@ -433,7 +433,7 @@ public class BattleManager : MonoBehaviour
 
                 go.transform.SetParent(mapContainer, false);
 
-                go.transform.localPosition = new Vector3(m * mapUnitWidth * sqrt3 * 2 + ((i % 2 == 1) ? mapUnitWidth * Mathf.Sqrt(3) : 0), -i * mapUnitWidth * 3, 0);
+                go.transform.localPosition = new Vector3(m * mapUnitWidth * sqrt3 * 2 + ((i % 2 == 1) ? mapUnitWidth * sqrt3 : 0), -i * mapUnitWidth * 3, 0);
 
                 go.transform.localScale = new Vector3(mapUnitScale, mapUnitScale, mapUnitScale);
 
