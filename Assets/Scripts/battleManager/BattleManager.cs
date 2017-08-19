@@ -7,7 +7,6 @@ using FinalWar;
 using superRaycast;
 using screenScale;
 using superFunction;
-using publicTools;
 using superGraphicRaycast;
 using superEnumerator;
 using superSequenceControl;
@@ -18,15 +17,34 @@ public class BattleManager : MonoBehaviour
 {
     public const string BATTLE_OVER = "battleOver";
 
-    private const float mapUnitWidth = 30;
-    private const float mapUnitScale = 55;
-    private const float heroScale = 1.0f;
-    private const float mapContainerYFix = 60;
+    [SerializeField]
+    private float moveThreshold = 0.1f;
+
+    [SerializeField]
+    private float mapUnitWidth = 30;
+
+    [SerializeField]
+    private float mapUnitScale = 55;
+
     private static readonly float sqrt3 = Mathf.Sqrt(3);
-    private const float scaleStep = 0.95f;
-    private const float minScale = 0.7f;
-    private const float maxScale = 1.4f;
-    private const int defaultMapHeight = 5;
+
+    [SerializeField]
+    private float minScale = 0.7f;
+
+    [SerializeField]
+    private float maxScale = 1.4f;
+
+    [SerializeField]
+    private float fixStep = 1.05f;
+
+    [SerializeField]
+    private float viewportXFix;
+
+    [SerializeField]
+    private float viewportYFix;
+
+    [SerializeField]
+    private float boundFix;
 
     [SerializeField]
     private Camera mainCamera;
@@ -53,25 +71,22 @@ public class BattleManager : MonoBehaviour
     private Color hillColor;
 
     [SerializeField]
-    private RectTransform battleContainer;
+    private Transform battleContainer;
 
     [SerializeField]
-    private RectTransform battleScaleContainer;
-
-    [SerializeField]
-    private RectTransform battleContentContainer;
+    private Transform battleContentContainer;
 
     [SerializeField]
     private RectTransform cardContainer;
 
     [SerializeField]
-    private RectTransform mapContainer;
+    private Transform mapContainer;
 
     [SerializeField]
-    private RectTransform heroContainer;
+    private Transform heroContainer;
 
     [SerializeField]
-    public RectTransform arrowContainer;
+    public Transform arrowContainer;
 
     [SerializeField]
     private Text moneyTf;
@@ -104,13 +119,25 @@ public class BattleManager : MonoBehaviour
 
     private Vector2 lastPos;
 
-    //private GameObject mapGo;
+    private Bounds bounds;
+
+    private Bounds viewport;
+
+    private float defaultScale;
 
     public static BattleManager Instance { get; private set; }
 
     void Awake()
     {
         Instance = this;
+
+        Vector3 v = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, 0));
+
+        viewport = new Bounds(Vector3.zero, v * 2);
+
+        viewport.center = new Vector3(viewportXFix, viewportYFix, 0);
+
+        viewport.extents = new Vector3(viewport.extents.x - viewportXFix, viewport.extents.y - viewportYFix, viewport.extents.z);
     }
 
     private enum DownType
@@ -346,11 +373,6 @@ public class BattleManager : MonoBehaviour
 
     private void ClearMapUnits()
     {
-        //if (mapGo != null)
-        //{
-        //    Destroy(mapGo);
-        //}
-
         Dictionary<int, MapUnit>.ValueCollection.Enumerator enumerator = mapUnitDic.Values.GetEnumerator();
 
         while (enumerator.MoveNext())
@@ -359,6 +381,14 @@ public class BattleManager : MonoBehaviour
         }
 
         mapUnitDic.Clear();
+
+        battleContentContainer.localPosition = Vector3.zero;
+
+        battleContentContainer.localScale = Vector3.one;
+
+        battleContainer.localPosition = Vector3.zero;
+
+        battleContainer.localScale = Vector3.one;
     }
 
     private void ClearCards()
@@ -482,19 +512,26 @@ public class BattleManager : MonoBehaviour
                     Destroy(unit.GetComponent<Collider>());
                 }
 
+                if (index == 0)
+                {
+                    bounds = go.GetComponent<Renderer>().bounds;
+                }
+                else
+                {
+                    bounds.Encapsulate(go.GetComponent<Renderer>().bounds);
+                }
+
                 index++;
             }
         }
 
-        battleContentContainer.localPosition = new Vector3(-0.5f * (battle.mapData.mapWidth * mapUnitWidth * sqrt3 * 2) + mapUnitWidth * sqrt3, mapContainerYFix + 0.5f * (battle.mapData.mapHeight * mapUnitWidth * 3 + mapUnitWidth) - mapUnitWidth * 2, 0);
+        battleContentContainer.localPosition = new Vector3(-bounds.center.x, -bounds.center.y, 0);
 
-        float baseScale = (float)defaultMapHeight / battle.mapData.mapHeight;
+        defaultScale = Mathf.Min(viewport.extents.x / bounds.extents.x, viewport.extents.y / bounds.extents.y);
 
-        battleScaleContainer.localScale = new Vector3(baseScale, baseScale, baseScale);
+        battleContainer.localScale = new Vector3(defaultScale, defaultScale, defaultScale);
 
-        battleContainer.localScale = Vector3.one;
-
-        battleContainer.localPosition = Vector3.zero;
+        FixBounds();
     }
 
     private void CreateCards(bool _hideInSummon)
@@ -958,7 +995,7 @@ public class BattleManager : MonoBehaviour
 
         _heroCard.transform.localPosition = mapUnit.transform.localPosition;
 
-        _heroCard.transform.localScale = new Vector3(heroScale, heroScale, heroScale);
+        //_heroCard.transform.localScale = new Vector3(heroScale, heroScale, heroScale);
     }
 
 
@@ -1170,7 +1207,7 @@ public class BattleManager : MonoBehaviour
 
         Action<float> toDel = delegate (float obj)
         {
-            float scale = heroScale * obj;
+            float scale = obj;
 
             heroBattle.transform.localScale = new Vector3(scale, scale, scale);
 
@@ -1280,71 +1317,68 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void FixBattleContainerRect()
+    private void ScaleChange(int _index, float _scrollValue, Vector2 _pos)
     {
-        if (battleContainer.localScale.x < 1)
+        Vector3 v = mainCamera.ScreenToWorldPoint(_pos);
+
+        Vector3 v2 = battleContainer.InverseTransformPoint(v);
+
+        battleContainer.localPosition = new Vector3(battleContainer.localPosition.x + v2.x, battleContainer.localPosition.y + v2.y, battleContainer.localPosition.z);
+
+        float scale;
+
+        if (_scrollValue > 1)
         {
-            battleContainer.anchoredPosition = Vector2.zero;
+            scale = battleContainer.localScale.x * fixStep;
         }
         else
         {
-            if (battleContainer.anchoredPosition.x - (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x > -(canvas.transform as RectTransform).rect.width / 2)
-            {
-                battleContainer.anchoredPosition = new Vector2(-(canvas.transform as RectTransform).rect.width / 2 + (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x, battleContainer.anchoredPosition.y);
-            }
-            else if (battleContainer.anchoredPosition.x + (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x < (canvas.transform as RectTransform).rect.width / 2)
-            {
-                battleContainer.anchoredPosition = new Vector2((canvas.transform as RectTransform).rect.width / 2 - (canvas.transform as RectTransform).rect.width / 2 * battleContainer.localScale.x, battleContainer.anchoredPosition.y);
-            }
-
-            if (battleContainer.anchoredPosition.y - (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x > -(canvas.transform as RectTransform).rect.height / 2)
-            {
-                battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x, -(canvas.transform as RectTransform).rect.height / 2 + (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x);
-            }
-            else if (battleContainer.anchoredPosition.y + (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x < (canvas.transform as RectTransform).rect.height / 2)
-            {
-                battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x, (canvas.transform as RectTransform).rect.height / 2 - (canvas.transform as RectTransform).rect.height / 2 * battleContainer.localScale.x);
-            }
+            scale = battleContainer.localScale.x * (1 / fixStep);
         }
+
+        scale = Mathf.Clamp(scale, defaultScale * minScale, defaultScale * maxScale);
+
+        battleContainer.localScale = new Vector3(scale, scale, scale);
+
+        Vector3 v3 = battleContainer.TransformPoint(v2);
+
+        battleContainer.localPosition = new Vector3(battleContainer.localPosition.x - v3.x + v.x, battleContainer.localPosition.y - v3.y + v.y, battleContainer.localPosition.z);
+
+        FixBounds();
     }
 
-    private void ScaleChange(int _index, float _scrollValue, Vector2 _pos)
+    private void FixBounds()
     {
-        float scrollValue = _scrollValue;
+        Bounds tmpBounds = bounds;
 
-        Vector2 mousePosition = _pos;
+        tmpBounds.extents = new Vector3(tmpBounds.extents.x * battleContainer.transform.localScale.x, tmpBounds.extents.y * battleContainer.transform.localScale.y, tmpBounds.extents.z * battleContainer.transform.localScale.z);
 
-        if (scrollValue < 1)
+        tmpBounds.Expand(boundFix);
+
+        if (tmpBounds.extents.x < viewport.extents.x)
         {
-            Vector2 v = PublicTools.MousePositionToCanvasPosition(canvas, mousePosition);
-
-            Vector2 v2 = (v - battleContainer.anchoredPosition) / battleContainer.localScale.x;
-
-            battleContainer.localScale = battleContainer.localScale * scaleStep;
-
-            if (battleContainer.localScale.x < minScale)
-            {
-                battleContainer.localScale = new Vector3(minScale, minScale, minScale);
-            }
-
-            battleContainer.anchoredPosition = v - v2 * battleContainer.localScale.x;
-
-            FixBattleContainerRect();
+            battleContainer.localPosition = new Vector3(viewport.center.x, battleContainer.localPosition.y, battleContainer.localPosition.z);
         }
-        else if (scrollValue > 1)
+        else if (battleContainer.localPosition.x - tmpBounds.extents.x > viewport.min.x)
         {
-            Vector2 v = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
+            battleContainer.localPosition = new Vector3(viewport.min.x + tmpBounds.extents.x, battleContainer.localPosition.y, battleContainer.localPosition.z);
+        }
+        else if (battleContainer.localPosition.x + tmpBounds.extents.x < viewport.max.x)
+        {
+            battleContainer.localPosition = new Vector3(viewport.max.x - tmpBounds.extents.x, battleContainer.localPosition.y, battleContainer.localPosition.z);
+        }
 
-            Vector2 v2 = (v - battleContainer.anchoredPosition) / battleContainer.localScale.x;
-
-            battleContainer.localScale = battleContainer.localScale / scaleStep;
-
-            if (battleContainer.localScale.x > maxScale)
-            {
-                battleContainer.localScale = new Vector3(maxScale, maxScale, maxScale);
-            }
-
-            battleContainer.anchoredPosition = v - v2 * battleContainer.localScale.x;
+        if (tmpBounds.extents.y < viewport.extents.y)
+        {
+            battleContainer.localPosition = new Vector3(battleContainer.localPosition.x, viewport.center.y, battleContainer.localPosition.z);
+        }
+        else if (battleContainer.localPosition.y - tmpBounds.extents.y > viewport.min.y)
+        {
+            battleContainer.localPosition = new Vector3(battleContainer.localPosition.x, viewport.min.y + tmpBounds.extents.y, battleContainer.localPosition.z);
+        }
+        else if (battleContainer.localPosition.y + tmpBounds.extents.y < viewport.max.y)
+        {
+            battleContainer.localPosition = new Vector3(battleContainer.localPosition.x, viewport.max.y - tmpBounds.extents.y, battleContainer.localPosition.z);
         }
     }
 
@@ -1352,7 +1386,7 @@ public class BattleManager : MonoBehaviour
     {
         if (!_blockByUI && _hitIndex == 0)
         {
-            downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
+            downPos = lastPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
             isDown = DownType.BACKGROUND;
         }
@@ -1360,7 +1394,7 @@ public class BattleManager : MonoBehaviour
 
     private void MapUnitDownReal(MapUnit _mapUnit)
     {
-        downPos = lastPos = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
+        downPos = lastPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
         isDown = DownType.MAPUNIT;
 
@@ -1380,18 +1414,20 @@ public class BattleManager : MonoBehaviour
 
     private void BackgroundMove()
     {
-        Vector3 nowPos = PublicTools.MousePositionToCanvasPosition(canvas, Input.mousePosition);
+        Vector3 nowPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
-        if (!hasMove && Vector2.Distance(nowPos, downPos) > 10)
+        if (!hasMove && Vector2.Distance(nowPos, downPos) > moveThreshold)
         {
             hasMove = true;
         }
 
-        if (!isDoingHeroAction && hasMove && battleContainer.localScale.x > 1)
+        if (!isDoingHeroAction && hasMove)
         {
-            battleContainer.anchoredPosition = new Vector2(battleContainer.anchoredPosition.x + nowPos.x - lastPos.x, battleContainer.anchoredPosition.y + nowPos.y - lastPos.y);
+            Vector3 v2 = new Vector2(nowPos.x - lastPos.x, nowPos.y - lastPos.y);
 
-            FixBattleContainerRect();
+            battleContainer.localPosition = new Vector3(battleContainer.localPosition.x + v2.x, battleContainer.localPosition.y + v2.y, battleContainer.localPosition.z);
+
+            FixBounds();
         }
 
         lastPos = nowPos;

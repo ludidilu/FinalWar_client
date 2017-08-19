@@ -204,7 +204,7 @@ public static class ResourceLoader
 
 #if !USE_ASSETBUNDLE
 
-        OneLoadOver();
+        GameObjectFactory.Instance.PreloadGameObjects(preloadPrefabs, OneLoadOver);
 
         GameObjectFactory.Instance.GetGameObject("Assets/Resource/BattleManager.prefab", goDele);
 
