@@ -441,11 +441,11 @@ public class BattleManager : MonoBehaviour
     {
         int index = 0;
 
-        for (int i = 0; i < battle.mapData.mapHeight; i++)
+        for (int i = 0; i < battle.mapData.mapWidth; i++)
         {
-            for (int m = 0; m < battle.mapData.mapWidth; m++)
+            for (int m = 0; m < battle.mapData.mapHeight; m++)
             {
-                if (i % 2 == 1 && m == battle.mapData.mapWidth - 1)
+                if (i % 2 == 1 && m == battle.mapData.mapHeight - 1)
                 {
                     continue;
                 }
@@ -463,7 +463,9 @@ public class BattleManager : MonoBehaviour
 
                 go.transform.SetParent(mapContainer, false);
 
-                go.transform.localPosition = new Vector3(m * mapUnitWidth * sqrt3 * 2 + ((i % 2 == 1) ? mapUnitWidth * sqrt3 : 0), -i * mapUnitWidth * 3, 0);
+                //go.transform.localPosition = new Vector3(m * mapUnitWidth * sqrt3 * 2 + ((i % 2 == 1) ? mapUnitWidth * sqrt3 : 0), -i * mapUnitWidth * 3, 0);
+
+                go.transform.localPosition = new Vector3(i * mapUnitWidth * 3, -m * mapUnitWidth * sqrt3 * 2 - ((i % 2 == 1) ? mapUnitWidth * sqrt3 : 0), 0);
 
                 go.transform.localScale = new Vector3(mapUnitScale, mapUnitScale, mapUnitScale);
 

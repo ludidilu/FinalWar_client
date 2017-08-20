@@ -135,11 +135,11 @@ public class MapCreator : MonoBehaviour
 
         int index = 0;
 
-        for (int i = 0; i < mapData.mapHeight; i++)
+        for (int i = 0; i < mapData.mapWidth; i++)
         {
-            for (int m = 0; m < mapData.mapWidth; m++)
+            for (int m = 0; m < mapData.mapHeight; m++)
             {
-                if (i % 2 == 1 && m == mapData.mapWidth - 1)
+                if (i % 2 == 1 && m == mapData.mapHeight - 1)
                 {
                     continue;
                 }
@@ -148,7 +148,9 @@ public class MapCreator : MonoBehaviour
 
                 go.transform.SetParent(mapContainer, false);
 
-                go.transform.localPosition = new Vector3(m * unitWidth * sqrt3 * 2 + ((i % 2 == 1) ? unitWidth * Mathf.Sqrt(3) : 0), -i * unitWidth * 3, 0);
+                //go.transform.localPosition = new Vector3(m * unitWidth * sqrt3 * 2 + ((i % 2 == 1) ? unitWidth * Mathf.Sqrt(3) : 0), -i * unitWidth * 3, 0);
+
+                go.transform.localPosition = new Vector3(i * unitWidth * 3, -m * unitWidth * sqrt3 * 2 - ((i % 2 == 1) ? unitWidth * Mathf.Sqrt(3) : 0), 0);
 
                 go.transform.localScale = new Vector3(unitScale, unitScale, unitScale);
 
@@ -163,6 +165,8 @@ public class MapCreator : MonoBehaviour
                 };
 
                 //SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseClick, click);
+
+                SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseButtonDown, click);
 
                 SuperFunction.Instance.AddEventListener(go, SuperRaycast.GetMouseEnter, click);
 
