@@ -298,17 +298,9 @@ public class BattleManager : MonoBehaviour
 
         CreateCards(false);
 
-        //		CreateSummonHeros();
-
         CreateHeros();
 
-        //		CreateMoves();
-
-        //		CreateMoneyTf();
-
         CreateMoneyTfOrigin();
-
-        //RefreshTouchable(battle.GetClientCanAction());
     }
 
     public void QuitBattle()
@@ -457,13 +449,9 @@ public class BattleManager : MonoBehaviour
                     continue;
                 }
 
-                //GameObject go = Instantiate(Resources.Load<GameObject>("MapUnit"));
-
                 GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/MapUnit.prefab", null);
 
                 go.transform.SetParent(mapContainer, false);
-
-                //go.transform.localPosition = new Vector3(m * mapUnitWidth * sqrt3 * 2 + ((i % 2 == 1) ? mapUnitWidth * sqrt3 : 0), -i * mapUnitWidth * 3, 0);
 
                 go.transform.localPosition = new Vector3(i * mapUnitWidth * 3, -m * mapUnitWidth * sqrt3 * 2 - ((i % 2 == 1) ? mapUnitWidth * sqrt3 : 0), 0);
 
@@ -529,7 +517,7 @@ public class BattleManager : MonoBehaviour
 
         battleContentContainer.localPosition = new Vector3(-bounds.center.x, -bounds.center.y, 0);
 
-        defaultScale = Mathf.Min(viewport.extents.x / bounds.extents.x, viewport.extents.y / bounds.extents.y);
+        defaultScale = Mathf.Min(viewport.extents.x / (bounds.extents.x + boundFix * 0.5f), viewport.extents.y / (bounds.extents.y + boundFix * 0.5f));
 
         battleContainer.localScale = new Vector3(defaultScale, defaultScale, defaultScale);
 
@@ -552,8 +540,6 @@ public class BattleManager : MonoBehaviour
             {
                 continue;
             }
-
-            //GameObject go = Instantiate(Resources.Load<GameObject>("HeroCard"));
 
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/HeroCard.prefab", null);
 
@@ -653,8 +639,6 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateArrow(int _start, int _end, Color _color, int _index)
     {
-        //GameObject go = Instantiate(Resources.Load<GameObject>("Arrow"));
-
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/Arrow.prefab", null);
 
         Arrow arrow = go.GetComponent<Arrow>();
@@ -684,8 +668,6 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateShootArrow(int _start, int _end, Color _color)
     {
-        //GameObject go = Instantiate(Resources.Load<GameObject>("ShootArrow"));
-
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/ShootArrow.prefab", null);
 
         ShootArrow arrow = go.GetComponent<ShootArrow>();
@@ -951,8 +933,6 @@ public class BattleManager : MonoBehaviour
 
     private HeroBattle AddHeroToMap(Hero _hero)
     {
-        //GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
-
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/HeroBattle.prefab", null);
 
         HeroBattle hero = go.GetComponent<HeroBattle>();
@@ -969,8 +949,6 @@ public class BattleManager : MonoBehaviour
     private HeroBattle AddCardToMap(int _cardUid, int _pos)
     {
         int cardID = battle.GetCard(_cardUid);
-
-        //GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("HeroBattle"));
 
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/HeroBattle.prefab", null);
 
@@ -996,8 +974,6 @@ public class BattleManager : MonoBehaviour
         _heroCard.transform.SetParent(heroContainer, false);
 
         _heroCard.transform.localPosition = mapUnit.transform.localPosition;
-
-        //_heroCard.transform.localScale = new Vector3(heroScale, heroScale, heroScale);
     }
 
 
@@ -1038,10 +1014,16 @@ public class BattleManager : MonoBehaviour
         //		}
     }
 
+    private System.Random random = new System.Random();
+
+    private int GetRandomValue(int _max)
+    {
+        return random.Next(_max);
+    }
+
     private void CreateAiAction()
     {
-
-        //		HeroAi.Start(battle, battle.clientIsMine, 0.2);
+        BattleAi.Start(battle, true, GetRandomValue);
 
         ClearMoves();
 
@@ -1353,9 +1335,9 @@ public class BattleManager : MonoBehaviour
     {
         Bounds tmpBounds = bounds;
 
-        tmpBounds.extents = new Vector3(tmpBounds.extents.x * battleContainer.transform.localScale.x, tmpBounds.extents.y * battleContainer.transform.localScale.y, tmpBounds.extents.z * battleContainer.transform.localScale.z);
-
         tmpBounds.Expand(boundFix);
+
+        tmpBounds.extents = new Vector3(tmpBounds.extents.x * battleContainer.transform.localScale.x, tmpBounds.extents.y * battleContainer.transform.localScale.y, tmpBounds.extents.z * battleContainer.transform.localScale.z);
 
         if (tmpBounds.extents.x < viewport.extents.x)
         {
