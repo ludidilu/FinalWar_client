@@ -933,7 +933,7 @@ MonoBehaviour:
   moveThreshold: 0.1
   mapUnitWidth: 0.53
   mapUnitScale: 1
-  minScale: 0.5
+  minScale: 1
   maxScale: 2
   fixStep: 1.05
   viewportXFix: 0

@@ -219,9 +219,9 @@ public class BattleControl : MonoBehaviour
             SuperSequenceControl.MoveNext(_index);
         };
 
-        attacker.ShowHud(_vo.attackerSpeed.ToString(), Color.grey, 0, dele0);
+        attacker.ShowHud(_vo.attackerSpeed.ToString(), Color.grey, Color.red, 0, dele0);
 
-        defenderReal.ShowHud(_vo.defenderSpeed.ToString(), Color.grey, 0, null);
+        defenderReal.ShowHud(_vo.defenderSpeed.ToString(), Color.grey, Color.red, 0, null);
 
         yield return null;
 

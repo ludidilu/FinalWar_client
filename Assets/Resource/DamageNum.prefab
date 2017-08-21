@@ -22,6 +22,8 @@ GameObject:
   - component: {fileID: 23361336350603692}
   - component: {fileID: 102749253202829634}
   - component: {fileID: 114533237286841548}
+  - component: {fileID: 114772182679540138}
+  - component: {fileID: 114069847359959732}
   m_Layer: 0
   m_Name: DamageNum
   m_TagString: Untagged
@@ -90,10 +92,23 @@ TextMesh:
   m_FontSize: 0
   m_FontStyle: 1
   m_RichText: 1
-  m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Font: {fileID: 12800000, guid: 6afc4626a5f100e4a8955a82c4bda716, type: 3}
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+--- !u!114 &114069847359959732
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1416160638454546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f7cf1cf26d099b4ba2ee9832a740a91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0.15, y: -0.15, z: 0.2}
+  shadowColor: {r: 0, g: 0, b: 0, a: 0.49019608}
 --- !u!114 &114533237286841548
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -106,6 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 102749253202829634}
+  textOutline: {fileID: 114772182679540138}
   posCurve:
     serializedVersion: 2
     m_Curve:
@@ -144,3 +160,17 @@ MonoBehaviour:
     m_RotationOrder: 4
   moveTime: 1.5
   height: 1.5
+--- !u!114 &114772182679540138
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1416160638454546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b06c0f6e83fc5e439e89e2c1bc738ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineWidth: 0.05
+  outlineColor: {r: 1, g: 0, b: 0, a: 0.49019608}
+  offsetZ: 0.1

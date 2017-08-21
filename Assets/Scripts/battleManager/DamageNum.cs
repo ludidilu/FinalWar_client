@@ -7,6 +7,9 @@ public class DamageNum : MonoBehaviour
     private TextMesh text;
 
     [SerializeField]
+    private TextMeshOutline textOutline;
+
+    [SerializeField]
     private AnimationCurve posCurve;
 
     [SerializeField]
@@ -24,13 +27,15 @@ public class DamageNum : MonoBehaviour
 
     private Action callBack;
 
-    public void Init(string _str, Color _color, Action _callBack)
+    public void Init(string _str, Color _color, Color _outlineColor, Action _callBack)
     {
         startTime = Time.time;
 
         text.text = _str;
 
         text.color = _color;
+
+        textOutline.SetOutlineColor(_outlineColor);
 
         callBack = _callBack;
 

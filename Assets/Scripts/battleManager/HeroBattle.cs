@@ -163,7 +163,7 @@ public class HeroBattle : HeroBase
         SuperTween.Instance.To(0, 1, 1, shockToDel, null);
     }
 
-    public void ShowHud(string _str, Color _color, float _yFix, Action _callBack)
+    public void ShowHud(string _str, Color _color, Color _outlineColor, float _yFix, Action _callBack)
     {
         //GameObject go = Instantiate(Resources.Load<GameObject>("DamageNum"));
 
@@ -177,7 +177,7 @@ public class HeroBattle : HeroBase
 
         DamageNum damageNum = go.GetComponent<DamageNum>();
 
-        damageNum.Init(_str, _color, _callBack);
+        damageNum.Init(_str, _color, _outlineColor, _callBack);
     }
 
     public bool TakeEffect(List<BattleHeroEffectVO> _list)
@@ -194,7 +194,7 @@ public class HeroBattle : HeroBase
 
                     shock = true;
 
-                    ShowHud((-effectVO.data).ToString(), Color.red, i * BattleControl.Instance.hudHeight, null);
+                    ShowHud((-effectVO.data).ToString(), Color.red, Color.black, i * BattleControl.Instance.hudHeight, null);
 
                     break;
 
@@ -202,13 +202,13 @@ public class HeroBattle : HeroBase
 
                     if (effectVO.data > 0)
                     {
-                        ShowHud("+" + effectVO.data.ToString(), Color.yellow, i * BattleControl.Instance.hudHeight, null);
+                        ShowHud("+" + effectVO.data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
                     }
                     else
                     {
                         shock = true;
 
-                        ShowHud(effectVO.data.ToString(), Color.yellow, i * BattleControl.Instance.hudHeight, null);
+                        ShowHud(effectVO.data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
                     }
 
                     break;
@@ -217,13 +217,13 @@ public class HeroBattle : HeroBase
 
                     if (effectVO.data > 0)
                     {
-                        ShowHud("+" + effectVO.data.ToString(), Color.blue, i * BattleControl.Instance.hudHeight, null);
+                        ShowHud("+" + effectVO.data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
                     }
                     else
                     {
                         shock = true;
 
-                        ShowHud(effectVO.data.ToString(), Color.blue, i * BattleControl.Instance.hudHeight, null);
+                        ShowHud(effectVO.data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
                     }
 
                     break;
@@ -233,11 +233,11 @@ public class HeroBattle : HeroBase
 
                     if (effectVO.data > 0)
                     {
-                        ShowHud(effectVO.effect.ToString() + " +" + effectVO.data.ToString(), Color.black, i * BattleControl.Instance.hudHeight, null);
+                        ShowHud(effectVO.effect.ToString() + " +" + effectVO.data.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
                     }
                     else
                     {
-                        ShowHud(effectVO.effect.ToString() + " " + effectVO.data.ToString(), Color.black, i * BattleControl.Instance.hudHeight, null);
+                        ShowHud(effectVO.effect.ToString() + " " + effectVO.data.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
                     }
 
                     break;
@@ -247,7 +247,7 @@ public class HeroBattle : HeroBase
                 case Effect.DISABLE_RECOVER_SHIELD:
                 case Effect.SILENCE:
 
-                    ShowHud(effectVO.effect.ToString(), Color.black, i * BattleControl.Instance.hudHeight, null);
+                    ShowHud(effectVO.effect.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
 
                     break;
             }
