@@ -13,13 +13,13 @@ using gameObjectFactory;
 public static class ResourceLoader
 {
     private static readonly string[] preloadPrefabs = new string[] {
-        "Assets/Resource/Arrow.prefab",
-        "Assets/Resource/DamageArrow.prefab",
-        "Assets/Resource/DamageNum.prefab",
-        "Assets/Resource/HeroBattle.prefab",
-        "Assets/Resource/HeroCard.prefab",
-        "Assets/Resource/MapUnit.prefab",
-        "Assets/Resource/ShootArrow.prefab"
+        "Assets/Resource/prefab/Arrow.prefab",
+        "Assets/Resource/prefab/DamageArrow.prefab",
+        "Assets/Resource/prefab/DamageNum.prefab",
+        "Assets/Resource/prefab/HeroBattle.prefab",
+        "Assets/Resource/prefab/HeroCard.prefab",
+        "Assets/Resource/prefab/MapUnit.prefab",
+        "Assets/Resource/prefab/ShootArrow.prefab"
     };
 
     private static Action callBack;
@@ -206,18 +206,18 @@ public static class ResourceLoader
 
         GameObjectFactory.Instance.PreloadGameObjects(preloadPrefabs, OneLoadOver);
 
-        GameObjectFactory.Instance.GetGameObject("Assets/Resource/BattleManager.prefab", goDele);
+        GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", goDele);
 
-        GameObjectFactory.Instance.GetGameObject("Assets/Resource/BattleControl.prefab", goDele);
+        GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleControl.prefab", goDele);
 #else
 
         Action dele = delegate ()
         {
             GameObjectFactory.Instance.PreloadGameObjects(preloadPrefabs, OneLoadOver);
 
-            GameObjectFactory.Instance.GetGameObject("Assets/Resource/BattleManager.prefab", goDele);
+            GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", goDele);
 
-            GameObjectFactory.Instance.GetGameObject("Assets/Resource/BattleControl.prefab", goDele);
+            GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleControl.prefab", goDele);
         };
 
         AssetManager.Instance.Init(dele);

@@ -20,10 +20,13 @@ public class HeroBattle : HeroBase
     public Transform zTrans;
 
     [SerializeField]
-    private MeshColorControl frame;
+    private SpriteRenderer frame;
 
     [SerializeField]
-    private MeshColorControl body;
+    private SpriteRenderer body;
+
+    [SerializeField]
+    private SpriteRenderer bg;
 
     [SerializeField]
     private TextMesh shield;
@@ -35,10 +38,10 @@ public class HeroBattle : HeroBase
     private TextMesh attack;
 
     [SerializeField]
-    private TextMesh heroType;
+    private SpriteRenderer heroType;
 
-    [SerializeField]
-    private TextMesh heroName;
+    //[SerializeField]
+    //private TextMesh heroName;
 
     private Hero hero;
 
@@ -70,24 +73,16 @@ public class HeroBattle : HeroBase
     {
         sds = _heroSDS;
 
-        heroName.text = sds.name;
+        //heroName.text = sds.name;
 
-        heroType.text = _heroSDS.heroTypeFix.name;
+        //heroType.text = _heroSDS.heroTypeFix.name;
+
+        heroType.sprite = BattleControl.Instance.typeSprite[_heroSDS.heroTypeFix.ID];
     }
 
     public void SetFrameVisible(bool _visible)
     {
-        frame.gameObject.SetActive(_visible);
-    }
-
-    public void SetFrameColor(Color _color)
-    {
-        frame.SetColor(_color);
-    }
-
-    void Start()
-    {
-        SetFrameColor(new Color(1, 0, 0, 0.3f));
+        frame.sprite = _visible ? BattleControl.Instance.frameChoose : BattleControl.Instance.frame;
     }
 
     public void Init(int _id)
@@ -131,7 +126,20 @@ public class HeroBattle : HeroBase
 
         shield.text = nowShield.ToString();
 
-        body.SetColor(hero.GetCanAction() ? Color.white : Color.grey);
+        if (hero.GetCanAction())
+        {
+            body.material = BattleControl.Instance.mat;
+
+            bg.material = BattleControl.Instance.mat;
+        }
+        else
+        {
+            body.material = BattleControl.Instance.matGray;
+
+            bg.material = BattleControl.Instance.matGray;
+        }
+
+        //body.SetColor(hero.GetCanAction() ? Color.white : Color.grey);
     }
 
     public void RefreshAttackWithoutShield()
@@ -167,7 +175,7 @@ public class HeroBattle : HeroBase
     {
         //GameObject go = Instantiate(Resources.Load<GameObject>("DamageNum"));
 
-        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/DamageNum.prefab", null);
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/DamageNum.prefab", null);
 
         go.transform.SetParent(BattleManager.Instance.arrowContainer, false);
 
@@ -275,13 +283,9 @@ public class HeroBattle : HeroBase
 
     private void DieTo(float _v)
     {
-        Color color = frame.GetColor();
+        frame.color = new Color(1, 1, 1, _v);
 
-        frame.SetColor(new Color(color.r, color.g, color.b, _v));
-
-        color = body.GetColor();
-
-        body.SetColor(new Color(color.r, color.g, color.b, _v));
+        body.color = new Color(1, 1, 1, _v);
 
         shield.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
 
@@ -289,7 +293,7 @@ public class HeroBattle : HeroBase
 
         hp.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
 
-        heroName.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
+        //heroName.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
 
         heroType.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
     }

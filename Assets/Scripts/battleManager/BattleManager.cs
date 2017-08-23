@@ -449,7 +449,7 @@ public class BattleManager : MonoBehaviour
                     continue;
                 }
 
-                GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/MapUnit.prefab", null);
+                GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/MapUnit.prefab", null);
 
                 go.transform.SetParent(mapContainer, false);
 
@@ -541,7 +541,7 @@ public class BattleManager : MonoBehaviour
                 continue;
             }
 
-            GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/HeroCard.prefab", null);
+            GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/HeroCard.prefab", null);
 
             HeroCard hero = go.GetComponent<HeroCard>();
 
@@ -639,7 +639,7 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateArrow(int _start, int _end, Color _color, int _index)
     {
-        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/Arrow.prefab", null);
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/Arrow.prefab", null);
 
         Arrow arrow = go.GetComponent<Arrow>();
 
@@ -668,7 +668,7 @@ public class BattleManager : MonoBehaviour
 
     private GameObject CreateShootArrow(int _start, int _end, Color _color)
     {
-        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/ShootArrow.prefab", null);
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/ShootArrow.prefab", null);
 
         ShootArrow arrow = go.GetComponent<ShootArrow>();
 
@@ -933,7 +933,7 @@ public class BattleManager : MonoBehaviour
 
     private HeroBattle AddHeroToMap(Hero _hero)
     {
-        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/HeroBattle.prefab", null);
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/HeroBattle.prefab", null);
 
         HeroBattle hero = go.GetComponent<HeroBattle>();
 
@@ -950,7 +950,7 @@ public class BattleManager : MonoBehaviour
     {
         int cardID = battle.GetCard(_cardUid);
 
-        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/HeroBattle.prefab", null);
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/HeroBattle.prefab", null);
 
         HeroBattle hero = go.GetComponent<HeroBattle>();
 

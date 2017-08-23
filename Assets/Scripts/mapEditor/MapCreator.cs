@@ -144,7 +144,7 @@ public class MapCreator : MonoBehaviour
                     continue;
                 }
 
-                GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resource/MapUnit.prefab"));
+                GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resource/prefab/MapUnit.prefab"));
 
                 go.transform.SetParent(mapContainer, false);
 
