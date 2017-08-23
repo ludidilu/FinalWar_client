@@ -6,27 +6,18 @@ public class MeshColorControl : MonoBehaviour
 {
     private Color color;
 
-    private List<Color> colorList;
+    private List<Color> colorList = new List<Color>();
 
-    private Mesh m_mesh;
+    private Mesh mesh;
 
-    private Mesh mesh
+    // Use this for initialization
+    void Awake()
     {
-        get
+        mesh = GetComponent<MeshFilter>().mesh;
+
+        for (int i = 0; i < mesh.vertexCount; i++)
         {
-            if (m_mesh == null)
-            {
-                m_mesh = GetComponent<MeshFilter>().mesh;
-
-                colorList = new List<Color>();
-
-                for (int i = 0; i < m_mesh.vertexCount; i++)
-                {
-                    colorList.Add(Color.white);
-                }
-            }
-
-            return m_mesh;
+            colorList.Add(Color.white);
         }
     }
 
