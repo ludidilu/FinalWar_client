@@ -2,6 +2,8 @@
 {
 	public string name;
 
+    public string icon;
+
 	private string m_comment;
 
 	public string comment{

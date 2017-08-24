@@ -4,6 +4,7 @@ using UnityEngine;
 using FinalWar;
 using superTween;
 using gameObjectFactory;
+using textureFactory;
 
 public class HeroBattle : HeroBase
 {
@@ -73,11 +74,14 @@ public class HeroBattle : HeroBase
     {
         sds = _heroSDS;
 
-        //heroName.text = sds.name;
-
-        //heroType.text = _heroSDS.heroTypeFix.name;
-
         heroType.sprite = BattleControl.Instance.typeSprite[_heroSDS.heroTypeFix.ID];
+
+        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + sds.icon + ".png", GetBodySprite, true);
+    }
+
+    private void GetBodySprite(Sprite _sp)
+    {
+        body.sprite = _sp;
     }
 
     public void SetFrameVisible(bool _visible)
