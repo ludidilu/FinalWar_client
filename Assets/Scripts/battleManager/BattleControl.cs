@@ -33,6 +33,21 @@ public class BattleControl : MonoBehaviour
     [SerializeField]
     public float hudHeight;
 
+    [SerializeField]
+    public Material mat;
+
+    [SerializeField]
+    public Material matGray;
+
+    [SerializeField]
+    public Sprite[] typeSprite;
+
+    [SerializeField]
+    public Sprite frame;
+
+    [SerializeField]
+    public Sprite frameChoose;
+
     public static BattleControl Instance { get; private set; }
 
     void Awake()
@@ -92,9 +107,7 @@ public class BattleControl : MonoBehaviour
 
         angle += Mathf.PI * 0.5f;
 
-        //GameObject arrow = Instantiate(Resources.Load<GameObject>("DamageArrow"));
-
-        GameObject arrow = GameObjectFactory.Instance.GetGameObject("Assets/Resource/DamageArrow.prefab", null);
+        GameObject arrow = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/DamageArrow.prefab", null);
 
         arrow.transform.SetParent(BattleManager.Instance.arrowContainer, false);
 
