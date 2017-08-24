@@ -630,7 +630,7 @@ public class BattleControl : MonoBehaviour
 
         Action<float> dele = delegate (float _value)
         {
-            hero.zTrans.localRotation = Quaternion.Euler(0, _value, 0);
+            hero.zTrans.localRotation = Quaternion.Euler(0, 0, _value);
         };
 
         SuperSequenceControl.To(0, 720, 0.5f, dele, _index);

@@ -1303,6 +1303,11 @@ public class BattleManager : MonoBehaviour
 
     private void ScaleChange(int _index, float _scrollValue, Vector2 _pos)
     {
+        if (!canAction)
+        {
+            return;
+        }
+
         Vector3 v = mainCamera.ScreenToWorldPoint(_pos);
 
         Vector3 v2 = battleContainer.InverseTransformPoint(v);

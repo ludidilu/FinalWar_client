@@ -6,6 +6,7 @@ using wwwManager;
 using thread;
 using System.Threading;
 using assetManager;
+using assetBundleManager;
 #endif
 using FinalWar;
 using gameObjectFactory;
@@ -210,9 +211,10 @@ public static class ResourceLoader
 
         GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleControl.prefab", goDele);
 #else
-
         Action dele = delegate ()
         {
+            AssetBundleManager.Instance.Load("texture", null);
+
             GameObjectFactory.Instance.PreloadGameObjects(preloadPrefabs, OneLoadOver);
 
             GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", goDele);
