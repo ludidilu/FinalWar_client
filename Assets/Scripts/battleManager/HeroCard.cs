@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using textureFactory;
 
 public class HeroCard : HeroBase, IPointerClickHandler
 {
@@ -11,10 +12,10 @@ public class HeroCard : HeroBase, IPointerClickHandler
     private Image frame;
 
     [SerializeField]
-    private Text nameText;
+    private Image body;
 
     [SerializeField]
-    private Text ability;
+    private Image heroType;
 
     public void Init(int _cardUid, int _id)
     {
@@ -29,25 +30,25 @@ public class HeroCard : HeroBase, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData _data)
     {
-        SendMessageUpwards("HeroClick", this, SendMessageOptions.DontRequireReceiver);
+        BattleManager.Instance.HeroClick(this);
     }
 
     private void InitCard(HeroSDS _heroSDS)
     {
         sds = _heroSDS;
 
-        nameText.text = sds.name;
+        heroType.sprite = BattleControl.Instance.typeSprite[sds.heroTypeFix.ID];
 
-        ability.text = _heroSDS.heroTypeFix.name;
+        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + sds.icon + ".png", GetBodySprite, true);
+    }
+
+    private void GetBodySprite(Sprite _sp)
+    {
+        body.sprite = _sp;
     }
 
     public void SetFrameVisible(bool _visible)
     {
-        frame.gameObject.SetActive(_visible);
-    }
-
-    public void SetFrameColor(Color _color)
-    {
-        frame.color = _color;
+        frame.sprite = _visible ? BattleControl.Instance.frameChoose : BattleControl.Instance.frame;
     }
 }

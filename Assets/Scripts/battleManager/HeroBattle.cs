@@ -74,7 +74,7 @@ public class HeroBattle : HeroBase
     {
         sds = _heroSDS;
 
-        heroType.sprite = BattleControl.Instance.typeSprite[_heroSDS.heroTypeFix.ID];
+        heroType.sprite = BattleControl.Instance.typeSprite[sds.heroTypeFix.ID];
 
         TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + sds.icon + ".png", GetBodySprite, true);
     }
