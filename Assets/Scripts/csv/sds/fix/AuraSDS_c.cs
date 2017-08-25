@@ -4,6 +4,16 @@ public class AuraSDS_c {
         _csv.auraTarget = _br.ReadInt32();
         _csv.auraType = _br.ReadInt32();
         _csv.ID = _br.ReadInt32();
+        int lengthauraCondition = _br.ReadInt32();
+        _csv.auraCondition = new int[lengthauraCondition];
+        for(int i = 0 ; i < lengthauraCondition ; i++){
+            _csv.auraCondition[i] = _br.ReadInt32();
+        }
+        int lengthauraConditionData = _br.ReadInt32();
+        _csv.auraConditionData = new int[lengthauraConditionData];
+        for(int i = 0 ; i < lengthauraConditionData ; i++){
+            _csv.auraConditionData[i] = _br.ReadInt32();
+        }
         int lengthauraData = _br.ReadInt32();
         _csv.auraData = new int[lengthauraData];
         for(int i = 0 ; i < lengthauraData ; i++){

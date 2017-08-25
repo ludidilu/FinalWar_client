@@ -14,6 +14,7 @@ public class HeroSDS_c {
         for(int i = 0 ; i < lengthauras ; i++){
             _csv.auras[i] = _br.ReadInt32();
         }
+        _csv.icon = _br.ReadString();
         _csv.name = _br.ReadString();
     }
 }
