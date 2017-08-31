@@ -1,18 +1,16 @@
 using System.IO;
 public class AuraSDS_c {
     public static void Init(AuraSDS _csv, BinaryReader _br){
+        _csv.auraCondition = _br.ReadInt32();
+        _csv.auraConditionData = _br.ReadInt32();
         _csv.auraTarget = _br.ReadInt32();
+        _csv.auraTrigger = _br.ReadInt32();
         _csv.auraType = _br.ReadInt32();
         _csv.ID = _br.ReadInt32();
-        int lengthauraCondition = _br.ReadInt32();
-        _csv.auraCondition = new int[lengthauraCondition];
-        for(int i = 0 ; i < lengthauraCondition ; i++){
-            _csv.auraCondition[i] = _br.ReadInt32();
-        }
-        int lengthauraConditionData = _br.ReadInt32();
-        _csv.auraConditionData = new int[lengthauraConditionData];
-        for(int i = 0 ; i < lengthauraConditionData ; i++){
-            _csv.auraConditionData[i] = _br.ReadInt32();
+        int lengthauraConditionTarget = _br.ReadInt32();
+        _csv.auraConditionTarget = new int[lengthauraConditionTarget];
+        for(int i = 0 ; i < lengthauraConditionTarget ; i++){
+            _csv.auraConditionTarget[i] = _br.ReadInt32();
         }
         int lengthauraData = _br.ReadInt32();
         _csv.auraData = new int[lengthauraData];

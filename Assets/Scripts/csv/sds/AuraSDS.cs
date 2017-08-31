@@ -1,21 +1,23 @@
 ﻿public partial class AuraSDS : CsvBase, IAuraSDS
 {
     public string eventName;
-    public int[] auraCondition;
-    public int[] auraConditionData;
+    public int auraTrigger;
+    public int auraCondition;
+    public int[] auraConditionTarget;
+    public int auraConditionData;
     public int auraType;
     public int auraTarget;
     public int[] auraData;
 
-    private AuraCondition[] auraConditionFix;
+    private AuraTarget[] auraConditionTargetFix;
 
     public override void Fix()
     {
-        auraConditionFix = new AuraCondition[auraCondition.Length];
+        auraConditionTargetFix = new AuraTarget[auraConditionTarget.Length];
 
-        for (int i = 0; i < auraCondition.Length; i++)
+        for (int i = 0; i < auraConditionTarget.Length; i++)
         {
-            auraConditionFix[i] = (AuraCondition)auraCondition[i];
+            auraConditionTargetFix[i] = (AuraTarget)auraConditionTarget[i];
         }
     }
 
@@ -24,12 +26,22 @@
         return eventName;
     }
 
-    public AuraCondition[] GetAuraCondition()
+    public AuraTarget GetAuraTrigger()
     {
-        return auraConditionFix;
+        return (AuraTarget)auraTrigger;
     }
 
-    public int[] GetAuraConditionData()
+    public AuraCondition GetAuraCondition()
+    {
+        return (AuraCondition)auraCondition;
+    }
+
+    public AuraTarget[] GetAuraConditionTarget()
+    {
+        return auraConditionTargetFix;
+    }
+
+    public int GetAuraConditionData()
     {
         return auraConditionData;
     }

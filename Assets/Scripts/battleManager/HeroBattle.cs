@@ -196,76 +196,79 @@ public class HeroBattle : HeroBase
     {
         bool shock = false;
 
-        for (int i = 0; i < _list.Count; i++)
+        if (_list != null)
         {
-            BattleHeroEffectVO effectVO = _list[i];
-
-            switch (effectVO.effect)
+            for (int i = 0; i < _list.Count; i++)
             {
-                case Effect.DAMAGE:
+                BattleHeroEffectVO effectVO = _list[i];
 
-                    shock = true;
+                switch (effectVO.effect)
+                {
+                    case Effect.DAMAGE:
 
-                    ShowHud((-effectVO.data).ToString(), Color.red, Color.black, i * BattleControl.Instance.hudHeight, null);
-
-                    break;
-
-                case Effect.SHIELD_CHANGE:
-
-                    if (effectVO.data > 0)
-                    {
-                        ShowHud("+" + effectVO.data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
-                    }
-                    else
-                    {
                         shock = true;
 
-                        ShowHud(effectVO.data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
-                    }
+                        ShowHud((-effectVO.data).ToString(), Color.red, Color.black, i * BattleControl.Instance.hudHeight, null);
 
-                    break;
+                        break;
 
-                case Effect.HP_CHANGE:
+                    case Effect.SHIELD_CHANGE:
 
-                    if (effectVO.data > 0)
-                    {
-                        ShowHud("+" + effectVO.data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
-                    }
-                    else
-                    {
-                        shock = true;
+                        if (effectVO.data > 0)
+                        {
+                            ShowHud("+" + effectVO.data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
+                        }
+                        else
+                        {
+                            shock = true;
 
-                        ShowHud(effectVO.data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
-                    }
+                            ShowHud(effectVO.data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
+                        }
 
-                    break;
+                        break;
 
-                case Effect.FIX_ATTACK:
-                case Effect.FIX_SPEED:
+                    case Effect.HP_CHANGE:
 
-                    if (effectVO.data > 0)
-                    {
-                        ShowHud(effectVO.effect.ToString() + " +" + effectVO.data.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
-                    }
-                    else
-                    {
-                        ShowHud(effectVO.effect.ToString() + " " + effectVO.data.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
-                    }
+                        if (effectVO.data > 0)
+                        {
+                            ShowHud("+" + effectVO.data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
+                        }
+                        else
+                        {
+                            shock = true;
 
-                    break;
+                            ShowHud(effectVO.data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
+                        }
 
-                case Effect.DISABLE_ACTION:
-                case Effect.DISABLE_MOVE:
-                case Effect.DISABLE_RECOVER_SHIELD:
-                case Effect.SILENCE:
+                        break;
 
-                    ShowHud(effectVO.effect.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
+                    case Effect.FIX_ATTACK:
+                    case Effect.FIX_SPEED:
 
-                    break;
+                        if (effectVO.data > 0)
+                        {
+                            ShowHud(effectVO.effect.ToString() + " +" + effectVO.data.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
+                        }
+                        else
+                        {
+                            ShowHud(effectVO.effect.ToString() + " " + effectVO.data.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
+                        }
+
+                        break;
+
+                    case Effect.DISABLE_ACTION:
+                    case Effect.DISABLE_MOVE:
+                    case Effect.DISABLE_RECOVER_SHIELD:
+                    case Effect.SILENCE:
+
+                        ShowHud(effectVO.effect.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
+
+                        break;
+                }
             }
-        }
 
-        RefreshHpAndShield();
+            RefreshHpAndShield();
+        }
 
         return shock;
     }

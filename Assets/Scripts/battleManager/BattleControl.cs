@@ -83,7 +83,9 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        bool shock = stander.TakeEffect(_vo.effectList);
+        attacker.TakeEffect(_vo.attackerEffectList);
+
+        bool shock = stander.TakeEffect(_vo.standerEffectList);
 
         if (shock)
         {
@@ -316,7 +318,9 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        bool shock = defender.TakeEffect(_vo.effectList);
+        attacker.TakeEffect(_vo.attackerEffectList);
+
+        bool shock = defender.TakeEffect(_vo.defenderEffectList);
 
         if (shock)
         {
@@ -427,7 +431,9 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        bool shock = defender.TakeEffect(_vo.effectList);
+        attacker.TakeEffect(_vo.attackerEffectList);
+
+        bool shock = defender.TakeEffect(_vo.defenderEffectList);
 
         if (shock)
         {
