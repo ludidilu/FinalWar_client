@@ -48,11 +48,16 @@ public class Connection : MonoBehaviour
 
         IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(_ip), _port);
 
-        socket.Connect(ipe);
+        socket.BeginConnect(ipe, ConnectCallBack, _uid);
+    }
+
+    private void ConnectCallBack(IAsyncResult _result)
+    {
+        socket.EndConnect(_result);
 
         isConnect = true;
 
-        socket.BeginSend(BitConverter.GetBytes(_uid), 0, 4, SocketFlags.None, SendCallBack, null);
+        socket.BeginSend(BitConverter.GetBytes((int)_result.AsyncState), 0, 4, SocketFlags.None, SendCallBack, null);
     }
 
     void Update()
