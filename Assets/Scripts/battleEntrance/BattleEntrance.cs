@@ -25,7 +25,9 @@ public class BattleEntrance : MonoBehaviour
     {
         SuperFunction.Instance.AddEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_OVER, BattleOver);
 
-        BattleManager.Instance.Init(SendBattleAction);
+        BattleManager.Instance.Init();
+
+        BattleManager.Instance.SetSendDataCallBack(SendBattleAction);
 
         Connection.Instance.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ReceiveData, ConfigDictionary.Instance.uid);
     }

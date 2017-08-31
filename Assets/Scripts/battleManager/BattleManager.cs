@@ -207,12 +207,14 @@ public class BattleManager : MonoBehaviour
 
     private bool isInit = false;
 
+    private Action<MemoryStream> sendDataCallBack;
+
     private void WriteLog(string _str)
     {
         Debug.Log(_str);
     }
 
-    public void Init(Action<MemoryStream> _sendDataCallBack)
+    public void Init()
     {
         Log.Init(WriteLog);
 
@@ -232,13 +234,26 @@ public class BattleManager : MonoBehaviour
 
         Battle.Init(mapDic, heroDic, skillDic, auraDic, effectDic);
 
-        battle.ClientSetCallBack(_sendDataCallBack, RefreshData, DoAction, BattleQuit);
+        battle.ClientSetCallBack(SendData, RefreshData, DoAction, BattleQuit);
 
         SuperFunction.Instance.AddEventListener<float, Vector2>(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
 
         SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
 
         SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
+    }
+
+    public void SetSendDataCallBack(Action<MemoryStream> _sendDataCallBack)
+    {
+        sendDataCallBack = _sendDataCallBack;
+    }
+
+    private void SendData(MemoryStream _ms)
+    {
+        if (sendDataCallBack != null)
+        {
+            sendDataCallBack(_ms);
+        }
     }
 
     public void ReceiveData(byte[] _bytes)

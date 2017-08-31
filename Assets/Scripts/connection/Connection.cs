@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Net.Sockets;
 using System.Net;
 using System;
@@ -30,19 +29,22 @@ public class Connection : MonoBehaviour
     private byte[] headBuffer = new byte[HEAD_LENGTH];
     private byte[] bodyBuffer = new byte[ushort.MaxValue];
 
-    private Socket socket;
+    private Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
     private Action<byte[]> receiveCallBack;
 
     private bool isReceivingHead = true;
 
-    private bool isConnect = false;
+    public bool isConnect { private set; get; }
 
     public void Init(string _ip, int _port, Action<byte[]> _receiveCallBack, int _uid)
     {
-        receiveCallBack = _receiveCallBack;
+        if (isConnect)
+        {
+            return;
+        }
 
-        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        receiveCallBack = _receiveCallBack;
 
         IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(_ip), _port);
 
