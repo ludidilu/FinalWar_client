@@ -21,7 +21,7 @@ public class BattleEntrance : MonoBehaviour
     }
 
     [SerializeField]
-    private GameObject panel;
+    private GameObject container;
 
     [SerializeField]
     private GameObject btPVP;
@@ -36,6 +36,8 @@ public class BattleEntrance : MonoBehaviour
 
     void Awake()
     {
+        DebugTool.Init(Debug.Log);
+
         ResourceLoader.Load(LoadOver);
     }
 
@@ -49,7 +51,14 @@ public class BattleEntrance : MonoBehaviour
 
         client = new Client();
 
-        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceiveData, GetActionCallBack);
+        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceiveData, ConnectSuccess);
+    }
+
+    private void ConnectSuccess(BinaryReader _br)
+    {
+        container.SetActive(true);
+
+        ReceiveData(_br);
     }
 
     private void ReceiveData(BinaryReader _br)
@@ -58,85 +67,27 @@ public class BattleEntrance : MonoBehaviour
 
         if (isBattle)
         {
-            if (!BattleManager.Instance.gameObject.activeSelf)
+            if (container.activeSelf)
             {
-                return;
+                container.SetActive(false);
             }
 
-            BattleManager.Instance.ReceiveData(_br);
+            if (!BattleManager.Instance.gameObject.activeSelf)
+            {
+                SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
+
+                BattleManager.Instance.RequestRefreshData();
+            }
+            else
+            {
+                BattleManager.Instance.ReceiveData(_br);
+            }
         }
         else
         {
-            PlayerState playerState = (PlayerState)_br.ReadUInt16();
+            PlayerState playerState = (PlayerState)_br.ReadInt16();
 
             SetState(playerState);
-        }
-
-        switch (type)
-        {
-            case 0:
-
-                short length = _br.ReadInt16();
-
-                byte[] bytes = _br.ReadBytes(length);
-
-                if (!BattleManager.Instance.gameObject.activeSelf)
-                {
-                    BattleManager.Instance.gameObject.SetActive(true);
-                }
-
-                if (gameObject.activeSelf)
-                {
-                    gameObject.SetActive(false);
-                }
-
-                BattleManager.Instance.ReceiveData(bytes);
-
-                break;
-
-            case 1:
-
-                if (BattleManager.Instance.gameObject.activeSelf)
-                {
-                    BattleManager.Instance.gameObject.SetActive(false);
-                }
-
-                if (!gameObject.activeSelf)
-                {
-                    gameObject.SetActive(true);
-                }
-
-                panel.SetActive(true);
-
-                btPVP.SetActive(false);
-
-                btPVE.SetActive(false);
-
-                btCancel.SetActive(true);
-
-                break;
-
-            case 2:
-
-                if (BattleManager.Instance.gameObject.activeSelf)
-                {
-                    BattleManager.Instance.gameObject.SetActive(false);
-                }
-
-                if (!gameObject.activeSelf)
-                {
-                    gameObject.SetActive(true);
-                }
-
-                panel.SetActive(true);
-
-                btPVP.SetActive(true);
-
-                btPVE.SetActive(true);
-
-                btCancel.SetActive(false);
-
-                break;
         }
     }
 
@@ -146,19 +97,42 @@ public class BattleEntrance : MonoBehaviour
         {
             case PlayerState.BATTLE:
 
+                container.SetActive(false);
+
+                if (!BattleManager.Instance.gameObject.activeSelf)
+                {
+                    SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
+
+                    BattleManager.Instance.RequestRefreshData();
+                }
 
                 break;
 
             case PlayerState.FREE:
 
+                btPVP.SetActive(true);
+
+                btPVE.SetActive(true);
+
+                btCancel.SetActive(false);
 
                 break;
 
             case PlayerState.SEARCHING:
 
+                btPVP.SetActive(false);
+
+                btPVE.SetActive(false);
+
+                btCancel.SetActive(true);
 
                 break;
         }
+    }
+
+    private void BattleStart(int _index)
+    {
+        BattleManager.Instance.gameObject.SetActive(true);
     }
 
     public void EnterPVP()
@@ -186,14 +160,9 @@ public class BattleEntrance : MonoBehaviour
 
                 bw.Write((short)_data);
 
-                client.Send(ms, GetActionCallBack);
+                client.Send(ms, ReceiveData);
             }
         }
-    }
-
-    private void GetActionCallBack(BinaryReader _br)
-    {
-
     }
 
     private void SendBattleAction(MemoryStream _ms, Action<BinaryReader> _callBack)
@@ -206,21 +175,24 @@ public class BattleEntrance : MonoBehaviour
 
                 bw.Write(_ms.GetBuffer(), 0, (int)_ms.Length);
 
-                client.Send(_ms, _callBack);
+                client.Send(ms, _callBack);
             }
         }
     }
 
     private void BattleOver(int _index)
     {
-        gameObject.SetActive(true);
-
-        panel.SetActive(true);
+        container.SetActive(true);
 
         btPVP.SetActive(true);
 
         btPVE.SetActive(true);
 
         btCancel.SetActive(false);
+    }
+
+    void Update()
+    {
+        client.Update();
     }
 }

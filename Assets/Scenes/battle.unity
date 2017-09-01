@@ -1011,7 +1011,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b77def02f649d824b8647146dcf7dd08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panel: {fileID: 1688468802}
+  container: {fileID: 1688468802}
   btPVP: {fileID: 1203941051}
   btPVE: {fileID: 1441971448}
   btCancel: {fileID: 732264360}
