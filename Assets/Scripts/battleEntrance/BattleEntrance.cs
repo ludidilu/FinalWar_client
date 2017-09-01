@@ -51,17 +51,10 @@ public class BattleEntrance : MonoBehaviour
 
         client = new Client();
 
-        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceiveData, ConnectSuccess);
+        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceivePushData, ReceiveReplyData);
     }
 
-    private void ConnectSuccess(BinaryReader _br)
-    {
-        container.SetActive(true);
-
-        ReceiveData(_br);
-    }
-
-    private void ReceiveData(BinaryReader _br)
+    private void ReceivePushData(BinaryReader _br)
     {
         bool isBattle = _br.ReadBoolean();
 
@@ -85,10 +78,15 @@ public class BattleEntrance : MonoBehaviour
         }
         else
         {
-            PlayerState playerState = (PlayerState)_br.ReadInt16();
-
-            SetState(playerState);
+            ReceiveReplyData(_br);
         }
+    }
+
+    private void ReceiveReplyData(BinaryReader _br)
+    {
+        PlayerState playerState = (PlayerState)_br.ReadInt16();
+
+        SetState(playerState);
     }
 
     private void SetState(PlayerState _state)
@@ -110,6 +108,8 @@ public class BattleEntrance : MonoBehaviour
 
             case PlayerState.FREE:
 
+                container.SetActive(true);
+
                 btPVP.SetActive(true);
 
                 btPVE.SetActive(true);
@@ -119,6 +119,8 @@ public class BattleEntrance : MonoBehaviour
                 break;
 
             case PlayerState.SEARCHING:
+
+                container.SetActive(true);
 
                 btPVP.SetActive(false);
 
@@ -160,7 +162,7 @@ public class BattleEntrance : MonoBehaviour
 
                 bw.Write((short)_data);
 
-                client.Send(ms, ReceiveData);
+                client.Send(ms, ReceiveReplyData);
             }
         }
     }
