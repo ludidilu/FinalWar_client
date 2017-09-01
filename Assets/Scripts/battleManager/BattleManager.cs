@@ -15,6 +15,8 @@ using gameObjectFactory;
 
 public class BattleManager : MonoBehaviour
 {
+    public const string BATTLE_START = "battleStart";
+
     public const string BATTLE_OVER = "battleOver";
 
     [SerializeField]
@@ -207,7 +209,7 @@ public class BattleManager : MonoBehaviour
 
     private bool isInit = false;
 
-    private Action<MemoryStream> sendDataCallBack;
+    private Action<MemoryStream, Action<BinaryReader>> sendDataCallBack;
 
     private void WriteLog(string _str)
     {
@@ -243,22 +245,22 @@ public class BattleManager : MonoBehaviour
         SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
     }
 
-    public void SetSendDataCallBack(Action<MemoryStream> _sendDataCallBack)
+    public void SetSendDataCallBack(Action<MemoryStream, Action<BinaryReader>> _sendDataCallBack)
     {
         sendDataCallBack = _sendDataCallBack;
     }
 
-    private void SendData(MemoryStream _ms)
+    private void SendData(MemoryStream _ms, Action<BinaryReader> _callBack)
     {
         if (sendDataCallBack != null)
         {
-            sendDataCallBack(_ms);
+            sendDataCallBack(_ms, _callBack);
         }
     }
 
-    public void ReceiveData(byte[] _bytes)
+    public void ReceiveData(BinaryReader _br)
     {
-        battle.ClientGetPackage(_bytes);
+        battle.ClientGetPackage(_br);
     }
 
     private void RefreshData()
@@ -266,6 +268,8 @@ public class BattleManager : MonoBehaviour
         if (!isInit)
         {
             isInit = true;
+
+            SuperFunction.Instance.DispatchEvent(gameObject, BATTLE_START);
         }
 
         heroDetail.Hide();
@@ -371,6 +375,8 @@ public class BattleManager : MonoBehaviour
 
     private void BattleOver()
     {
+        isInit = false;
+
         RefreshTouchable(true);
 
         gameObject.SetActive(false);
@@ -1013,7 +1019,7 @@ public class BattleManager : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.F5))
         {
-            battle.ClientRequestRefreshData();
+            RequestRefreshData();
 
         }
         else if (Input.GetKeyUp(KeyCode.A))
@@ -1027,6 +1033,11 @@ public class BattleManager : MonoBehaviour
         //
         //			ActionBtClick();
         //		}
+    }
+
+    public void RequestRefreshData()
+    {
+        battle.ClientRequestRefreshData();
     }
 
     private System.Random random = new System.Random();
