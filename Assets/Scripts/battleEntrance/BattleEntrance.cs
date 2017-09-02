@@ -36,7 +36,7 @@ public class BattleEntrance : MonoBehaviour
 
     void Awake()
     {
-        DebugTool.Init(Debug.Log);
+        Log.Init(Debug.Log);
 
         ResourceLoader.Load(LoadOver);
     }
