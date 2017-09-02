@@ -10,6 +10,9 @@ public class DamageNum : MonoBehaviour
     private TextMeshOutline textOutline;
 
     [SerializeField]
+    private TextMeshShadow textShadow;
+
+    [SerializeField]
     private AnimationCurve posCurve;
 
     [SerializeField]
@@ -34,6 +37,10 @@ public class DamageNum : MonoBehaviour
         text.text = _str;
 
         text.color = _color;
+
+        textOutline.SetText(_str);
+
+        textShadow.SetText(_str);
 
         textOutline.SetOutlineColor(_outlineColor);
 

@@ -33,10 +33,19 @@ public class HeroBattle : HeroBase
     private TextMesh shield;
 
     [SerializeField]
+    private TextMeshOutline shieldOutline;
+
+    [SerializeField]
     private TextMesh hp;
 
     [SerializeField]
+    private TextMeshOutline hpOutline;
+
+    [SerializeField]
     private TextMesh attack;
+
+    [SerializeField]
+    private TextMeshOutline attackOutline;
 
     [SerializeField]
     private SpriteRenderer heroType;
@@ -97,9 +106,15 @@ public class HeroBattle : HeroBase
 
         hp.gameObject.SetActive(false);
 
-        shield.gameObject.SetActive(false);
-
         attack.gameObject.SetActive(false);
+
+        shield.color = Color.red;
+
+        string text = heroSDS.cost.ToString();
+
+        shield.text = text;
+
+        shieldOutline.SetText(text);
     }
 
     public void Init(Hero _hero)
@@ -126,9 +141,17 @@ public class HeroBattle : HeroBase
 
         hero.ProcessDamage(out nowShield, out nowHp);
 
-        hp.text = nowHp.ToString();
+        string text = nowHp.ToString();
 
-        shield.text = nowShield.ToString();
+        hp.text = text;
+
+        hpOutline.SetText(text);
+
+        text = nowShield.ToString();
+
+        shield.text = text;
+
+        shieldOutline.SetText(text);
 
         if (hero.GetCanAction())
         {
@@ -148,17 +171,29 @@ public class HeroBattle : HeroBase
 
     public void RefreshAttackWithoutShield()
     {
-        attack.text = hero.GetDamageWithoutShield().ToString();
+        string text = hero.GetDamageWithoutShield().ToString();
+
+        attack.text = text;
+
+        attackOutline.SetText(text);
     }
 
     public void RefreshAttack()
     {
-        attack.text = hero.GetDamage().ToString();
+        string text = hero.GetDamage().ToString();
+
+        attack.text = text;
+
+        attackOutline.SetText(text);
     }
 
     public void RefreshAttack(int _attack)
     {
-        attack.text = _attack.ToString();
+        string text = _attack.ToString();
+
+        attack.text = text;
+
+        attackOutline.SetText(text);
     }
 
     public void Shock(HeroBattle _hero, AnimationCurve _curve, float _shockDis)
@@ -293,14 +328,14 @@ public class HeroBattle : HeroBase
 
         body.color = new Color(1, 1, 1, _v);
 
+        bg.color = new Color(1, 1, 1, _v);
+
         shield.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
 
-        attack.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
+        attack.color = new Color(attack.color.r, attack.color.g, attack.color.b, _v);
 
-        hp.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
+        hp.color = new Color(hp.color.r, hp.color.g, hp.color.b, _v);
 
-        //heroName.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
-
-        heroType.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
+        heroType.color = new Color(1, 1, 1, _v);
     }
 }

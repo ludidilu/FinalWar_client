@@ -593,8 +593,11 @@ MonoBehaviour:
   body: {fileID: 212780729786936990}
   bg: {fileID: 212530215307290634}
   shield: {fileID: 102487142974038680}
+  shieldOutline: {fileID: 114320525227429352}
   hp: {fileID: 102429652892271382}
+  hpOutline: {fileID: 114385770890323526}
   attack: {fileID: 102530061273927654}
+  attackOutline: {fileID: 114593522868792612}
   heroType: {fileID: 212160963934307490}
 --- !u!212 &212160963934307490
 SpriteRenderer:

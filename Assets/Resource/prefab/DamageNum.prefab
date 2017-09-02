@@ -105,7 +105,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1416160638454546}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f7cf1cf26d099b4ba2ee9832a740a91, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f55a17d066083147962ec70b5dbf099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0.15, y: -0.15, z: 0.2}
@@ -123,6 +123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: {fileID: 102749253202829634}
   textOutline: {fileID: 114772182679540138}
+  textShadow: {fileID: 114069847359959732}
   posCurve:
     serializedVersion: 2
     m_Curve:
