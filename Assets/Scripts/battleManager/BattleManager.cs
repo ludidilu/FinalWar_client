@@ -724,21 +724,16 @@ public class BattleManager : MonoBehaviour
 
         if (nowChooseHeroCanAction)
         {
-            Dictionary<int, int>.Enumerator enumerator = battle.GetActionEnumerator();
+            int targetPos;
 
-            while (enumerator.MoveNext())
+            if (battle.GetActionContainsKey(GetNowChooseHero().pos, out targetPos))
             {
-                KeyValuePair<int, int> pair = enumerator.Current;
-
-                if (pair.Key == GetNowChooseHero().pos)
+                if (targetPos == _mapUnit.index)
                 {
-                    if (pair.Value == _mapUnit.index)
-                    {
-                        isDoingHeroAction = true;
-                    }
-
-                    return;
+                    isDoingHeroAction = true;
                 }
+
+                return;
             }
 
             if (_mapUnit.index == GetNowChooseHero().pos)
@@ -770,21 +765,15 @@ public class BattleManager : MonoBehaviour
         {
             mouseHasExited = true;
 
-            Dictionary<int, int>.Enumerator enumerator = battle.GetActionEnumerator();
+            int targetPos;
 
-            while (enumerator.MoveNext())
+            if (battle.GetActionContainsKey(GetNowChooseHero().pos, out targetPos))
             {
-                KeyValuePair<int, int> pair = enumerator.Current;
-
-                if (pair.Key == GetNowChooseHero().pos && _mapUnit.index == pair.Value)
+                if (_mapUnit.index == targetPos)
                 {
-                    battle.ClientRequestUnaction(GetNowChooseHero().pos);
-
                     ClearMoves();
 
                     CreateMoves();
-
-                    return;
                 }
             }
         }

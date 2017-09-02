@@ -256,7 +256,6 @@ public class HeroBattle : HeroBase
 
                         break;
 
-                    case Effect.DISABLE_ACTION:
                     case Effect.DISABLE_MOVE:
                     case Effect.DISABLE_RECOVER_SHIELD:
                     case Effect.SILENCE:
