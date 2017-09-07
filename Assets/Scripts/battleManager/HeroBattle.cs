@@ -98,8 +98,10 @@ public class HeroBattle : HeroBase
         frame.sprite = _visible ? BattleControl.Instance.frameChoose : BattleControl.Instance.frame;
     }
 
-    public void Init(int _id)
+    public void Init(int _cardUid, int _id)
     {
+        cardUid = _cardUid;
+
         HeroSDS heroSDS = StaticData.GetData<HeroSDS>(_id);
 
         InitCard(heroSDS);
@@ -158,15 +160,17 @@ public class HeroBattle : HeroBase
             body.material = BattleControl.Instance.mat;
 
             bg.material = BattleControl.Instance.mat;
+
+            transform.SetAsFirstSibling();
         }
         else
         {
             body.material = BattleControl.Instance.matGray;
 
             bg.material = BattleControl.Instance.matGray;
-        }
 
-        //body.SetColor(hero.GetCanAction() ? Color.white : Color.grey);
+            transform.SetAsLastSibling();
+        }
     }
 
     public void RefreshAttackWithoutShield()

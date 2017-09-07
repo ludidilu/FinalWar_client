@@ -949,9 +949,9 @@ public class BattleManager : MonoBehaviour
 
         heroDic.Add(_hero.pos, hero);
 
-        hero.Init(_hero);
-
         AddHeroToMapReal(hero, _hero.pos);
+
+        hero.Init(_hero);
 
         return hero;
     }
@@ -966,11 +966,9 @@ public class BattleManager : MonoBehaviour
 
         summonHeroDic.Add(_pos, hero);
 
-        hero.Init(cardID);
-
-        hero.cardUid = _cardUid;
-
         AddHeroToMapReal(hero, _pos);
+
+        hero.Init(_cardUid, cardID);
 
         return hero;
     }

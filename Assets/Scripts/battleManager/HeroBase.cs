@@ -4,5 +4,5 @@ public class HeroBase : MonoBehaviour
 {
     public HeroSDS sds { get; protected set; }
 
-    public int cardUid;
+    public int cardUid { get; protected set; }
 }
