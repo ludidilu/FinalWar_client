@@ -10,6 +10,9 @@
 
     public int fearType;
 
+    public int fearAttackWeight;
+    public int fearDefenseWeight;
+
     public int GetID()
     {
         return ID;
@@ -48,5 +51,15 @@
     public FearType GetFearType()
     {
         return (FearType)fearType;
+    }
+
+    public int GetFearAttackWeight()
+    {
+        return fearAttackWeight;
+    }
+
+    public int GetFearDefenseWeight()
+    {
+        return fearDefenseWeight;
     }
 }
