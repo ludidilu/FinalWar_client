@@ -139,6 +139,8 @@ public static class ResourceLoader
         StaticData.Load<SkillSDS>("skill");
 
         StaticData.Load<AuraSDS>("aura");
+
+        StaticData.Load<TestCardsSDS>("testCards");
     }
 
     private static void LoadMap()
