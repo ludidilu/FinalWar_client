@@ -48,6 +48,9 @@ public class BattleControl : MonoBehaviour
     [SerializeField]
     public Sprite frameChoose;
 
+    [SerializeField]
+    public float zFixStep;
+
     public static BattleControl Instance { get; private set; }
 
     void Awake()
@@ -79,6 +82,8 @@ public class BattleControl : MonoBehaviour
             }
         };
 
+        attacker.zTrans.localPosition = new Vector3(0, 0, zFixStep);
+
         SuperSequenceControl.To(0f, 1f, 1f, moveToDel, _index);
 
         yield return null;
@@ -93,6 +98,8 @@ public class BattleControl : MonoBehaviour
         }
 
         yield return null;
+
+        attacker.zTrans.localPosition = Vector3.zero;
 
         SuperSequenceControl.DelayCall(2.0f, _lastIndex);
     }
@@ -636,7 +643,7 @@ public class BattleControl : MonoBehaviour
 
         Action<float> dele = delegate (float _value)
         {
-            hero.zTrans.localRotation = Quaternion.Euler(0, 0, _value);
+            hero.moveTrans.localRotation = Quaternion.Euler(0, 0, _value);
         };
 
         SuperSequenceControl.To(0, 720, 0.5f, dele, _index);
