@@ -82,8 +82,6 @@ public class BattleControl : MonoBehaviour
             }
         };
 
-        attacker.zTrans.localPosition = new Vector3(0, 0, zFixStep);
-
         SuperSequenceControl.To(0f, 1f, 1f, moveToDel, _index);
 
         yield return null;
@@ -98,8 +96,6 @@ public class BattleControl : MonoBehaviour
         }
 
         yield return null;
-
-        attacker.zTrans.localPosition = Vector3.zero;
 
         SuperSequenceControl.DelayCall(2.0f, _lastIndex);
     }
@@ -176,6 +172,40 @@ public class BattleControl : MonoBehaviour
             BattleManager.Instance.heroDic.TryGetValue(_vo.pos, out defender);
         }
 
+        if (defenderReal == supporter)
+        {
+            if (defender != null)
+            {
+                Vector3 v1 = (defender.transform.localPosition - attacker.transform.localPosition).normalized;
+
+                Vector3 v2 = (defender.transform.localPosition - supporter.transform.localPosition).normalized;
+
+                Vector3 v3 = v1 + v2;
+
+                Vector3 tmpPos = defender.transform.localPosition + v3.normalized * Vector3.Distance(defender.transform.localPosition, attacker.transform.localPosition) * 0.5f;
+
+                Action<float> defenderToDel = delegate (float _value)
+                {
+                    Vector3 v = Vector3.Lerp(defender.transform.localPosition, tmpPos, _value);
+
+                    defender.hudTrans.localPosition = defender.transform.InverseTransformPoint(defender.transform.parent.TransformPoint(v));
+                };
+
+                SuperSequenceControl.To(0f, 1f, 0.5f, defenderToDel, 0);
+            }
+
+            Action<float> supporterToDel = delegate (float _value)
+            {
+                Vector3 v = Vector3.Lerp(supporter.transform.localPosition, targetPos, _value);
+
+                supporter.hudTrans.localPosition = supporter.transform.InverseTransformPoint(supporter.transform.parent.TransformPoint(v));
+            };
+
+            SuperSequenceControl.To(0f, 1f, 0.5f, supporterToDel, _index);
+
+            yield return null;
+        }
+
         List<HeroBattle> attackerSupporters = null;
 
         if (_vo.attackerSupperters != null)
@@ -224,9 +254,17 @@ public class BattleControl : MonoBehaviour
                     {
                         HeroBattle hero = defenderSupporters[i];
 
-                        Vector3 v = Vector3.Lerp(hero.transform.localPosition, defenderReal.transform.localPosition, obj);
+                        Vector3 v0 = hero.transform.TransformPoint(hero.hudTrans.localPosition);
 
-                        hero.moveTrans.localPosition = hero.hudTrans.InverseTransformPoint(hero.transform.parent.TransformPoint(v));
+                        Vector3 v1 = defenderReal.transform.TransformPoint(defenderReal.hudTrans.localPosition);
+
+                        Vector3 v = Vector3.Lerp(v0, v1, obj);
+
+                        hero.moveTrans.localPosition = hero.hudTrans.InverseTransformPoint(v);
+
+                        //Vector3 v = Vector3.Lerp(hero.transform.localPosition, defenderReal.transform.localPosition, obj);
+
+                        //hero.moveTrans.localPosition = hero.hudTrans.InverseTransformPoint(hero.transform.parent.TransformPoint(v));
                     }
                 }
             };
@@ -250,42 +288,6 @@ public class BattleControl : MonoBehaviour
         if (supportersMove != null)
         {
             SuperSequenceControl.To(0.5f, 0f, 0.5f, supportersMove, _index);
-
-            yield return null;
-        }
-
-        if (defenderReal == supporter)
-        {
-            if (defender != null)
-            {
-                Vector3 v1 = (defender.transform.localPosition - attacker.transform.localPosition).normalized;
-
-                Vector3 v2 = (defender.transform.localPosition - supporter.transform.localPosition).normalized;
-
-                Vector3 v3 = v1 + v2;
-
-                Vector3 tmpPos = defender.transform.localPosition + v3.normalized * Vector3.Distance(defender.transform.localPosition, attacker.transform.localPosition) * 0.5f;
-
-                Action<float> defenderToDel = delegate (float _value)
-                {
-                    Vector3 v = Vector3.Lerp(defender.transform.localPosition, tmpPos, _value);
-
-                    defender.moveTrans.localPosition = defender.hudTrans.InverseTransformPoint(defender.transform.parent.TransformPoint(v));
-                };
-
-                SuperSequenceControl.To(0f, 1f, 0.5f, defenderToDel, 0);
-            }
-
-            Action<float> supporterToDel = delegate (float _value)
-            {
-                Vector3 v = Vector3.Lerp(supporter.transform.localPosition, targetPos, _value);
-
-                supporter.hudTrans.localPosition = supporter.transform.InverseTransformPoint(supporter.transform.parent.TransformPoint(v));
-            };
-
-            supporter.transform.SetAsLastSibling();
-
-            SuperSequenceControl.To(0f, 1f, 0.5f, supporterToDel, _index);
 
             yield return null;
         }
@@ -479,13 +481,13 @@ public class BattleControl : MonoBehaviour
 
             if (BattleManager.Instance.heroDic.TryGetValue(_vo.pos, out defender))
             {
-                Vector3 startPos2 = defender.moveTrans.localPosition;
+                Vector3 startPos2 = defender.hudTrans.localPosition;
 
                 Action<float> dele2 = delegate (float _value)
                 {
                     Vector3 v = Vector3.Lerp(startPos2, Vector3.zero, _value);
 
-                    defender.moveTrans.localPosition = v;
+                    defender.hudTrans.localPosition = v;
                 };
 
                 SuperSequenceControl.To(0f, 1f, 0.5f, dele2, 0);

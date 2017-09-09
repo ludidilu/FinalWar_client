@@ -129,19 +129,6 @@ public class BattleManager : MonoBehaviour
 
     public static BattleManager Instance { get; private set; }
 
-    void Awake()
-    {
-        Instance = this;
-
-        Vector3 v = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, 0));
-
-        viewport = new Bounds(Vector3.zero, v * 2);
-
-        viewport.center = new Vector3(viewportXFix, viewportYFix, 0);
-
-        viewport.extents = new Vector3(viewport.extents.x - viewportXFix, viewport.extents.y - viewportYFix, viewport.extents.z);
-    }
-
     private enum DownType
     {
         NULL,
@@ -210,6 +197,28 @@ public class BattleManager : MonoBehaviour
     private bool isInit = false;
 
     private Action<MemoryStream, Action<BinaryReader>> sendDataCallBack;
+
+    private int heroUid;
+
+    public int GetHeroUid()
+    {
+        heroUid++;
+
+        return heroUid;
+    }
+
+    void Awake()
+    {
+        Instance = this;
+
+        Vector3 v = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, 0));
+
+        viewport = new Bounds(Vector3.zero, v * 2);
+
+        viewport.center = new Vector3(viewportXFix, viewportYFix, 0);
+
+        viewport.extents = new Vector3(viewport.extents.x - viewportXFix, viewport.extents.y - viewportYFix, viewport.extents.z);
+    }
 
     private void WriteLog(string _str)
     {
@@ -284,7 +293,7 @@ public class BattleManager : MonoBehaviour
 
         ClearMoves();
 
-        CreateMapPanel();
+        CreateMapUnits();
 
         CreateCards(true);
 
@@ -313,7 +322,7 @@ public class BattleManager : MonoBehaviour
 
         ClearMoves();
 
-        CreateMapPanel();
+        CreateMapUnits();
 
         CreateCards(false);
 
@@ -375,6 +384,16 @@ public class BattleManager : MonoBehaviour
 
     private void BattleOver()
     {
+        ClearMapUnits();
+
+        ClearCards();
+
+        ClearSummonHeros();
+
+        ClearHeros();
+
+        ClearMoves();
+
         isInit = false;
 
         RefreshTouchable(true);
@@ -430,6 +449,8 @@ public class BattleManager : MonoBehaviour
 
     private void ClearHeros()
     {
+        heroUid = 0;
+
         Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator2 = heroDic.Values.GetEnumerator();
 
         while (enumerator2.MoveNext())
@@ -450,7 +471,7 @@ public class BattleManager : MonoBehaviour
         arrowList.Clear();
     }
 
-    private void CreateMapPanel()
+    private void CreateMapUnits()
     {
         int index = 0;
 
@@ -951,7 +972,7 @@ public class BattleManager : MonoBehaviour
 
         AddHeroToMapReal(hero, _hero.pos);
 
-        hero.Init(_hero);
+        hero.Init(_hero, GetHeroUid());
 
         return hero;
     }

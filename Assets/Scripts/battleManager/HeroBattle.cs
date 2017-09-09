@@ -119,8 +119,10 @@ public class HeroBattle : HeroBase
         shieldOutline.SetText(text);
     }
 
-    public void Init(Hero _hero)
+    public void Init(Hero _hero, int _heroUid)
     {
+        zTrans.localPosition = new Vector3(0, 0, _heroUid * BattleControl.Instance.zFixStep);
+
         hero = _hero;
 
         RefreshAll();
