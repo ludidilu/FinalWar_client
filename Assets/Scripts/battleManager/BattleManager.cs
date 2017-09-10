@@ -792,6 +792,8 @@ public class BattleManager : MonoBehaviour
             {
                 if (_mapUnit.index == targetPos)
                 {
+                    battle.ClientRequestUnaction(GetNowChooseHero().pos);
+
                     ClearMoves();
 
                     CreateMoves();

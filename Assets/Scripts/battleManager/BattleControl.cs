@@ -182,6 +182,11 @@ public class BattleControl : MonoBehaviour
 
                 Vector3 v3 = v1 + v2;
 
+                if (v3 == Vector3.zero)
+                {
+                    v3 = (Quaternion.AngleAxis(90, Vector3.forward) * v1).normalized;
+                }
+
                 Vector3 tmpPos = defender.transform.localPosition + v3.normalized * Vector3.Distance(defender.transform.localPosition, attacker.transform.localPosition) * 0.5f;
 
                 Action<float> defenderToDel = delegate (float _value)
