@@ -50,9 +50,6 @@ public class HeroBattle : HeroBase
     [SerializeField]
     private SpriteRenderer heroType;
 
-    //[SerializeField]
-    //private TextMesh heroName;
-
     private Hero hero;
 
     public bool isMine
@@ -121,7 +118,7 @@ public class HeroBattle : HeroBase
 
     public void Init(Hero _hero, int _heroUid)
     {
-        zTrans.localPosition = new Vector3(0, 0, _heroUid * BattleControl.Instance.zFixStep);
+        //zTrans.localPosition = new Vector3(0, 0, _heroUid * BattleControl.Instance.zFixStep);
 
         hero = _hero;
 

@@ -51,6 +51,9 @@ public class BattleControl : MonoBehaviour
     [SerializeField]
     public float zFixStep;
 
+    [SerializeField]
+    public float moveAwayDistance;
+
     public static BattleControl Instance { get; private set; }
 
     void Awake()
@@ -184,10 +187,10 @@ public class BattleControl : MonoBehaviour
 
                 if (v3 == Vector3.zero)
                 {
-                    v3 = (Quaternion.AngleAxis(90, Vector3.forward) * v1).normalized;
+                    v3 = (Quaternion.AngleAxis(90, Vector3.forward) * v1);
                 }
 
-                Vector3 tmpPos = defender.transform.localPosition + v3.normalized * Vector3.Distance(defender.transform.localPosition, attacker.transform.localPosition) * 0.5f;
+                Vector3 tmpPos = defender.transform.localPosition + v3.normalized * Vector3.Distance(defender.transform.localPosition, attacker.transform.localPosition) * moveAwayDistance;
 
                 Action<float> defenderToDel = delegate (float _value)
                 {

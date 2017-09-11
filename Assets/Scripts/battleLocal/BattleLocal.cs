@@ -3,6 +3,8 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using superFunction;
+using System.Text;
+using UnityEngine;
 
 public class BattleLocal
 {
@@ -27,8 +29,12 @@ public class BattleLocal
 
     private Action<BinaryReader> clientReceiveDataCallBack;
 
+    private string saveKey;
+
     public BattleLocal()
     {
+        saveKey = string.Format("BattleLocal:{0}", ConfigDictionary.Instance.uid);
+
         battleServer = new Battle_server(false);
 
         battleServer.ServerSetCallBack(ServerSendDataCallBack, ServerBattleOverCallBack);
@@ -68,15 +74,31 @@ public class BattleLocal
 
     public void Start()
     {
+        SuperFunction.Instance.AddEventListener(BattleManager.Instance.gameObject, BattleManager.ROUND_OVER, RoundOver);
+
         BattleManager.Instance.SetSendDataCallBack(GetDataFromClient);
 
         SuperFunction.Instance.AddEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
 
-        IList<int> mCards = StaticData.GetData<TestCardsSDS>(1).cards;
+        FileInfo fi = new FileInfo(Application.persistentDataPath + "/local" + ConfigDictionary.Instance.uid + ".dat");
 
-        IList<int> oCards = StaticData.GetData<TestCardsSDS>(2).cards;
+        if (fi.Exists)
+        {
+            using (BinaryReader br = new BinaryReader(fi.OpenRead()))
+            {
+                byte[] bytes = br.ReadBytes((int)br.BaseStream.Length);
 
-        battleServer.ServerStart(mapID, mCards, oCards, true);
+                battleServer.FromBytes(bytes);
+            }
+        }
+        else
+        {
+            IList<int> mCards = StaticData.GetData<TestCardsSDS>(1).cards;
+
+            IList<int> oCards = StaticData.GetData<TestCardsSDS>(2).cards;
+
+            battleServer.ServerStart(mapID, mCards, oCards, true);
+        }
 
         BattleManager.Instance.RequestRefreshData();
     }
@@ -90,7 +112,16 @@ public class BattleLocal
 
     private void BattleOver(int _index)
     {
+        SuperFunction.Instance.RemoveEventListener(BattleManager.Instance.gameObject, BattleManager.ROUND_OVER, RoundOver);
+
         BattleEntrance.Instance.Show();
+
+        if (PlayerPrefs.HasKey(saveKey))
+        {
+            PlayerPrefs.DeleteKey(saveKey);
+
+            PlayerPrefs.Save();
+        }
     }
 
     private void GetDataFromClient(MemoryStream _ms, Action<BinaryReader> _clientReceiveDataCallBack)
@@ -102,6 +133,23 @@ public class BattleLocal
         using (BinaryReader br = new BinaryReader(_ms))
         {
             battleServer.ServerGetPackage(br, true);
+        }
+    }
+
+    private void RoundOver(int _index)
+    {
+        byte[] bytes = battleServer.ToBytes();
+
+        FileInfo fi = new FileInfo(Application.persistentDataPath + "/local" + ConfigDictionary.Instance.uid + ".dat");
+
+        if (fi.Exists)
+        {
+            fi.Delete();
+        }
+
+        using (BinaryWriter bw = new BinaryWriter(fi.Create()))
+        {
+            bw.Write(bytes, 0, bytes.Length);
         }
     }
 }

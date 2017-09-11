@@ -19,6 +19,8 @@ public class BattleEntrance : MonoBehaviour
     {
         _Instance = this;
 
+        Application.targetFrameRate = 60;
+
         container.SetActive(false);
 
         ResourceLoader.Load(LoadOver);

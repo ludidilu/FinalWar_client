@@ -19,6 +19,8 @@ public class BattleManager : MonoBehaviour
 
     public const string BATTLE_OVER = "battleOver";
 
+    public const string ROUND_OVER = "roundOver";
+
     [SerializeField]
     private float moveThreshold = 0.1f;
 
@@ -1101,6 +1103,8 @@ public class BattleManager : MonoBehaviour
 
     private void DoAction(SuperEnumerator<ValueType> _step)
     {
+        SuperFunction.Instance.DispatchEvent(gameObject, ROUND_OVER);
+
         RefreshDataBeforeBattle();
 
         SuperSequenceControl.Start(DoActionReal, _step);

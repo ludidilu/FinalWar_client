@@ -240,6 +240,7 @@ MonoBehaviour:
   frame: {fileID: 21300000, guid: 48e23155cd8765e4ca6e26730eb243c4, type: 3}
   frameChoose: {fileID: 21300000, guid: 79bc8edb62628c645b1bd74f8ef38d26, type: 3}
   zFixStep: 1
+  moveAwayDistance: 0.7
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
