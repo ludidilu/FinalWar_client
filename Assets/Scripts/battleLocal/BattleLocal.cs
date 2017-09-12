@@ -116,11 +116,11 @@ public class BattleLocal
 
         BattleEntrance.Instance.Show();
 
-        if (PlayerPrefs.HasKey(saveKey))
-        {
-            PlayerPrefs.DeleteKey(saveKey);
+        FileInfo fi = new FileInfo(Application.persistentDataPath + "/local" + ConfigDictionary.Instance.uid + ".dat");
 
-            PlayerPrefs.Save();
+        if (fi.Exists)
+        {
+            fi.Delete();
         }
     }
 

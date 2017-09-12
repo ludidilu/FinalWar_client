@@ -159,16 +159,12 @@ public class HeroBattle : HeroBase
             body.material = BattleControl.Instance.mat;
 
             bg.material = BattleControl.Instance.mat;
-
-            transform.SetAsFirstSibling();
         }
         else
         {
             body.material = BattleControl.Instance.matGray;
 
             bg.material = BattleControl.Instance.matGray;
-
-            transform.SetAsLastSibling();
         }
     }
 
