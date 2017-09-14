@@ -50,6 +50,9 @@ public class HeroBattle : HeroBase
     [SerializeField]
     private SpriteRenderer heroType;
 
+    [SerializeField]
+    private GameObject chooseFrame;
+
     private Hero hero;
 
     public bool isMine
@@ -92,7 +95,9 @@ public class HeroBattle : HeroBase
 
     public void SetFrameVisible(bool _visible)
     {
-        frame.sprite = _visible ? BattleControl.Instance.frameChoose : BattleControl.Instance.frame;
+        chooseFrame.SetActive(_visible);
+
+        //frame.sprite = _visible ? BattleControl.Instance.frameChoose : BattleControl.Instance.frame;
     }
 
     public void Init(int _cardUid, int _id)
@@ -159,12 +164,20 @@ public class HeroBattle : HeroBase
             body.material = BattleControl.Instance.mat;
 
             bg.material = BattleControl.Instance.mat;
+
+            frame.material = BattleControl.Instance.mat;
+
+            heroType.material = BattleControl.Instance.mat;
         }
         else
         {
             body.material = BattleControl.Instance.matGray;
 
             bg.material = BattleControl.Instance.matGray;
+
+            frame.material = BattleControl.Instance.matGray;
+
+            heroType.material = BattleControl.Instance.matGray;
         }
     }
 
