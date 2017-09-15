@@ -137,7 +137,7 @@ public class BattleOnline : MonoBehaviour
 
     private void BattleStart(int _index)
     {
-        SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_OVER, BattleOver);
+        SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_QUIT, BattleOver);
 
         BattleManager.Instance.gameObject.SetActive(true);
     }

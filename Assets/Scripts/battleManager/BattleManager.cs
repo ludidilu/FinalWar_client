@@ -17,7 +17,7 @@ public class BattleManager : MonoBehaviour
 {
     public const string BATTLE_START = "battleStart";
 
-    public const string BATTLE_OVER = "battleOver";
+    public const string BATTLE_QUIT = "battleQuit";
 
     public const string ROUND_OVER = "roundOver";
 
@@ -247,7 +247,7 @@ public class BattleManager : MonoBehaviour
 
         Battle.Init(mapDic, heroDic, skillDic, auraDic, effectDic);
 
-        battle.ClientSetCallBack(SendData, RefreshData, DoAction, BattleQuit);
+        battle.ClientSetCallBack(SendData, RefreshData, DoAction, BattleOver);
 
         SuperFunction.Instance.AddEventListener<float, Vector2>(ScreenScale.Instance.go, ScreenScale.SCALE_CHANGE, ScaleChange);
 
@@ -338,13 +338,13 @@ public class BattleManager : MonoBehaviour
         battle.ClientRequestQuitBattle();
     }
 
-    private void BattleQuit(Battle.BattleResult _result)
+    private void BattleOver(Battle.BattleResult _result)
     {
         switch (_result)
         {
             case Battle.BattleResult.DRAW:
 
-                Alert("Draw!", BattleOver);
+                Alert("Draw!", BattleQuit);
 
                 break;
 
@@ -352,39 +352,31 @@ public class BattleManager : MonoBehaviour
 
                 if (battle.clientIsMine)
                 {
-                    Alert("You win!", BattleOver);
+                    Alert("You win!", BattleQuit);
                 }
                 else
                 {
-                    Alert("You lose!", BattleOver);
-                }
-
-                break;
-
-            case Battle.BattleResult.O_WIN:
-
-                if (battle.clientIsMine)
-                {
-                    Alert("You lose!", BattleOver);
-                }
-                else
-                {
-                    Alert("You win!", BattleOver);
+                    Alert("You lose!", BattleQuit);
                 }
 
                 break;
 
             default:
 
-                Alert("Quit!", BattleOver);
+                if (battle.clientIsMine)
+                {
+                    Alert("You lose!", BattleQuit);
+                }
+                else
+                {
+                    Alert("You win!", BattleQuit);
+                }
 
                 break;
         }
-
-        Alert("Battle quit!", BattleOver);
     }
 
-    private void BattleOver()
+    private void BattleQuit()
     {
         ClearMapUnits();
 
@@ -402,7 +394,7 @@ public class BattleManager : MonoBehaviour
 
         gameObject.SetActive(false);
 
-        SuperFunction.Instance.DispatchEvent(gameObject, BATTLE_OVER);
+        SuperFunction.Instance.DispatchEvent(gameObject, BATTLE_QUIT);
     }
 
     private void ClearMapUnits()
@@ -1012,13 +1004,13 @@ public class BattleManager : MonoBehaviour
 
     public void ActionBtClick()
     {
+        RefreshTouchable(false);
+
         ClearNowChooseCard();
 
         ClearNowChooseHero();
 
         battle.ClientRequestDoAction();
-
-        RefreshTouchable(battle.GetClientCanAction());
     }
 
     // Update is called once per frame
@@ -1104,8 +1096,6 @@ public class BattleManager : MonoBehaviour
     private void DoAction(SuperEnumerator<ValueType> _step)
     {
         SuperFunction.Instance.DispatchEvent(gameObject, ROUND_OVER);
-
-        RefreshDataBeforeBattle();
 
         SuperSequenceControl.Start(DoActionReal, _step);
     }
@@ -1210,13 +1200,24 @@ public class BattleManager : MonoBehaviour
 
                 yield return null;
             }
+            else if (vo is BattleRefreshVO)
+            {
+                RefreshDataBeforeBattle();
+            }
             else
             {
                 throw new Exception("vo type error:" + vo);
             }
         }
 
-        RefreshData();
+        if (battle.battleResult == -1)
+        {
+            RefreshData();
+        }
+        else
+        {
+            BattleOver((Battle.BattleResult)battle.battleResult);
+        }
     }
 
     private IEnumerator DoSummon(int _index, int _lastIndex, BattleSummonVO _vo)

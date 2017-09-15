@@ -7,6 +7,7 @@
     public int attackTimes;
     public int thread;
     public int supportSpeedBonus;
+    public int fearValue;
 
     public int fearType;
 
@@ -46,6 +47,11 @@
     public int GetSupportSpeedBonus()
     {
         return supportSpeedBonus;
+    }
+
+    public int GetFearValue()
+    {
+        return fearValue;
     }
 
     public FearType GetFearType()
