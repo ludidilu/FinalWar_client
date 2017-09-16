@@ -1095,6 +1095,8 @@ public class BattleManager : MonoBehaviour
 
     private void DoAction(SuperEnumerator<ValueType> _step)
     {
+        RefreshTouchable(false);
+
         SuperFunction.Instance.DispatchEvent(gameObject, ROUND_OVER);
 
         SuperSequenceControl.Start(DoActionReal, _step);

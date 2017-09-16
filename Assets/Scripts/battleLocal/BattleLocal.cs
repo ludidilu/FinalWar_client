@@ -134,7 +134,7 @@ public class BattleLocal
 
         using (BinaryReader br = new BinaryReader(_ms))
         {
-            battleServer.ServerGetPackage(br, true, 0);
+            battleServer.ServerGetPackage(br, true);
         }
     }
 
