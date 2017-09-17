@@ -3,7 +3,6 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using superFunction;
-using System.Text;
 using UnityEngine;
 
 public class BattleLocal
@@ -134,7 +133,7 @@ public class BattleLocal
 
         using (BinaryReader br = new BinaryReader(_ms))
         {
-            battleServer.ServerGetPackage(br, true);
+            battleServer.ServerGetPackage(br, true, true);
         }
     }
 
@@ -153,5 +152,10 @@ public class BattleLocal
         {
             bw.Write(bytes, 0, bytes.Length);
         }
+    }
+
+    public void VerifyBattle()
+    {
+        Debug.Log(battleServer.VerifyBattle());
     }
 }

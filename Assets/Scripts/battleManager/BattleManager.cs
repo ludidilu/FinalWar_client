@@ -1206,19 +1206,17 @@ public class BattleManager : MonoBehaviour
             {
                 RefreshDataBeforeBattle();
             }
-            else
-            {
-                throw new Exception("vo type error:" + vo);
-            }
         }
 
-        if (battle.battleResult == -1)
+        Battle.BattleResult battleResult = (Battle.BattleResult)_step.Current;
+
+        if (battleResult == Battle.BattleResult.NOT_OVER)
         {
             RefreshData();
         }
         else
         {
-            BattleOver((Battle.BattleResult)battle.battleResult);
+            BattleOver(battleResult);
         }
     }
 
