@@ -107,6 +107,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private AlertPanel alertPanel;
 
+    [SerializeField]
+    private SpriteRenderer bg;
+
     private Battle_client battle = new Battle_client();
 
     public Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
@@ -200,6 +203,8 @@ public class BattleManager : MonoBehaviour
 
     private Action<MemoryStream, Action<BinaryReader>> sendDataCallBack;
 
+    private Vector3 stepV;
+
     private int heroUid;
 
     public int GetHeroUid()
@@ -213,9 +218,9 @@ public class BattleManager : MonoBehaviour
     {
         Instance = this;
 
-        Vector3 v = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, 0));
+        stepV = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, 0));
 
-        viewport = new Bounds(Vector3.zero, v * 2);
+        viewport = new Bounds(Vector3.zero, stepV * 2);
 
         viewport.center = new Vector3(viewportXFix, viewportYFix, 0);
 
@@ -556,6 +561,10 @@ public class BattleManager : MonoBehaviour
         defaultScale = Mathf.Min(viewport.extents.x / (bounds.extents.x + boundFix * 0.5f), viewport.extents.y / (bounds.extents.y + boundFix * 0.5f));
 
         battleContainer.localScale = new Vector3(defaultScale, defaultScale, defaultScale);
+
+        bg.transform.localPosition = new Vector3(-viewportXFix / defaultScale, -viewport.center.y / defaultScale, 0);
+
+        bg.transform.localScale = new Vector3(stepV.x / bg.bounds.extents.x, stepV.y / bg.bounds.extents.y, 1);
 
         FixBounds();
     }
