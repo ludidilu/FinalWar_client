@@ -4,7 +4,10 @@ public class HeroTypeSDS_c {
         _csv.attackSpeed = _br.ReadInt32();
         _csv.attackTimes = _br.ReadInt32();
         _csv.defenseSpeed = _br.ReadInt32();
+        _csv.fearAttackWeight = _br.ReadInt32();
+        _csv.fearDefenseWeight = _br.ReadInt32();
         _csv.fearType = _br.ReadInt32();
+        _csv.fearValue = _br.ReadInt32();
         _csv.ID = _br.ReadInt32();
         _csv.supportSpeed = _br.ReadInt32();
         _csv.supportSpeedBonus = _br.ReadInt32();

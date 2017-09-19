@@ -2,21 +2,29 @@
 {
     public string eventName;
     public int auraTrigger;
-    public int auraCondition;
+    public int auraConditionCompare;
+    public int[] auraConditionType;
     public int[] auraConditionTarget;
-    public int auraConditionData;
+    public int[] auraConditionData;
     public int auraType;
     public int auraTarget;
+    public int auraTargetNum;
     public int[] auraData;
 
     private AuraTarget[] auraConditionTargetFix;
 
+    private AuraConditionType[] auraConditionTypeFix;
+
     public override void Fix()
     {
-        auraConditionTargetFix = new AuraTarget[auraConditionTarget.Length];
+        auraConditionTypeFix = new AuraConditionType[auraConditionType.Length];
 
-        for (int i = 0; i < auraConditionTarget.Length; i++)
+        auraConditionTargetFix = new AuraTarget[auraConditionType.Length];
+
+        for (int i = 0; i < auraConditionType.Length; i++)
         {
+            auraConditionTypeFix[i] = (AuraConditionType)auraConditionType[i];
+
             auraConditionTargetFix[i] = (AuraTarget)auraConditionTarget[i];
         }
     }
@@ -31,9 +39,14 @@
         return (AuraTarget)auraTrigger;
     }
 
-    public AuraCondition GetAuraCondition()
+    public AuraConditionCompare GetAuraConditionCompare()
     {
-        return (AuraCondition)auraCondition;
+        return (AuraConditionCompare)auraConditionCompare;
+    }
+
+    public AuraConditionType[] GetAuraConditionType()
+    {
+        return auraConditionTypeFix;
     }
 
     public AuraTarget[] GetAuraConditionTarget()
@@ -41,7 +54,7 @@
         return auraConditionTargetFix;
     }
 
-    public int GetAuraConditionData()
+    public int[] GetAuraConditionData()
     {
         return auraConditionData;
     }
@@ -54,6 +67,11 @@
     public AuraTarget GetAuraTarget()
     {
         return (AuraTarget)auraTarget;
+    }
+
+    public int GetAuraTargetNum()
+    {
+        return auraTargetNum;
     }
 
     public int[] GetAuraData()
