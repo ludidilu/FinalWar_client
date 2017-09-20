@@ -203,7 +203,7 @@ public class BattleManager : MonoBehaviour
 
     private Action<MemoryStream, Action<BinaryReader>> sendDataCallBack;
 
-    private Vector3 stepV;
+    private Vector2 stepV;
 
     private int heroUid;
 
@@ -218,7 +218,7 @@ public class BattleManager : MonoBehaviour
     {
         Instance = this;
 
-        stepV = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, 0));
+        stepV = new Vector2(mainCamera.aspect * mainCamera.orthographicSize, mainCamera.orthographicSize);
 
         viewport = new Bounds(Vector3.zero, stepV * 2);
 
@@ -564,7 +564,7 @@ public class BattleManager : MonoBehaviour
 
         bg.transform.localPosition = new Vector3(-viewportXFix / defaultScale, -viewport.center.y / defaultScale, 0);
 
-        bg.transform.localScale = new Vector3(stepV.x / bg.bounds.extents.x, stepV.y / bg.bounds.extents.y, 1);
+        bg.transform.localScale = new Vector3(stepV.x / bg.sprite.textureRect.width / defaultScale * 2 * bg.sprite.pixelsPerUnit, stepV.y / bg.sprite.textureRect.height / defaultScale * 2 * bg.sprite.pixelsPerUnit, 1);
 
         FixBounds();
     }
