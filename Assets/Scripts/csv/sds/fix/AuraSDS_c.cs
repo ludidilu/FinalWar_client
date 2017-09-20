@@ -1,31 +1,32 @@
 using System.IO;
 public class AuraSDS_c {
     public static void Init(AuraSDS _csv, BinaryReader _br){
-        _csv.auraConditionCompare = _br.ReadInt32();
-        _csv.auraTarget = _br.ReadInt32();
-        _csv.auraTargetNum = _br.ReadInt32();
-        _csv.auraTrigger = _br.ReadInt32();
-        _csv.auraType = _br.ReadInt32();
+        _csv.conditionCompare = _br.ReadInt32();
+        _csv.effectTarget = _br.ReadInt32();
+        _csv.effectTargetNum = _br.ReadInt32();
+        _csv.effectType = _br.ReadInt32();
+        _csv.eventPriority = _br.ReadInt32();
         _csv.ID = _br.ReadInt32();
-        int lengthauraConditionData = _br.ReadInt32();
-        _csv.auraConditionData = new int[lengthauraConditionData];
-        for(int i = 0 ; i < lengthauraConditionData ; i++){
-            _csv.auraConditionData[i] = _br.ReadInt32();
+        _csv.triggerTarget = _br.ReadInt32();
+        int lengthconditionData = _br.ReadInt32();
+        _csv.conditionData = new int[lengthconditionData];
+        for(int i = 0 ; i < lengthconditionData ; i++){
+            _csv.conditionData[i] = _br.ReadInt32();
         }
-        int lengthauraConditionTarget = _br.ReadInt32();
-        _csv.auraConditionTarget = new int[lengthauraConditionTarget];
-        for(int i = 0 ; i < lengthauraConditionTarget ; i++){
-            _csv.auraConditionTarget[i] = _br.ReadInt32();
+        int lengthconditionTarget = _br.ReadInt32();
+        _csv.conditionTarget = new int[lengthconditionTarget];
+        for(int i = 0 ; i < lengthconditionTarget ; i++){
+            _csv.conditionTarget[i] = _br.ReadInt32();
         }
-        int lengthauraConditionType = _br.ReadInt32();
-        _csv.auraConditionType = new int[lengthauraConditionType];
-        for(int i = 0 ; i < lengthauraConditionType ; i++){
-            _csv.auraConditionType[i] = _br.ReadInt32();
+        int lengthconditionType = _br.ReadInt32();
+        _csv.conditionType = new int[lengthconditionType];
+        for(int i = 0 ; i < lengthconditionType ; i++){
+            _csv.conditionType[i] = _br.ReadInt32();
         }
-        int lengthauraData = _br.ReadInt32();
-        _csv.auraData = new int[lengthauraData];
-        for(int i = 0 ; i < lengthauraData ; i++){
-            _csv.auraData[i] = _br.ReadInt32();
+        int lengtheffectData = _br.ReadInt32();
+        _csv.effectData = new int[lengtheffectData];
+        for(int i = 0 ; i < lengtheffectData ; i++){
+            _csv.effectData[i] = _br.ReadInt32();
         }
         _csv.comment = _br.ReadString();
         _csv.eventName = _br.ReadString();

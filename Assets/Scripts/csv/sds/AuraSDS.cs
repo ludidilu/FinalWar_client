@@ -1,31 +1,32 @@
 ﻿public partial class AuraSDS : CsvBase, IAuraSDS
 {
     public string eventName;
-    public int auraTrigger;
-    public int auraConditionCompare;
-    public int[] auraConditionType;
-    public int[] auraConditionTarget;
-    public int[] auraConditionData;
-    public int auraType;
-    public int auraTarget;
-    public int auraTargetNum;
-    public int[] auraData;
+    public int eventPriority;
+    public int triggerTarget;
+    public int conditionCompare;
+    public int[] conditionType;
+    public int[] conditionTarget;
+    public int[] conditionData;
+    public int effectType;
+    public int effectTarget;
+    public int effectTargetNum;
+    public int[] effectData;
 
-    private AuraTarget[] auraConditionTargetFix;
+    private AuraTarget[] conditionTargetFix;
 
-    private AuraConditionType[] auraConditionTypeFix;
+    private AuraConditionType[] conditionTypeFix;
 
     public override void Fix()
     {
-        auraConditionTypeFix = new AuraConditionType[auraConditionType.Length];
+        conditionTypeFix = new AuraConditionType[conditionType.Length];
 
-        auraConditionTargetFix = new AuraTarget[auraConditionType.Length];
+        conditionTargetFix = new AuraTarget[conditionType.Length];
 
-        for (int i = 0; i < auraConditionType.Length; i++)
+        for (int i = 0; i < conditionType.Length; i++)
         {
-            auraConditionTypeFix[i] = (AuraConditionType)auraConditionType[i];
+            conditionTypeFix[i] = (AuraConditionType)conditionType[i];
 
-            auraConditionTargetFix[i] = (AuraTarget)auraConditionTarget[i];
+            conditionTargetFix[i] = (AuraTarget)conditionTarget[i];
         }
     }
 
@@ -34,48 +35,53 @@
         return eventName;
     }
 
-    public AuraTarget GetAuraTrigger()
+    public int GetEventPriority()
     {
-        return (AuraTarget)auraTrigger;
+        return eventPriority;
     }
 
-    public AuraConditionCompare GetAuraConditionCompare()
+    public AuraTarget GetTriggerTarget()
     {
-        return (AuraConditionCompare)auraConditionCompare;
+        return (AuraTarget)triggerTarget;
     }
 
-    public AuraConditionType[] GetAuraConditionType()
+    public AuraConditionCompare GetConditionCompare()
     {
-        return auraConditionTypeFix;
+        return (AuraConditionCompare)conditionCompare;
     }
 
-    public AuraTarget[] GetAuraConditionTarget()
+    public AuraConditionType[] GetConditionType()
     {
-        return auraConditionTargetFix;
+        return conditionTypeFix;
     }
 
-    public int[] GetAuraConditionData()
+    public AuraTarget[] GetConditionTarget()
     {
-        return auraConditionData;
+        return conditionTargetFix;
     }
 
-    public AuraType GetAuraType()
+    public int[] GetConditionData()
     {
-        return (AuraType)auraType;
+        return conditionData;
     }
 
-    public AuraTarget GetAuraTarget()
+    public AuraType GetEffectType()
     {
-        return (AuraTarget)auraTarget;
+        return (AuraType)effectType;
     }
 
-    public int GetAuraTargetNum()
+    public AuraTarget GetEffectTarget()
     {
-        return auraTargetNum;
+        return (AuraTarget)effectTarget;
     }
 
-    public int[] GetAuraData()
+    public int GetEffectTargetNum()
     {
-        return auraData;
+        return effectTargetNum;
+    }
+
+    public int[] GetEffectData()
+    {
+        return effectData;
     }
 }
