@@ -48,6 +48,12 @@ public class HeroBattle : HeroBase
     private TextMeshOutline attackOutline;
 
     [SerializeField]
+    private TextMesh speed;
+
+    [SerializeField]
+    private TextMeshOutline speedOutline;
+
+    [SerializeField]
     private SpriteRenderer heroType;
 
     [SerializeField]
@@ -158,6 +164,37 @@ public class HeroBattle : HeroBase
         shield.text = text;
 
         shieldOutline.SetText(text);
+
+        int speedFix = hero.GetSpeedFix();
+
+        if (speedFix > 0)
+        {
+            text = "+" + speedFix;
+
+            speed.gameObject.SetActive(true);
+
+            speed.text = text;
+
+            speed.color = Color.green;
+
+            speedOutline.SetText(text);
+        }
+        else if (speedFix < 0)
+        {
+            text = speedFix.ToString();
+
+            speed.gameObject.SetActive(true);
+
+            speed.text = text;
+
+            speed.color = Color.red;
+
+            speedOutline.SetText(text);
+        }
+        else
+        {
+            speed.gameObject.SetActive(false);
+        }
 
         if (hero.GetCanAction())
         {
@@ -291,6 +328,8 @@ public class HeroBattle : HeroBase
 
                     case Effect.FIX_ATTACK:
                     case Effect.FIX_SPEED:
+                    case Effect.FIX_ATTACK_UNTIL_NEXT_ROUND_OVER:
+                    case Effect.FIX_SPEED_UNTIL_NEXT_ROUND_OVER:
 
                         if (effectVO.data > 0)
                         {
