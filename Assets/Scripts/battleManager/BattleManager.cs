@@ -1062,7 +1062,7 @@ public class BattleManager : MonoBehaviour
 
     private void CreateAiAction()
     {
-        BattleAi.Start(battle, true, GetRandomValue);
+        BattleAi.Start(battle, battle.clientIsMine, GetRandomValue);
 
         ClearMoves();
 
