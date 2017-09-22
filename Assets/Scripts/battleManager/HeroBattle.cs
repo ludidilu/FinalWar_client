@@ -125,6 +125,8 @@ public class HeroBattle : HeroBase
         shield.text = text;
 
         shieldOutline.SetText(text);
+
+        speed.gameObject.SetActive(false);
     }
 
     public void Init(Hero _hero, int _heroUid)

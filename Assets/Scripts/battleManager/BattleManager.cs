@@ -609,11 +609,11 @@ public class BattleManager : MonoBehaviour
 
     private void CreateSummonHeros()
     {
-        Dictionary<int, int>.Enumerator enumerator2 = battle.GetSummonEnumerator();
+        IEnumerator<KeyValuePair<int, int>> enumerator = battle.GetSummonEnumerator();
 
-        while (enumerator2.MoveNext())
+        while (enumerator.MoveNext())
         {
-            AddCardToMap(enumerator2.Current.Key, enumerator2.Current.Value);
+            AddCardToMap(enumerator.Current.Key, enumerator.Current.Value);
         }
     }
 

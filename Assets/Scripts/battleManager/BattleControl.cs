@@ -107,8 +107,6 @@ public class BattleControl : MonoBehaviour
     {
         HeroBattle shooter = BattleManager.Instance.heroDic[_vo.shooter];
 
-        shooter.RefreshHpAndShield();
-
         HeroBattle stander = BattleManager.Instance.heroDic[_vo.stander];
 
         float angle = Mathf.Atan2(stander.transform.localPosition.y - shooter.transform.localPosition.y, stander.transform.localPosition.x - shooter.transform.localPosition.x);
