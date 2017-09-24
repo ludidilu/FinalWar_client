@@ -145,7 +145,12 @@ public class BattleControl : MonoBehaviour
 
         Destroy(arrow);
 
-        stander.TakeEffect(_vo.effectList);
+        bool shock = stander.TakeEffect(_vo.effectList);
+
+        if (shock)
+        {
+            stander.Shock(shooter, shockCurve, shockDis);
+        }
 
         SuperSequenceControl.DelayCall(2.0f, _lastIndex);
     }
@@ -668,7 +673,12 @@ public class BattleControl : MonoBehaviour
 
                 targetHero.RefreshAttackWithoutShield();
 
-                bool b = targetHero.TakeEffect(enumerator.Current.Value);
+                bool shock = targetHero.TakeEffect(enumerator.Current.Value);
+
+                if (shock)
+                {
+                    targetHero.Shock(hero, shockCurve, shockDis);
+                }
             }
 
             SuperSequenceControl.DelayCall(2.0f, _lastIndex);
