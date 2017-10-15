@@ -89,9 +89,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        attacker.TakeEffect(_vo.attackerEffectList);
-
-        bool shock = stander.TakeEffect(_vo.standerEffectList);
+        bool shock = stander.TakeEffect(new List<BattleHeroEffectVO>() { _vo.vo });
 
         if (shock)
         {
@@ -314,7 +312,7 @@ public class BattleControl : MonoBehaviour
 
         Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
 
-        attacker.RefreshAttack(_vo.damage);
+        attacker.RefreshAttack();
 
         bool getHit = false;
 
@@ -338,9 +336,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        attacker.TakeEffect(_vo.attackerEffectList);
-
-        bool shock = defender.TakeEffect(_vo.defenderEffectList);
+        bool shock = defender.TakeEffect(new List<BattleHeroEffectVO>() { _vo.vo });
 
         if (shock)
         {
@@ -366,9 +362,23 @@ public class BattleControl : MonoBehaviour
 
         Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
 
-        attacker.RefreshAttack(_vo.attackDamage);
+        if (_vo.attackerShield)
+        {
+            attacker.RefreshAttack();
+        }
+        else
+        {
+            attacker.RefreshAttackWithoutShield();
+        }
 
-        defender.RefreshAttack(_vo.defenseDamage);
+        if (_vo.defenderShield)
+        {
+            defender.RefreshAttack();
+        }
+        else
+        {
+            defender.RefreshAttackWithoutShield();
+        }
 
         bool getHit = false;
 
@@ -392,14 +402,14 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        bool defenderShock = defender.TakeEffect(_vo.defenderEffectList);
+        bool defenderShock = defender.TakeEffect(new List<BattleHeroEffectVO>() { _vo.defenseVO });
 
         if (defenderShock)
         {
             defender.Shock(attacker, shockCurve, shockDis);
         }
 
-        bool attackerShock = attacker.TakeEffect(_vo.attackerEffectList);
+        bool attackerShock = attacker.TakeEffect(new List<BattleHeroEffectVO>() { _vo.attackVO });
 
         if (attackerShock)
         {
@@ -427,7 +437,7 @@ public class BattleControl : MonoBehaviour
 
         HeroBattle defender = BattleManager.Instance.heroDic[_vo.defender];
 
-        attacker.RefreshAttack(_vo.damage);
+        attacker.RefreshAttack();
 
         bool getHit = false;
 
@@ -451,9 +461,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        attacker.TakeEffect(_vo.attackerEffectList);
-
-        bool shock = defender.TakeEffect(_vo.defenderEffectList);
+        bool shock = defender.TakeEffect(new List<BattleHeroEffectVO>() { _vo.vo });
 
         if (shock)
         {

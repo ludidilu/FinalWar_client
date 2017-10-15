@@ -238,15 +238,6 @@ public class HeroBattle : HeroBase
         attackOutline.SetText(text);
     }
 
-    public void RefreshAttack(int _attack)
-    {
-        string text = _attack.ToString();
-
-        attack.text = text;
-
-        attackOutline.SetText(text);
-    }
-
     public void Shock(HeroBattle _hero, AnimationCurve _curve, float _shockDis)
     {
         Vector3 shockVector = (hudTrans.position - _hero.hudTrans.position).normalized * _shockDis;
