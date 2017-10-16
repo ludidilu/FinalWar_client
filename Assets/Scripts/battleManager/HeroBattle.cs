@@ -319,27 +319,15 @@ public class HeroBattle : HeroBase
 
                         break;
 
-                    case Effect.FIX_ATTACK:
-                    case Effect.FIX_SPEED:
-                    case Effect.FIX_ATTACK_UNTIL_NEXT_ROUND_OVER:
-                    case Effect.FIX_SPEED_UNTIL_NEXT_ROUND_OVER:
-
-                        if (effectVO.data > 0)
-                        {
-                            ShowHud(effectVO.effect.ToString() + " +" + effectVO.data.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
-                        }
-                        else
-                        {
-                            ShowHud(effectVO.effect.ToString() + " " + effectVO.data.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
-                        }
-
-                        break;
-
-                    case Effect.DISABLE_MOVE:
-                    case Effect.DISABLE_RECOVER_SHIELD:
                     case Effect.SILENCE:
 
                         ShowHud(effectVO.effect.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
+
+                        break;
+
+                    case Effect.AURA:
+
+
 
                         break;
                 }

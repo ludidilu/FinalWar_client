@@ -11,6 +11,7 @@
     public int effectTarget;
     public int effectTargetNum;
     public int[] effectData;
+    public string[] removeEventNames;
 
     private AuraTarget[] conditionTargetFix;
 
@@ -83,5 +84,10 @@
     public int[] GetEffectData()
     {
         return effectData;
+    }
+
+    public string[] GetRemoveEventNames()
+    {
+        return removeEventNames;
     }
 }

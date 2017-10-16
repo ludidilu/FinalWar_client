@@ -14,12 +14,12 @@
 
 				m_comment = string.Empty;
 
-				if (skill != 0) {
+				//if (skill != 0) {
 
-					SkillSDS skillSDS = StaticData.GetData<SkillSDS> (skill);
+				//	SkillSDS skillSDS = StaticData.GetData<SkillSDS> (skill);
 
-					m_comment += skillSDS.comment + "\n\n";
-				}
+				//	m_comment += skillSDS.comment + "\n\n";
+				//}
 
 				for (int i = 0; i < auras.Length; i++) {
 

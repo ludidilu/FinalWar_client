@@ -6,7 +6,8 @@
     public int cost;
     public int heroType;
     public int attack;
-    public int skill;
+    public int[] shootSkills;
+    public int[] supportSkills;
     public int[] auras;
 
     private HeroTypeSDS m_heroTypeFix;
@@ -54,9 +55,14 @@
         return attack;
     }
 
-    public int GetSkill()
+    public int[] GetShootSkills()
     {
-        return skill;
+        return shootSkills;
+    }
+
+    public int[] GetSupportSkills()
+    {
+        return supportSkills;
     }
 
     public int[] GetAuras()

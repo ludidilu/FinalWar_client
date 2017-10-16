@@ -52,15 +52,6 @@ public class LoadCsv {
             MapSDSDic.Add(unit.ID,unit);
         }
         dic.Add(typeof(MapSDS),MapSDSDic);
-        Dictionary<int,SkillSDS> SkillSDSDic = new Dictionary<int,SkillSDS>();
-        int lengthSkillSDS = br.ReadInt32();
-        for(int i = 0 ; i < lengthSkillSDS ; i++){
-            SkillSDS unit = new SkillSDS();
-            SkillSDS_c.Init(unit,br);
-            unit.Fix();
-            SkillSDSDic.Add(unit.ID,unit);
-        }
-        dic.Add(typeof(SkillSDS),SkillSDSDic);
         Dictionary<int,TestCardsSDS> TestCardsSDSDic = new Dictionary<int,TestCardsSDS>();
         int lengthTestCardsSDS = br.ReadInt32();
         for(int i = 0 ; i < lengthTestCardsSDS ; i++){

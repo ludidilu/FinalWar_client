@@ -136,8 +136,6 @@ public static class ResourceLoader
 
         StaticData.Load<EffectSDS>("effect");
 
-        StaticData.Load<SkillSDS>("skill");
-
         StaticData.Load<AuraSDS>("aura");
 
         StaticData.Load<TestCardsSDS>("testCards");

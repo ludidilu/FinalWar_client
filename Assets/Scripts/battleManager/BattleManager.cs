@@ -244,13 +244,11 @@ public class BattleManager : MonoBehaviour
 
         Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS>();
 
-        Dictionary<int, SkillSDS> skillDic = StaticData.GetDic<SkillSDS>();
-
         Dictionary<int, AuraSDS> auraDic = StaticData.GetDic<AuraSDS>();
 
         Dictionary<int, EffectSDS> effectDic = StaticData.GetDic<EffectSDS>();
 
-        Battle.Init(mapDic, heroDic, skillDic, auraDic, effectDic);
+        Battle.Init(mapDic, heroDic, auraDic, effectDic);
 
         battle.ClientSetCallBack(SendData, RefreshData, DoAction, BattleOver);
 
