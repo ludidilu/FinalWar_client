@@ -155,7 +155,7 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Support(int _index, int _lastIndex, BattleSupportVO _vo)
     {
-
+        yield return null;
     }
 
     public IEnumerator PrepareAttack(int _index, int _lastIndex, BattlePrepareAttackVO _vo)
