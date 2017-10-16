@@ -30,5 +30,10 @@ public class AuraSDS_c {
         }
         _csv.comment = _br.ReadString();
         _csv.eventName = _br.ReadString();
+        int lengthremoveEventNames = _br.ReadInt32();
+        _csv.removeEventNames = new string[lengthremoveEventNames];
+        for(int i = 0 ; i < lengthremoveEventNames ; i++){
+            _csv.removeEventNames[i] = _br.ReadString();
+        }
     }
 }

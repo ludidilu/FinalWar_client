@@ -10,7 +10,6 @@ public class HeroTypeSDS_c {
         _csv.fearValue = _br.ReadInt32();
         _csv.ID = _br.ReadInt32();
         _csv.supportSpeed = _br.ReadInt32();
-        _csv.supportSpeedBonus = _br.ReadInt32();
         _csv.thread = _br.ReadInt32();
         _csv.name = _br.ReadString();
     }
