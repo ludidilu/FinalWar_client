@@ -8,14 +8,16 @@
     public int[] conditionTarget;
     public int[] conditionData;
     public int effectType;
-    public int effectTarget;
-    public int effectTargetNum;
+    public int[] effectTarget;
+    public int[] effectTargetNum;
     public int[] effectData;
     public string[] removeEventNames;
 
     private AuraTarget[] conditionTargetFix;
 
     private AuraConditionType[] conditionTypeFix;
+
+    private AuraTarget[] effectTargetFix;
 
     public override void Fix()
     {
@@ -28,6 +30,13 @@
             conditionTypeFix[i] = (AuraConditionType)conditionType[i];
 
             conditionTargetFix[i] = (AuraTarget)conditionTarget[i];
+        }
+
+        effectTargetFix = new AuraTarget[effectTarget.Length];
+
+        for (int i = 0; i < effectTarget.Length; i++)
+        {
+            effectTargetFix[i] = (AuraTarget)effectTarget[i];
         }
     }
 
@@ -71,12 +80,12 @@
         return (AuraType)effectType;
     }
 
-    public AuraTarget GetEffectTarget()
+    public AuraTarget[] GetEffectTarget()
     {
-        return (AuraTarget)effectTarget;
+        return effectTargetFix;
     }
 
-    public int GetEffectTargetNum()
+    public int[] GetEffectTargetNum()
     {
         return effectTargetNum;
     }

@@ -2,8 +2,6 @@ using System.IO;
 public class AuraSDS_c {
     public static void Init(AuraSDS _csv, BinaryReader _br){
         _csv.conditionCompare = _br.ReadInt32();
-        _csv.effectTarget = _br.ReadInt32();
-        _csv.effectTargetNum = _br.ReadInt32();
         _csv.effectType = _br.ReadInt32();
         _csv.eventPriority = _br.ReadInt32();
         _csv.ID = _br.ReadInt32();
@@ -27,6 +25,16 @@ public class AuraSDS_c {
         _csv.effectData = new int[lengtheffectData];
         for(int i = 0 ; i < lengtheffectData ; i++){
             _csv.effectData[i] = _br.ReadInt32();
+        }
+        int lengtheffectTarget = _br.ReadInt32();
+        _csv.effectTarget = new int[lengtheffectTarget];
+        for(int i = 0 ; i < lengtheffectTarget ; i++){
+            _csv.effectTarget[i] = _br.ReadInt32();
+        }
+        int lengtheffectTargetNum = _br.ReadInt32();
+        _csv.effectTargetNum = new int[lengtheffectTargetNum];
+        for(int i = 0 ; i < lengtheffectTargetNum ; i++){
+            _csv.effectTargetNum[i] = _br.ReadInt32();
         }
         _csv.eventName = _br.ReadString();
         _csv.hud = _br.ReadString();
