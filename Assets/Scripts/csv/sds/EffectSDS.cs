@@ -1,4 +1,4 @@
-﻿public class EffectSDS : CsvBase, IEffectSDS
+﻿public partial class EffectSDS : CsvBase, IEffectSDS
 {
     public int effect;
     public int[] data;

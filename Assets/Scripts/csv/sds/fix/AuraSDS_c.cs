@@ -28,8 +28,8 @@ public class AuraSDS_c {
         for(int i = 0 ; i < lengtheffectData ; i++){
             _csv.effectData[i] = _br.ReadInt32();
         }
-        _csv.comment = _br.ReadString();
         _csv.eventName = _br.ReadString();
+        _csv.hud = _br.ReadString();
         int lengthremoveEventNames = _br.ReadInt32();
         _csv.removeEventNames = new string[lengthremoveEventNames];
         for(int i = 0 ; i < lengthremoveEventNames ; i++){

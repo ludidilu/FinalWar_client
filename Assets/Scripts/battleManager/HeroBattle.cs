@@ -337,7 +337,11 @@ public class HeroBattle : HeroBase
 
                     case Effect.ADD_AURA:
 
+                        data = effectVO.data[0];
 
+                        AuraSDS auraSDS = StaticData.GetData<AuraSDS>(data);
+
+                        ShowHud(auraSDS.hud, Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
 
                         break;
                 }
