@@ -155,7 +155,35 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Support(int _index, int _lastIndex, BattleSupportVO _vo)
     {
+        Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.stander].transform.localPosition;
+
+        HeroBattle supporter = BattleManager.Instance.heroDic[_vo.supporter];
+
+        HeroBattle stander = BattleManager.Instance.heroDic[_vo.stander];
+
+        Action<float> supporterToDel = delegate (float _value)
+        {
+            Vector3 v = Vector3.Lerp(supporter.transform.localPosition, targetPos, _value);
+
+            supporter.hudTrans.localPosition = supporter.transform.InverseTransformPoint(supporter.transform.parent.TransformPoint(v));
+        };
+
+        SuperSequenceControl.To(0f, 0.5f, 0.5f, supporterToDel, _index);
+
         yield return null;
+
+        bool shock = stander.TakeEffect(_vo.effectList);
+
+        if (shock)
+        {
+            stander.Shock(supporter, shockCurve, shockDis);
+        }
+
+        SuperSequenceControl.DelayCall(0.5f, _index);
+
+        yield return null;
+
+        SuperSequenceControl.To(0.5f, 0f, 0.5f, supporterToDel, _lastIndex);
     }
 
     public IEnumerator PrepareAttack(int _index, int _lastIndex, BattlePrepareAttackVO _vo)
