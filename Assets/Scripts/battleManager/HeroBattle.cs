@@ -283,49 +283,59 @@ public class HeroBattle : HeroBase
                 {
                     case Effect.DAMAGE:
 
-                        shock = true;
+                        int data = effectVO.data[0];
 
-                        ShowHud((-effectVO.data).ToString(), Color.red, Color.black, i * BattleControl.Instance.hudHeight, null);
+                        if (data > 0)
+                        {
+                            shock = true;
+                        }
+
+                        ShowHud((-data).ToString(), Color.red, Color.black, i * BattleControl.Instance.hudHeight, null);
 
                         break;
 
                     case Effect.SHIELD_CHANGE:
 
-                        if (effectVO.data > 0)
+                        data = effectVO.data[0];
+
+                        if (data > 0)
                         {
-                            ShowHud("+" + effectVO.data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
+                            ShowHud("+" + data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
                         }
                         else
                         {
                             shock = true;
 
-                            ShowHud(effectVO.data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
+                            ShowHud(data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
                         }
 
                         break;
 
                     case Effect.HP_CHANGE:
 
-                        if (effectVO.data > 0)
+                        data = effectVO.data[0];
+
+                        if (data > 0)
                         {
-                            ShowHud("+" + effectVO.data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
+                            ShowHud("+" + data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
                         }
                         else
                         {
                             shock = true;
 
-                            ShowHud(effectVO.data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
+                            ShowHud(data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
                         }
 
                         break;
 
-                    case Effect.SILENCE:
+                    case Effect.BE_SILENCE:
+                    case Effect.BE_CLEAN:
 
                         ShowHud(effectVO.effect.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
 
                         break;
 
-                    case Effect.AURA:
+                    case Effect.ADD_AURA:
 
 
 
