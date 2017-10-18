@@ -127,11 +127,9 @@ public class MapCreator : MonoBehaviour
     {
         nowMapType = MapType.NULL;
 
-        int size = mapData.mapWidth * mapData.mapHeight - mapData.mapHeight / 2;
+        units = new MapUnit[mapData.size];
 
-        units = new MapUnit[size];
-
-        arrows = new GameObject[size];
+        arrows = new GameObject[mapData.size];
 
         int index = 0;
 
