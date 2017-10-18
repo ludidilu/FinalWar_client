@@ -56,12 +56,12 @@ public class BattleOnline : MonoBehaviour
         container.SetActive(false);
 
         client = new Client();
-
-        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceivePushData);
     }
 
     public void Init()
     {
+        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceivePushData);
+
         BattleManager.Instance.SetSendDataCallBack(SendBattleAction);
 
         client.Connect(ReceiveReplyData);

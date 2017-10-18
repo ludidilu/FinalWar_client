@@ -673,7 +673,7 @@ public class BattleManager : MonoBehaviour
 
             for (int i = 0; i < cellData.shooters.Count; i++)
             {
-                GameObject go = CreateShootArrow(cellData.shooters[i].pos, pos, new Color(1, 1, 0, 0.7f));
+                GameObject go = CreateShootArrow(cellData.shooters[i].pos, pos, new Color(1, 1, 0, 0.7f), i);
 
                 arrowList.Add(go);
             }
@@ -709,11 +709,11 @@ public class BattleManager : MonoBehaviour
         return go;
     }
 
-    private GameObject CreateShootArrow(int _start, int _end, Color _color)
+    private GameObject CreateShootArrow(int _start, int _end, Color _color, int _index)
     {
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/ShootArrow.prefab", null);
 
-        ShootArrow arrow = go.GetComponent<ShootArrow>();
+        Arrow arrow = go.GetComponent<Arrow>();
 
         go.transform.SetParent(arrowContainer, false);
 
@@ -736,6 +736,8 @@ public class BattleManager : MonoBehaviour
         go.transform.localScale = new Vector3(scale, scale, scale);
 
         arrow.SetColor(_color);
+
+        arrow.SetIndex(_index);
 
         return go;
     }
