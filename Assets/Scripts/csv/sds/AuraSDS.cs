@@ -1,7 +1,7 @@
 ﻿public partial class AuraSDS : CsvBase, IAuraSDS
 {
     public string eventName;
-    public int eventPriority;
+    public int priority;
     public int triggerTarget;
     public int conditionCompare;
     public int[] conditionType;
@@ -10,7 +10,7 @@
     public int effectType;
     public int[] effectTarget;
     public int[] effectTargetNum;
-    public int[] effectData;
+    public int effectData;
     public string[] removeEventNames;
 
     private AuraTarget[] conditionTargetFix;
@@ -45,9 +45,9 @@
         return eventName;
     }
 
-    public int GetEventPriority()
+    public int GetPriority()
     {
-        return eventPriority;
+        return priority;
     }
 
     public AuraTarget GetTriggerTarget()
@@ -90,7 +90,7 @@
         return effectTargetNum;
     }
 
-    public int[] GetEffectData()
+    public int GetEffectData()
     {
         return effectData;
     }

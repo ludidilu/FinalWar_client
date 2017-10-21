@@ -631,7 +631,7 @@ public class BattleControl : MonoBehaviour
 
         if (_vo.data != null)
         {
-            Dictionary<int, List<BattleHeroEffectVO>>.Enumerator enumerator = _vo.data.GetEnumerator();
+            Dictionary<int, BattleHeroEffectVO>.Enumerator enumerator = _vo.data.GetEnumerator();
 
             while (enumerator.MoveNext())
             {
@@ -639,7 +639,7 @@ public class BattleControl : MonoBehaviour
 
                 targetHero.RefreshAttackWithoutShield();
 
-                bool shock = targetHero.TakeEffect(enumerator.Current.Value);
+                bool shock = targetHero.TakeEffect(new List<BattleHeroEffectVO>() { enumerator.Current.Value });
 
                 if (shock)
                 {
