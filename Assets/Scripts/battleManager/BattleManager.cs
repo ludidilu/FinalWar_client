@@ -737,7 +737,7 @@ public class BattleManager : MonoBehaviour
 
         arrow.SetColor(_color);
 
-        arrow.SetIndex(_index);
+        //arrow.SetIndex(_index);
 
         return go;
     }
@@ -1214,6 +1214,12 @@ public class BattleManager : MonoBehaviour
             else if (vo is BattleRefreshVO)
             {
                 RefreshDataBeforeBattle();
+            }
+            else if (vo is BattleSupportVO)
+            {
+                SuperSequenceControl.Start(BattleControl.Instance.Support, _index, (BattleSupportVO)vo);
+
+                yield return null;
             }
         }
 
