@@ -310,14 +310,14 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        bool defenderShock = defender.TakeEffect(new List<BattleHeroEffectVO>() { _vo.defenseVO });
+        bool defenderShock = defender.TakeEffect(new List<BattleHeroEffectVO>() { _vo.attackVO });
 
         if (defenderShock)
         {
             defender.Shock(attacker, shockCurve, shockDis);
         }
 
-        bool attackerShock = attacker.TakeEffect(new List<BattleHeroEffectVO>() { _vo.attackVO });
+        bool attackerShock = attacker.TakeEffect(new List<BattleHeroEffectVO>() { _vo.defenseVO });
 
         if (attackerShock)
         {
