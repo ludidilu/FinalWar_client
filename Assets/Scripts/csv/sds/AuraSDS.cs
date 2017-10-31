@@ -1,4 +1,6 @@
-﻿public partial class AuraSDS : CsvBase, IAuraSDS
+﻿using FinalWar;
+
+public partial class AuraSDS : CsvBase, IAuraSDS
 {
     public string eventName;
     public int priority;

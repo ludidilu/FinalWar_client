@@ -1,4 +1,6 @@
-﻿public partial class HeroSDS : CsvBase, IHeroSDS
+﻿using FinalWar;
+
+public partial class HeroSDS : CsvBase, IHeroSDS
 {
 	public string name;
 

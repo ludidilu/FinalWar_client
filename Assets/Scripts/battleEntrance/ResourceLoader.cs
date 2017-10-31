@@ -36,9 +36,7 @@ public static class ResourceLoader
 
     private static void ConfigLoadOver()
     {
-        num = 7;
-
-        LoadRandomData();
+        num = 6;
 
         LoadTables();
 
@@ -77,37 +75,6 @@ public static class ResourceLoader
     public static void LoadConfigLocal()
     {
         ConfigDictionary.Instance.LoadLocalConfig(Path.Combine(Application.streamingAssetsPath, "local.xml"));
-    }
-
-    private static void LoadRandomData()
-    {
-#if !USE_ASSETBUNDLE
-
-        using (FileStream fs = new FileStream(Path.Combine(ConfigDictionary.Instance.random_path, "random.dat"), FileMode.Open))
-        {
-            using (BinaryReader br = new BinaryReader(fs))
-            {
-                BattleRandomPool.Load(br);
-
-                OneLoadOver();
-            }
-        }
-#else
-        Action<WWW> dele = delegate (WWW _www)
-        {
-            using (MemoryStream ms = new MemoryStream(_www.bytes))
-            {
-                using (BinaryReader br = new BinaryReader(ms))
-                {
-                    BattleRandomPool.Load(br);
-
-                    OneLoadOver();
-                }
-            }
-        };
-
-        WWWManager.Instance.Load("random.dat", dele);
-#endif
     }
 
     private static void LoadTables()

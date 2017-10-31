@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.IO;
+using FinalWar;
 #if USE_ASSETBUNDLE
 using System.Threading;
 using wwwManager;

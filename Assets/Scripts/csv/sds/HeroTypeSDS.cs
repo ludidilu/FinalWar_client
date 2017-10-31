@@ -1,4 +1,6 @@
-﻿public partial class HeroTypeSDS : CsvBase, IHeroTypeSDS
+﻿using FinalWar;
+
+public partial class HeroTypeSDS : CsvBase, IHeroTypeSDS
 {
     public int attackSpeed;
     public int defenseSpeed;
