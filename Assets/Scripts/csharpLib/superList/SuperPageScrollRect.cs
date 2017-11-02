@@ -3,49 +3,169 @@ using UnityEngine.EventSystems;
 using superTween;
 using superList;
 
-public class SuperPageScrollRect : SuperScrollRect {
+public class SuperPageScrollRect : SuperScrollRect
+{
+    private int verticalNum;
 
-	[SerializeField]
-	private int num;
+    private int horizontalNum;
 
-	[SerializeField]
-	private float speedFix;
+    private float speedFix;
 
-	private float step;
+    private float verticalStep;
 
-	private float halfStep;
+    private float verticalHalfStep;
 
-	protected override void Awake (){
+    private float horizontalStep;
 
-		base.Awake();
+    private float horizontalHalfStep;
 
-		step = 1f / (num - 1);
-		
-		halfStep = step * 0.5f;
-	}
+    private int verticalTweenID = -1;
 
-	public override void OnEndDrag(PointerEventData eventData){
+    private int horizontalTweenID = -1;
 
-		base.OnEndDrag (eventData);
+    protected override void Awake()
+    {
+        base.Awake();
 
-		StopMovement ();
+        inertia = false;
+    }
 
-		if (horizontalNormalizedPosition > 0 && horizontalNormalizedPosition < 1) {
+    public override void OnBeginDrag(PointerEventData eventData)
+    {
+        base.OnBeginDrag(eventData);
 
-			for (int i = 0; i < num; i++) {
+        if (verticalTweenID != -1)
+        {
+            SuperTween.Instance.Remove(verticalTweenID);
 
-				if (horizontalNormalizedPosition < i * step + halfStep) {
+            verticalTweenID = -1;
+        }
 
-					SuperTween.Instance.To(horizontalNormalizedPosition,i * step,Mathf.Abs(i * step - horizontalNormalizedPosition) * speedFix,SetPos,null);
+        if (horizontalTweenID != -1)
+        {
+            SuperTween.Instance.Remove(horizontalTweenID);
 
-					break;
-				}
-			}
-		}
-	}
+            horizontalTweenID = -1;
+        }
+    }
 
-	private void SetPos(float _value){
+    public override void OnEndDrag(PointerEventData eventData)
+    {
+        base.OnEndDrag(eventData);
 
-		horizontalNormalizedPosition = _value;
-	}
+        StopMovement();
+
+        if (vertical)
+        {
+            if (verticalNormalizedPosition > 0 && verticalNormalizedPosition < 1)
+            {
+                for (int i = 0; i < verticalNum; i++)
+                {
+                    if (verticalNormalizedPosition < i * verticalStep + verticalHalfStep)
+                    {
+                        SetVerticalPosIndex(i, false);
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (horizontal)
+        {
+            if (horizontalNormalizedPosition > 0 && horizontalNormalizedPosition < 1)
+            {
+                for (int i = 0; i < horizontalNum; i++)
+                {
+                    if (horizontalNormalizedPosition < i * horizontalStep + horizontalHalfStep)
+                    {
+                        SetHorizontalPosIndex(i, false);
+
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void SetVerticalPosIndex(int _index, bool _instant)
+    {
+        if (_instant)
+        {
+            SetVerticalPos(_index * verticalStep);
+        }
+        else
+        {
+            verticalTweenID = SuperTween.Instance.To(verticalNormalizedPosition, _index * verticalStep, Mathf.Abs(_index * verticalStep - verticalNormalizedPosition) * speedFix, SetVerticalPos, VerticalTweenOver);
+        }
+    }
+
+    public void SetHorizontalPosIndex(int _index, bool _instant)
+    {
+        if (_instant)
+        {
+            SetHorizontalPos(_index * horizontalStep);
+        }
+        else
+        {
+            horizontalTweenID = SuperTween.Instance.To(horizontalNormalizedPosition, _index * horizontalHalfStep, Mathf.Abs(_index * horizontalHalfStep - horizontalNormalizedPosition) * speedFix, SetHorizontalPos, HorizontalTweenOver);
+        }
+    }
+
+    private void SetVerticalPos(float _value)
+    {
+        verticalNormalizedPosition = _value;
+    }
+
+    private void SetHorizontalPos(float _value)
+    {
+        horizontalNormalizedPosition = _value;
+    }
+
+    private void VerticalTweenOver()
+    {
+        verticalTweenID = -1;
+    }
+
+    private void HorizontalTweenOver()
+    {
+        horizontalTweenID = -1;
+    }
+
+    public void SetVerticalNum(int _verticalNum)
+    {
+        verticalNum = _verticalNum;
+
+        if (verticalNum > 1)
+        {
+            verticalStep = 1f / (verticalNum - 1);
+        }
+        else
+        {
+            verticalStep = 0;
+        }
+
+        verticalHalfStep = verticalStep * 0.5f;
+    }
+
+    public void SetHorizontalNum(int _horizontalNum)
+    {
+        horizontalNum = _horizontalNum;
+
+        if (horizontalNum > 1)
+        {
+            horizontalStep = 1f / (horizontalNum - 1);
+        }
+        else
+        {
+            horizontalStep = 0;
+        }
+
+        horizontalHalfStep = horizontalStep * 0.5f;
+    }
+
+    public void SetSpeedFix(float _speedFix)
+    {
+        speedFix = _speedFix;
+    }
 }

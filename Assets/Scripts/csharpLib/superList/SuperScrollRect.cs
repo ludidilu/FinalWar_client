@@ -1,124 +1,80 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using superFunction;
 
-namespace superList{
-	
-	public class SuperScrollRect : ScrollRect,IPointerExitHandler {
+namespace superList
+{
+    public class SuperScrollRect : ScrollRect, IPointerExitHandler
+    {
+        public static bool canDrag
+        {
+            get
+            {
+                return SuperScrollRectScript.Instance.canDrag > 0;
+            }
 
-		public static GameObject eventDispatcher;
+            set
+            {
+                SuperScrollRectScript.Instance.canDrag = SuperScrollRectScript.Instance.canDrag + (value ? 1 : -1);
+            }
+        }
 
-		public const string CLOSE_MOVE = "SuperListCloseMove";
-		
-		public const string OPEN_MOVE = "SuperListOpenMove";
+        public bool isRestrain = false;
 
-		public static bool canDrag{
+        private bool isRestrainDrag;
 
-			get{
+        private bool isOneTouchDrag;
 
-				return SuperScrollRectScript.Instance.canDrag > 0;
-			}
+        public override void OnBeginDrag(PointerEventData eventData)
+        {
+            if (!canDrag || Input.touchCount > 1)
+            {
+                return;
+            }
 
-			set{
+            if (isRestrain)
+            {
+                isRestrainDrag = true;
+            }
 
-				SuperScrollRectScript.Instance.canDrag = SuperScrollRectScript.Instance.canDrag + (value ? 1 : -1);
-			}
-		}
+            isOneTouchDrag = true;
 
-		public bool isRestrain = false;
+            base.OnBeginDrag(eventData);
+        }
 
-		private bool isRestrainDrag;
+        public override void OnDrag(PointerEventData eventData)
+        {
+            if (!canDrag)
+            {
+                return;
+            }
 
-		private bool isOneTouchDrag;
-		
-		public override void OnBeginDrag(PointerEventData eventData) {
+            if (Input.touchCount > 1)
+            {
+                isOneTouchDrag = false;
 
-			if(!canDrag || Input.touchCount > 1){
+                return;
+            }
 
-				return;
-			}
+            if (isOneTouchDrag && (!isRestrain || isRestrainDrag))
+            {
+                base.OnDrag(eventData);
+            }
+        }
 
-			if(isRestrain){
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (isRestrain)
+            {
+                base.OnEndDrag(eventData);
 
-				isRestrainDrag = true;
-			}
-
-			isOneTouchDrag = true;
-
-			base.OnBeginDrag(eventData);
-		}
-		
-		public override void OnDrag(PointerEventData eventData) {
-
-			if(!canDrag){
-				
-				return;
-			}
-			
-			if(Input.touchCount > 1){
-				
-				isOneTouchDrag = false;
-				
-				return;
-			}
-
-			if(isOneTouchDrag && (!isRestrain || isRestrainDrag)){
-
-				base.OnDrag(eventData);
-			}
-		}
-		
-		public void OnPointerExit (PointerEventData eventData)
-		{
-			if(isRestrain){
-
-				base.OnEndDrag(eventData);
-				
-				isRestrainDrag = false;
-			}
-		}
+                isRestrainDrag = false;
+            }
+        }
 
         public void DirectContentAnchoredPosition(Vector2 anchoredPosition)
         {
             SetContentAnchoredPosition(anchoredPosition);
         }
-
-		protected override void Awake ()
-		{
-			base.Awake();
-
-			if (movementType == ScrollRect.MovementType.Elastic) {
-
-				if (eventDispatcher == null) {
-					
-					eventDispatcher = new GameObject ("SuperListEventDispatcher");
-					
-					GameObject.DontDestroyOnLoad (eventDispatcher);
-				}
-
-				SuperFunction.Instance.AddEventListener (eventDispatcher, OPEN_MOVE, OpenMove);
-				
-				SuperFunction.Instance.AddEventListener (eventDispatcher, CLOSE_MOVE, CloseMove);
-			}
-		}
-
-		protected override void OnDestroy (){
-				
-			SuperFunction.Instance.RemoveEventListener(eventDispatcher,OPEN_MOVE,OpenMove);
-			
-			SuperFunction.Instance.RemoveEventListener(eventDispatcher,CLOSE_MOVE,CloseMove);
-		}
-
-		public void CloseMove(int _index){
-			
-			movementType = ScrollRect.MovementType.Clamped;
-		}
-		
-		public void OpenMove(int _index){
-			
-			movementType = ScrollRect.MovementType.Elastic;
-		}
-	}
+    }
 }
