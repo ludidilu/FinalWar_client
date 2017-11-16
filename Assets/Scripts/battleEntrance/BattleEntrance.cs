@@ -2,22 +2,14 @@
 
 public class BattleEntrance : MonoBehaviour
 {
-    private static BattleEntrance _Instance;
-
-    public static BattleEntrance Instance
-    {
-        get
-        {
-            return _Instance;
-        }
-    }
+    public static BattleEntrance Instance { private set; get; }
 
     [SerializeField]
     private GameObject container;
 
     void Awake()
     {
-        _Instance = this;
+        Instance = this;
 
         Application.targetFrameRate = 60;
 
@@ -29,6 +21,7 @@ public class BattleEntrance : MonoBehaviour
     private void LoadOver()
     {
         container.SetActive(true);
+
         BattleManager.Instance.Init();
     }
 
