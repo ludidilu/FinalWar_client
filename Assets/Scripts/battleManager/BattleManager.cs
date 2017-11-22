@@ -1135,12 +1135,6 @@ public class BattleManager : MonoBehaviour
 
                 yield return null;
             }
-            else if (vo is BattleAttackVO)
-            {
-                SuperSequenceControl.Start(BattleControl.Instance.Attack, _index, (BattleAttackVO)vo);
-
-                yield return null;
-            }
             else if (vo is BattlePrepareAttackVO)
             {
                 SuperSequenceControl.Start(BattleControl.Instance.PrepareAttack, _index, (BattlePrepareAttackVO)vo);
@@ -1153,9 +1147,9 @@ public class BattleManager : MonoBehaviour
 
                 yield return null;
             }
-            else if (vo is BattleCounterVO)
+            else if (vo is BattleAttackBothVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.Counter, _index, (BattleCounterVO)vo);
+                SuperSequenceControl.Start(BattleControl.Instance.AttackBoth, _index, (BattleAttackBothVO)vo);
 
                 yield return null;
             }
