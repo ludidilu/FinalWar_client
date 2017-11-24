@@ -11,6 +11,7 @@ public class HeroTypeSDS_c {
         _csv.ID = _br.ReadInt32();
         _csv.supportSpeed = _br.ReadInt32();
         _csv.thread = _br.ReadInt32();
+        _csv.desc = _br.ReadString();
         _csv.name = _br.ReadString();
     }
 }

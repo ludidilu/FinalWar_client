@@ -9,7 +9,7 @@ using thread;
 using System.Threading;
 using publicTools;
 
-public static class StaticData
+public static class SuperStaticData
 {
     public static string path;
 
@@ -19,9 +19,9 @@ public static class StaticData
 
     private static Dictionary<Type, IList> dicList = new Dictionary<Type, IList>();
 
-    public static T GetData<T>(int _id) where T : CsvBase
+    public static T GetData<T, U>(U _id) where T : SuperCsvBase<U>
     {
-        Dictionary<int, T> tmpDic = dic[typeof(T)] as Dictionary<int, T>;
+        Dictionary<U, T> tmpDic = dic[typeof(T)] as Dictionary<U, T>;
 
         T data;
 
@@ -33,32 +33,7 @@ public static class StaticData
         return data;
     }
 
-    public static T GetDataOfKey<T>(string key, object keyValueParam) where T : CsvBase
-    {
-        Dictionary<int, T> dict = GetDic<T>();
-
-        Type type = typeof(T);
-
-        FieldInfo field = type.GetField(key);
-
-        IEnumerator<T> enumerator = dict.Values.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            T item = enumerator.Current;
-
-            object keyValue = field.GetValue(item);
-
-            if (keyValue.Equals(keyValueParam))
-            {
-                return item;
-            }
-        }
-
-        return default(T);
-    }
-
-    public static Dictionary<int, T> GetDic<T>() where T : CsvBase
+    public static Dictionary<U, T> GetDic<T, U>() where T : SuperCsvBase<U>
     {
         Type type = typeof(T);
 
@@ -69,10 +44,10 @@ public static class StaticData
             SuperDebug.LogError("not find: " + type);
         }
 
-        return data as Dictionary<int, T>;
+        return data as Dictionary<U, T>;
     }
 
-    public static List<T> GetList<T>() where T : CsvBase
+    public static List<T> GetList<T, U>() where T : SuperCsvBase<U>
     {
         Type type = typeof(T);
 
@@ -80,7 +55,7 @@ public static class StaticData
 
         if (!dicList.TryGetValue(type, out data))
         {
-            Dictionary<int, T> dict = GetDic<T>();
+            Dictionary<U, T> dict = GetDic<T, U>();
 
             data = new List<T>();
 
@@ -97,9 +72,9 @@ public static class StaticData
         return data as List<T>;
     }
 
-    public static bool IsIDExists<T>(int _id) where T : CsvBase
+    public static bool IsIDExists<T, U>(U _id) where T : SuperCsvBase<U>
     {
-        Dictionary<int, T> dict = GetDic<T>();
+        Dictionary<U, T> dict = GetDic<T, U>();
 
         return dict.ContainsKey(_id);
     }
@@ -124,7 +99,7 @@ public static class StaticData
         dic = new Dictionary<Type, IDictionary>();
     }
 
-    public static void Load<T>(string _name) where T : CsvBase, new()
+    public static void Load<T, U>(string _name) where T : SuperCsvBase<U>, new()
     {
         Type type = typeof(T);
 
@@ -133,7 +108,7 @@ public static class StaticData
             return;
         }
 
-        Dictionary<int, T> result = new Dictionary<int, T>();
+        Dictionary<U, T> result = new Dictionary<U, T>();
 
         using (FileStream fs = new FileStream(path + "/" + _name + ".csv", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
@@ -153,7 +128,7 @@ public static class StaticData
 
                         infoArr = new FieldInfo[dataArr.Length];
 
-                        for (int m = 1; m < dataArr.Length; m++)
+                        for (int m = 0; m < dataArr.Length; m++)
                         {
                             infoArr[m] = type.GetField(dataArr[m]);
                         }
@@ -164,9 +139,7 @@ public static class StaticData
 
                         T csv = new T();
 
-                        csv.ID = Int32.Parse(dataArr[0]);
-
-                        for (int m = 1; m < infoArr.Length; m++)
+                        for (int m = 0; m < infoArr.Length; m++)
                         {
                             FieldInfo info = infoArr[m];
 
@@ -191,7 +164,7 @@ public static class StaticData
         dic.Add(type, result);
     }
 
-    private static void SetData(FieldInfo _info, CsvBase _csv, string _data)
+    private static void SetData<U>(FieldInfo _info, SuperCsvBase<U> _csv, string _data)
     {
         try
         {

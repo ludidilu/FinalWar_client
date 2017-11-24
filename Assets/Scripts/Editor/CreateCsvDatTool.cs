@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-public class CreateCsvDatTool
+public static class CreateCsvDatTool
 {
     [MenuItem("Create csv.dat/Do")]
     public static void Start()

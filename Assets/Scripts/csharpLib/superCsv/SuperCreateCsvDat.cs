@@ -5,11 +5,11 @@ using System.Reflection;
 using System;
 using System.Collections.Generic;
 
-public static class CreateCsvDat
+public static class SuperCreateCsvDat
 {
     public static void Start(string _path)
     {
-        FileInfo fib = new FileInfo(Application.streamingAssetsPath + "/" + StaticData.datName);
+        FileInfo fib = new FileInfo(Application.streamingAssetsPath + "/" + SuperStaticData.datName);
 
         if (fib.Exists)
         {
@@ -27,7 +27,7 @@ public static class CreateCsvDat
             di.Create();
         }
 
-        FileInfo fix = new FileInfo(Application.dataPath + _path + "LoadCsv.cs");
+        FileInfo fix = new FileInfo(Application.dataPath + _path + "SuperLoadCsv.cs");
 
         if (fix.Exists)
         {
@@ -44,7 +44,7 @@ public static class CreateCsvDat
 
         sww.WriteLine("using System;");
 
-        sww.WriteLine("public class LoadCsv {");
+        sww.WriteLine("public class SuperLoadCsv {");
 
         sww.WriteLine("    public static Dictionary<Type,IDictionary> Init(byte[] _bytes) {");
 
@@ -56,7 +56,7 @@ public static class CreateCsvDat
 
         List<Type> typeList = new List<Type>();
 
-        foreach (Type type in StaticData.dic.Keys)
+        foreach (Type type in SuperStaticData.dic.Keys)
         {
             typeList.Add(type);
         }
@@ -65,11 +65,11 @@ public static class CreateCsvDat
 
         foreach (Type type in typeList)
         {
-            IDictionary unitDic = StaticData.dic[type];
+            IDictionary unitDic = SuperStaticData.dic[type];
 
             string fileName = type.Name;
 
-            FileInfo fii = new FileInfo(Application.dataPath + _path + fileName + "_c.cs");
+            FileInfo fii = new FileInfo(Application.dataPath + _path + fileName + "_s.cs");
 
             if (fii.Exists)
             {
@@ -80,7 +80,7 @@ public static class CreateCsvDat
 
             sw.WriteLine("using System.IO;");
 
-            sw.WriteLine("public class " + fileName + "_c {");
+            sw.WriteLine("public class " + fileName + "_s {");
 
             sw.WriteLine("    public static void Init(" + fileName + " _csv, BinaryReader _br){");
 
@@ -95,6 +95,8 @@ public static class CreateCsvDat
 
             fisList.Sort(SortFieldInfo);
 
+            string keyType = string.Empty;
+
             foreach (FieldInfo fi in fisList)
             {
                 switch (fi.FieldType.Name)
@@ -103,11 +105,21 @@ public static class CreateCsvDat
 
                         sw.WriteLine("        _csv." + fi.Name + " = _br.ReadInt32();");
 
+                        if (fi.Name == "ID")
+                        {
+                            keyType = "int";
+                        }
+
                         break;
 
                     case "String":
 
                         sw.WriteLine("        _csv." + fi.Name + " = _br.ReadString();");
+
+                        if (fi.Name == "ID")
+                        {
+                            keyType = "string";
+                        }
 
                         break;
 
@@ -237,7 +249,7 @@ public static class CreateCsvDat
 
             bw.Write(unitDic.Count);
 
-            sww.WriteLine("        Dictionary<int," + fileName + "> " + fileName + "Dic = new Dictionary<int," + fileName + ">();");
+            sww.WriteLine("        Dictionary<" + keyType + ", " + fileName + "> " + fileName + "Dic = new Dictionary<" + keyType + ", " + fileName + ">();");
 
             sww.WriteLine("        int length" + fileName + " = br.ReadInt32();");
 
@@ -245,7 +257,7 @@ public static class CreateCsvDat
 
             sww.WriteLine("            " + fileName + " unit = new " + fileName + "();");
 
-            sww.WriteLine("            " + fileName + "_c.Init(unit,br);");
+            sww.WriteLine("            " + fileName + "_s.Init(unit,br);");
 
             sww.WriteLine("            unit.Fix();");
 
