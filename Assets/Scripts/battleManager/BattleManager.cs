@@ -1506,7 +1506,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void Alert(string _str, Action _callBack)
+    public void Alert(string _str, Action _callBack)
     {
         alertPanel.Alert(_str, _callBack);
     }

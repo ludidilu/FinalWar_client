@@ -105,6 +105,8 @@ public static class ResourceLoader
 
         StaticData.Load<AuraSDS>("aura");
 
+        StaticData.Load<DescSDS>("desc");
+
         StaticData.Load<TestCardsSDS>("testCards");
     }
 

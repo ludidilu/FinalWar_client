@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using superFunction;
 
 public class HeroDetail : MonoBehaviour
 {
@@ -7,19 +8,19 @@ public class HeroDetail : MonoBehaviour
     private Text heroName;
 
     [SerializeField]
-    private Text cost;
+    private ClickText cost;
 
     [SerializeField]
-    private Text hp;
+    private ClickText hp;
 
     [SerializeField]
-    private Text shield;
+    private ClickText shield;
 
     [SerializeField]
-    private Text attack;
+    private ClickText attack;
 
     [SerializeField]
-    private Text abilityType;
+    private ClickText abilityType;
 
     [SerializeField]
     private Text comment;
@@ -28,6 +29,21 @@ public class HeroDetail : MonoBehaviour
     private GameObject commentContainer;
 
     private HeroBase hero;
+
+    void Awake()
+    {
+        SuperFunction.Instance.AddEventListener<int>(ClickText.eventGo, ClickText.EVENT_NAME, GetClick);
+    }
+
+    private void GetClick(int _index, int _id)
+    {
+        if (_id > 0)
+        {
+            DescSDS sds = StaticData.GetData<DescSDS>(_id);
+
+            BattleManager.Instance.Alert(sds.desc, null);
+        }
+    }
 
     public void Show(HeroBase _hero)
     {
@@ -44,6 +60,8 @@ public class HeroDetail : MonoBehaviour
         attack.text = hero.sds.attack.ToString();
 
         abilityType.text = hero.sds.heroTypeFix.name;
+
+        abilityType.clickKey = hero.sds.ID;
 
         if (!string.IsNullOrEmpty(hero.sds.comment))
         {
