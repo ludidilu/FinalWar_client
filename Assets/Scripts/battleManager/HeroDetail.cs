@@ -18,14 +18,14 @@ public class HeroDetail : MonoBehaviour
     [SerializeField]
     private Text attack;
 
-	[SerializeField]
-	private Text abilityType;
+    [SerializeField]
+    private Text abilityType;
 
     [SerializeField]
     private Text comment;
 
-	[SerializeField]
-	private GameObject commentContainer;
+    [SerializeField]
+    private GameObject commentContainer;
 
     private HeroBase hero;
 
@@ -33,47 +33,40 @@ public class HeroDetail : MonoBehaviour
     {
         hero = _hero;
 
-		ShowReal (hero.sds);
+        heroName.text = hero.sds.name;
+
+        cost.text = hero.sds.cost.ToString();
+
+        hp.text = hero.sds.hp.ToString();
+
+        shield.text = hero.sds.shield.ToString();
+
+        attack.text = hero.sds.attack.ToString();
+
+        abilityType.text = hero.sds.heroTypeFix.name;
+
+        if (!string.IsNullOrEmpty(hero.sds.comment))
+        {
+            comment.text = hero.sds.comment;
+
+            if (!commentContainer.activeSelf)
+            {
+                commentContainer.SetActive(true);
+            }
+        }
+        else
+        {
+            if (commentContainer.activeSelf)
+            {
+                commentContainer.SetActive(false);
+            }
+        }
+
+        if (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+        }
     }
-
-	private void ShowReal(HeroSDS _heroSDS){
-
-		heroName.color = _heroSDS == hero.sds ? Color.black : Color.red;
-
-		heroName.text = _heroSDS.name;
-		
-		cost.text = _heroSDS.cost.ToString();
-		
-		hp.text = _heroSDS.hp.ToString();
-		
-		shield.text = _heroSDS.shield.ToString();
-		
-		attack.text = _heroSDS.attack.ToString();
-
-		abilityType.text = _heroSDS.heroTypeFix.name;
-
-		if (!string.IsNullOrEmpty (_heroSDS.comment)) {
-			
-			comment.text = _heroSDS.comment;
-			
-			if(!commentContainer.activeSelf){
-				
-				commentContainer.SetActive(true);
-			}
-			
-		}else{
-			
-			if(commentContainer.activeSelf){
-				
-				commentContainer.SetActive(false);
-			}
-		}
-		
-		if (!gameObject.activeSelf)
-		{
-			gameObject.SetActive(true);
-		}
-	}
 
     public void Hide(HeroBase _hero)
     {
