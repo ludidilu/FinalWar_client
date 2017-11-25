@@ -288,6 +288,8 @@ public class BattleManager : MonoBehaviour
 
         heroDetail.Hide();
 
+        alertPanel.Close();
+
         ClearMapUnits();
 
         ClearCards();
@@ -316,6 +318,8 @@ public class BattleManager : MonoBehaviour
     private void RefreshDataBeforeBattle()
     {
         heroDetail.Hide();
+
+        alertPanel.Close();
 
         ClearMapUnits();
 
