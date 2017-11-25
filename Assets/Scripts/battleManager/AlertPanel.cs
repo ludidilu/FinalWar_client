@@ -49,15 +49,18 @@ public class AlertPanel : MonoBehaviour
 
     public void Close()
     {
-        gameObject.SetActive(false);
-
-        SuperGraphicRaycast.SetIsOpen(true, "a");
-
-        SuperRaycast.SetIsOpen(true, "a");
-
-        if (callBack != null)
+        if (gameObject.activeSelf)
         {
-            callBack();
+            gameObject.SetActive(false);
+
+            SuperGraphicRaycast.SetIsOpen(true, "a");
+
+            SuperRaycast.SetIsOpen(true, "a");
+
+            if (callBack != null)
+            {
+                callBack();
+            }
         }
     }
 }
