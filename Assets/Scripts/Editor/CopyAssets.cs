@@ -1,11 +1,9 @@
 ﻿using System.IO;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
 public static class CopyAssets
 {
-
     [MenuItem("Copy Assets/Do")]
     public static void Start()
     {
