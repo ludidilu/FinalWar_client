@@ -119,8 +119,8 @@ public static class ResourceLoader
     {
 #if !USE_ASSETBUNDLE
 
-        string actionStr = File.ReadAllText(ConfigDictionary.Instance.ai_path + "ai_action.xml");
-        string summonStr = File.ReadAllText(ConfigDictionary.Instance.ai_path + "ai_summon.xml");
+        string actionStr = File.ReadAllText(Path.Combine(ConfigDictionary.Instance.ai_path, "ai_action.xml"));
+        string summonStr = File.ReadAllText(Path.Combine(ConfigDictionary.Instance.ai_path, "ai_summon.xml"));
 
         BattleAi.Init(actionStr, summonStr);
 
