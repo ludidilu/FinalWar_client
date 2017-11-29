@@ -563,7 +563,7 @@ PlayerSettings:
   webGLUseWasm: 0
   webGLCompressionFormat: 1
   scriptingDefineSymbols:
-    1: USE_ASSETBUNDLE
+    1: 
     7: USE_ASSETBUNDLE
   platformArchitecture:
     iOS: 2
