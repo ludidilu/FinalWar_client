@@ -61,7 +61,7 @@ public class HeroDetail : MonoBehaviour
 
         abilityType.text = hero.sds.heroTypeFix.name;
 
-        abilityType.clickKey = hero.sds.ID;
+        abilityType.clickKey = hero.sds.heroTypeFix.ID;
 
         if (!string.IsNullOrEmpty(hero.sds.comment))
         {
