@@ -374,5 +374,10 @@ public class HeroBattle : HeroBase
         hp.color = new Color(hp.color.r, hp.color.g, hp.color.b, _v);
 
         heroType.color = new Color(1, 1, 1, _v);
+
+        if (speed.gameObject.activeSelf)
+        {
+            speed.color = new Color(speed.color.a, speed.color.g, speed.color.b, _v);
+        }
     }
 }

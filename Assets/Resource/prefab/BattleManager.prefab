@@ -79,6 +79,8 @@ GameObject:
   - component: {fileID: 22475798}
   - component: {fileID: 22227190}
   - component: {fileID: 11489550}
+  - component: {fileID: 114278096171489370}
+  - component: {fileID: 114363045258327204}
   m_Layer: 5
   m_Name: GameObject (1)
   m_TagString: Untagged
@@ -591,7 +593,17 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 1
+  m_Text: 'fgfgf
+
+    fgfg
+
+    fgfgfgfggfgfgdddddfdf
+
+
+
+    dfff
+
+    aaa'
 --- !u!114 &11405928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1590,11 +1602,11 @@ RectTransform:
   m_Father: {fileID: 22405076}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000029563904}
-  m_SizeDelta: {x: 200, y: 250}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -300}
+  m_SizeDelta: {x: 200, y: 294.5733}
+  m_Pivot: {x: 0, y: 1}
 --- !u!224 &22483560
 RectTransform:
   m_ObjectHideFlags: 1
@@ -1644,10 +1656,10 @@ RectTransform:
   m_Father: {fileID: 22475798}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 180, y: -10}
+  m_SizeDelta: {x: 160, y: 264.5733}
   m_Pivot: {x: 1, y: 1}
 --- !u!224 &22491342
 RectTransform:
@@ -2137,6 +2149,39 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: aaa
   clickKey: 0
+--- !u!114 &114278096171489370
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 121974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3a5149e46522d84cb8079537220a929, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 20
+    m_Right: 20
+    m_Top: 10
+    m_Bottom: 20
+  m_ChildAlignment: 0
+  ChildForceExpandHeight: 0
+  ChildForceExpandWidth: 0
+  Spacing: 0
+--- !u!114 &114363045258327204
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 121974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!114 &114393357581153658
 MonoBehaviour:
   m_ObjectHideFlags: 1

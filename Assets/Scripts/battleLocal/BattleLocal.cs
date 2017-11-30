@@ -79,16 +79,13 @@ public class BattleLocal
 
         SuperFunction.Instance.AddEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
 
-        FileInfo fi = new FileInfo(Application.persistentDataPath + "/local" + ConfigDictionary.Instance.uid + ".dat");
-
-        if (fi.Exists)
+        if (PlayerPrefs.HasKey(saveKey))
         {
-            using (BinaryReader br = new BinaryReader(fi.OpenRead()))
-            {
-                byte[] bytes = br.ReadBytes((int)br.BaseStream.Length);
+            string str = PlayerPrefs.GetString(saveKey);
 
-                battleServer.FromBytes(bytes);
-            }
+            byte[] bytes = Convert.FromBase64String(str);
+
+            battleServer.FromBytes(bytes);
         }
         else
         {
@@ -115,11 +112,11 @@ public class BattleLocal
 
         BattleEntrance.Instance.Show();
 
-        FileInfo fi = new FileInfo(Application.persistentDataPath + "/local" + ConfigDictionary.Instance.uid + ".dat");
-
-        if (fi.Exists)
+        if (PlayerPrefs.HasKey(saveKey))
         {
-            fi.Delete();
+            PlayerPrefs.DeleteKey(saveKey);
+
+            PlayerPrefs.Save();
         }
 
         battleServer.ResetData();
@@ -141,17 +138,11 @@ public class BattleLocal
     {
         byte[] bytes = battleServer.ToBytes();
 
-        FileInfo fi = new FileInfo(Application.persistentDataPath + "/local" + ConfigDictionary.Instance.uid + ".dat");
+        string str = Convert.ToBase64String(bytes);
 
-        if (fi.Exists)
-        {
-            fi.Delete();
-        }
+        PlayerPrefs.SetString(saveKey, str);
 
-        using (BinaryWriter bw = new BinaryWriter(fi.Create()))
-        {
-            bw.Write(bytes, 0, bytes.Length);
-        }
+        PlayerPrefs.Save();
     }
 
     public void VerifyBattle()

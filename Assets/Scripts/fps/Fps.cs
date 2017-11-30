@@ -14,12 +14,12 @@ public class Fps : MonoBehaviour
     {
         gs = new GUIStyle();
 
-        gs.fontSize = 40;
+        gs.fontSize = 20;
     }
 
     void OnGUI()
     {
-        GUI.Label(new Rect(0, 0, 100, 100), text, gs);
+        GUI.Label(new Rect(0, 0, 50, 50), text, gs);
     }
 
     void Update()
