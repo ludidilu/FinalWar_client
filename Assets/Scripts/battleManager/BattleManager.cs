@@ -93,7 +93,19 @@ public class BattleManager : MonoBehaviour
     public Transform arrowContainer;
 
     [SerializeField]
-    private Text moneyTf;
+    private Text mMoneyTf;
+
+    [SerializeField]
+    private Text mScoreTf;
+
+    [SerializeField]
+    private Text oMoneyTf;
+
+    [SerializeField]
+    private Text oScoreTf;
+
+    [SerializeField]
+    private Text oCardNumTf;
 
     [SerializeField]
     private GameObject actionBt;
@@ -631,22 +643,14 @@ public class BattleManager : MonoBehaviour
 
     private void CreateMoneyTf()
     {
-        if (!moneyTf.gameObject.activeSelf)
-        {
-            moneyTf.gameObject.SetActive(true);
-        }
+        mMoneyTf.text = battle.ClientGetMoney().ToString();
 
-        moneyTf.text = battle.ClientGetMoney().ToString();
+        oMoneyTf.text = battle.clientIsMine ? battle.oMoney.ToString() : battle.mMoney.ToString();
     }
 
     private void CreateMoneyTfOrigin()
     {
-        if (!moneyTf.gameObject.activeSelf)
-        {
-            moneyTf.gameObject.SetActive(true);
-        }
-
-        moneyTf.text = battle.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
+        mMoneyTf.text = battle.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
     }
 
     private void CreateMoves()
@@ -938,22 +942,7 @@ public class BattleManager : MonoBehaviour
 
     private bool SummonHero(int _cardUid, int _pos)
     {
-        bool b = battle.ClientRequestSummon(_cardUid, _pos);
-
-        if (b)
-        {
-            CreateMoneyTf();
-
-            ClearCards();
-
-            CreateCards(true);
-
-            ClearSummonHeros();
-
-            CreateSummonHeros();
-        }
-
-        return b;
+        return battle.ClientRequestSummon(_cardUid, _pos);
     }
 
     private void UnsummonHero(int _cardUid)

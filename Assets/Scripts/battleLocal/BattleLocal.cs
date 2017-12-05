@@ -22,7 +22,7 @@ public class BattleLocal
         }
     }
 
-    private const int mapID = 2;
+    private const int testID = 1;
 
     private Battle_server battleServer;
 
@@ -89,11 +89,9 @@ public class BattleLocal
         }
         else
         {
-            IList<int> mCards = StaticData.GetData<TestCardsSDS>(1).cards;
+            TestCardsSDS testCardSDS = StaticData.GetData<TestCardsSDS>(testID);
 
-            IList<int> oCards = StaticData.GetData<TestCardsSDS>(2).cards;
-
-            battleServer.ServerStart(mapID, mCards, oCards, true);
+            battleServer.ServerStart(testCardSDS.mapID, testCardSDS.maxRoundNum, testCardSDS.mCards, testCardSDS.oCards, true);
         }
 
         BattleManager.Instance.RequestRefreshData();
@@ -130,7 +128,7 @@ public class BattleLocal
 
         using (BinaryReader br = new BinaryReader(_ms))
         {
-            battleServer.ServerGetPackage(br, true, true);
+            battleServer.ServerGetPackage(br, true);
         }
     }
 

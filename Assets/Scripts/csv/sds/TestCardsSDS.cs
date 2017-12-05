@@ -1,4 +1,7 @@
 ﻿public class TestCardsSDS : CsvBase
 {
-    public int[] cards;
+    public int[] mCards;
+    public int[] oCards;
+    public int mapID;
+    public int maxRoundNum;
 }
