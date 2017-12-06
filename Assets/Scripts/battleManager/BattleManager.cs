@@ -349,7 +349,7 @@ public class BattleManager : MonoBehaviour
 
         CreateHeros();
 
-        CreateMoneyTfOrigin();
+        CreateMoneyTf();
     }
 
     public void QuitBattle()
@@ -643,14 +643,9 @@ public class BattleManager : MonoBehaviour
 
     private void CreateMoneyTf()
     {
-        mMoneyTf.text = battle.ClientGetMoney().ToString();
+        mMoneyTf.text = battle.GetNowMoney(battle.clientIsMine).ToString();
 
-        oMoneyTf.text = battle.clientIsMine ? battle.oMoney.ToString() : battle.mMoney.ToString();
-    }
-
-    private void CreateMoneyTfOrigin()
-    {
-        mMoneyTf.text = battle.clientIsMine ? battle.mMoney.ToString() : battle.oMoney.ToString();
+        oMoneyTf.text = battle.GetNowMoney(!battle.clientIsMine).ToString();
     }
 
     private void CreateMoves()
@@ -1224,7 +1219,7 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator DoSummon(int _index, int _lastIndex, BattleSummonVO _vo)
     {
-        CreateMoneyTfOrigin();
+        CreateMoneyTf();
 
         Hero hero = battle.heroMapDic[_vo.pos];
 
