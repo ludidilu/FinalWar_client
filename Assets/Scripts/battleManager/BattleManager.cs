@@ -108,6 +108,9 @@ public class BattleManager : MonoBehaviour
     private Text oCardNumTf;
 
     [SerializeField]
+    private Text roundNumLeftTf;
+
+    [SerializeField]
     private GameObject actionBt;
 
     [SerializeField]
@@ -1234,8 +1237,6 @@ public class BattleManager : MonoBehaviour
             else if (vo is BattleScoreChangeVO)
             {
                 DoScoreChange((BattleScoreChangeVO)vo);
-
-                yield return null;
             }
         }
 

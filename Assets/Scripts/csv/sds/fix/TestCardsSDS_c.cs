@@ -1,6 +1,18 @@
 using System.IO;
 public class TestCardsSDS_c {
     public static void Init(TestCardsSDS _csv, BinaryReader _br){
-        
+        _csv.ID = _br.ReadInt32();
+        _csv.mapID = _br.ReadInt32();
+        _csv.maxRoundNum = _br.ReadInt32();
+        int lengthmCards = _br.ReadInt32();
+        _csv.mCards = new int[lengthmCards];
+        for(int i = 0 ; i < lengthmCards ; i++){
+            _csv.mCards[i] = _br.ReadInt32();
+        }
+        int lengthoCards = _br.ReadInt32();
+        _csv.oCards = new int[lengthoCards];
+        for(int i = 0 ; i < lengthoCards ; i++){
+            _csv.oCards[i] = _br.ReadInt32();
+        }
     }
 }

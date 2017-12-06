@@ -184,6 +184,8 @@ public static class ResourceLoader
         {
             AssetBundleManager.Instance.Load("texture", null);
 
+            AssetBundleManager.Instance.Load("font", null);
+
             GameObjectFactory.Instance.PreloadGameObjects(preloadPrefabs, OneLoadOver);
 
             GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", goDele);
