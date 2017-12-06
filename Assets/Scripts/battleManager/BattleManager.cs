@@ -314,7 +314,7 @@ public class BattleManager : MonoBehaviour
 
         CreateMapUnits();
 
-        CreateCards(true);
+        CreateCards();
 
         CreateSummonHeros();
 
@@ -323,6 +323,8 @@ public class BattleManager : MonoBehaviour
         CreateMoves();
 
         CreateMoneyTf();
+
+        CreateScoreTf();
 
         RefreshTouchable(battle.GetClientCanAction());
     }
@@ -345,7 +347,7 @@ public class BattleManager : MonoBehaviour
 
         CreateMapUnits();
 
-        CreateCards(false);
+        CreateCards();
 
         CreateHeros();
 
@@ -442,7 +444,7 @@ public class BattleManager : MonoBehaviour
 
         while (enumerator2.MoveNext())
         {
-            GameObject.Destroy(enumerator2.Current.gameObject);
+            Destroy(enumerator2.Current.gameObject);
         }
 
         cardDic.Clear();
@@ -583,22 +585,32 @@ public class BattleManager : MonoBehaviour
         FixBounds();
     }
 
-    private void CreateCards(bool _hideInSummon)
+    private void CreateCards()
     {
-        List<int> handCards = battle.clientIsMine ? battle.mHandCards : battle.oHandCards;
+        List<int> mHandCards;
+
+        List<int> oHandCards;
+
+        if (battle.clientIsMine)
+        {
+            mHandCards = battle.mHandCards;
+
+            oHandCards = battle.oHandCards;
+        }
+        else
+        {
+            mHandCards = battle.oHandCards;
+
+            oHandCards = battle.mHandCards;
+        }
 
         int index = 0;
 
-        for (int i = 0; i < handCards.Count; i++)
+        for (int i = 0; i < mHandCards.Count; i++)
         {
-            int uid = handCards[i];
+            int uid = mHandCards[i];
 
             int id = battle.GetCard(uid);
-
-            if (_hideInSummon && battle.GetSummonContainsKey(uid))
-            {
-                continue;
-            }
 
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/HeroCard.prefab", null);
 
@@ -619,6 +631,8 @@ public class BattleManager : MonoBehaviour
 
             index++;
         }
+
+        oCardNumTf.text = oHandCards.Count.ToString();
     }
 
     private void CreateSummonHeros()
@@ -646,6 +660,20 @@ public class BattleManager : MonoBehaviour
         mMoneyTf.text = battle.GetNowMoney(battle.clientIsMine).ToString();
 
         oMoneyTf.text = battle.GetNowMoney(!battle.clientIsMine).ToString();
+    }
+
+    private void CreateScoreTf()
+    {
+        if (battle.clientIsMine)
+        {
+            mScoreTf.text = battle.mScore.ToString();
+            oScoreTf.text = battle.oScore.ToString();
+        }
+        else
+        {
+            mScoreTf.text = battle.oScore.ToString();
+            oScoreTf.text = battle.mScore.ToString();
+        }
     }
 
     private void CreateMoves()
@@ -875,7 +903,7 @@ public class BattleManager : MonoBehaviour
 
                 ClearCards();
 
-                CreateCards(true);
+                CreateCards();
 
                 ClearSummonHeros();
 
@@ -948,7 +976,7 @@ public class BattleManager : MonoBehaviour
 
         ClearCards();
 
-        CreateCards(true);
+        CreateCards();
 
         ClearSummonHeros();
 
@@ -1062,7 +1090,7 @@ public class BattleManager : MonoBehaviour
 
         ClearCards();
 
-        CreateCards(true);
+        CreateCards();
     }
 
     private void RefreshTouchable(bool _canAction)
@@ -1203,6 +1231,12 @@ public class BattleManager : MonoBehaviour
 
                 yield return null;
             }
+            else if (vo is BattleScoreChangeVO)
+            {
+                DoScoreChange((BattleScoreChangeVO)vo);
+
+                yield return null;
+            }
         }
 
         Battle.BattleResult battleResult = (Battle.BattleResult)_step.Current;
@@ -1219,8 +1253,6 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator DoSummon(int _index, int _lastIndex, BattleSummonVO _vo)
     {
-        CreateMoneyTf();
-
         Hero hero = battle.heroMapDic[_vo.pos];
 
         HeroBattle heroBattle = AddHeroToMap(hero);
@@ -1237,10 +1269,6 @@ public class BattleManager : MonoBehaviour
         };
 
         SuperSequenceControl.To(10f, 1f, 0.5f, toDel, _index);
-
-        ClearCards();
-
-        CreateCards(false);
 
         yield return null;
 
@@ -1311,20 +1339,19 @@ public class BattleManager : MonoBehaviour
 
     private void DoAddCards(BattleAddCardsVO _vo)
     {
-        if (_vo.isMine == battle.clientIsMine)
-        {
-            ClearCards();
+        ClearCards();
 
-            CreateCards(true);
-        }
+        CreateCards();
     }
 
     private void DoMoneyChange(BattleMoneyChangeVO _vo)
     {
-        if (_vo.isMine == battle.clientIsMine)
-        {
-            CreateMoneyTf();
-        }
+        CreateMoneyTf();
+    }
+
+    private void DoScoreChange(BattleScoreChangeVO _vo)
+    {
+        CreateScoreTf();
     }
 
     private void DoRecover()
