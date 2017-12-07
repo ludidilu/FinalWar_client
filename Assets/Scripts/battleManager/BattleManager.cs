@@ -329,6 +329,8 @@ public class BattleManager : MonoBehaviour
 
         CreateScoreTf();
 
+        CreateRoundNumLeftTf();
+
         RefreshTouchable(battle.GetClientCanAction());
     }
 
@@ -677,6 +679,11 @@ public class BattleManager : MonoBehaviour
             mScoreTf.text = battle.oScore.ToString();
             oScoreTf.text = battle.mScore.ToString();
         }
+    }
+
+    private void CreateRoundNumLeftTf()
+    {
+        roundNumLeftTf.text = (battle.maxRoundNum - battle.roundNum).ToString();
     }
 
     private void CreateMoves()
