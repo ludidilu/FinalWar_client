@@ -615,6 +615,11 @@ public class BattleManager : MonoBehaviour
         {
             int uid = mHandCards[i];
 
+            if (battle.GetSummonContainsKey(uid))
+            {
+                continue;
+            }
+
             int id = battle.GetCard(uid);
 
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/HeroCard.prefab", null);
@@ -632,7 +637,9 @@ public class BattleManager : MonoBehaviour
             float cardWidth = (go.transform as RectTransform).sizeDelta.x;
             float cardHeight = (go.transform as RectTransform).sizeDelta.y;
 
-            (go.transform as RectTransform).anchoredPosition = new Vector2(-0.5f * cardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * cardContainer.rect.height + cardHeight * 0.5f);
+            float fixX = (cardContainer.rect.width - cardWidth * (mHandCards.Count - battle.GetSummonNum())) * 0.5f;
+
+            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * cardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * cardContainer.rect.height + cardHeight * 0.5f);
 
             index++;
         }
