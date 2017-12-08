@@ -1254,13 +1254,11 @@ public class BattleManager : MonoBehaviour
             }
         }
 
+        RefreshData();
+
         Battle.BattleResult battleResult = (Battle.BattleResult)_step.Current;
 
-        if (battleResult == Battle.BattleResult.NOT_OVER)
-        {
-            RefreshData();
-        }
-        else
+        if (battleResult != Battle.BattleResult.NOT_OVER)
         {
             BattleOver(battleResult);
         }
