@@ -1,7 +1,6 @@
 ﻿using FinalWar;
 using System.IO;
 using System;
-using System.Collections.Generic;
 using superFunction;
 using UnityEngine;
 
@@ -68,13 +67,31 @@ public class BattleLocal
 
     private void ServerBattleOverCallBack(Battle.BattleResult _result)
     {
+        if (_result == Battle.BattleResult.NOT_OVER)
+        {
+            byte[] bytes = battleServer.ToBytes();
 
+            string str = Convert.ToBase64String(bytes);
+
+            PlayerPrefs.SetString(saveKey, str);
+
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            if (PlayerPrefs.HasKey(saveKey))
+            {
+                PlayerPrefs.DeleteKey(saveKey);
+
+                PlayerPrefs.Save();
+            }
+
+            battleServer.ResetData();
+        }
     }
 
     public void Start()
     {
-        SuperFunction.Instance.AddEventListener(BattleManager.Instance.gameObject, BattleManager.ROUND_OVER, RoundOver);
-
         BattleManager.Instance.SetSendDataCallBack(GetDataFromClient);
 
         SuperFunction.Instance.AddEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
@@ -106,18 +123,7 @@ public class BattleLocal
 
     private void BattleOver(int _index)
     {
-        SuperFunction.Instance.RemoveEventListener(BattleManager.Instance.gameObject, BattleManager.ROUND_OVER, RoundOver);
-
         BattleEntrance.Instance.Show();
-
-        if (PlayerPrefs.HasKey(saveKey))
-        {
-            PlayerPrefs.DeleteKey(saveKey);
-
-            PlayerPrefs.Save();
-        }
-
-        battleServer.ResetData();
     }
 
     private void GetDataFromClient(MemoryStream _ms, Action<BinaryReader> _clientReceiveDataCallBack)
@@ -130,17 +136,6 @@ public class BattleLocal
         {
             battleServer.ServerGetPackage(br, true);
         }
-    }
-
-    private void RoundOver(int _index)
-    {
-        byte[] bytes = battleServer.ToBytes();
-
-        string str = Convert.ToBase64String(bytes);
-
-        PlayerPrefs.SetString(saveKey, str);
-
-        PlayerPrefs.Save();
     }
 
     public void VerifyBattle()
