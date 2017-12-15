@@ -35,7 +35,7 @@ public class BattleLocal
 
         battleServer = new Battle_server(false);
 
-        battleServer.ServerSetCallBack(ServerSendDataCallBack, ServerBattleOverCallBack);
+        battleServer.ServerSetCallBack(ServerSendDataCallBack, ServerRoundOverCallBack);
     }
 
     private void ServerSendDataCallBack(bool _isMine, bool _isPush, MemoryStream _ms)
@@ -65,7 +65,7 @@ public class BattleLocal
         }
     }
 
-    private void ServerBattleOverCallBack(Battle.BattleResult _result)
+    private void ServerRoundOverCallBack(Battle.BattleResult _result)
     {
         if (_result == Battle.BattleResult.NOT_OVER)
         {
