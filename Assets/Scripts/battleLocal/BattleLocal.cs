@@ -33,7 +33,7 @@ public class BattleLocal
     {
         saveKey = string.Format("BattleLocal:{0}", ConfigDictionary.Instance.uid);
 
-        battleServer = new Battle_server(false);
+        battleServer = new Battle_server(true);
 
         battleServer.ServerSetCallBack(ServerSendDataCallBack, ServerRoundOverCallBack);
     }
