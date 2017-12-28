@@ -25,6 +25,9 @@ public enum MapType
 public class MapCreator : MonoBehaviour
 {
     [SerializeField]
+    private Camera mainCamera;
+
+    [SerializeField]
     private GameObject choosePanel;
 
     [SerializeField]
@@ -41,6 +44,12 @@ public class MapCreator : MonoBehaviour
 
     [SerializeField]
     private Transform mapContainer;
+
+    [SerializeField]
+    private Transform scaleContainer;
+
+    [SerializeField]
+    private GameObject mapText;
 
     [SerializeField]
     private float unitWidth = 0.4f;
@@ -134,6 +143,8 @@ public class MapCreator : MonoBehaviour
 
         int index = 0;
 
+        Bounds bounds = new Bounds();
+
         for (int i = 0; i < mapData.mapWidth; i++)
         {
             for (int m = 0; m < mapData.mapHeight; m++)
@@ -155,7 +166,7 @@ public class MapCreator : MonoBehaviour
 
                 MapUnit unit = go.GetComponent<MapUnit>();
 
-				SuperFunction.SuperFunctionCallBack3<bool, RaycastHit, int> click = delegate (int _index, bool _blockByUI, RaycastHit _hit, int _hitIndex)
+                SuperFunction.SuperFunctionCallBack3<bool, RaycastHit, int> click = delegate (int _index, bool _blockByUI, RaycastHit _hit, int _hitIndex)
                 {
                     if (!_blockByUI)
                     {
@@ -172,6 +183,12 @@ public class MapCreator : MonoBehaviour
                 units[index] = unit;
 
                 unit.Init(index);
+
+                GameObject textGo = Instantiate(mapText);
+
+                textGo.transform.SetParent(go.transform, false);
+
+                textGo.GetComponent<TextMesh>().text = index.ToString();
 
                 if (mapData.dic.ContainsKey(index))
                 {
@@ -205,11 +222,32 @@ public class MapCreator : MonoBehaviour
                     unit.SetMainColor(bts[(int)MapType.NULL].color);
                 }
 
+                if (index == 0)
+                {
+                    bounds = go.GetComponent<Renderer>().bounds;
+                }
+                else
+                {
+                    bounds.Encapsulate(go.GetComponent<Renderer>().bounds);
+                }
+
                 index++;
             }
         }
 
-        mapContainer.transform.localPosition = new Vector3(-0.5f * (mapData.mapWidth * unitWidth * sqrt3 * 2) + unitWidth * sqrt3, 0.5f * (mapData.mapHeight * unitWidth * 3 + unitWidth) - unitWidth * 2, 0);
+        mapContainer.localPosition = new Vector3(-bounds.center.x, -bounds.center.y, 0);
+
+        Vector2 stepV = new Vector2(mainCamera.aspect * mainCamera.orthographicSize, mainCamera.orthographicSize);
+
+        Bounds viewport = new Bounds(Vector3.zero, stepV * 2);
+
+        viewport.center = new Vector3(0, 1, 0);
+
+        viewport.extents = new Vector3(viewport.extents.x - 0, viewport.extents.y - 1, viewport.extents.z);
+
+        float defaultScale = Mathf.Min(viewport.extents.x / (bounds.extents.x + 0.8f * 0.5f), viewport.extents.y / (bounds.extents.y + 0.8f * 0.5f));
+
+        scaleContainer.localScale = new Vector3(defaultScale, defaultScale, defaultScale);
     }
 
     public void SaveMap()
