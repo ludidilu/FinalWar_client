@@ -36,7 +36,7 @@ public static class ResourceLoader
 
     private static void ConfigLoadOver()
     {
-        num = 6;
+        num = 5;
 
         LoadTables();
 
@@ -177,8 +177,6 @@ public static class ResourceLoader
         GameObjectFactory.Instance.PreloadGameObjects(preloadPrefabs, OneLoadOver);
 
         GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", goDele);
-
-        GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleControl.prefab", goDele);
 #else
         Action dele = delegate ()
         {
@@ -189,8 +187,6 @@ public static class ResourceLoader
             GameObjectFactory.Instance.PreloadGameObjects(preloadPrefabs, OneLoadOver);
 
             GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", goDele);
-
-            GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleControl.prefab", goDele);
         };
 
         AssetManager.Instance.Init(dele);

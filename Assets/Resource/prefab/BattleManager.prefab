@@ -316,6 +316,7 @@ GameObject:
   m_Component:
   - component: {fileID: 497894}
   - component: {fileID: 11448894}
+  - component: {fileID: 114023888084350660}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -2177,6 +2178,227 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114023888084350660
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 181324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8096a2a64ce11e47a07a47b88bfa498, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPercent: 0.88
+  shockDis: 0.5
+  dieTime: 1
+  shootCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 1.2635117
+      tangentMode: 1
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: -1.2418749
+      outSlope: -0.51196134
+      tangentMode: 1
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  shootFix: 2
+  attackCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: -1.1187176
+      tangentMode: 1
+    - serializedVersion: 2
+      time: 0.8
+      value: -0.3
+      inSlope: -0.071742736
+      outSlope: 11.000004
+      tangentMode: 65
+    - serializedVersion: 2
+      time: 0.9
+      value: 0.8
+      inSlope: 11.000004
+      outSlope: -7.999998
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: -7.999998
+      outSlope: 2
+      tangentMode: 5
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  shockCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 20
+      tangentMode: 65
+    - serializedVersion: 2
+      time: 0.05
+      value: 1
+      inSlope: 20
+      outSlope: -39
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.1
+      value: -0.95
+      inSlope: -39
+      outSlope: 36.999996
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.15
+      value: 0.9
+      inSlope: 36.999996
+      outSlope: -35.000004
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.2
+      value: -0.85
+      inSlope: -35.000004
+      outSlope: 33.000004
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.25
+      value: 0.8
+      inSlope: 33.000004
+      outSlope: -30.999992
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.3
+      value: -0.75
+      inSlope: -30.999992
+      outSlope: 29.00001
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.35
+      value: 0.7
+      inSlope: 29.00001
+      outSlope: -26.999992
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.4
+      value: -0.65
+      inSlope: -26.999992
+      outSlope: 25.00001
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.45
+      value: 0.6
+      inSlope: 25.00001
+      outSlope: -22.999996
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.5
+      value: -0.55
+      inSlope: -22.999996
+      outSlope: 20.999996
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.55
+      value: 0.5
+      inSlope: 20.999996
+      outSlope: -18.999996
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.6
+      value: -0.45
+      inSlope: -18.999996
+      outSlope: 17.000015
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.65
+      value: 0.4
+      inSlope: 17.000015
+      outSlope: -14.999996
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.7
+      value: -0.35
+      inSlope: -14.999996
+      outSlope: 12.999997
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.75
+      value: 0.3
+      inSlope: 12.999997
+      outSlope: -10.999998
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.8
+      value: -0.25
+      inSlope: -10.999998
+      outSlope: 8.999998
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.85
+      value: 0.2
+      inSlope: 8.999998
+      outSlope: -7.0000067
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.9
+      value: -0.15
+      inSlope: -7.0000067
+      outSlope: 4.999999
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 0.95
+      value: 0.1
+      inSlope: 4.999999
+      outSlope: -1.9999995
+      tangentMode: 69
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: -1.9999995
+      outSlope: 0
+      tangentMode: 5
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hudHeight: 0.7
+  mat: {fileID: 2100000, guid: 421c1aacc2f1d4b4e81355d8896c81f5, type: 2}
+  matGray: {fileID: 2100000, guid: a39a31683b692cb4fa247d3f2022e450, type: 2}
+  typeSprite:
+  - {fileID: 21300000, guid: de2e3ffa1c48e8d4ca66394d59f3f0a0, type: 3}
+  - {fileID: 21300000, guid: 0e070f119de499147bbb6336ffc17131, type: 3}
+  - {fileID: 21300000, guid: 746c09e4235642543a8b9743cab65dab, type: 3}
+  - {fileID: 21300000, guid: 07023862fa779e04bbc4eafba7462d4b, type: 3}
+  - {fileID: 21300000, guid: 2cffa99f21bf31a4da5cc3aa1774ebe3, type: 3}
+  - {fileID: 21300000, guid: d8158640f952770479d39be726246618, type: 3}
+  - {fileID: 21300000, guid: c6a14d6471873734bbe9ea52a2824794, type: 3}
+  - {fileID: 21300000, guid: f527f66e4200c024a820fb2100f834d1, type: 3}
+  - {fileID: 21300000, guid: 0e2ac29730f1de2498927870e767e4d9, type: 3}
+  - {fileID: 21300000, guid: 3411e2e48ac0ae24287d05cc00c41367, type: 3}
+  - {fileID: 21300000, guid: 746c09e4235642543a8b9743cab65dab, type: 3}
+  - {fileID: 21300000, guid: 07023862fa779e04bbc4eafba7462d4b, type: 3}
+  - {fileID: 21300000, guid: 2cffa99f21bf31a4da5cc3aa1774ebe3, type: 3}
+  - {fileID: 21300000, guid: d8158640f952770479d39be726246618, type: 3}
+  - {fileID: 21300000, guid: c6a14d6471873734bbe9ea52a2824794, type: 3}
+  - {fileID: 21300000, guid: f527f66e4200c024a820fb2100f834d1, type: 3}
+  - {fileID: 21300000, guid: 0e2ac29730f1de2498927870e767e4d9, type: 3}
+  - {fileID: 21300000, guid: 3411e2e48ac0ae24287d05cc00c41367, type: 3}
+  frame: {fileID: 21300000, guid: 48e23155cd8765e4ca6e26730eb243c4, type: 3}
+  frameChoose: {fileID: 21300000, guid: 79bc8edb62628c645b1bd74f8ef38d26, type: 3}
+  zFixStep: 1
+  moveAwayDistance: 0.7
 --- !u!114 &114078907227263200
 MonoBehaviour:
   m_ObjectHideFlags: 1

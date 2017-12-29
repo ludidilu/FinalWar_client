@@ -60,15 +60,14 @@ public class MapCreator : MonoBehaviour
     [SerializeField]
     private Image[] bts;
 
+    [SerializeField]
+    private Toggle[] toggles;
+
     private static readonly float sqrt3 = Mathf.Sqrt(3);
 
     private MapUnit[] units;
 
-    private GameObject[] arrows;
-
     private MapData mapData;
-
-    private bool showMyTarget = true;
 
     private MapType nowMapType;
 
@@ -125,6 +124,10 @@ public class MapCreator : MonoBehaviour
 
         InitMapData(int.Parse(widthField.text), int.Parse(heightField.text));
 
+        widthField.text = string.Empty;
+
+        heightField.text = string.Empty;
+
         CreateMapPanel();
     }
 
@@ -135,11 +138,13 @@ public class MapCreator : MonoBehaviour
 
     public void CreateMapPanel()
     {
+        mapContainer.localPosition = Vector3.zero;
+
+        scaleContainer.localScale = Vector3.one;
+
         nowMapType = MapType.NULL;
 
         units = new MapUnit[mapData.size];
-
-        arrows = new GameObject[mapData.size];
 
         int index = 0;
 
@@ -237,6 +242,8 @@ public class MapCreator : MonoBehaviour
 
         mapContainer.localPosition = new Vector3(-bounds.center.x, -bounds.center.y, 0);
 
+        Debug.Log("mapContainer.localPosition:" + mapContainer.localPosition);
+
         Vector2 stepV = new Vector2(mainCamera.aspect * mainCamera.orthographicSize, mainCamera.orthographicSize);
 
         Bounds viewport = new Bounds(Vector3.zero, stepV * 2);
@@ -278,6 +285,34 @@ public class MapCreator : MonoBehaviour
         }
     }
 
+    public void Quit()
+    {
+        if (units != null)
+        {
+            for (int i = 0; i < units.Length; i++)
+            {
+                Destroy(units[i].gameObject);
+            }
+
+            units = null;
+        }
+
+        mapPanel.SetActive(false);
+
+        inputPanel.SetActive(false);
+
+        choosePanel.SetActive(true);
+
+        nowMapType = MapType.NULL;
+
+        for (int i = 0; i < toggles.Length - 1; i++)
+        {
+            toggles[i].isOn = false;
+        }
+
+        toggles[toggles.Length - 1].isOn = true;
+    }
+
     private bool CheckMap()
     {
         if (mapData.mBase == -1)
@@ -301,7 +336,7 @@ public class MapCreator : MonoBehaviour
     {
         if (_go.toggle.isOn)
         {
-            nowMapType = (MapType)_go.mapType;
+            nowMapType = _go.mapType;
         }
     }
 

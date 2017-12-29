@@ -21,7 +21,7 @@ public class BattleLocal
         }
     }
 
-    private const int testID = 1;
+    private const int testID = 1000;
 
     private Battle_server battleServer;
 
@@ -108,7 +108,7 @@ public class BattleLocal
         {
             TestCardsSDS testCardSDS = StaticData.GetData<TestCardsSDS>(testID);
 
-            battleServer.ServerStart(testCardSDS.mapID, testCardSDS.maxRoundNum, testCardSDS.mCards, testCardSDS.oCards, true);
+            battleServer.ServerStart(testCardSDS.mapID, testCardSDS.maxRoundNum, testCardSDS.mCards, testCardSDS.oCards, testCardSDS.randomSeed, true);
         }
 
         BattleManager.Instance.RequestRefreshData();
