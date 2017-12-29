@@ -108,7 +108,7 @@ public class BattleLocal
         {
             TestCardsSDS testCardSDS = StaticData.GetData<TestCardsSDS>(testID);
 
-            battleServer.ServerStart(testCardSDS.mapID, testCardSDS.maxRoundNum, testCardSDS.mCards, testCardSDS.oCards, testCardSDS.randomSeed, true);
+            battleServer.ServerStart(testCardSDS.mapID, testCardSDS.maxRoundNum, testCardSDS.mCards, testCardSDS.oCards, true);
         }
 
         BattleManager.Instance.RequestRefreshData();

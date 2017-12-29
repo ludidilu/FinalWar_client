@@ -12,24 +12,56 @@ using thread;
 public class MapSDS : CsvBase, IMapSDS
 {
     public string name;
-    public int[] heroPos;
-    public int[] heroID;
+    public string[] hero;
+    public string[] fearAction;
 
     private MapData mapData;
+
+    private KeyValuePair<int, int>[] heroReal;
+
+    private KeyValuePair<int, int>[] fearActionReal;
 
     public MapData GetMapData()
     {
         return mapData;
     }
 
-    public int[] GetHeroPos()
+    public KeyValuePair<int, int>[] GetHero()
     {
-        return heroPos;
+        return heroReal;
     }
 
-    public int[] GetHeroID()
+    public KeyValuePair<int, int>[] GetFearAction()
     {
-        return heroID;
+        return fearActionReal;
+    }
+
+    public override void Fix()
+    {
+        heroReal = new KeyValuePair<int, int>[hero.Length];
+
+        for (int i = 0; i < hero.Length; i++)
+        {
+            string[] strArr = hero[i].Split('&');
+
+            heroReal[i] = new KeyValuePair<int, int>(int.Parse(strArr[0]), int.Parse(strArr[1]));
+        }
+
+        hero = null;
+
+        if (fearAction.Length > 0)
+        {
+            fearActionReal = new KeyValuePair<int, int>[fearAction.Length];
+
+            for (int i = 0; i < fearAction.Length; i++)
+            {
+                string[] strArr = fearAction[i].Split('&');
+
+                fearActionReal[i] = new KeyValuePair<int, int>(int.Parse(strArr[0]), int.Parse(strArr[1]));
+            }
+        }
+
+        fearAction = null;
     }
 
     public static void Load(Action _callBack)
