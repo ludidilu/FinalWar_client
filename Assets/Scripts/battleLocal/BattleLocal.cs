@@ -94,7 +94,7 @@ public class BattleLocal
     {
         BattleManager.Instance.SetSendDataCallBack(GetDataFromClient);
 
-        SuperFunction.Instance.AddEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
+        SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
 
         if (PlayerPrefs.HasKey(saveKey))
         {

@@ -497,7 +497,11 @@ public class BattleManager : MonoBehaviour
 
     private void CreateMapUnits()
     {
+        int fix = battle.clientIsMine ? 1 : -1;
+
         int index = 0;
+
+        bool initBounds = false;
 
         for (int i = 0; i < battle.mapData.mapWidth; i++)
         {
@@ -519,7 +523,7 @@ public class BattleManager : MonoBehaviour
 
                 go.transform.SetParent(mapContainer, false);
 
-                go.transform.localPosition = new Vector3(i * mapUnitWidth * 3, -m * mapUnitWidth * sqrt3 * 2 - ((i % 2 == 1) ? mapUnitWidth * sqrt3 : 0), 0);
+                go.transform.localPosition = new Vector3(i * mapUnitWidth * 3 * fix, (-m * mapUnitWidth * sqrt3 * 2 - ((i % 2 == 1) ? mapUnitWidth * sqrt3 : 0)) * fix, 0);
 
                 go.transform.localScale = new Vector3(mapUnitScale, mapUnitScale, mapUnitScale);
 
@@ -568,8 +572,10 @@ public class BattleManager : MonoBehaviour
                     Destroy(unit.GetComponent<Collider>());
                 }
 
-                if (index == 0)
+                if (!initBounds)
                 {
+                    initBounds = true;
+
                     bounds = go.GetComponent<Renderer>().bounds;
                 }
                 else
