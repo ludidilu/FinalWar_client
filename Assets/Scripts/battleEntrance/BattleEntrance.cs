@@ -1,46 +1,26 @@
-﻿using UnityEngine;
-
-public class BattleEntrance : MonoBehaviour
+﻿public class BattleEntrance : UIBase
 {
-    public static BattleEntrance Instance { private set; get; }
+    private BattleLocal battleLocal;
 
-    [SerializeField]
-    private GameObject container;
-
-    void Awake()
+    public override void Init()
     {
-        Instance = this;
+        base.Init();
 
-        Application.targetFrameRate = 60;
-
-        container.SetActive(false);
-
-        ResourceLoader.Load(LoadOver);
-    }
-
-    private void LoadOver()
-    {
-        container.SetActive(true);
-
-        BattleManager.Instance.Init();
+        battleLocal = new BattleLocal();
     }
 
     public void Online()
     {
-        container.SetActive(false);
-
-        BattleOnline.Instance.Init();
+        UIManager.Instance.Show<BattleOnline>();
     }
 
     public void Local()
     {
-        container.SetActive(false);
-
-        BattleLocal.Instance.Start();
+        battleLocal.Start();
     }
 
-    public void Show()
+    public override bool IsFullScreen()
     {
-        container.SetActive(true);
+        return true;
     }
 }

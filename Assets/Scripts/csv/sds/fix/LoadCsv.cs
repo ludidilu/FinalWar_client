@@ -16,6 +16,15 @@ public class LoadCsv {
             AuraSDSDic.Add(unit.ID,unit);
         }
         dic.Add(typeof(AuraSDS),AuraSDSDic);
+        Dictionary<int,BattleSDS> BattleSDSDic = new Dictionary<int,BattleSDS>();
+        int lengthBattleSDS = br.ReadInt32();
+        for(int i = 0 ; i < lengthBattleSDS ; i++){
+            BattleSDS unit = new BattleSDS();
+            BattleSDS_c.Init(unit,br);
+            unit.Fix();
+            BattleSDSDic.Add(unit.ID,unit);
+        }
+        dic.Add(typeof(BattleSDS),BattleSDSDic);
         Dictionary<int,DescSDS> DescSDSDic = new Dictionary<int,DescSDS>();
         int lengthDescSDS = br.ReadInt32();
         for(int i = 0 ; i < lengthDescSDS ; i++){
@@ -61,15 +70,6 @@ public class LoadCsv {
             MapSDSDic.Add(unit.ID,unit);
         }
         dic.Add(typeof(MapSDS),MapSDSDic);
-        Dictionary<int,TestCardsSDS> TestCardsSDSDic = new Dictionary<int,TestCardsSDS>();
-        int lengthTestCardsSDS = br.ReadInt32();
-        for(int i = 0 ; i < lengthTestCardsSDS ; i++){
-            TestCardsSDS unit = new TestCardsSDS();
-            TestCardsSDS_c.Init(unit,br);
-            unit.Fix();
-            TestCardsSDSDic.Add(unit.ID,unit);
-        }
-        dic.Add(typeof(TestCardsSDS),TestCardsSDSDic);
         br.Close();
         ms.Close();
         ms.Dispose();

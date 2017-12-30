@@ -1,6 +1,7 @@
 using System.IO;
-public class TestCardsSDS_c {
-    public static void Init(TestCardsSDS _csv, BinaryReader _br){
+public class BattleSDS_c {
+    public static void Init(BattleSDS _csv, BinaryReader _br){
+        _csv.isPve = _br.ReadBoolean();
         _csv.ID = _br.ReadInt32();
         _csv.mapID = _br.ReadInt32();
         _csv.maxRoundNum = _br.ReadInt32();

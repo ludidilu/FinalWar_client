@@ -15,9 +15,14 @@ using gameObjectFactory;
 
 public class BattleManager : MonoBehaviour
 {
-    public const string BATTLE_START = "battleStart";
-
     public const string BATTLE_QUIT = "battleQuit";
+
+    public const string BATTLE_SEND_DATA = "battleSendData";
+
+    public const string BATTLE_RECEIVE_DATA = "battleReceiveData";
+
+    [SerializeField]
+    private BattleControl battleControl;
 
     [SerializeField]
     private float moveThreshold = 0.1f;
@@ -123,6 +128,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private SpriteRenderer bg;
 
+    private GameObject eventGo;
+
     private Battle_client battle = new Battle_client();
 
     public Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
@@ -144,8 +151,6 @@ public class BattleManager : MonoBehaviour
     private Bounds viewport;
 
     private float defaultScale;
-
-    public static BattleManager Instance { get; private set; }
 
     private enum DownType
     {
@@ -214,8 +219,6 @@ public class BattleManager : MonoBehaviour
 
     private bool isInit = false;
 
-    private Action<MemoryStream, Action<BinaryReader>> sendDataCallBack;
-
     private Vector2 stepV;
 
     private int heroUid;
@@ -229,8 +232,6 @@ public class BattleManager : MonoBehaviour
 
     void Awake()
     {
-        Instance = this;
-
         stepV = new Vector2(mainCamera.aspect * mainCamera.orthographicSize, mainCamera.orthographicSize);
 
         viewport = new Bounds(Vector3.zero, stepV * 2);
@@ -238,6 +239,8 @@ public class BattleManager : MonoBehaviour
         viewport.center = new Vector3(viewportXFix, viewportYFix, 0);
 
         viewport.extents = new Vector3(viewport.extents.x - viewportXFix, viewport.extents.y - viewportYFix, viewport.extents.z);
+
+        gameObject.SetActive(false);
     }
 
     private void WriteLog(string _str)
@@ -245,8 +248,10 @@ public class BattleManager : MonoBehaviour
         Debug.Log(_str);
     }
 
-    public void Init()
+    public void Init(GameObject _eventGo)
     {
+        eventGo = _eventGo;
+
         Log.Init(WriteLog);
 
         SuperRaycast.SetCamera(mainCamera);
@@ -270,22 +275,16 @@ public class BattleManager : MonoBehaviour
         SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButtonDown, GetMouseDown);
 
         SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
-    }
 
-    public void SetSendDataCallBack(Action<MemoryStream, Action<BinaryReader>> _sendDataCallBack)
-    {
-        sendDataCallBack = _sendDataCallBack;
+        SuperFunction.Instance.AddEventListener<BinaryReader>(eventGo, BATTLE_RECEIVE_DATA, ReceiveData);
     }
 
     private void SendData(MemoryStream _ms, Action<BinaryReader> _callBack)
     {
-        if (sendDataCallBack != null)
-        {
-            sendDataCallBack(_ms, _callBack);
-        }
+        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_SEND_DATA, _ms, _callBack);
     }
 
-    public void ReceiveData(BinaryReader _br)
+    private void ReceiveData(int _index, BinaryReader _br)
     {
         battle.ClientGetPackage(_br);
     }
@@ -296,7 +295,7 @@ public class BattleManager : MonoBehaviour
         {
             isInit = true;
 
-            SuperFunction.Instance.DispatchEvent(gameObject, BATTLE_START);
+            gameObject.SetActive(true);
         }
 
         heroDetail.Hide();
@@ -630,9 +629,9 @@ public class BattleManager : MonoBehaviour
 
             HeroCard hero = go.GetComponent<HeroCard>();
 
-            hero.SetFrameVisible(false);
+            hero.Init(this, battleControl, uid, id);
 
-            hero.Init(uid, id);
+            hero.SetFrameVisible(false);
 
             cardDic.Add(uid, hero);
 
@@ -1014,7 +1013,7 @@ public class BattleManager : MonoBehaviour
 
         AddHeroToMapReal(hero, _hero.pos);
 
-        hero.Init(_hero, GetHeroUid());
+        hero.Init(this, battleControl, _hero, GetHeroUid());
 
         return hero;
     }
@@ -1031,7 +1030,7 @@ public class BattleManager : MonoBehaviour
 
         AddHeroToMapReal(hero, _pos);
 
-        hero.Init(_cardUid, cardID);
+        hero.Init(this, battleControl, _cardUid, cardID);
 
         return hero;
     }
@@ -1154,43 +1153,43 @@ public class BattleManager : MonoBehaviour
 
             if (vo is BattleShootVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.Shoot, _index, (BattleShootVO)vo);
+                SuperSequenceControl.Start(battleControl.Shoot, _index, (BattleShootVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleMoveVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.Move, _index, (BattleMoveVO)vo);
+                SuperSequenceControl.Start(battleControl.Move, _index, (BattleMoveVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleRushVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.Rush, _index, (BattleRushVO)vo);
+                SuperSequenceControl.Start(battleControl.Rush, _index, (BattleRushVO)vo);
 
                 yield return null;
             }
             else if (vo is BattlePrepareAttackVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.PrepareAttack, _index, (BattlePrepareAttackVO)vo);
+                SuperSequenceControl.Start(battleControl.PrepareAttack, _index, (BattlePrepareAttackVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleAttackAndCounterVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.AttackAndCounter, _index, (BattleAttackAndCounterVO)vo);
+                SuperSequenceControl.Start(battleControl.AttackAndCounter, _index, (BattleAttackAndCounterVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleAttackBothVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.AttackBoth, _index, (BattleAttackBothVO)vo);
+                SuperSequenceControl.Start(battleControl.AttackBoth, _index, (BattleAttackBothVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleDeathVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.Die, _index, (BattleDeathVO)vo);
+                SuperSequenceControl.Start(battleControl.Die, _index, (BattleDeathVO)vo);
 
                 yield return null;
             }
@@ -1202,7 +1201,7 @@ public class BattleManager : MonoBehaviour
             }
             else if (vo is BattleAttackOverVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.AttackOver, _index, (BattleAttackOverVO)vo);
+                SuperSequenceControl.Start(battleControl.AttackOver, _index, (BattleAttackOverVO)vo);
 
                 yield return null;
             }
@@ -1236,7 +1235,7 @@ public class BattleManager : MonoBehaviour
             }
             else if (vo is BattleTriggerAuraVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.TriggerAura, _index, (BattleTriggerAuraVO)vo);
+                SuperSequenceControl.Start(battleControl.TriggerAura, _index, (BattleTriggerAuraVO)vo);
 
                 yield return null;
             }
@@ -1246,7 +1245,7 @@ public class BattleManager : MonoBehaviour
             }
             else if (vo is BattleSupportVO)
             {
-                SuperSequenceControl.Start(BattleControl.Instance.Support, _index, (BattleSupportVO)vo);
+                SuperSequenceControl.Start(battleControl.Support, _index, (BattleSupportVO)vo);
 
                 yield return null;
             }
@@ -1539,10 +1538,5 @@ public class BattleManager : MonoBehaviour
     public void Alert(string _str, Action _callBack)
     {
         alertPanel.Alert(_str, _callBack);
-    }
-
-    void Start()
-    {
-        gameObject.SetActive(false);
     }
 }

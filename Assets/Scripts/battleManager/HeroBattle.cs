@@ -59,6 +59,10 @@ public class HeroBattle : HeroBase
     [SerializeField]
     private GameObject chooseFrame;
 
+    private BattleManager battleManager;
+
+    private BattleControl battleControl;
+
     private Hero hero;
 
     public bool isMine
@@ -85,11 +89,11 @@ public class HeroBattle : HeroBase
         }
     }
 
-    protected void InitCard(HeroSDS _heroSDS)
+    private void InitCard(HeroSDS _heroSDS)
     {
         sds = _heroSDS;
 
-        heroType.sprite = BattleControl.Instance.typeSprite[sds.heroTypeFix.ID];
+        heroType.sprite = battleControl.typeSprite[sds.heroTypeFix.ID];
 
         TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + sds.icon + ".png", GetBodySprite, true);
     }
@@ -103,11 +107,15 @@ public class HeroBattle : HeroBase
     {
         chooseFrame.SetActive(_visible);
 
-        //frame.sprite = _visible ? BattleControl.Instance.frameChoose : BattleControl.Instance.frame;
+        //frame.sprite = _visible ? battleControl.frameChoose : battleControl.frame;
     }
 
-    public void Init(int _cardUid, int _id)
+    public void Init(BattleManager _battleManager, BattleControl _battleControl, int _cardUid, int _id)
     {
+        battleManager = _battleManager;
+
+        battleControl = _battleControl;
+
         cardUid = _cardUid;
 
         HeroSDS heroSDS = StaticData.GetData<HeroSDS>(_id);
@@ -129,11 +137,15 @@ public class HeroBattle : HeroBase
         speed.gameObject.SetActive(false);
     }
 
-    public void Init(Hero _hero, int _heroUid)
+    public void Init(BattleManager _battleManager, BattleControl _battleControl, Hero _hero, int _heroUid)
     {
-        zTrans.localPosition = new Vector3(0, 0, _heroUid * BattleControl.Instance.zFixStep);
+        battleManager = _battleManager;
+
+        battleControl = _battleControl;
 
         hero = _hero;
+
+        zTrans.localPosition = new Vector3(0, 0, _heroUid * battleControl.zFixStep);
 
         RefreshAll();
     }
@@ -200,23 +212,23 @@ public class HeroBattle : HeroBase
 
         if (hero.GetCanAction())
         {
-            body.material = BattleControl.Instance.mat;
+            body.material = battleControl.mat;
 
-            bg.material = BattleControl.Instance.mat;
+            bg.material = battleControl.mat;
 
-            frame.material = BattleControl.Instance.mat;
+            frame.material = battleControl.mat;
 
-            heroType.material = BattleControl.Instance.mat;
+            heroType.material = battleControl.mat;
         }
         else
         {
-            body.material = BattleControl.Instance.matGray;
+            body.material = battleControl.matGray;
 
-            bg.material = BattleControl.Instance.matGray;
+            bg.material = battleControl.matGray;
 
-            frame.material = BattleControl.Instance.matGray;
+            frame.material = battleControl.matGray;
 
-            heroType.material = BattleControl.Instance.matGray;
+            heroType.material = battleControl.matGray;
         }
     }
 
@@ -258,7 +270,7 @@ public class HeroBattle : HeroBase
 
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/DamageNum.prefab", null);
 
-        go.transform.SetParent(BattleManager.Instance.arrowContainer, false);
+        go.transform.SetParent(battleManager.arrowContainer, false);
 
         Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(hudTrans.localPosition));
 
@@ -290,7 +302,7 @@ public class HeroBattle : HeroBase
                             shock = true;
                         }
 
-                        ShowHud((-data).ToString(), Color.red, Color.black, i * BattleControl.Instance.hudHeight, null);
+                        ShowHud((-data).ToString(), Color.red, Color.black, i * battleControl.hudHeight, null);
 
                         break;
 
@@ -300,13 +312,13 @@ public class HeroBattle : HeroBase
 
                         if (data > 0)
                         {
-                            ShowHud("+" + data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
+                            ShowHud("+" + data.ToString(), Color.yellow, Color.blue, i * battleControl.hudHeight, null);
                         }
                         else
                         {
                             shock = true;
 
-                            ShowHud(data.ToString(), Color.yellow, Color.blue, i * BattleControl.Instance.hudHeight, null);
+                            ShowHud(data.ToString(), Color.yellow, Color.blue, i * battleControl.hudHeight, null);
                         }
 
                         break;
@@ -317,13 +329,13 @@ public class HeroBattle : HeroBase
 
                         if (data > 0)
                         {
-                            ShowHud("+" + data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
+                            ShowHud("+" + data.ToString(), Color.blue, Color.red, i * battleControl.hudHeight, null);
                         }
                         else
                         {
                             shock = true;
 
-                            ShowHud(data.ToString(), Color.blue, Color.red, i * BattleControl.Instance.hudHeight, null);
+                            ShowHud(data.ToString(), Color.blue, Color.red, i * battleControl.hudHeight, null);
                         }
 
                         break;
@@ -332,7 +344,7 @@ public class HeroBattle : HeroBase
                     case Effect.BE_CLEAN:
                     case Effect.ADD_AURA:
 
-                        ShowHud(effectVO.effect.ToString(), Color.black, Color.red, i * BattleControl.Instance.hudHeight, null);
+                        ShowHud(effectVO.effect.ToString(), Color.black, Color.red, i * battleControl.hudHeight, null);
 
                         break;
                 }
@@ -356,7 +368,7 @@ public class HeroBattle : HeroBase
             }
         };
 
-        SuperTween.Instance.To(1, 0, BattleControl.Instance.dieTime, DieTo, dieOver);
+        SuperTween.Instance.To(1, 0, battleControl.dieTime, DieTo, dieOver);
     }
 
     private void DieTo(float _v)

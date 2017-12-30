@@ -5,6 +5,9 @@ using superFunction;
 public class HeroDetail : MonoBehaviour
 {
     [SerializeField]
+    private BattleManager battleManager;
+
+    [SerializeField]
     private Text heroName;
 
     [SerializeField]
@@ -41,7 +44,7 @@ public class HeroDetail : MonoBehaviour
         {
             DescSDS sds = StaticData.GetData<DescSDS>(_id);
 
-            BattleManager.Instance.Alert(sds.desc, null);
+            battleManager.Alert(sds.desc, null);
         }
     }
 

@@ -4,34 +4,21 @@ using superFunction;
 using Connection;
 using System;
 
-public class BattleOnline : MonoBehaviour
+public class BattleOnline : UIBase
 {
-    enum PlayerState
+    private enum PlayerState
     {
         FREE,
         SEARCHING,
         BATTLE
     }
 
-    internal enum PackageData
+    private enum PackageData
     {
         PVP,
         PVE,
         CANCEL_SEARCH
     }
-
-    private static BattleOnline _Instance;
-
-    public static BattleOnline Instance
-    {
-        get
-        {
-            return _Instance;
-        }
-    }
-
-    [SerializeField]
-    private GameObject container;
 
     [SerializeField]
     private GameObject btPVP;
@@ -47,24 +34,15 @@ public class BattleOnline : MonoBehaviour
 
     private Client client;
 
-    void Awake()
+    public override void Init()
     {
-        _Instance = this;
+        base.Init();
 
         Log.Init(Debug.Log);
 
-        container.SetActive(false);
-
         client = new Client();
-    }
 
-    public void Init()
-    {
         client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceivePushData);
-
-        BattleManager.Instance.SetSendDataCallBack(SendBattleAction);
-
-        client.Connect(ReceiveReplyData);
     }
 
     private void ReceivePushData(BinaryReader _br)
@@ -73,7 +51,7 @@ public class BattleOnline : MonoBehaviour
 
         if (isBattle)
         {
-            BattleManager.Instance.ReceiveData(_br);
+            SuperFunction.Instance.DispatchEvent(BattleView.battleManagerEventGo, BattleManager.BATTLE_RECEIVE_DATA, _br);
         }
         else
         {
@@ -94,20 +72,11 @@ public class BattleOnline : MonoBehaviour
         {
             case PlayerState.BATTLE:
 
-                container.SetActive(false);
-
-                if (!BattleManager.Instance.gameObject.activeSelf)
-                {
-                    SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
-
-                    BattleManager.Instance.RequestRefreshData();
-                }
+                UIManager.Instance.Show<BattleView>();
 
                 break;
 
             case PlayerState.FREE:
-
-                container.SetActive(true);
 
                 btPVP.SetActive(true);
 
@@ -121,8 +90,6 @@ public class BattleOnline : MonoBehaviour
 
             case PlayerState.SEARCHING:
 
-                container.SetActive(true);
-
                 btPVP.SetActive(false);
 
                 btPVE.SetActive(false);
@@ -135,29 +102,7 @@ public class BattleOnline : MonoBehaviour
         }
     }
 
-    private void BattleStart(int _index)
-    {
-        SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_QUIT, BattleOver);
-
-        BattleManager.Instance.gameObject.SetActive(true);
-    }
-
     public void EnterPVP()
-    {
-        SendAction(PackageData.PVP);
-    }
-
-    public void EnterPVE()
-    {
-        SendAction(PackageData.PVE);
-    }
-
-    public void CancelPVP()
-    {
-        SendAction(PackageData.CANCEL_SEARCH);
-    }
-
-    private void SendAction(PackageData _data)
     {
         using (MemoryStream ms = new MemoryStream())
         {
@@ -165,14 +110,53 @@ public class BattleOnline : MonoBehaviour
             {
                 bw.Write(false);
 
-                bw.Write((short)_data);
+                bw.Write((short)PackageData.PVP);
 
                 client.Send(ms, ReceiveReplyData);
             }
         }
     }
 
-    private void SendBattleAction(MemoryStream _ms, Action<BinaryReader> _callBack)
+    public void EnterPVE()
+    {
+        UIManager.Instance.Show<BattleChoose, Action<BattleSDS>>(ChooseBattle);
+    }
+
+    private void ChooseBattle(BattleSDS _battleSDS)
+    {
+        UIManager.Instance.Hide<BattleChoose>();
+
+        using (MemoryStream ms = new MemoryStream())
+        {
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                bw.Write(false);
+
+                bw.Write((short)PackageData.PVE);
+
+                bw.Write(_battleSDS.ID);
+
+                client.Send(ms, ReceiveReplyData);
+            }
+        }
+    }
+
+    public void CancelPVP()
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                bw.Write(false);
+
+                bw.Write((short)PackageData.CANCEL_SEARCH);
+
+                client.Send(ms, ReceiveReplyData);
+            }
+        }
+    }
+
+    private void SendBattleAction(int _index, MemoryStream _ms, Action<BinaryReader> _callBack)
     {
         using (MemoryStream ms = new MemoryStream())
         {
@@ -187,10 +171,13 @@ public class BattleOnline : MonoBehaviour
         }
     }
 
-    private void BattleOver(int _index)
+    public override bool IsFullScreen()
     {
-        container.SetActive(true);
+        return true;
+    }
 
+    public override void OnShow()
+    {
         btPVP.SetActive(true);
 
         btPVE.SetActive(true);
@@ -200,13 +187,31 @@ public class BattleOnline : MonoBehaviour
         btQuit.SetActive(true);
     }
 
+    public override void OnEnter()
+    {
+        btPVP.SetActive(false);
+
+        btPVE.SetActive(false);
+
+        btCancel.SetActive(false);
+
+        btQuit.SetActive(false);
+
+        SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, SendBattleAction);
+
+        client.Connect(ReceiveReplyData);
+    }
+
+    public override void OnExit()
+    {
+        SuperFunction.Instance.RemoveEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, SendBattleAction);
+    }
+
     public void Quit()
     {
         client.Close();
 
-        container.SetActive(false);
-
-        BattleEntrance.Instance.Show();
+        UIManager.Instance.Hide(this);
     }
 
     void Update()

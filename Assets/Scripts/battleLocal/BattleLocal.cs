@@ -1,33 +1,19 @@
-﻿using FinalWar;
-using System.IO;
-using System;
+﻿using System;
 using superFunction;
 using UnityEngine;
+using FinalWar;
+using System.IO;
+using System.Collections.Generic;
 
 public class BattleLocal
 {
-    private static BattleLocal _Instance;
+    public const string SAVE_DATA_CHANGE = "saveDataChange";
 
-    public static BattleLocal Instance
-    {
-        get
-        {
-            if (_Instance == null)
-            {
-                _Instance = new BattleLocal();
-            }
-
-            return _Instance;
-        }
-    }
-
-    private const int testID = 1000;
+    private string saveKey;
 
     private Battle_server battleServer;
 
     private Action<BinaryReader> clientReceiveDataCallBack;
-
-    private string saveKey;
 
     public BattleLocal()
     {
@@ -36,6 +22,60 @@ public class BattleLocal
         battleServer = new Battle_server(true);
 
         battleServer.ServerSetCallBack(ServerSendDataCallBack, ServerRoundOverCallBack);
+
+        Dictionary<int, MapSDS> mapDic = StaticData.GetDic<MapSDS>();
+
+        Dictionary<int, HeroSDS> heroDic = StaticData.GetDic<HeroSDS>();
+
+        Dictionary<int, AuraSDS> auraDic = StaticData.GetDic<AuraSDS>();
+
+        Dictionary<int, EffectSDS> effectDic = StaticData.GetDic<EffectSDS>();
+
+        Battle.Init(mapDic, heroDic, auraDic, effectDic);
+    }
+
+    private void SaveDataChange(int _index, byte[] _bytes)
+    {
+        if (_bytes != null)
+        {
+            string str = Convert.ToBase64String(_bytes);
+
+            PlayerPrefs.SetString(saveKey, str);
+
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            if (PlayerPrefs.HasKey(saveKey))
+            {
+                PlayerPrefs.DeleteKey(saveKey);
+
+                PlayerPrefs.Save();
+            }
+        }
+    }
+
+    public void Start()
+    {
+        if (PlayerPrefs.HasKey(saveKey))
+        {
+            string str = PlayerPrefs.GetString(saveKey);
+
+            byte[] bytes = Convert.FromBase64String(str);
+
+            StartBattle(bytes);
+        }
+        else
+        {
+            UIManager.Instance.Show<BattleChoose, Action<BattleSDS>>(Choose);
+        }
+    }
+
+    private void Choose(BattleSDS _battleSDS)
+    {
+        UIManager.Instance.Hide<BattleChoose>();
+
+        StartBattle(_battleSDS);
     }
 
     private void ServerSendDataCallBack(bool _isMine, bool _isPush, MemoryStream _ms)
@@ -48,7 +88,7 @@ public class BattleLocal
             {
                 using (BinaryReader br = new BinaryReader(_ms))
                 {
-                    BattleManager.Instance.ReceiveData(br);
+                    SuperFunction.Instance.DispatchEvent(BattleView.battleManagerEventGo, BattleManager.BATTLE_RECEIVE_DATA, br);
                 }
             }
             else
@@ -79,56 +119,41 @@ public class BattleLocal
         }
         else
         {
+            battleServer.ResetData();
+
             if (PlayerPrefs.HasKey(saveKey))
             {
                 PlayerPrefs.DeleteKey(saveKey);
 
                 PlayerPrefs.Save();
             }
-
-            battleServer.ResetData();
         }
     }
 
-    public void Start()
+    private void StartBattle(byte[] _bytes)
     {
-        BattleManager.Instance.SetSendDataCallBack(GetDataFromClient);
+        battleServer.FromBytes(_bytes);
 
-        SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_START, BattleStart);
-
-        if (PlayerPrefs.HasKey(saveKey))
-        {
-            string str = PlayerPrefs.GetString(saveKey);
-
-            byte[] bytes = Convert.FromBase64String(str);
-
-            battleServer.FromBytes(bytes);
-        }
-        else
-        {
-            TestCardsSDS testCardSDS = StaticData.GetData<TestCardsSDS>(testID);
-
-            battleServer.ServerStart(testCardSDS.mapID, testCardSDS.maxRoundNum, testCardSDS.mCards, testCardSDS.oCards, true);
-        }
-
-        BattleManager.Instance.RequestRefreshData();
+        StartBattle();
     }
 
-    private void BattleStart(int _index)
+    private void StartBattle(BattleSDS _battleSDS)
     {
-        SuperFunction.Instance.AddOnceEventListener(BattleManager.Instance.gameObject, BattleManager.BATTLE_QUIT, BattleOver);
+        battleServer.ServerStart(_battleSDS.mapID, _battleSDS.maxRoundNum, _battleSDS.mCards, _battleSDS.oCards, true);
 
-        BattleManager.Instance.gameObject.SetActive(true);
+        StartBattle();
     }
 
-    private void BattleOver(int _index)
+    private void StartBattle()
     {
-        BattleEntrance.Instance.Show();
+        SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, ClientSendData);
+
+        UIManager.Instance.Show<BattleView>();
     }
 
-    private void GetDataFromClient(MemoryStream _ms, Action<BinaryReader> _clientReceiveDataCallBack)
+    private void ClientSendData(int _index, MemoryStream _ms, Action<BinaryReader> _callBack)
     {
-        clientReceiveDataCallBack = _clientReceiveDataCallBack;
+        clientReceiveDataCallBack = _callBack;
 
         _ms.Position = 0;
 
@@ -136,10 +161,5 @@ public class BattleLocal
         {
             battleServer.ServerGetPackage(br, true);
         }
-    }
-
-    public void VerifyBattle()
-    {
-        Debug.Log(battleServer.VerifyBattle());
     }
 }

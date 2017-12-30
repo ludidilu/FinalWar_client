@@ -47,8 +47,6 @@ public class MapSDS : CsvBase, IMapSDS
             heroReal[i] = new KeyValuePair<int, int>(int.Parse(strArr[0]), int.Parse(strArr[1]));
         }
 
-        hero = null;
-
         if (fearAction.Length > 0)
         {
             fearActionReal = new KeyValuePair<int, int>[fearAction.Length];
@@ -60,8 +58,6 @@ public class MapSDS : CsvBase, IMapSDS
                 fearActionReal[i] = new KeyValuePair<int, int>(int.Parse(strArr[0]), int.Parse(strArr[1]));
             }
         }
-
-        fearAction = null;
     }
 
     public static void Load(Action _callBack)

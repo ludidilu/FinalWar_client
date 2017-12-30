@@ -79,7 +79,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68667bf140ec98340b8d7dd501683478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardUid: 0
   cost: {fileID: 11428402}
   frame: {fileID: 11484672}
   body: {fileID: 11458900}

@@ -10,6 +10,9 @@ using gameObjectFactory;
 public class BattleControl : MonoBehaviour
 {
     [SerializeField]
+    private BattleManager battleManager;
+
+    [SerializeField]
     private float hitPercent;
 
     [SerializeField]
@@ -54,18 +57,11 @@ public class BattleControl : MonoBehaviour
     [SerializeField]
     public float moveAwayDistance;
 
-    public static BattleControl Instance { get; private set; }
-
-    void Awake()
-    {
-        Instance = this;
-    }
-
     public IEnumerator Rush(int _index, int _lastIndex, BattleRushVO _vo)
     {
-        HeroBattle attacker = BattleManager.Instance.heroDic[_vo.attacker];
+        HeroBattle attacker = battleManager.heroDic[_vo.attacker];
 
-        HeroBattle stander = BattleManager.Instance.heroDic[_vo.stander];
+        HeroBattle stander = battleManager.heroDic[_vo.stander];
 
         bool getHit = false;
 
@@ -103,9 +99,9 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Shoot(int _index, int _lastIndex, BattleShootVO _vo)
     {
-        HeroBattle shooter = BattleManager.Instance.heroDic[_vo.shooter];
+        HeroBattle shooter = battleManager.heroDic[_vo.shooter];
 
-        HeroBattle stander = BattleManager.Instance.heroDic[_vo.stander];
+        HeroBattle stander = battleManager.heroDic[_vo.stander];
 
         float angle = Mathf.Atan2(stander.transform.localPosition.y - shooter.transform.localPosition.y, stander.transform.localPosition.x - shooter.transform.localPosition.x);
 
@@ -113,7 +109,7 @@ public class BattleControl : MonoBehaviour
 
         GameObject arrow = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/DamageArrow.prefab", null);
 
-        arrow.transform.SetParent(BattleManager.Instance.arrowContainer, false);
+        arrow.transform.SetParent(battleManager.arrowContainer, false);
 
         arrow.transform.localPosition = shooter.transform.localPosition;
 
@@ -155,11 +151,11 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Support(int _index, int _lastIndex, BattleSupportVO _vo)
     {
-        Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.stander].transform.localPosition;
+        Vector3 targetPos = battleManager.mapUnitDic[_vo.stander].transform.localPosition;
 
-        HeroBattle supporter = BattleManager.Instance.heroDic[_vo.supporter];
+        HeroBattle supporter = battleManager.heroDic[_vo.supporter];
 
-        HeroBattle stander = BattleManager.Instance.heroDic[_vo.stander];
+        HeroBattle stander = battleManager.heroDic[_vo.stander];
 
         Action<float> supporterToDel = delegate (float _value)
         {
@@ -188,9 +184,9 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator PrepareAttack(int _index, int _lastIndex, BattlePrepareAttackVO _vo)
     {
-        Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
+        Vector3 targetPos = battleManager.mapUnitDic[_vo.pos].transform.localPosition;
 
-        HeroBattle attacker = BattleManager.Instance.heroDic[_vo.attacker];
+        HeroBattle attacker = battleManager.heroDic[_vo.attacker];
 
         HeroBattle defenderReal;
 
@@ -200,13 +196,13 @@ public class BattleControl : MonoBehaviour
 
         if (_vo.pos == _vo.defender)
         {
-            defenderReal = defender = BattleManager.Instance.heroDic[_vo.defender];
+            defenderReal = defender = battleManager.heroDic[_vo.defender];
         }
         else
         {
-            defenderReal = supporter = BattleManager.Instance.heroDic[_vo.defender];
+            defenderReal = supporter = battleManager.heroDic[_vo.defender];
 
-            BattleManager.Instance.heroDic.TryGetValue(_vo.pos, out defender);
+            battleManager.heroDic.TryGetValue(_vo.pos, out defender);
         }
 
         if (defenderReal == supporter)
@@ -264,11 +260,11 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator AttackAndCounter(int _index, int _lastIndex, BattleAttackAndCounterVO _vo)
     {
-        HeroBattle attacker = BattleManager.Instance.heroDic[_vo.attacker];
+        HeroBattle attacker = battleManager.heroDic[_vo.attacker];
 
-        HeroBattle defender = BattleManager.Instance.heroDic[_vo.defender];
+        HeroBattle defender = battleManager.heroDic[_vo.defender];
 
-        Vector3 targetPos = BattleManager.Instance.mapUnitDic[_vo.pos].transform.localPosition;
+        Vector3 targetPos = battleManager.mapUnitDic[_vo.pos].transform.localPosition;
 
         if (_vo.attackerShield)
         {
@@ -339,13 +335,13 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator AttackBoth(int _index, int _lastIndex, BattleAttackBothVO _vo)
     {
-        HeroBattle attacker = BattleManager.Instance.heroDic[_vo.attacker];
+        HeroBattle attacker = battleManager.heroDic[_vo.attacker];
 
-        HeroBattle defender = BattleManager.Instance.heroDic[_vo.defender];
+        HeroBattle defender = battleManager.heroDic[_vo.defender];
 
-        Vector3 attackPos = BattleManager.Instance.mapUnitDic[_vo.defender].transform.localPosition;
+        Vector3 attackPos = battleManager.mapUnitDic[_vo.defender].transform.localPosition;
 
-        Vector3 defensePos = BattleManager.Instance.mapUnitDic[_vo.attacker].transform.localPosition;
+        Vector3 defensePos = battleManager.mapUnitDic[_vo.attacker].transform.localPosition;
 
         Vector3 targetPos = Vector3.Lerp(attackPos, defensePos, 0.5f);
 
@@ -424,7 +420,7 @@ public class BattleControl : MonoBehaviour
     {
         if (_vo.defender != _vo.pos)
         {
-            HeroBattle supporter = BattleManager.Instance.heroDic[_vo.defender];
+            HeroBattle supporter = battleManager.heroDic[_vo.defender];
 
             Vector3 startPos = supporter.hudTrans.localPosition;
 
@@ -439,7 +435,7 @@ public class BattleControl : MonoBehaviour
 
             HeroBattle defender;
 
-            if (BattleManager.Instance.heroDic.TryGetValue(_vo.pos, out defender))
+            if (battleManager.heroDic.TryGetValue(_vo.pos, out defender))
             {
                 Vector3 startPos2 = defender.hudTrans.localPosition;
 
@@ -515,15 +511,15 @@ public class BattleControl : MonoBehaviour
             {
                 KeyValuePair<int, int> pair = tmpList2[i];
 
-                HeroBattle hero = BattleManager.Instance.heroDic[pair.Key];
+                HeroBattle hero = battleManager.heroDic[pair.Key];
 
                 tmpDic.Add(pair.Key, hero);
 
-                BattleManager.Instance.heroDic.Remove(pair.Key);
+                battleManager.heroDic.Remove(pair.Key);
 
-                Vector3 startPos = BattleManager.Instance.mapUnitDic[pair.Key].transform.localPosition;
+                Vector3 startPos = battleManager.mapUnitDic[pair.Key].transform.localPosition;
 
-                Vector3 endPos = BattleManager.Instance.mapUnitDic[pair.Value].transform.localPosition;
+                Vector3 endPos = battleManager.mapUnitDic[pair.Value].transform.localPosition;
 
                 Action<float> toDel = delegate (float obj)
                 {
@@ -548,15 +544,15 @@ public class BattleControl : MonoBehaviour
 
                 HeroBattle hero = tmpDic[pair.Key];
 
-                BattleManager.Instance.heroDic.Add(pair.Value, hero);
+                battleManager.heroDic.Add(pair.Value, hero);
 
                 hero.RefreshAll();
 
                 int index = pair.Value;
 
-                MapUnit unit = BattleManager.Instance.mapUnitDic[index];
+                MapUnit unit = battleManager.mapUnitDic[index];
 
-                BattleManager.Instance.SetMapUnitColor(unit);
+                battleManager.SetMapUnitColor(unit);
             }
 
             tmpList.Clear();
@@ -580,9 +576,9 @@ public class BattleControl : MonoBehaviour
         {
             int pos = _vo.deads[i];
 
-            HeroBattle hero = BattleManager.Instance.heroDic[pos];
+            HeroBattle hero = battleManager.heroDic[pos];
 
-            BattleManager.Instance.heroDic.Remove(pos);
+            battleManager.heroDic.Remove(pos);
 
             if (i == 0)
             {
@@ -601,7 +597,7 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator TriggerAura(int _index, int _lastIndex, BattleTriggerAuraVO _vo)
     {
-        HeroBattle hero = BattleManager.Instance.heroDic[_vo.pos];
+        HeroBattle hero = battleManager.heroDic[_vo.pos];
 
         Action<float> dele = delegate (float _value)
         {
@@ -618,7 +614,7 @@ public class BattleControl : MonoBehaviour
 
             while (enumerator.MoveNext())
             {
-                HeroBattle targetHero = BattleManager.Instance.heroDic[enumerator.Current.Key];
+                HeroBattle targetHero = battleManager.heroDic[enumerator.Current.Key];
 
                 targetHero.RefreshAttackWithoutShield();
 
