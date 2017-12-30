@@ -72,6 +72,18 @@ public class BattleOnline : UIBase
         {
             case PlayerState.BATTLE:
 
+                btPVP.SetActive(true);
+
+                btPVE.SetActive(true);
+
+                btCancel.SetActive(false);
+
+                btQuit.SetActive(true);
+
+                SuperFunction.Instance.AddOnceEventListener(BattleView.battleManagerEventGo, BattleManager.BATTLE_QUIT, BattleOver);
+
+                SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, SendBattleAction);
+
                 UIManager.Instance.Show<BattleView>();
 
                 break;
@@ -176,17 +188,6 @@ public class BattleOnline : UIBase
         return true;
     }
 
-    public override void OnShow()
-    {
-        btPVP.SetActive(true);
-
-        btPVE.SetActive(true);
-
-        btCancel.SetActive(false);
-
-        btQuit.SetActive(true);
-    }
-
     public override void OnEnter()
     {
         btPVP.SetActive(false);
@@ -197,12 +198,10 @@ public class BattleOnline : UIBase
 
         btQuit.SetActive(false);
 
-        SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, SendBattleAction);
-
         client.Connect(ReceiveReplyData);
     }
 
-    public override void OnExit()
+    public void BattleOver(int _index)
     {
         SuperFunction.Instance.RemoveEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, SendBattleAction);
     }

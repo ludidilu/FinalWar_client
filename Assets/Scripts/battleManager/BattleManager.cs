@@ -417,7 +417,7 @@ public class BattleManager : MonoBehaviour
 
         gameObject.SetActive(false);
 
-        SuperFunction.Instance.DispatchEvent(gameObject, BATTLE_QUIT);
+        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_QUIT);
     }
 
     private void ClearMapUnits()

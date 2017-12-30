@@ -146,6 +146,8 @@ public class BattleLocal
 
     private void StartBattle()
     {
+        SuperFunction.Instance.AddOnceEventListener(BattleView.battleManagerEventGo, BattleManager.BATTLE_QUIT, BattleOver);
+
         SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, ClientSendData);
 
         UIManager.Instance.Show<BattleView>();
@@ -161,5 +163,10 @@ public class BattleLocal
         {
             battleServer.ServerGetPackage(br, true);
         }
+    }
+
+    private void BattleOver(int _index)
+    {
+        SuperFunction.Instance.RemoveEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, ClientSendData);
     }
 }

@@ -55,7 +55,7 @@ public class BattleView : UIBase
 
         battleManager.Init(battleManagerEventGo);
 
-        SuperFunction.Instance.AddEventListener(_go, BattleManager.BATTLE_QUIT, BattleQuit);
+        SuperFunction.Instance.AddEventListener(battleManagerEventGo, BattleManager.BATTLE_QUIT, BattleQuit);
 
         battleManager.RequestRefreshData();
     }

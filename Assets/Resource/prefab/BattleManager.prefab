@@ -582,7 +582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 342f6afde2b9fe2409c5bfc4ded70fd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleManager: {fileID: 0}
+  battleManager: {fileID: 11448894}
   heroName: {fileID: 114729677380356504}
   cost: {fileID: 114921428599489160}
   hp: {fileID: 114834002736187760}
