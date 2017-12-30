@@ -67,7 +67,7 @@ public class BattleLocal
         }
         else
         {
-            UIManager.Instance.Show<BattleChoose, Action<BattleSDS>>(Choose);
+            UIManager.Instance.Show<BattleChoose>(new Action<BattleSDS>(Choose));
         }
     }
 

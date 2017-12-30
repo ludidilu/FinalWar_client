@@ -119,7 +119,7 @@ public class BattleOnline : UIBase
 
     public void EnterPVE()
     {
-        UIManager.Instance.Show<BattleChoose, Action<BattleSDS>>(ChooseBattle);
+        UIManager.Instance.Show<BattleChoose>(new Action<BattleSDS>(ChooseBattle));
     }
 
     private void ChooseBattle(BattleSDS _battleSDS)

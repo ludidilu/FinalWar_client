@@ -38,7 +38,7 @@ public class BattleChoose : UIBase
         superList.SetData(list);
     }
 
-    public override void OnEnter<U>(U _data)
+    public override void OnEnter(object _data)
     {
         chooseCallBack = _data as Action<BattleSDS>;
     }
