@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using superTween;
 using UnityEngine.UI;
+using System.IO;
 
 namespace publicTools
 {
@@ -813,6 +814,62 @@ namespace publicTools
             }
 
             return result;
+        }
+
+        public static void SaveRenderTextureToPNG(RenderTexture _rt, string _path)
+        {
+            RenderTexture prev = RenderTexture.active;
+
+            RenderTexture.active = _rt;
+
+            Texture2D png = new Texture2D(_rt.width, _rt.height, TextureFormat.ARGB32, false);
+
+            png.ReadPixels(new Rect(0, 0, _rt.width, _rt.height), 0, 0);
+
+            byte[] bytes = png.EncodeToPNG();
+
+            FileInfo fi = new FileInfo(_path);
+
+            if (fi.Exists)
+            {
+                fi.Delete();
+            }
+
+            using (FileStream fs = File.Open(_path, FileMode.Create))
+            {
+                using (BinaryWriter writer = new BinaryWriter(fs))
+                {
+                    writer.Write(bytes);
+
+                    UnityEngine.Object.Destroy(png);
+                }
+            }
+
+            RenderTexture.active = prev;
+        }
+
+        public static void AtlasGetOriginalUV(Image _img)
+        {
+            Vector4 fix;
+
+            Vector4 fix2;
+
+            if (_img.sprite.packed)
+            {
+                fix = new Vector4(_img.sprite.textureRect.x / _img.sprite.texture.width, _img.sprite.textureRect.y / _img.sprite.texture.height, _img.sprite.textureRect.width / _img.sprite.texture.width, _img.sprite.textureRect.height / _img.sprite.texture.height);
+
+                fix2 = new Vector4(_img.sprite.textureRectOffset.x / _img.sprite.rect.width, _img.sprite.textureRectOffset.y / _img.sprite.rect.height, _img.sprite.textureRect.width / _img.sprite.rect.width, _img.sprite.textureRect.height / _img.sprite.rect.height);
+            }
+            else
+            {
+                fix = new Vector4(0, 0, 1, 1);
+
+                fix2 = new Vector4(0, 0, 1, 1);
+            }
+
+            _img.material.SetVector("fix", fix);
+
+            _img.material.SetVector("fix2", fix2);
         }
     }
 }

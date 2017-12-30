@@ -40,9 +40,6 @@ public class BattleManager : MonoBehaviour
     private float fixStep = 1.05f;
 
     [SerializeField]
-    private float myUiPosY = 120;
-
-    [SerializeField]
     private float viewportXFix;
 
     [SerializeField]
@@ -125,9 +122,6 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField]
     private SpriteRenderer bg;
-
-    [SerializeField]
-    private RectTransform myUiContainer;
 
     private Battle_client battle = new Battle_client();
 
@@ -655,15 +649,6 @@ public class BattleManager : MonoBehaviour
         }
 
         oCardNumTf.text = oHandCards.Count.ToString();
-
-        if (mHandCards.Count == 0)
-        {
-            myUiContainer.anchoredPosition = Vector2.zero;
-        }
-        else
-        {
-            myUiContainer.anchoredPosition = new Vector2(0, myUiPosY);
-        }
     }
 
     private void CreateSummonHeros()
