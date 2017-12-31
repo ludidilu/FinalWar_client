@@ -42,7 +42,7 @@ public class BattleOnline : UIBase
 
         client = new Client();
 
-        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceivePushData);
+        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceivePushData, Disconnect);
     }
 
     private void ReceivePushData(BinaryReader _br)
@@ -198,7 +198,17 @@ public class BattleOnline : UIBase
 
         btQuit.SetActive(false);
 
-        client.Connect(ReceiveReplyData);
+        client.Connect(ReceiveReplyData, ConnectFail);
+    }
+
+    private void ConnectFail()
+    {
+        UIManager.Instance.Hide(this);
+    }
+
+    private void Disconnect()
+    {
+
     }
 
     public void BattleOver(int _index)

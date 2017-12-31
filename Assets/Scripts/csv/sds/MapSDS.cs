@@ -13,6 +13,7 @@ public class MapSDS : CsvBase, IMapSDS
 {
     public string name;
     public string[] hero;
+    public bool isFearAction;
     public string[] fearAction;
 
     private MapData mapData;
@@ -31,6 +32,11 @@ public class MapSDS : CsvBase, IMapSDS
         return heroReal;
     }
 
+    public bool GetIsFearAction()
+    {
+        return isFearAction;
+    }
+
     public KeyValuePair<int, int>[] GetFearAction()
     {
         return fearActionReal;
@@ -47,16 +53,13 @@ public class MapSDS : CsvBase, IMapSDS
             heroReal[i] = new KeyValuePair<int, int>(int.Parse(strArr[0]), int.Parse(strArr[1]));
         }
 
-        if (fearAction.Length > 0)
+        fearActionReal = new KeyValuePair<int, int>[fearAction.Length];
+
+        for (int i = 0; i < fearAction.Length; i++)
         {
-            fearActionReal = new KeyValuePair<int, int>[fearAction.Length];
+            string[] strArr = fearAction[i].Split('&');
 
-            for (int i = 0; i < fearAction.Length; i++)
-            {
-                string[] strArr = fearAction[i].Split('&');
-
-                fearActionReal[i] = new KeyValuePair<int, int>(int.Parse(strArr[0]), int.Parse(strArr[1]));
-            }
+            fearActionReal[i] = new KeyValuePair<int, int>(int.Parse(strArr[0]), int.Parse(strArr[1]));
         }
     }
 
