@@ -240,6 +240,10 @@ public class BattleManager : MonoBehaviour
 
         viewport.extents = new Vector3(viewport.extents.x - viewportXFix, viewport.extents.y - viewportYFix, viewport.extents.z);
 
+        SuperFunction.Instance.AddEventListener<int>(ClickText.eventGo, ClickText.EVENT_NAME, ClickDesc);
+
+        SuperFunction.Instance.AddEventListener<int>(ClickImage.eventGo, ClickImage.EVENT_NAME, ClickDesc);
+
         gameObject.SetActive(false);
     }
 
@@ -1551,5 +1555,15 @@ public class BattleManager : MonoBehaviour
     public void Alert(string _str, Action _callBack)
     {
         alertPanel.Alert(_str, _callBack);
+    }
+
+    private void ClickDesc(int _index, int _id)
+    {
+        if (_id > 0)
+        {
+            DescSDS sds = StaticData.GetData<DescSDS>(_id);
+
+            Alert(sds.desc, null);
+        }
     }
 }

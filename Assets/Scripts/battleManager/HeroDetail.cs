@@ -33,21 +33,6 @@ public class HeroDetail : MonoBehaviour
 
     private HeroBase hero;
 
-    void Awake()
-    {
-        SuperFunction.Instance.AddEventListener<int>(ClickText.eventGo, ClickText.EVENT_NAME, GetClick);
-    }
-
-    private void GetClick(int _index, int _id)
-    {
-        if (_id > 0)
-        {
-            DescSDS sds = StaticData.GetData<DescSDS>(_id);
-
-            battleManager.Alert(sds.desc, null);
-        }
-    }
-
     public void Show(HeroBase _hero)
     {
         hero = _hero;

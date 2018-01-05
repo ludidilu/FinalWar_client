@@ -2,8 +2,8 @@
 using UnityEngine;
 
 [CanEditMultipleObjects]
-[CustomEditor(typeof(ClickText))]
-public class ClickTextEditor : UnityEditor.UI.TextEditor
+[CustomEditor(typeof(ClickImage))]
+public class ClickImageEditor : UnityEditor.UI.ImageEditor
 {
     private SerializedProperty styleProp;
 
