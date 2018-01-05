@@ -588,7 +588,20 @@ public class BattleManager : MonoBehaviour
 
         bg.transform.localPosition = new Vector3(-viewportXFix / defaultScale, -viewport.center.y / defaultScale, 0);
 
-        bg.transform.localScale = new Vector3(stepV.x / bg.sprite.textureRect.width / defaultScale * 2 * bg.sprite.pixelsPerUnit, stepV.y / bg.sprite.textureRect.height / defaultScale * 2 * bg.sprite.pixelsPerUnit, 1);
+        float scale;
+
+        if (bg.sprite.rect.width / bg.sprite.rect.height > stepV.x / stepV.y)
+        {
+            scale = stepV.y / bg.sprite.rect.height / defaultScale * 2 * bg.sprite.pixelsPerUnit;
+        }
+        else
+        {
+            scale = stepV.x / bg.sprite.rect.width / defaultScale * 2 * bg.sprite.pixelsPerUnit;
+        }
+
+        bg.transform.localScale = new Vector3(scale, scale, 1);
+
+        //bg.transform.localScale = new Vector3(stepV.x / bg.sprite.rect.width / defaultScale * 2 * bg.sprite.pixelsPerUnit, stepV.y / bg.sprite.rect.height / defaultScale * 2 * bg.sprite.pixelsPerUnit, 1);
 
         FixBounds();
     }

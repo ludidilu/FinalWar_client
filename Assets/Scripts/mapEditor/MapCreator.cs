@@ -75,6 +75,8 @@ public class MapCreator : MonoBehaviour
 
     void Awake()
     {
+        ConfigDictionary.Instance.LoadLocalConfig(Path.Combine(Application.streamingAssetsPath, "local.xml"));
+
         SuperRaycast.SetCamera(Camera.main);
 
         SuperRaycast.SetIsOpen(true, "a");
@@ -89,7 +91,7 @@ public class MapCreator : MonoBehaviour
 
     public void LoadMap()
     {
-        string path = EditorUtility.OpenFilePanel("a", "a", "map");
+        string path = EditorUtility.OpenFilePanel("a", ConfigDictionary.Instance.map_path, "map");
 
         if (!string.IsNullOrEmpty(path))
         {
@@ -264,7 +266,7 @@ public class MapCreator : MonoBehaviour
             return;
         }
 
-        string path = EditorUtility.SaveFilePanel("a", "a", "", "map");
+        string path = EditorUtility.SaveFilePanel("a", ConfigDictionary.Instance.map_path, "", "map");
 
         if (!string.IsNullOrEmpty(path))
         {
