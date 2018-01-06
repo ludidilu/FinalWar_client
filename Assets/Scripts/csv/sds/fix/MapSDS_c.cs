@@ -1,6 +1,7 @@
 using System.IO;
 public class MapSDS_c {
     public static void Init(MapSDS _csv, BinaryReader _br){
+        _csv.isFearAction = _br.ReadBoolean();
         _csv.ID = _br.ReadInt32();
         _csv.name = _br.ReadString();
         int lengthfearAction = _br.ReadInt32();
