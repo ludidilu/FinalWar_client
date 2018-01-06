@@ -43,9 +43,6 @@ public class BattleControl : MonoBehaviour
     public Material matGray;
 
     [SerializeField]
-    public Sprite[] typeSprite;
-
-    [SerializeField]
     public Sprite frame;
 
     [SerializeField]

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using textureFactory;
 
 public class HeroCard : HeroBase, IPointerClickHandler
 {
@@ -41,16 +40,12 @@ public class HeroCard : HeroBase, IPointerClickHandler
         battleManager.HeroClick(this);
     }
 
-    private void InitCard(HeroSDS _heroSDS)
+    protected override void GetHeroTypeSprite(Sprite _sp)
     {
-        sds = _heroSDS;
-
-        heroType.sprite = battleControl.typeSprite[sds.heroTypeFix.ID];
-
-        TextureFactory.Instance.GetTexture<Sprite>("Assets/Resource/texture/" + sds.icon + ".png", GetBodySprite, true);
+        heroType.sprite = _sp;
     }
 
-    private void GetBodySprite(Sprite _sp)
+    protected override void GetBodySprite(Sprite _sp)
     {
         body.sprite = _sp;
     }
