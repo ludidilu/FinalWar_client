@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using superFunction;
 using UnityEngine;
 
-public class ClickText : Text, IPointerClickHandler
+public class ClickText : Text, IPointerDownHandler
 {
     private static GameObject _eventGo;
 
@@ -24,7 +24,7 @@ public class ClickText : Text, IPointerClickHandler
 
     public int clickKey;
 
-    public void OnPointerClick(PointerEventData _data)
+    public void OnPointerDown(PointerEventData _data)
     {
         SuperFunction.Instance.DispatchEvent(eventGo, EVENT_NAME, clickKey);
     }
