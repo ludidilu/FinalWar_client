@@ -12,6 +12,8 @@ public class Main : MonoBehaviour
 
     private const string PATH_FIX = "Assets/Resource/prefab/{0}.prefab";
 
+    public const int layerIndex = 100;
+
     void Awake()
     {
         Application.targetFrameRate = 60;
@@ -23,7 +25,7 @@ public class Main : MonoBehaviour
 
     private void LoadOver()
     {
-        UIManager.Instance.Show<BattleEntrance>();
+        UIManager.Instance.ShowInRoot<BattleEntrance>(0, layerIndex);
     }
 
     private void LoadUi(Type _type, Action<GameObject> _callBack)

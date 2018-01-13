@@ -1,4 +1,4 @@
-﻿public class BattleEntrance : UIBase
+﻿public class BattleEntrance : UIPanel
 {
     private BattleLocal battleLocal;
 
@@ -11,12 +11,12 @@
 
     public void Online()
     {
-        UIManager.Instance.Show<BattleOnline>();
+        UIManager.Instance.ShowInParent<BattleOnline>(1, uid);
     }
 
     public void Local()
     {
-        battleLocal.Start();
+        battleLocal.Start(uid);
     }
 
     public override bool IsFullScreen()

@@ -2,7 +2,7 @@
 using gameObjectFactory;
 using superFunction;
 
-public class BattleView : UIBase
+public class BattleView : UIPanel
 {
     private static GameObject m_battleManagerEventGo;
 
@@ -22,11 +22,6 @@ public class BattleView : UIBase
     private GameObject mainCamera;
 
     private BattleManager battleManager;
-
-    public override bool IsFullScreen()
-    {
-        return true;
-    }
 
     public override void OnEnter()
     {
@@ -62,6 +57,6 @@ public class BattleView : UIBase
 
     private void BattleQuit(int _index)
     {
-        UIManager.Instance.Hide(this);
+        UIManager.Instance.Hide(uid);
     }
 }

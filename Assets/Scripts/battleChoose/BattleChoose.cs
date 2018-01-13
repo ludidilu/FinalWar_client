@@ -2,18 +2,14 @@
 using UnityEngine;
 using superList;
 using System;
+using tuple;
 
-public class BattleChoose : UIBase
+public class BattleChoose : UIWindow
 {
     [SerializeField]
     private SuperList superList;
 
     private Action<BattleSDS> chooseCallBack;
-
-    public override bool IsFullScreen()
-    {
-        return false;
-    }
 
     public override void Init()
     {
@@ -38,18 +34,22 @@ public class BattleChoose : UIBase
         superList.SetData(list);
     }
 
-    public override void OnEnter(object _data)
+    public override void OnEnter()
     {
-        chooseCallBack = _data as Action<BattleSDS>;
+        chooseCallBack = ((Tuple<Action<BattleSDS>>)data).first;
+
+        superList.DisplayIndex(0);
     }
 
     private void Click(object _battleSDS)
     {
         chooseCallBack(_battleSDS as BattleSDS);
+
+        UIManager.Instance.Hide(uid);
     }
 
     public void Quit()
     {
-        UIManager.Instance.Hide(this);
+        UIManager.Instance.Hide(uid);
     }
 }

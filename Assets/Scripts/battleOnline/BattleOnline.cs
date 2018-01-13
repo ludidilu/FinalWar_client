@@ -3,8 +3,9 @@ using System.IO;
 using superFunction;
 using Connection;
 using System;
+using tuple;
 
-public class BattleOnline : UIBase
+public class BattleOnline : UIPanel
 {
     private enum PlayerState
     {
@@ -84,7 +85,7 @@ public class BattleOnline : UIBase
 
                 SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, SendBattleAction);
 
-                UIManager.Instance.Show<BattleView>();
+                UIManager.Instance.ShowInParent<BattleView>(0, uid);
 
                 break;
 
@@ -131,13 +132,11 @@ public class BattleOnline : UIBase
 
     public void EnterPVE()
     {
-        UIManager.Instance.Show<BattleChoose>(new Action<BattleSDS>(ChooseBattle));
+        UIManager.Instance.ShowInParent<BattleChoose>(new Tuple<Action<BattleSDS>>(new Action<BattleSDS>(ChooseBattle)), uid);
     }
 
     private void ChooseBattle(BattleSDS _battleSDS)
     {
-        UIManager.Instance.Hide<BattleChoose>();
-
         using (MemoryStream ms = new MemoryStream())
         {
             using (BinaryWriter bw = new BinaryWriter(ms))
@@ -203,7 +202,7 @@ public class BattleOnline : UIBase
 
     private void ConnectFail()
     {
-        UIManager.Instance.Hide(this);
+        UIManager.Instance.Hide(uid);
     }
 
     private void Disconnect()
@@ -220,7 +219,7 @@ public class BattleOnline : UIBase
     {
         client.Close();
 
-        UIManager.Instance.Hide(this);
+        UIManager.Instance.Hide(uid);
     }
 
     void Update()

@@ -4,6 +4,7 @@ using UnityEngine;
 using FinalWar;
 using System.IO;
 using System.Collections.Generic;
+using tuple;
 
 public class BattleLocal
 {
@@ -14,6 +15,8 @@ public class BattleLocal
     private Battle_server battleServer;
 
     private Action<BinaryReader> clientReceiveDataCallBack;
+
+    private int parentUid;
 
     public BattleLocal()
     {
@@ -55,8 +58,10 @@ public class BattleLocal
         }
     }
 
-    public void Start()
+    public void Start(int _parentUid)
     {
+        parentUid = _parentUid;
+
         if (PlayerPrefs.HasKey(saveKey))
         {
             string str = PlayerPrefs.GetString(saveKey);
@@ -67,14 +72,12 @@ public class BattleLocal
         }
         else
         {
-            UIManager.Instance.Show<BattleChoose>(new Action<BattleSDS>(Choose));
+            UIManager.Instance.ShowInParent<BattleChoose>(new Tuple<Action<BattleSDS>>(new Action<BattleSDS>(Choose)), parentUid);
         }
     }
 
     private void Choose(BattleSDS _battleSDS)
     {
-        UIManager.Instance.Hide<BattleChoose>();
-
         StartBattle(_battleSDS);
     }
 
@@ -150,7 +153,7 @@ public class BattleLocal
 
         SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, ClientSendData);
 
-        UIManager.Instance.Show<BattleView>();
+        UIManager.Instance.ShowInParent<BattleView>(0, parentUid);
     }
 
     private void ClientSendData(int _index, MemoryStream _ms, Action<BinaryReader> _callBack)
