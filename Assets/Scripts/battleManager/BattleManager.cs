@@ -177,10 +177,34 @@ public class BattleManager : MonoBehaviour
         if (_value == null)
         {
             heroDetail.Hide(m_nowChooseCard);
+
+            IEnumerator<MapUnit> enumerator = mapUnitDic.Values.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                enumerator.Current.SetIconVisible(false);
+            }
         }
         else
         {
             heroDetail.Show(_value);
+
+            if (_value.sds.cost <= battle.GetNowMoney(battle.clientIsMine))
+            {
+                IEnumerator<KeyValuePair<int, MapUnit>> enumerator = mapUnitDic.GetEnumerator();
+
+                while (enumerator.MoveNext())
+                {
+                    KeyValuePair<int, MapUnit> pair = enumerator.Current;
+
+                    int pos = pair.Key;
+
+                    if (battle.CheckPosCanSummon(battle.clientIsMine, pos))
+                    {
+                        pair.Value.SetIconVisible(true);
+                    }
+                }
+            }
         }
 
         m_nowChooseCard = _value;
