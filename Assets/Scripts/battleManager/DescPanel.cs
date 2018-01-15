@@ -1,26 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using superRaycast;
 using System;
-using superGraphicRaycast;
 
-public class AlertPanel : MonoBehaviour
+public class DescPanel : MonoBehaviour
 {
     [SerializeField]
     private Text alertText;
 
     private Action callBack;
 
-    private bool isDown = false;
-
-    public void Alert(string _str, Action _callBack)
+    public void Show(string _str, Action _callBack)
     {
         if (!gameObject.activeSelf)
         {
-            SuperRaycast.SetIsOpen(false, "AlertPanel");
-
-            SuperGraphicRaycast.SetIsOpen(false, "AlertPanel");
-
             gameObject.SetActive(true);
         }
 
@@ -33,16 +25,7 @@ public class AlertPanel : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            isDown = true;
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            if (isDown)
-            {
-                isDown = false;
-
-                Close();
-            }
+            Close();
         }
     }
 
@@ -50,10 +33,6 @@ public class AlertPanel : MonoBehaviour
     {
         if (gameObject.activeSelf)
         {
-            SuperRaycast.SetIsOpen(true, "AlertPanel");
-
-            SuperGraphicRaycast.SetIsOpen(true, "AlertPanel");
-
             gameObject.SetActive(false);
 
             if (callBack != null)

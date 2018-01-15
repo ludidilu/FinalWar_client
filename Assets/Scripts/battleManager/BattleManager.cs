@@ -123,6 +123,9 @@ public class BattleManager : MonoBehaviour
     private GameObject backGround;
 
     [SerializeField]
+    private DescPanel descPanel;
+
+    [SerializeField]
     private AlertPanel alertPanel;
 
     [SerializeField]
@@ -328,7 +331,7 @@ public class BattleManager : MonoBehaviour
 
         heroDetail.Hide();
 
-        alertPanel.Close();
+        descPanel.Close();
 
         ClearMapUnits();
 
@@ -363,7 +366,7 @@ public class BattleManager : MonoBehaviour
     {
         heroDetail.Hide();
 
-        alertPanel.Close();
+        descPanel.Close();
 
         ClearMapUnits();
 
@@ -1576,6 +1579,11 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    public void ShowDesc(string _str, Action _callBack)
+    {
+        descPanel.Show(_str, _callBack);
+    }
+
     public void Alert(string _str, Action _callBack)
     {
         alertPanel.Alert(_str, _callBack);
@@ -1587,7 +1595,7 @@ public class BattleManager : MonoBehaviour
         {
             DescSDS sds = StaticData.GetData<DescSDS>(_id);
 
-            Alert(sds.desc, null);
+            ShowDesc(sds.desc, null);
         }
     }
 }
