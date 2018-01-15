@@ -335,7 +335,6 @@ public class HeroBattle : HeroBase
 
                         break;
 
-                    case Effect.BE_SILENCE:
                     case Effect.BE_CLEAN:
                     case Effect.ADD_AURA:
 
