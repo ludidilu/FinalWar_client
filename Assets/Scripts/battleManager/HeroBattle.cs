@@ -344,7 +344,7 @@ public class HeroBattle : HeroBase
                 }
             }
 
-            RefreshHpAndShield();
+            battleManager.DoRecover();
         }
 
         return shock;

@@ -1412,7 +1412,7 @@ public class BattleManager : MonoBehaviour
         CreateScoreTf();
     }
 
-    private void DoRecover()
+    public void DoRecover()
     {
         Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator = heroDic.Values.GetEnumerator();
 
