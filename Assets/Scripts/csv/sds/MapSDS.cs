@@ -13,7 +13,6 @@ public class MapSDS : CsvBase, IMapSDS
 {
     public string name;
     public string[] hero;
-    public bool isFearAction;
     public string[] fearAction;
 
     private MapData mapData;
@@ -30,11 +29,6 @@ public class MapSDS : CsvBase, IMapSDS
     public KeyValuePair<int, int>[] GetHero()
     {
         return heroReal;
-    }
-
-    public bool GetIsFearAction()
-    {
-        return isFearAction;
     }
 
     public KeyValuePair<int, int>[] GetFearAction()
