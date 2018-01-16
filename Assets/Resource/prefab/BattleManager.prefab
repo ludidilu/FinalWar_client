@@ -352,13 +352,14 @@ GameObject:
   - component: {fileID: 22214756}
   - component: {fileID: 11455812}
   - component: {fileID: 114767490472349022}
+  - component: {fileID: 225812114943003978}
   m_Layer: 5
   m_Name: Image (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &190396
 GameObject:
   m_ObjectHideFlags: 1
@@ -386,13 +387,14 @@ GameObject:
   m_Component:
   - component: {fileID: 22405076}
   - component: {fileID: 11405928}
+  - component: {fileID: 225305628240116424}
   m_Layer: 5
   m_Name: HeroDetail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &193832
 GameObject:
   m_ObjectHideFlags: 1
@@ -591,6 +593,7 @@ MonoBehaviour:
   abilityType: {fileID: 114268674888295514}
   comment: {fileID: 11404392}
   commentContainer: {fileID: 121974}
+  cg: {fileID: 225305628240116424}
 --- !u!114 &11429364
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -756,6 +759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alertText: {fileID: 114994933458000836}
+  cg: {fileID: 225198059798763214}
 --- !u!114 &11465504
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1448,7 +1452,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: -300}
-  m_SizeDelta: {x: 200, y: 292.72314}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &22483560
 RectTransform:
@@ -1481,10 +1485,10 @@ RectTransform:
   m_Father: {fileID: 22475798}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 180, y: -10}
-  m_SizeDelta: {x: 160, y: 262.72314}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!224 &22491342
 RectTransform:
@@ -1572,13 +1576,14 @@ GameObject:
   - component: {fileID: 222053036311217946}
   - component: {fileID: 114739578635931476}
   - component: {fileID: 11459578}
+  - component: {fileID: 225198059798763214}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1048199135408426
 GameObject:
   m_ObjectHideFlags: 1
@@ -3051,6 +3056,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alertText: {fileID: 11485674}
+  cg: {fileID: 225812114943003978}
 --- !u!114 &114834002736187760
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3625,3 +3631,36 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &225198059798763214
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000955470167668}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
+--- !u!225 &225305628240116424
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 193262}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
+--- !u!225 &225812114943003978
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 186808}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0

@@ -9,19 +9,24 @@ public class AlertPanel : MonoBehaviour
     [SerializeField]
     private Text alertText;
 
+    [SerializeField]
+    private CanvasGroup cg;
+
     private Action callBack;
 
     private bool isDown = false;
 
     public void Alert(string _str, Action _callBack)
     {
-        if (!gameObject.activeSelf)
+        if (!cg.blocksRaycasts)
         {
             SuperRaycast.SetIsOpen(false, "AlertPanel");
 
             SuperGraphicRaycast.SetIsOpen(false, "AlertPanel");
 
-            gameObject.SetActive(true);
+            cg.alpha = 1;
+
+            cg.blocksRaycasts = true;
         }
 
         callBack = _callBack;
@@ -48,13 +53,15 @@ public class AlertPanel : MonoBehaviour
 
     public void Close()
     {
-        if (gameObject.activeSelf)
+        if (cg.blocksRaycasts)
         {
             SuperRaycast.SetIsOpen(true, "AlertPanel");
 
             SuperGraphicRaycast.SetIsOpen(true, "AlertPanel");
 
-            gameObject.SetActive(false);
+            cg.alpha = 0;
+
+            cg.blocksRaycasts = false;
 
             if (callBack != null)
             {

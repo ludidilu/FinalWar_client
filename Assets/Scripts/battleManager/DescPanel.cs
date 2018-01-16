@@ -7,13 +7,18 @@ public class DescPanel : MonoBehaviour
     [SerializeField]
     private Text alertText;
 
+    [SerializeField]
+    private CanvasGroup cg;
+
     private Action callBack;
 
     public void Show(string _str, Action _callBack)
     {
-        if (!gameObject.activeSelf)
+        if (!cg.blocksRaycasts)
         {
-            gameObject.SetActive(true);
+            cg.alpha = 1;
+
+            cg.blocksRaycasts = true;
         }
 
         callBack = _callBack;
@@ -31,9 +36,11 @@ public class DescPanel : MonoBehaviour
 
     public void Close()
     {
-        if (gameObject.activeSelf)
+        if (cg.blocksRaycasts)
         {
-            gameObject.SetActive(false);
+            cg.alpha = 0;
+
+            cg.blocksRaycasts = false;
 
             if (callBack != null)
             {

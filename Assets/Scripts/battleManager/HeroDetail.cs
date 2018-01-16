@@ -31,6 +31,9 @@ public class HeroDetail : MonoBehaviour
     [SerializeField]
     private GameObject commentContainer;
 
+    [SerializeField]
+    private CanvasGroup cg;
+
     private HeroBase hero;
 
     public void Show(HeroBase _hero)
@@ -68,9 +71,11 @@ public class HeroDetail : MonoBehaviour
             }
         }
 
-        if (!gameObject.activeSelf)
+        if (!cg.blocksRaycasts)
         {
-            gameObject.SetActive(true);
+            cg.alpha = 1;
+
+            cg.blocksRaycasts = true;
         }
     }
 
@@ -80,9 +85,11 @@ public class HeroDetail : MonoBehaviour
         {
             hero = null;
 
-            if (gameObject.activeSelf)
+            if (cg.blocksRaycasts)
             {
-                gameObject.SetActive(false);
+                cg.alpha = 0;
+
+                cg.blocksRaycasts = false;
             }
         }
     }
@@ -91,9 +98,11 @@ public class HeroDetail : MonoBehaviour
     {
         hero = null;
 
-        if (gameObject.activeSelf)
+        if (cg.blocksRaycasts)
         {
-            gameObject.SetActive(false);
+            cg.alpha = 0;
+
+            cg.blocksRaycasts = false;
         }
     }
 }
