@@ -386,4 +386,9 @@ public class HeroBattle : HeroBase
             speed.color = new Color(speed.color.a, speed.color.g, speed.color.b, _v);
         }
     }
+
+    public void GetDesc(ref List<string> _list)
+    {
+        hero.GetDesc(ref _list);
+    }
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using superFunction;
+using System.Collections.Generic;
 
 public class HeroDetail : MonoBehaviour
 {
@@ -26,15 +26,25 @@ public class HeroDetail : MonoBehaviour
     private ClickText abilityType;
 
     [SerializeField]
-    private Text comment;
+    private RectTransform container;
 
     [SerializeField]
-    private GameObject commentContainer;
+    private RectTransform poolContainer;
+
+    [SerializeField]
+    private GameObject cellResource;
 
     [SerializeField]
     private CanvasGroup cg;
 
+    [SerializeField]
+    private float defaultHeight;
+
     private HeroBase hero;
+
+    private Queue<Text> cellList = new Queue<Text>();
+
+    private Queue<Text> cellPool = new Queue<Text>();
 
     public void Show(HeroBase _hero)
     {
@@ -54,22 +64,33 @@ public class HeroDetail : MonoBehaviour
 
         abilityType.clickKey = hero.sds.heroTypeFix.ID;
 
+        ClearCell();
+
+        float height = defaultHeight;
+
         if (!string.IsNullOrEmpty(hero.sds.comment))
         {
-            comment.text = hero.sds.comment;
+            AddCell(hero.sds.comment, ref height);
+        }
 
-            if (!commentContainer.activeSelf)
-            {
-                commentContainer.SetActive(true);
-            }
-        }
-        else
+        if (_hero is HeroBattle)
         {
-            if (commentContainer.activeSelf)
+            HeroBattle hero = _hero as HeroBattle;
+
+            List<string> list = null;
+
+            hero.GetDesc(ref list);
+
+            if (list != null)
             {
-                commentContainer.SetActive(false);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    AddCell(list[i], ref height);
+                }
             }
         }
+
+        container.sizeDelta = new Vector2(container.sizeDelta.x, height);
 
         if (!cg.blocksRaycasts)
         {
@@ -77,6 +98,46 @@ public class HeroDetail : MonoBehaviour
 
             cg.blocksRaycasts = true;
         }
+    }
+
+    private void ClearCell()
+    {
+        while (cellList.Count > 0)
+        {
+            Text cell = cellList.Dequeue();
+
+            cell.transform.SetParent(poolContainer, false);
+
+            cellPool.Enqueue(cell);
+        }
+    }
+
+    public void AddCell(string _str, ref float _height)
+    {
+        Text cell;
+
+        if (cellPool.Count > 0)
+        {
+            cell = cellPool.Dequeue();
+        }
+        else
+        {
+            cell = Instantiate(cellResource).GetComponent<Text>();
+        }
+
+        cell.transform.SetParent(container, false);
+
+        cell.text = _str;
+
+        cellList.Enqueue(cell);
+
+        float height = cell.preferredHeight + 1;
+
+        cell.rectTransform.sizeDelta = new Vector2(cell.rectTransform.sizeDelta.x, height);
+
+        cell.rectTransform.anchoredPosition = new Vector2(0, -_height);
+
+        _height += height;
     }
 
     public void Hide(HeroBase _hero)
