@@ -336,9 +336,16 @@ public class HeroBattle : HeroBase
                         break;
 
                     case Effect.BE_CLEAN:
+
+                        ShowHud("Clean", Color.black, Color.red, i * battleControl.hudHeight, null);
+
+                        break;
+
                     case Effect.ADD_AURA:
 
-                        ShowHud(effectVO.effect.ToString(), Color.black, Color.red, i * battleControl.hudHeight, null);
+                        AuraSDS sds = StaticData.GetData<AuraSDS>(effectVO.data[0]);
+
+                        ShowHud(sds.desc, Color.black, Color.red, i * battleControl.hudHeight, null);
 
                         break;
                 }
