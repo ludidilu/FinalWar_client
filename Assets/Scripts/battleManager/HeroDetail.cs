@@ -77,15 +77,18 @@ public class HeroDetail : MonoBehaviour
         {
             HeroBattle hero = _hero as HeroBattle;
 
-            List<string> list = null;
-
-            hero.GetDesc(ref list);
-
-            if (list != null)
+            if (hero.isHero)
             {
-                for (int i = 0; i < list.Count; i++)
+                List<string> list = null;
+
+                hero.GetDesc(ref list);
+
+                if (list != null)
                 {
-                    AddCell(list[i], ref height);
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        AddCell(list[i], ref height);
+                    }
                 }
             }
         }
