@@ -877,9 +877,9 @@ public class BattleManager : MonoBehaviour
 
         if (nowChooseHeroCanAction)
         {
-            int targetPos;
+            int targetPos = battle.GetActionContainsKey(GetNowChooseHero().pos);
 
-            if (battle.GetActionContainsKey(GetNowChooseHero().pos, out targetPos))
+            if (targetPos != -1)
             {
                 if (targetPos == _mapUnit.index)
                 {
@@ -918,9 +918,9 @@ public class BattleManager : MonoBehaviour
         {
             mouseHasExited = true;
 
-            int targetPos;
+            int targetPos = battle.GetActionContainsKey(GetNowChooseHero().pos);
 
-            if (battle.GetActionContainsKey(GetNowChooseHero().pos, out targetPos))
+            if (targetPos != -1)
             {
                 if (_mapUnit.index == targetPos)
                 {
