@@ -4,12 +4,14 @@ using superList;
 using System;
 using tuple;
 
-public class BattleChoose : UIWindow
+public class BattleChoose : UIPanel
 {
     [SerializeField]
     private SuperList superList;
 
     private Action<BattleSDS> chooseCallBack;
+
+    private const int AI_BATTLE_ID = 3;
 
     public override void Init()
     {
@@ -44,6 +46,13 @@ public class BattleChoose : UIWindow
     private void Click(object _battleSDS)
     {
         chooseCallBack(_battleSDS as BattleSDS);
+
+        UIManager.Instance.Hide(uid);
+    }
+
+    public void Ai()
+    {
+        chooseCallBack(StaticData.GetData<BattleSDS>(AI_BATTLE_ID));
 
         UIManager.Instance.Hide(uid);
     }
