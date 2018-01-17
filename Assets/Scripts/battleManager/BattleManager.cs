@@ -244,7 +244,7 @@ public class BattleManager : MonoBehaviour
         {
             heroDetail.Show(_value);
 
-            if (_value.canAction)
+            if (_value.isHero && _value.canAction)
             {
                 List<int> list = BattlePublicTools.GetNeighbourPos(battle.mapData, _value.pos);
 

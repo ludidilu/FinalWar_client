@@ -64,6 +64,14 @@ public class HeroBattle : HeroBase
 
     private Hero hero;
 
+    public bool isHero
+    {
+        get
+        {
+            return hero != null;
+        }
+    }
+
     public bool isMine
     {
         get
@@ -396,21 +404,11 @@ public class HeroBattle : HeroBase
 
     public void GetDesc(ref List<string> _list)
     {
-        if (hero != null)
-        {
-            hero.GetDesc(ref _list);
-        }
+        hero.GetDesc(ref _list);
     }
 
     public List<int> GetCanAttackPos()
     {
-        if (hero != null)
-        {
-            return hero.GetCanAttackPos();
-        }
-        else
-        {
-            return null;
-        }
+        return hero.GetCanAttackPos();
     }
 }
