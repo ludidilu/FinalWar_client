@@ -398,4 +398,9 @@ public class HeroBattle : HeroBase
     {
         hero.GetDesc(ref _list);
     }
+
+    public List<int> GetCanAttackPos()
+    {
+        return hero.GetCanAttackPos();
+    }
 }

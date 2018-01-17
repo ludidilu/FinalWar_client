@@ -225,10 +225,44 @@ public class BattleManager : MonoBehaviour
         if (_value == null)
         {
             heroDetail.Hide(m_nowChooseHero);
+
+            IEnumerator<MapUnit> enumerator = mapUnitDic.Values.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                enumerator.Current.SetIconVisible(false);
+            }
         }
         else
         {
             heroDetail.Show(_value);
+
+            if (_value.canAction)
+            {
+                List<int> list = BattlePublicTools.GetNeighbourPos(battle.mapData, _value.pos);
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    int pos = list[i];
+
+                    if (battle.GetPosIsMine(pos) == _value.isMine)
+                    {
+                        mapUnitDic[pos].SetIconVisible(true);
+                    }
+                }
+
+                list = _value.GetCanAttackPos();
+
+                if (list != null)
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        int pos = list[i];
+
+                        mapUnitDic[pos].SetIconVisible(true);
+                    }
+                }
+            }
         }
 
         m_nowChooseHero = _value;
