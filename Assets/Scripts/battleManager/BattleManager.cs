@@ -1302,15 +1302,11 @@ public class BattleManager : MonoBehaviour
             heroBattle.transform.localPosition = new Vector3(heroBattle.transform.localPosition.x, heroBattle.transform.localPosition.y, 100 * (1 - obj));
         };
 
-        SuperSequenceControl.To(10f, 1f, 0.5f, toDel, _index);
+        SuperSequenceControl.To(10f, 1f, 0.3f, toDel, _index);
 
         yield return null;
 
-        SuperSequenceControl.DelayCall(0.5f, _index);
-
-        yield return null;
-
-        SuperSequenceControl.MoveNext(_lastIndex);
+        SuperSequenceControl.DelayCall(0.8f, _lastIndex);
     }
 
     public void SetMapUnitColor(MapUnit _unit)
