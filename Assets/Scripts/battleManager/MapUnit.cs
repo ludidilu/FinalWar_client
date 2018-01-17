@@ -26,4 +26,9 @@ public class MapUnit : MonoBehaviour
     {
         sr.gameObject.SetActive(_visible);
     }
+
+    public void SetIconColor(Color _color)
+    {
+        sr.color = _color;
+    }
 }

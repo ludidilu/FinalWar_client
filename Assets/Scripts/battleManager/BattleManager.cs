@@ -1595,7 +1595,11 @@ public class BattleManager : MonoBehaviour
 
                 if (battle.GetPosIsMine(pos) == _hero.isMine && !battle.GetSummonContainsValue(pos))
                 {
-                    mapUnitDic[pos].SetIconVisible(true);
+                    MapUnit unit = mapUnitDic[pos];
+
+                    unit.SetIconVisible(true);
+
+                    unit.SetIconColor(new Color(0, 1, 0, 0.8f));
                 }
             }
 
@@ -1607,7 +1611,11 @@ public class BattleManager : MonoBehaviour
                 {
                     int pos = list[i];
 
-                    mapUnitDic[pos].SetIconVisible(true);
+                    MapUnit unit = mapUnitDic[pos];
+
+                    unit.SetIconVisible(true);
+
+                    unit.SetIconColor(new Color(1, 0, 0, 0.8f));
                 }
             }
         }
@@ -1629,7 +1637,11 @@ public class BattleManager : MonoBehaviour
 
                 if (battle.CheckPosCanSummon(battle.clientIsMine, pos))
                 {
-                    pair.Value.SetIconVisible(true);
+                    MapUnit unit = pair.Value;
+
+                    unit.SetIconVisible(true);
+
+                    unit.SetIconColor(new Color(1, 1, 1, 0.8f));
                 }
             }
         }
