@@ -180,34 +180,10 @@ public class BattleManager : MonoBehaviour
         if (_value == null)
         {
             heroDetail.Hide(m_nowChooseCard);
-
-            IEnumerator<MapUnit> enumerator = mapUnitDic.Values.GetEnumerator();
-
-            while (enumerator.MoveNext())
-            {
-                enumerator.Current.SetIconVisible(false);
-            }
         }
         else
         {
             heroDetail.Show(_value);
-
-            if (_value.sds.cost <= battle.GetNowMoney(battle.clientIsMine))
-            {
-                IEnumerator<KeyValuePair<int, MapUnit>> enumerator = mapUnitDic.GetEnumerator();
-
-                while (enumerator.MoveNext())
-                {
-                    KeyValuePair<int, MapUnit> pair = enumerator.Current;
-
-                    int pos = pair.Key;
-
-                    if (battle.CheckPosCanSummon(battle.clientIsMine, pos))
-                    {
-                        pair.Value.SetIconVisible(true);
-                    }
-                }
-            }
         }
 
         m_nowChooseCard = _value;
@@ -225,44 +201,10 @@ public class BattleManager : MonoBehaviour
         if (_value == null)
         {
             heroDetail.Hide(m_nowChooseHero);
-
-            IEnumerator<MapUnit> enumerator = mapUnitDic.Values.GetEnumerator();
-
-            while (enumerator.MoveNext())
-            {
-                enumerator.Current.SetIconVisible(false);
-            }
         }
         else
         {
             heroDetail.Show(_value);
-
-            if (_value.isHero && _value.canAction)
-            {
-                List<int> list = BattlePublicTools.GetNeighbourPos(battle.mapData, _value.pos);
-
-                for (int i = 0; i < list.Count; i++)
-                {
-                    int pos = list[i];
-
-                    if (battle.GetPosIsMine(pos) == _value.isMine && !battle.GetSummonContainsValue(pos))
-                    {
-                        mapUnitDic[pos].SetIconVisible(true);
-                    }
-                }
-
-                list = _value.GetCanAttackPos();
-
-                if (list != null)
-                {
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        int pos = list[i];
-
-                        mapUnitDic[pos].SetIconVisible(true);
-                    }
-                }
-            }
         }
 
         m_nowChooseHero = _value;
@@ -1630,6 +1572,70 @@ public class BattleManager : MonoBehaviour
             DescSDS sds = StaticData.GetData<DescSDS>(_id);
 
             ShowDesc(sds.desc, null);
+        }
+    }
+
+    public void ClearMapUnitIcon()
+    {
+        IEnumerator<MapUnit> enumerator = mapUnitDic.Values.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            enumerator.Current.SetIconVisible(false);
+        }
+    }
+
+    public void ClickHeroBattleShowMapUnitIcon(HeroBattle _hero)
+    {
+        ClearMapUnitIcon();
+
+        if (_hero.isHero && _hero.canAction)
+        {
+            List<int> list = BattlePublicTools.GetNeighbourPos(battle.mapData, _hero.pos);
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                int pos = list[i];
+
+                if (battle.GetPosIsMine(pos) == _hero.isMine && !battle.GetSummonContainsValue(pos))
+                {
+                    mapUnitDic[pos].SetIconVisible(true);
+                }
+            }
+
+            list = _hero.GetCanAttackPos();
+
+            if (list != null)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    int pos = list[i];
+
+                    mapUnitDic[pos].SetIconVisible(true);
+                }
+            }
+        }
+    }
+
+    public void ClickHeroCardShowMapUnitIcon(HeroCard _hero)
+    {
+        ClearMapUnitIcon();
+
+        if (_hero.sds.cost <= battle.GetNowMoney(battle.clientIsMine))
+        {
+            IEnumerator<KeyValuePair<int, MapUnit>> enumerator = mapUnitDic.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                KeyValuePair<int, MapUnit> pair = enumerator.Current;
+
+                int pos = pair.Key;
+
+                if (battle.CheckPosCanSummon(battle.clientIsMine, pos))
+                {
+                    pair.Value.SetIconVisible(true);
+                }
+            }
         }
     }
 }

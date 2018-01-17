@@ -91,6 +91,14 @@ public class HeroDetail : MonoBehaviour
                     }
                 }
             }
+
+            battleManager.ClickHeroBattleShowMapUnitIcon(hero);
+        }
+        else
+        {
+            HeroCard hero = _hero as HeroCard;
+
+            battleManager.ClickHeroCardShowMapUnitIcon(hero);
         }
 
         container.sizeDelta = new Vector2(container.sizeDelta.x, height);
@@ -155,6 +163,8 @@ public class HeroDetail : MonoBehaviour
 
                 cg.blocksRaycasts = false;
             }
+
+            battleManager.ClearMapUnitIcon();
         }
     }
 
@@ -168,5 +178,7 @@ public class HeroDetail : MonoBehaviour
 
             cg.blocksRaycasts = false;
         }
+
+        battleManager.ClearMapUnitIcon();
     }
 }
