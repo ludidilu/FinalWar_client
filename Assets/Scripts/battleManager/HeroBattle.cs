@@ -396,11 +396,21 @@ public class HeroBattle : HeroBase
 
     public void GetDesc(ref List<string> _list)
     {
-        hero.GetDesc(ref _list);
+        if (hero != null)
+        {
+            hero.GetDesc(ref _list);
+        }
     }
 
     public List<int> GetCanAttackPos()
     {
-        return hero.GetCanAttackPos();
+        if (hero != null)
+        {
+            return hero.GetCanAttackPos();
+        }
+        else
+        {
+            return null;
+        }
     }
 }

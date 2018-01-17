@@ -181,11 +181,18 @@ public class BattleManager : MonoBehaviour
         {
             heroDetail.Hide(m_nowChooseCard);
 
-            IEnumerator<MapUnit> enumerator = mapUnitDic.Values.GetEnumerator();
+            IEnumerator<KeyValuePair<int, MapUnit>> enumerator = mapUnitDic.GetEnumerator();
 
             while (enumerator.MoveNext())
             {
-                enumerator.Current.SetIconVisible(false);
+                KeyValuePair<int, MapUnit> pair = enumerator.Current;
+
+                int pos = pair.Key;
+
+                if (!battle.GetSummonContainsValue(pos))
+                {
+                    pair.Value.SetIconVisible(true);
+                }
             }
         }
         else
