@@ -19,38 +19,20 @@ public class BattleView : UIPanel
         }
     }
 
-    private GameObject mainCamera;
-
     private BattleManager battleManager;
 
     public override void OnEnter()
     {
-        mainCamera = Camera.main.gameObject;
-
-        mainCamera.SetActive(false);
-
-        if (battleManager != null)
+        if (battleManager == null)
         {
-            battleManager.RequestRefreshData();
+            GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", null);
+
+            battleManager = go.GetComponent<BattleManager>();
+
+            battleManager.Init(battleManagerEventGo);
+
+            SuperFunction.Instance.AddEventListener(battleManagerEventGo, BattleManager.BATTLE_QUIT, BattleQuit);
         }
-        else
-        {
-            GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", GetBattleManager);
-        }
-    }
-
-    public override void OnExit()
-    {
-        mainCamera.SetActive(true);
-    }
-
-    private void GetBattleManager(GameObject _go)
-    {
-        battleManager = _go.GetComponent<BattleManager>();
-
-        battleManager.Init(battleManagerEventGo);
-
-        SuperFunction.Instance.AddEventListener(battleManagerEventGo, BattleManager.BATTLE_QUIT, BattleQuit);
 
         battleManager.RequestRefreshData();
     }
