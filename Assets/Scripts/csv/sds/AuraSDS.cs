@@ -12,23 +12,23 @@ public partial class AuraSDS : CsvBase, IAuraSDS
     public int effectType;
     public int effectTarget;
     public int effectTargetNum;
-    public int effectData;
+    public int[] effectData;
     public string[] removeEventNames;
     public string desc;
 
     private AuraTarget[] conditionTargetFix;
 
-    private AuraConditionType[] conditionTypeFix;
+    private Hero.HeroData[] conditionTypeFix;
 
     public override void Fix()
     {
-        conditionTypeFix = new AuraConditionType[conditionType.Length];
+        conditionTypeFix = new Hero.HeroData[conditionType.Length];
 
         conditionTargetFix = new AuraTarget[conditionType.Length];
 
         for (int i = 0; i < conditionType.Length; i++)
         {
-            conditionTypeFix[i] = (AuraConditionType)conditionType[i];
+            conditionTypeFix[i] = (Hero.HeroData)conditionType[i];
 
             conditionTargetFix[i] = (AuraTarget)conditionTarget[i];
         }
@@ -54,7 +54,7 @@ public partial class AuraSDS : CsvBase, IAuraSDS
         return (AuraConditionCompare)conditionCompare;
     }
 
-    public AuraConditionType[] GetConditionType()
+    public Hero.HeroData[] GetConditionType()
     {
         return conditionTypeFix;
     }
@@ -84,7 +84,7 @@ public partial class AuraSDS : CsvBase, IAuraSDS
         return effectTargetNum;
     }
 
-    public int GetEffectData()
+    public int[] GetEffectData()
     {
         return effectData;
     }
