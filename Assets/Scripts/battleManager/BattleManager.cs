@@ -21,6 +21,14 @@ public class BattleManager : MonoBehaviour
 
     public const string BATTLE_RECEIVE_DATA = "battleReceiveData";
 
+    public const string BATTLE_ACTION = "battleAction";
+
+    public const string BATTLE_UNACTION = "battleUnaction";
+
+    public const string BATTLE_SUMMON = "battleSummon";
+
+    public const string BATTLE_UNSUMMON = "battleUnsummon";
+
     [SerializeField]
     private BattleControl battleControl;
 
@@ -837,7 +845,7 @@ public class BattleManager : MonoBehaviour
         {
             if (GetNowChooseHero().pos != _mapUnit.index)
             {
-                if (battle.ClientRequestAction(GetNowChooseHero().pos, _mapUnit.index))
+                if (HeroAction(GetNowChooseHero().pos, _mapUnit.index))
                 {
                     ClearMoves();
 
@@ -855,16 +863,13 @@ public class BattleManager : MonoBehaviour
 
             int targetPos = battle.GetActionContainsKey(GetNowChooseHero().pos);
 
-            if (targetPos != -1)
+            if (targetPos == _mapUnit.index)
             {
-                if (_mapUnit.index == targetPos)
-                {
-                    battle.ClientRequestUnaction(GetNowChooseHero().pos);
+                HeroUnaction(GetNowChooseHero().pos);
 
-                    ClearMoves();
+                ClearMoves();
 
-                    CreateMoves();
-                }
+                CreateMoves();
             }
         }
     }
@@ -893,6 +898,16 @@ public class BattleManager : MonoBehaviour
                     ClearNowChooseHero();
 
                     UnsummonHero(summonHero.cardUid);
+
+                    CreateMoneyTf();
+
+                    ClearCards();
+
+                    CreateCards();
+
+                    ClearSummonHeros();
+
+                    CreateSummonHeros();
                 }
                 else
                 {
@@ -996,24 +1011,42 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private bool HeroAction(int _pos, int _target)
+    {
+        bool b = battle.ClientRequestAction(_pos, _target);
+
+        if (b)
+        {
+            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_ACTION);
+        }
+
+        return b;
+    }
+
+    private void HeroUnaction(int _pos)
+    {
+        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_UNACTION);
+
+        battle.ClientRequestUnaction(_pos);
+    }
+
     private bool SummonHero(int _cardUid, int _pos)
     {
-        return battle.ClientRequestSummon(_cardUid, _pos);
+        bool b = battle.ClientRequestSummon(_cardUid, _pos);
+
+        if (b)
+        {
+            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_SUMMON);
+        }
+
+        return b;
     }
 
     private void UnsummonHero(int _cardUid)
     {
+        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_UNSUMMON);
+
         battle.ClientRequestUnsummon(_cardUid);
-
-        CreateMoneyTf();
-
-        ClearCards();
-
-        CreateCards();
-
-        ClearSummonHeros();
-
-        CreateSummonHeros();
     }
 
     private HeroBattle AddHeroToMap(Hero _hero)
