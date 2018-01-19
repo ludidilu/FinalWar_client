@@ -29,6 +29,8 @@ public class BattleManager : MonoBehaviour
 
     public const string BATTLE_UNSUMMON = "battleUnsummon";
 
+    public const string BATTLE_ROUND_OVER = "battleRoundOver";
+
     [SerializeField]
     private BattleControl battleControl;
 
@@ -147,7 +149,7 @@ public class BattleManager : MonoBehaviour
 
     public Dictionary<int, HeroBattle> heroDic = new Dictionary<int, HeroBattle>();
 
-    private Dictionary<int, HeroCard> cardDic = new Dictionary<int, HeroCard>();
+    public Dictionary<int, HeroCard> cardDic = new Dictionary<int, HeroCard>();
 
     private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
 
@@ -1303,6 +1305,8 @@ public class BattleManager : MonoBehaviour
 
         RefreshData();
 
+        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_ROUND_OVER);
+
         Battle.BattleResult battleResult = (Battle.BattleResult)_step.Current;
 
         if (battleResult != Battle.BattleResult.NOT_OVER)
@@ -1543,7 +1547,7 @@ public class BattleManager : MonoBehaviour
         lastPos = nowPos;
     }
 
-    private void GetMouseUp()
+    public void GetMouseUp()
     {
         if (isDown != DownType.NULL)
         {
