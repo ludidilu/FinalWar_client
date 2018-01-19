@@ -1544,12 +1544,12 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void ShowDesc(string _str, Action _callBack)
+    private void ShowDesc(string _str, Action _callBack)
     {
         descPanel.Show(_str, _callBack);
     }
 
-    public void Alert(string _str, Action _callBack)
+    private void Alert(string _str, Action _callBack)
     {
         alertPanel.Alert(_str, _callBack);
     }
