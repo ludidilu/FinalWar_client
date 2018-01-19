@@ -39,8 +39,6 @@ public class BattleOnline : UIPanel
     {
         base.Init();
 
-        Log.Init(Debug.Log);
-
         client = new Client();
 
         client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceivePushData, Disconnect);

@@ -18,6 +18,10 @@ public class Main : MonoBehaviour
     {
         Application.targetFrameRate = 60;
 
+        FinalWar.Log.Init(Debug.Log);
+
+        Connection.Log.Init(Debug.Log);
+
         UIManager.Instance.Init(root, mask, LoadUi);
 
         ResourceLoader.Load(LoadOver);

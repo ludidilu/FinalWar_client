@@ -250,16 +250,9 @@ public class BattleManager : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void WriteLog(string _str)
-    {
-        Debug.Log(_str);
-    }
-
     public void Init(GameObject _eventGo)
     {
         eventGo = _eventGo;
-
-        Log.Init(WriteLog);
 
         SuperRaycast.SetCamera(mainCamera);
 
