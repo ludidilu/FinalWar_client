@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using superGraphicRaycast;
 using superRaycast;
@@ -54,7 +53,7 @@ public static class BattleGuide
 
         guideIndex = _guideIndex;
 
-        StartGuide();
+        SuperTween.Instance.NextFrameCall(StartGuide);
     }
 
     private static void Over()

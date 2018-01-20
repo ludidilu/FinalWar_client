@@ -15,6 +15,8 @@ using gameObjectFactory;
 
 public class BattleManager : MonoBehaviour
 {
+    public const string BATTLE_START = "battleStart";
+
     public const string BATTLE_QUIT = "battleQuit";
 
     public const string BATTLE_SEND_DATA = "battleSendData";
@@ -316,6 +318,8 @@ public class BattleManager : MonoBehaviour
             isInit = true;
 
             gameObject.SetActive(true);
+
+            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_START);
         }
 
         heroDetail.Hide();
@@ -660,7 +664,7 @@ public class BattleManager : MonoBehaviour
 
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/HeroCard.prefab", null);
 
-            go.name = string.Format("HeroCard{0}", index);
+            go.name = string.Format("HeroCard{0}", id);
 
             HeroCard hero = go.GetComponent<HeroCard>();
 
@@ -1660,6 +1664,25 @@ public class BattleManager : MonoBehaviour
                     unit.SetIconVisible(true);
 
                     unit.SetIconColor(new Color(1, 0, 0, 0.8f));
+                }
+            }
+
+            if (_hero.sds.shootSkills.Length > 0)
+            {
+                list = BattlePublicTools.GetCanThrowHeroPos(battle, _hero.hero);
+
+                if (list != null)
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        int pos = list[i];
+
+                        MapUnit unit = mapUnitDic[pos];
+
+                        unit.SetIconVisible(true);
+
+                        unit.SetIconColor(new Color(1, 0, 0, 0.8f));
+                    }
                 }
             }
         }

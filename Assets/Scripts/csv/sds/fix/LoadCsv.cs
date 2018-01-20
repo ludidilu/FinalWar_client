@@ -43,6 +43,15 @@ public class LoadCsv {
             EffectSDSDic.Add(unit.ID,unit);
         }
         dic.Add(typeof(EffectSDS),EffectSDSDic);
+        Dictionary<int,GuideSDS> GuideSDSDic = new Dictionary<int,GuideSDS>();
+        int lengthGuideSDS = br.ReadInt32();
+        for(int i = 0 ; i < lengthGuideSDS ; i++){
+            GuideSDS unit = new GuideSDS();
+            GuideSDS_c.Init(unit,br);
+            unit.Fix();
+            GuideSDSDic.Add(unit.ID,unit);
+        }
+        dic.Add(typeof(GuideSDS),GuideSDSDic);
         Dictionary<int,HeroSDS> HeroSDSDic = new Dictionary<int,HeroSDS>();
         int lengthHeroSDS = br.ReadInt32();
         for(int i = 0 ; i < lengthHeroSDS ; i++){

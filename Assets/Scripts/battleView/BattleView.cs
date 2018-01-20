@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using gameObjectFactory;
 using superFunction;
-using System.Collections;
 
 public class BattleView : UIPanel
 {
@@ -24,6 +23,18 @@ public class BattleView : UIPanel
 
     public override void OnEnter()
     {
+        int guideID = (int)data;
+
+        if (guideID != 0)
+        {
+            SuperFunction.SuperFunctionCallBack0 dele = delegate (int _index)
+            {
+                BattleGuide.Start(battleManager, guideID);
+            };
+
+            SuperFunction.Instance.AddOnceEventListener(battleManagerEventGo, BattleManager.BATTLE_START, dele);
+        }
+
         if (battleManager == null)
         {
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", null);

@@ -62,7 +62,7 @@ public class HeroBattle : HeroBase
 
     private BattleControl battleControl;
 
-    private Hero hero;
+    public Hero hero;
 
     public bool isHero
     {

@@ -18,6 +18,8 @@ public class BattleLocal
 
     private int parentUid;
 
+    private bool isGuide;
+
     public BattleLocal()
     {
         saveKey = string.Format("BattleLocal:{0}", ConfigDictionary.Instance.uid);
@@ -35,27 +37,6 @@ public class BattleLocal
         Dictionary<int, EffectSDS> effectDic = StaticData.GetDic<EffectSDS>();
 
         Battle.Init(mapDic, heroDic, auraDic, effectDic);
-    }
-
-    private void SaveDataChange(int _index, byte[] _bytes)
-    {
-        if (_bytes != null)
-        {
-            string str = Convert.ToBase64String(_bytes);
-
-            PlayerPrefs.SetString(saveKey, str);
-
-            PlayerPrefs.Save();
-        }
-        else
-        {
-            if (PlayerPrefs.HasKey(saveKey))
-            {
-                PlayerPrefs.DeleteKey(saveKey);
-
-                PlayerPrefs.Save();
-            }
-        }
     }
 
     public void Start(int _parentUid)
@@ -112,19 +93,22 @@ public class BattleLocal
     {
         if (_result == Battle.BattleResult.NOT_OVER)
         {
-            byte[] bytes = battleServer.ToBytes();
+            if (!isGuide)
+            {
+                byte[] bytes = battleServer.ToBytes();
 
-            string str = Convert.ToBase64String(bytes);
+                string str = Convert.ToBase64String(bytes);
 
-            PlayerPrefs.SetString(saveKey, str);
+                PlayerPrefs.SetString(saveKey, str);
 
-            PlayerPrefs.Save();
+                PlayerPrefs.Save();
+            }
         }
         else
         {
             battleServer.ResetData();
 
-            if (PlayerPrefs.HasKey(saveKey))
+            if (!isGuide && PlayerPrefs.HasKey(saveKey))
             {
                 PlayerPrefs.DeleteKey(saveKey);
 
@@ -137,23 +121,25 @@ public class BattleLocal
     {
         battleServer.FromBytes(_bytes);
 
-        StartBattle();
+        StartBattle(0);
     }
 
     private void StartBattle(BattleSDS _battleSDS)
     {
         battleServer.ServerStart(_battleSDS.mapID, _battleSDS.maxRoundNum, _battleSDS.mCards, _battleSDS.oCards, true);
 
-        StartBattle();
+        StartBattle(_battleSDS.guideID);
     }
 
-    private void StartBattle()
+    private void StartBattle(int _guideID)
     {
+        isGuide = _guideID != 0;
+
         SuperFunction.Instance.AddOnceEventListener(BattleView.battleManagerEventGo, BattleManager.BATTLE_QUIT, BattleOver);
 
         SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, ClientSendData);
 
-        UIManager.Instance.ShowInParent<BattleView>(0, parentUid);
+        UIManager.Instance.ShowInParent<BattleView>(_guideID, parentUid);
     }
 
     private void ClientSendData(int _index, MemoryStream _ms, Action<BinaryReader> _callBack)
