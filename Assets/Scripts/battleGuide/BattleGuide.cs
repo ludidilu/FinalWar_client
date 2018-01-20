@@ -29,8 +29,6 @@ public static class BattleGuide
 
             SpriteRenderer sr = finger.AddComponent<SpriteRenderer>();
 
-            sr.sortingOrder = 1;
-
             Action<Sprite> dele = delegate (Sprite _sp)
             {
                 sr.sprite = _sp;

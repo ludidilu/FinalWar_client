@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 224822618926642564}
   - component: {fileID: 222790558227553376}
   - component: {fileID: 114082662408420140}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: HeroDetailCell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
