@@ -68,6 +68,11 @@ public class BattleView : UIPanel
         superSequenceControl.SuperSequenceControl.Start(Sequence);
     }
 
+    private void ProcessGuideUnit(int _index)
+    {
+
+    }
+
     private IEnumerator Sequence(int _index)
     {
         SuperFunction.SuperFunctionCallBack0 dele = delegate (int _indexx)
@@ -86,7 +91,7 @@ public class BattleView : UIPanel
         SuperFunction.Instance.AddEventListener(battleManagerEventGo, BattleManager.BATTLE_ROUND_OVER, dele);
 
 
-        GameObject go1 = battleManager.cardDic[0].gameObject;
+        GameObject go1 = GameObject.Find("HeroCard");
 
         publicTools.PublicTools.SetTag(go1, "Guide");
 
@@ -104,7 +109,7 @@ public class BattleView : UIPanel
 
         yield return null;
 
-        go1 = battleManager.cardDic[1].gameObject;
+        go1 = battleManager.cardList[1].gameObject;
 
         publicTools.PublicTools.SetTag(go1, "Guide");
 
@@ -122,7 +127,7 @@ public class BattleView : UIPanel
 
         yield return null;
 
-        go1 = battleManager.cardDic[2].gameObject;
+        go1 = battleManager.cardList[2].gameObject;
 
         publicTools.PublicTools.SetTag(go1, "Guide");
 

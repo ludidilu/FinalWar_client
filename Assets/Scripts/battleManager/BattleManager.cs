@@ -31,6 +31,10 @@ public class BattleManager : MonoBehaviour
 
     public const string BATTLE_ROUND_OVER = "battleRoundOver";
 
+    public const string BATTLE_CHOOSE_CARD = "battleChooseCard";
+
+    public const string BATTLE_CHOOSE_HERO = "battleChooseHero";
+
     [SerializeField]
     private BattleControl battleControl;
 
@@ -141,7 +145,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private SpriteRenderer bg;
 
-    private GameObject eventGo;
+    public GameObject eventGo;
 
     private Battle_client battle = new Battle_client();
 
@@ -149,7 +153,7 @@ public class BattleManager : MonoBehaviour
 
     public Dictionary<int, HeroBattle> heroDic = new Dictionary<int, HeroBattle>();
 
-    public Dictionary<int, HeroCard> cardDic = new Dictionary<int, HeroCard>();
+    public List<HeroCard> cardList = new List<HeroCard>();
 
     private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
 
@@ -193,6 +197,8 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_CHOOSE_CARD);
+
             heroDetail.Show(_value);
         }
 
@@ -214,6 +220,8 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
+            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_CHOOSE_HERO);
+
             heroDetail.Show(_value);
         }
 
@@ -452,14 +460,12 @@ public class BattleManager : MonoBehaviour
 
     private void ClearCards()
     {
-        Dictionary<int, HeroCard>.ValueCollection.Enumerator enumerator2 = cardDic.Values.GetEnumerator();
-
-        while (enumerator2.MoveNext())
+        for (int i = 0; i < cardList.Count; i++)
         {
-            Destroy(enumerator2.Current.gameObject);
+            Destroy(cardList[i].gameObject);
         }
 
-        cardDic.Clear();
+        cardList.Clear();
     }
 
     private void ClearSummonHeros()
@@ -523,6 +529,8 @@ public class BattleManager : MonoBehaviour
                 }
 
                 GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/MapUnit.prefab", null);
+
+                go.name = string.Format("MapUnit{0}", index);
 
                 go.transform.SetParent(mapContainer, false);
 
@@ -650,13 +658,15 @@ public class BattleManager : MonoBehaviour
 
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/HeroCard.prefab", null);
 
+            go.name = string.Format("HeroCard{0}", index);
+
             HeroCard hero = go.GetComponent<HeroCard>();
 
             hero.Init(this, battleControl, uid, id);
 
             hero.SetFrameVisible(false);
 
-            cardDic.Add(uid, hero);
+            cardList.Add(hero);
 
             go.transform.SetParent(cardContainer, false);
 
