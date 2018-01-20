@@ -21,19 +21,21 @@ public class BattleManager : MonoBehaviour
 
     public const string BATTLE_RECEIVE_DATA = "battleReceiveData";
 
-    public const string BATTLE_ACTION = "battleAction";
+    public const string BATTLE_HERO_ACTION = "battleHeroAction";
 
-    public const string BATTLE_UNACTION = "battleUnaction";
+    public const string BATTLE_HERO_UNACTION = "battleHeroUnaction";
 
-    public const string BATTLE_SUMMON = "battleSummon";
+    public const string BATTLE_HERO_SUMMON = "battleHeroSummon";
 
-    public const string BATTLE_UNSUMMON = "battleUnsummon";
+    public const string BATTLE_HERO_UNSUMMON = "battleHeroUnsummon";
 
     public const string BATTLE_ROUND_OVER = "battleRoundOver";
 
     public const string BATTLE_CHOOSE_CARD = "battleChooseCard";
 
     public const string BATTLE_CHOOSE_HERO = "battleChooseHero";
+
+    public const string BATTLE_ACTION = "battleAction";
 
     [SerializeField]
     private BattleControl battleControl;
@@ -1029,7 +1031,7 @@ public class BattleManager : MonoBehaviour
 
         if (b)
         {
-            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_ACTION);
+            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_HERO_ACTION);
         }
 
         return b;
@@ -1037,7 +1039,7 @@ public class BattleManager : MonoBehaviour
 
     private void HeroUnaction(int _pos)
     {
-        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_UNACTION);
+        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_HERO_UNACTION);
 
         battle.ClientRequestUnaction(_pos);
     }
@@ -1048,7 +1050,7 @@ public class BattleManager : MonoBehaviour
 
         if (b)
         {
-            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_SUMMON);
+            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_HERO_SUMMON);
         }
 
         return b;
@@ -1056,7 +1058,7 @@ public class BattleManager : MonoBehaviour
 
     private void UnsummonHero(int _cardUid)
     {
-        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_UNSUMMON);
+        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_HERO_UNSUMMON);
 
         battle.ClientRequestUnsummon(_cardUid);
     }
@@ -1107,6 +1109,8 @@ public class BattleManager : MonoBehaviour
 
     public void ActionBtClick()
     {
+        SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_ACTION);
+
         RefreshTouchable(false);
 
         ClearNowChooseCard();

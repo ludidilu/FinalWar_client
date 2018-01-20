@@ -6,6 +6,7 @@ using superRaycast;
 using publicTools;
 using superFunction;
 using superTween;
+using textureFactory;
 
 public static class BattleGuide
 {
@@ -15,8 +16,32 @@ public static class BattleGuide
 
     private static int guideIndex;
 
+    private static GameObject finger;
+
+    private static int fingerTweenID = -1;
+
     public static void Start(BattleManager _battleManager, int _guideIndex)
     {
+        if (finger == null)
+        {
+            finger = new GameObject();
+
+            finger.layer = LayerMask.NameToLayer("UI");
+
+            SpriteRenderer sr = finger.AddComponent<SpriteRenderer>();
+
+            sr.sortingOrder = 1;
+
+            Action<Sprite> dele = delegate (Sprite _sp)
+            {
+                sr.sprite = _sp;
+
+                finger.SetActive(false);
+            };
+
+            TextureFactory.Instance.GetTexture("Assets/Resource/texture/ui_shouzhi.png", dele, true);
+        }
+
         battleManager = _battleManager;
 
         SuperGraphicRaycast.SetFilter(true);
@@ -49,6 +74,11 @@ public static class BattleGuide
 
         GuideSDS sds = StaticData.GetData<GuideSDS>(guideIndex);
 
+        if (sds.gameObjectNameArr.Length > 1)
+        {
+            battleManager.GetMouseUp();
+        }
+
         if (sds.over)
         {
             Over();
@@ -74,7 +104,50 @@ public static class BattleGuide
     {
         SetData();
 
+        GuideSDS sds = StaticData.GetData<GuideSDS>(guideIndex);
 
+        if (sds.gameObjectNameArr.Length == 1)
+        {
+            finger.SetActive(true);
+
+            finger.transform.position = GameObject.Find(sds.gameObjectNameArr[0]).transform.position;
+        }
+        else if (sds.gameObjectNameArr.Length == 2)
+        {
+            finger.SetActive(true);
+
+            FingerMove(GameObject.Find(sds.gameObjectNameArr[0]).transform.position, GameObject.Find(sds.gameObjectNameArr[1]).transform.position);
+        }
+    }
+
+    private static void FingerMove(Vector3 _start, Vector3 _end)
+    {
+        Action start = null;
+
+        Action<float> to = null;
+
+        Action end = null;
+
+        to = delegate (float _value)
+        {
+            finger.transform.position = Vector3.Lerp(_start, _end, _value);
+        };
+
+        end = delegate ()
+        {
+            fingerTweenID = -1;
+
+            finger.transform.position = _start;
+
+            start();
+        };
+
+        start = delegate ()
+        {
+            fingerTweenID = SuperTween.Instance.To(0, 1, 1, to, end);
+        };
+
+        end();
     }
 
     private static void SetData()
@@ -103,6 +176,15 @@ public static class BattleGuide
 
     private static void ClearData()
     {
+        finger.SetActive(false);
+
+        if (fingerTweenID != -1)
+        {
+            SuperTween.Instance.Remove(fingerTweenID);
+
+            fingerTweenID = -1;
+        }
+
         GuideSDS sds = StaticData.GetData<GuideSDS>(guideIndex);
 
         for (int i = 0; i < sds.eventNameArr.Length; i++)

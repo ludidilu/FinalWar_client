@@ -113,6 +113,8 @@ public static class ResourceLoader
         StaticData.Load<DescSDS>("desc");
 
         StaticData.Load<BattleSDS>("battle");
+
+        StaticData.Load<GuideSDS>("guide");
     }
 
     private static void LoadMap()
