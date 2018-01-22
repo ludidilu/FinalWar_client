@@ -5,18 +5,18 @@ using UnityEngine.UI;
 public class BattleChooseCell : SuperListCell
 {
     [SerializeField]
-    private Text mapID;
+    private Text mapName;
 
     [SerializeField]
-    private Text round;
+    private CanvasGroup cg;
 
     public override bool SetData(object _data)
     {
         BattleSDS battleSDS = _data as BattleSDS;
 
-        mapID.text = battleSDS.mapID.ToString();
+        mapName.text = battleSDS.name;
 
-        round.text = battleSDS.maxRoundNum.ToString();
+        cg.alpha = battleSDS.guideID == 0 ? 0 : 1;
 
         return base.SetData(_data);
     }
