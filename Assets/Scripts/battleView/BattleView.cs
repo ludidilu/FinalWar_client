@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using gameObjectFactory;
 using superFunction;
+using publicTools;
 
 public class BattleView : UIPanel
 {
@@ -27,14 +28,7 @@ public class BattleView : UIPanel
 
         if (guideID != 0)
         {
-
-
-            SuperFunction.SuperFunctionCallBack0 dele = delegate (int _index)
-            {
-                BattleGuide.Start(battleManager, guideID);
-            };
-
-            SuperFunction.Instance.AddOnceEventListener(battleManagerEventGo, BattleManager.BATTLE_START, dele);
+            SuperFunction.Instance.AddOnceEventListener(battleManagerEventGo, BattleManager.BATTLE_START, StartGuide);
         }
 
         if (battleManager == null)
@@ -42,6 +36,8 @@ public class BattleView : UIPanel
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", null);
 
             battleManager = go.GetComponent<BattleManager>();
+
+            PublicTools.SetTag(battleManager.quitBt, BattleGuide.TAG_NAME);
 
             battleManager.Init(battleManagerEventGo);
 
@@ -51,8 +47,22 @@ public class BattleView : UIPanel
         battleManager.RequestRefreshData();
     }
 
+    private void StartGuide(int _index)
+    {
+        int guideID = (int)data;
+
+        BattleGuide.Start(battleManager, guideID);
+    }
+
     private void BattleQuit(int _index)
     {
+        int guideID = (int)data;
+
+        if (guideID != 0)
+        {
+            BattleGuide.Over();
+        }
+
         UIManager.Instance.Hide(uid);
     }
 

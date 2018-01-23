@@ -9,7 +9,7 @@ using textureFactory;
 
 public static class BattleGuide
 {
-    private const string TAG_NAME = "Guide";
+    public const string TAG_NAME = "Guide";
 
     private static BattleManager battleManager;
 
@@ -56,6 +56,8 @@ public static class BattleGuide
 
     public static void Over()
     {
+        ClearData();
+
         SuperGraphicRaycast.SetFilter(false);
 
         SuperGraphicRaycast.RemoveFilterTag(TAG_NAME);

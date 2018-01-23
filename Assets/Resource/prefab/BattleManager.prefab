@@ -639,6 +639,7 @@ MonoBehaviour:
   oCardNumTf: {fileID: 114367962505221646}
   roundNumLeftTf: {fileID: 114971402939417504}
   actionBt: {fileID: 144452}
+  quitBt: {fileID: 197694}
   heroDetail: {fileID: 11405928}
   backGround: {fileID: 120328}
   descPanel: {fileID: 11459578}

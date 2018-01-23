@@ -135,6 +135,9 @@ public class BattleManager : MonoBehaviour
     private GameObject actionBt;
 
     [SerializeField]
+    public GameObject quitBt;
+
+    [SerializeField]
     private HeroDetail heroDetail;
 
     [SerializeField]
