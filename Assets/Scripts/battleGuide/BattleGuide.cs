@@ -47,14 +47,14 @@ public static class BattleGuide
 
         SuperRaycast.SetFilter(true);
 
-        SuperRaycast.AddTag(TAG_NAME);
+        SuperRaycast.AddFilterTag(TAG_NAME);
 
         guideIndex = _guideIndex;
 
         SuperTween.Instance.NextFrameCall(StartGuide);
     }
 
-    private static void Over()
+    public static void Over()
     {
         SuperGraphicRaycast.SetFilter(false);
 
@@ -62,7 +62,7 @@ public static class BattleGuide
 
         SuperRaycast.SetFilter(false);
 
-        SuperRaycast.RemoveTag(TAG_NAME);
+        SuperRaycast.RemoveFilterTag(TAG_NAME);
     }
 
     private static void Success(int _index)

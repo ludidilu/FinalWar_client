@@ -27,6 +27,8 @@ public class BattleView : UIPanel
 
         if (guideID != 0)
         {
+
+
             SuperFunction.SuperFunctionCallBack0 dele = delegate (int _index)
             {
                 BattleGuide.Start(battleManager, guideID);
