@@ -269,8 +269,6 @@ public class HeroBattle : HeroBase
 
     public void ShowHud(string _str, Color _color, Color _outlineColor, float _yFix, Action _callBack)
     {
-        //GameObject go = Instantiate(Resources.Load<GameObject>("DamageNum"));
-
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/DamageNum.prefab", null);
 
         go.transform.SetParent(battleManager.arrowContainer, false);
@@ -298,7 +296,7 @@ public class HeroBattle : HeroBase
                 {
                     case Effect.DAMAGE:
 
-                        int data = effectVO.data[0];
+                        int data = effectVO.data;
 
                         if (data > 0)
                         {
@@ -311,7 +309,7 @@ public class HeroBattle : HeroBase
 
                     case Effect.SHIELD_CHANGE:
 
-                        data = effectVO.data[0];
+                        data = effectVO.data;
 
                         if (data > 0)
                         {
@@ -328,7 +326,7 @@ public class HeroBattle : HeroBase
 
                     case Effect.HP_CHANGE:
 
-                        data = effectVO.data[0];
+                        data = effectVO.data;
 
                         if (data > 0)
                         {
@@ -343,7 +341,7 @@ public class HeroBattle : HeroBase
 
                         break;
 
-                    case Effect.BE_CLEAN:
+                    case Effect.BE_CLEANED:
 
                         ShowHud("Clean", Color.black, Color.red, i * battleControl.hudHeight, null);
 
@@ -351,9 +349,31 @@ public class HeroBattle : HeroBase
 
                     case Effect.ADD_AURA:
 
-                        AuraSDS sds = StaticData.GetData<AuraSDS>(effectVO.data[0]);
+                        AuraSDS sds = StaticData.GetData<AuraSDS>(effectVO.data);
 
                         ShowHud(sds.desc, Color.black, Color.red, i * battleControl.hudHeight, null);
+
+                        break;
+
+                    case Effect.BE_KILLED:
+
+                        shock = true;
+
+                        ShowHud("Die", Color.black, Color.red, i * battleControl.hudHeight, null);
+
+                        break;
+
+                    case Effect.ADD_MONEY:
+
+                        battleManager.CreateMoneyTf();
+
+                        break;
+
+                    case Effect.CHANGE_HERO:
+
+                        battleManager.ClearHeros();
+
+                        battleManager.CreateHeros();
 
                         break;
                 }

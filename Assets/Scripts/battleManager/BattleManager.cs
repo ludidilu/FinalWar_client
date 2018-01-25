@@ -489,7 +489,7 @@ public class BattleManager : MonoBehaviour
         summonHeroDic.Clear();
     }
 
-    private void ClearHeros()
+    public void ClearHeros()
     {
         heroUid = 0;
 
@@ -702,7 +702,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void CreateHeros()
+    public void CreateHeros()
     {
         Dictionary<int, Hero>.ValueCollection.Enumerator enumerator = battle.heroMapDic.Values.GetEnumerator();
 
@@ -712,7 +712,7 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void CreateMoneyTf()
+    public void CreateMoneyTf()
     {
         mMoneyTf.text = battle.GetNowMoney(battle.clientIsMine).ToString();
 
