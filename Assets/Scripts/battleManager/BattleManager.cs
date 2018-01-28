@@ -611,7 +611,7 @@ public class BattleManager : MonoBehaviour
 
         defaultScale = Mathf.Min(viewport.extents.x / (bounds.extents.x + boundFix * 0.5f), viewport.extents.y / (bounds.extents.y + boundFix * 0.5f));
 
-        battleContainer.localScale = new Vector3(defaultScale, defaultScale, defaultScale);
+        battleContainer.localScale = new Vector3(defaultScale, defaultScale, 1);
 
         bg.transform.localPosition = new Vector3(-viewportXFix / defaultScale, -viewport.center.y / defaultScale, 0);
 
@@ -1473,7 +1473,7 @@ public class BattleManager : MonoBehaviour
 
         scale = Mathf.Clamp(scale, defaultScale * minScale, defaultScale * maxScale);
 
-        battleContainer.localScale = new Vector3(scale, scale, scale);
+        battleContainer.localScale = new Vector3(scale, scale, 1);
 
         Vector3 v3 = battleContainer.TransformPoint(v2);
 

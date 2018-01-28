@@ -6,11 +6,20 @@ public class Arrow : MonoBehaviour
     private SpriteRenderer sr;
 
     [SerializeField]
-    private Sprite[] arr;
+    private TextMesh tm;
+
+    [SerializeField]
+    private TextMeshOutline tmo;
 
     public void SetIndex(int _index)
     {
-        sr.sprite = arr[_index];
+        string str = (_index + 1).ToString();
+
+        tm.text = str;
+
+        tmo.SetText(str);
+
+        tm.transform.rotation = Quaternion.identity;
     }
 
     public void SetColor(Color _color)
