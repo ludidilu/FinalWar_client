@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
 
-public class Arrow : MonoBehaviour
+public class Arrow : ShootArrow
 {
-    [SerializeField]
-    private SpriteRenderer sr;
-
     [SerializeField]
     private TextMesh tm;
 
@@ -13,17 +10,21 @@ public class Arrow : MonoBehaviour
 
     public void SetIndex(int _index)
     {
-        string str = (_index + 1).ToString();
+        if (_index < 0)
+        {
+            tm.gameObject.SetActive(false);
+        }
+        else
+        {
+            tm.gameObject.SetActive(true);
 
-        tm.text = str;
+            string str = (_index + 1).ToString();
 
-        tmo.SetText(str);
+            tm.text = str;
 
-        tm.transform.rotation = Quaternion.identity;
-    }
+            tmo.SetText(str);
 
-    public void SetColor(Color _color)
-    {
-        sr.color = _color;
+            tm.transform.rotation = Quaternion.identity;
+        }
     }
 }

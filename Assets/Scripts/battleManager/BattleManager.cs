@@ -752,14 +752,18 @@ public class BattleManager : MonoBehaviour
 
             for (int i = 0; i < cellData.attackers.Count; i++)
             {
-                GameObject go = CreateArrow(cellData.attackers[i].pos, pos, new Color(1, 0, 0, 0.7f), i);
+                int index = cellData.attackers.Count > 1 ? i : -1;
+
+                GameObject go = CreateArrow(cellData.attackers[i].pos, pos, new Color(1, 0, 0, 0.7f), index);
 
                 arrowList.Add(go);
             }
 
             for (int i = 0; i < cellData.supporters.Count; i++)
             {
-                GameObject go = CreateArrow(cellData.supporters[i].pos, pos, new Color(0, 1, 0, 0.7f), i);
+                int index = cellData.supporters.Count > 1 ? i : -1;
+
+                GameObject go = CreateArrow(cellData.supporters[i].pos, pos, new Color(0, 1, 0, 0.7f), index);
 
                 arrowList.Add(go);
             }
@@ -806,7 +810,7 @@ public class BattleManager : MonoBehaviour
     {
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/ShootArrow.prefab", null);
 
-        Arrow arrow = go.GetComponent<Arrow>();
+        ShootArrow arrow = go.GetComponent<ShootArrow>();
 
         go.transform.SetParent(arrowContainer, false);
 
@@ -829,8 +833,6 @@ public class BattleManager : MonoBehaviour
         go.transform.localScale = new Vector3(scale, scale, scale);
 
         arrow.SetColor(_color);
-
-        //arrow.SetIndex(_index);
 
         return go;
     }
