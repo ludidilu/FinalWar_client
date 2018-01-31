@@ -11,26 +11,43 @@ public partial class AuraSDS : CsvBase, IAuraSDS
     public int[] conditionData;
     public int effectType;
     public int effectTarget;
+    public int targetConditionCompare;
+    public int[] targetConditionType;
+    public int[] targetConditionTarget;
+    public int[] targetConditionData;
     public int effectTargetNum;
     public int[] effectData;
     public string[] removeEventNames;
     public string desc;
 
     private AuraTarget[] conditionTargetFix;
-
     private Hero.HeroData[] conditionTypeFix;
+
+    private AuraTarget[] targetConditionTargetFix;
+    private Hero.HeroData[] targetConditionTypeFix;
 
     public override void Fix()
     {
         conditionTypeFix = new Hero.HeroData[conditionType.Length];
 
-        conditionTargetFix = new AuraTarget[conditionType.Length];
+        conditionTargetFix = new AuraTarget[conditionTarget.Length];
 
         for (int i = 0; i < conditionType.Length; i++)
         {
             conditionTypeFix[i] = (Hero.HeroData)conditionType[i];
 
             conditionTargetFix[i] = (AuraTarget)conditionTarget[i];
+        }
+
+        targetConditionTypeFix = new Hero.HeroData[targetConditionType.Length];
+
+        targetConditionTargetFix = new AuraTarget[targetConditionTarget.Length];
+
+        for (int i = 0; i < targetConditionType.Length; i++)
+        {
+            targetConditionTypeFix[i] = (Hero.HeroData)targetConditionType[i];
+
+            targetConditionTargetFix[i] = (AuraTarget)targetConditionTarget[i];
         }
     }
 
@@ -77,6 +94,26 @@ public partial class AuraSDS : CsvBase, IAuraSDS
     public AuraTarget GetEffectTarget()
     {
         return (AuraTarget)effectTarget;
+    }
+
+    public AuraConditionCompare GetTargetConditionCompare()
+    {
+        return (AuraConditionCompare)targetConditionCompare;
+    }
+
+    public Hero.HeroData[] GetTargetConditionType()
+    {
+        return targetConditionTypeFix;
+    }
+
+    public AuraTarget[] GetTargetConditionTarget()
+    {
+        return targetConditionTargetFix;
+    }
+
+    public int[] GetTargetConditionData()
+    {
+        return targetConditionData;
     }
 
     public int GetEffectTargetNum()
