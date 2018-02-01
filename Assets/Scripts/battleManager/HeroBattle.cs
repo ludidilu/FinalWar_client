@@ -351,7 +351,7 @@ public class HeroBattle : HeroBase
 
                         AuraSDS sds = StaticData.GetData<AuraSDS>(effectVO.data);
 
-                        ShowHud(sds.desc, Color.black, Color.red, i * battleControl.hudHeight, null);
+                        ShowHud(sds.hud, Color.black, Color.red, i * battleControl.hudHeight, null);
 
                         break;
 
@@ -422,7 +422,7 @@ public class HeroBattle : HeroBase
         }
     }
 
-    public void GetDesc(ref List<string> _list)
+    public void GetDesc(ref List<int> _list)
     {
         hero.GetDesc(ref _list);
     }

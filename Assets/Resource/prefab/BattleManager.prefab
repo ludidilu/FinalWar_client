@@ -645,8 +645,14 @@ MonoBehaviour:
   descPanel: {fileID: 11459578}
   alertPanel: {fileID: 114767490472349022}
   bg: {fileID: 212832140466329472}
+  auraDescID: 100
+  shootDescID: 101
+  supportDescID: 102
   eventGo: {fileID: 0}
   cardList: []
+  auraDescFix: 
+  shootDescFix: 
+  supportDescFix: 
 --- !u!114 &11455812
 MonoBehaviour:
   m_ObjectHideFlags: 1

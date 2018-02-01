@@ -16,5 +16,6 @@ public class BattleSDS_c {
         for(int i = 0 ; i < lengthoCards ; i++){
             _csv.oCards[i] = _br.ReadInt32();
         }
+        _csv.name = _br.ReadString();
     }
 }

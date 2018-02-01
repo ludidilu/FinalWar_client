@@ -68,9 +68,19 @@ public class HeroDetail : MonoBehaviour
 
         float height = defaultHeight;
 
-        if (!string.IsNullOrEmpty(hero.sds.comment))
+        for (int i = 0; i < hero.sds.auras.Length; i++)
         {
-            AddCell(hero.sds.comment, ref height);
+            AddCell(string.Format(battleManager.auraDescFix, StaticData.GetData<AuraSDS>(hero.sds.auras[i]).desc), ref height);
+        }
+
+        for (int i = 0; i < hero.sds.shootSkills.Length; i++)
+        {
+            AddCell(string.Format(battleManager.shootDescFix, StaticData.GetData<EffectSDS>(hero.sds.shootSkills[i]).desc), ref height);
+        }
+
+        for (int i = 0; i < hero.sds.supportSkills.Length; i++)
+        {
+            AddCell(string.Format(battleManager.supportDescFix, StaticData.GetData<EffectSDS>(hero.sds.supportSkills[i]).desc), ref height);
         }
 
         if (_hero is HeroBattle)
@@ -79,7 +89,7 @@ public class HeroDetail : MonoBehaviour
 
             if (hero.isHero)
             {
-                List<string> list = null;
+                List<int> list = null;
 
                 hero.GetDesc(ref list);
 
@@ -87,7 +97,9 @@ public class HeroDetail : MonoBehaviour
                 {
                     for (int i = 0; i < list.Count; i++)
                     {
-                        AddCell(list[i], ref height);
+                        string desc = StaticData.GetData<AuraSDS>(list[i]).desc;
+
+                        AddCell(desc, ref height);
                     }
                 }
             }

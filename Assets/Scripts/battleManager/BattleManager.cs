@@ -152,6 +152,15 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private SpriteRenderer bg;
 
+    [SerializeField]
+    private int auraDescID;
+
+    [SerializeField]
+    private int shootDescID;
+
+    [SerializeField]
+    private int supportDescID;
+
     public GameObject eventGo;
 
     private Battle_client battle = new Battle_client();
@@ -251,6 +260,12 @@ public class BattleManager : MonoBehaviour
 
     private int heroUid;
 
+    public string auraDescFix;
+
+    public string shootDescFix;
+
+    public string supportDescFix;
+
     public int GetHeroUid()
     {
         heroUid++;
@@ -302,6 +317,12 @@ public class BattleManager : MonoBehaviour
         SuperFunction.Instance.AddEventListener<bool, RaycastHit, int>(backGround, SuperRaycast.GetMouseButton, GetMouseMove);
 
         SuperFunction.Instance.AddEventListener<BinaryReader>(eventGo, BATTLE_RECEIVE_DATA, ReceiveData);
+
+        auraDescFix = StaticData.GetData<DescSDS>(auraDescID).desc;
+
+        shootDescFix = StaticData.GetData<DescSDS>(shootDescID).desc;
+
+        supportDescFix = StaticData.GetData<DescSDS>(supportDescID).desc;
     }
 
     private void SendData(MemoryStream _ms, Action<BinaryReader> _callBack)

@@ -18,7 +18,6 @@ public partial class AuraSDS : CsvBase, IAuraSDS
     public int effectTargetNum;
     public int[] effectData;
     public string[] removeEventNames;
-    public string desc;
 
     private AuraTarget[] conditionTargetFix;
     private Hero.HeroData[] conditionTypeFix;
@@ -49,6 +48,11 @@ public partial class AuraSDS : CsvBase, IAuraSDS
 
             targetConditionTargetFix[i] = (AuraTarget)targetConditionTarget[i];
         }
+    }
+
+    public int GetID()
+    {
+        return ID;
     }
 
     public string GetEventName()
@@ -129,10 +133,5 @@ public partial class AuraSDS : CsvBase, IAuraSDS
     public string[] GetRemoveEventNames()
     {
         return removeEventNames;
-    }
-
-    public string GetDesc()
-    {
-        return desc;
     }
 }

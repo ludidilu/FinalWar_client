@@ -7,6 +7,7 @@ public class AuraSDS_c {
         _csv.effectType = _br.ReadInt32();
         _csv.ID = _br.ReadInt32();
         _csv.priority = _br.ReadInt32();
+        _csv.targetConditionCompare = _br.ReadInt32();
         _csv.triggerTarget = _br.ReadInt32();
         int lengthconditionData = _br.ReadInt32();
         _csv.conditionData = new int[lengthconditionData];
@@ -27,6 +28,21 @@ public class AuraSDS_c {
         _csv.effectData = new int[lengtheffectData];
         for(int i = 0 ; i < lengtheffectData ; i++){
             _csv.effectData[i] = _br.ReadInt32();
+        }
+        int lengthtargetConditionData = _br.ReadInt32();
+        _csv.targetConditionData = new int[lengthtargetConditionData];
+        for(int i = 0 ; i < lengthtargetConditionData ; i++){
+            _csv.targetConditionData[i] = _br.ReadInt32();
+        }
+        int lengthtargetConditionTarget = _br.ReadInt32();
+        _csv.targetConditionTarget = new int[lengthtargetConditionTarget];
+        for(int i = 0 ; i < lengthtargetConditionTarget ; i++){
+            _csv.targetConditionTarget[i] = _br.ReadInt32();
+        }
+        int lengthtargetConditionType = _br.ReadInt32();
+        _csv.targetConditionType = new int[lengthtargetConditionType];
+        for(int i = 0 ; i < lengthtargetConditionType ; i++){
+            _csv.targetConditionType[i] = _br.ReadInt32();
         }
         _csv.desc = _br.ReadString();
         _csv.eventName = _br.ReadString();

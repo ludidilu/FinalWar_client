@@ -23,7 +23,6 @@ public class HeroSDS_c {
         for(int i = 0 ; i < lengthsupportSkills ; i++){
             _csv.supportSkills[i] = _br.ReadInt32();
         }
-        _csv.comment = _br.ReadString();
         _csv.icon = _br.ReadString();
         _csv.name = _br.ReadString();
     }

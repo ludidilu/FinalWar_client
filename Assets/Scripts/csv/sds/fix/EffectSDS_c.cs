@@ -9,5 +9,6 @@ public class EffectSDS_c {
         for(int i = 0 ; i < lengthdata ; i++){
             _csv.data[i] = _br.ReadInt32();
         }
+        _csv.desc = _br.ReadString();
     }
 }
