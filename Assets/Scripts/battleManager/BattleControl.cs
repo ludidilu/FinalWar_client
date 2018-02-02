@@ -82,12 +82,12 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        bool shock = stander.TakeEffect(new List<BattleHeroEffectVO>() { _vo.vo });
+        //bool shock = stander.TakeEffect(new List<BattleHeroEffectVO>() { _vo.vo });
 
-        if (shock)
-        {
-            stander.Shock(attacker, shockCurve, shockDis);
-        }
+        //if (shock)
+        //{
+        //    stander.Shock(attacker, shockCurve, shockDis);
+        //}
 
         yield return null;
 
@@ -263,24 +263,6 @@ public class BattleControl : MonoBehaviour
 
         Vector3 targetPos = battleManager.mapUnitDic[_vo.pos].transform.localPosition;
 
-        if (_vo.attackerShield)
-        {
-            attacker.RefreshAttack();
-        }
-        else
-        {
-            attacker.RefreshAttackWithoutShield();
-        }
-
-        if (_vo.defenderShield)
-        {
-            defender.RefreshAttack();
-        }
-        else
-        {
-            defender.RefreshAttackWithoutShield();
-        }
-
         bool getHit = false;
 
         Action<float> attackerToDel = delegate (float obj)
@@ -323,10 +305,6 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        attacker.RefreshAttackWithoutShield();
-
-        defender.RefreshAttackWithoutShield();
-
         SuperSequenceControl.MoveNext(_lastIndex);
     }
 
@@ -341,24 +319,6 @@ public class BattleControl : MonoBehaviour
         Vector3 defensePos = battleManager.mapUnitDic[_vo.attacker].transform.localPosition;
 
         Vector3 targetPos = Vector3.Lerp(attackPos, defensePos, 0.5f);
-
-        if (_vo.attackerShield)
-        {
-            attacker.RefreshAttack();
-        }
-        else
-        {
-            attacker.RefreshAttackWithoutShield();
-        }
-
-        if (_vo.defenderShield)
-        {
-            defender.RefreshAttack();
-        }
-        else
-        {
-            defender.RefreshAttackWithoutShield();
-        }
 
         bool getHit = false;
 
@@ -405,10 +365,6 @@ public class BattleControl : MonoBehaviour
         SuperSequenceControl.DelayCall(2.0f, _index);
 
         yield return null;
-
-        attacker.RefreshAttackWithoutShield();
-
-        defender.RefreshAttackWithoutShield();
 
         SuperSequenceControl.MoveNext(_lastIndex);
     }
@@ -543,7 +499,7 @@ public class BattleControl : MonoBehaviour
 
                 battleManager.heroDic.Add(pair.Value, hero);
 
-                hero.RefreshAll();
+                hero.RefreshAttack();
 
                 int index = pair.Value;
 
@@ -613,7 +569,7 @@ public class BattleControl : MonoBehaviour
             {
                 HeroBattle targetHero = battleManager.heroDic[enumerator.Current.Key];
 
-                targetHero.RefreshAttackWithoutShield();
+                targetHero.RefreshAttack();
 
                 bool shock = targetHero.TakeEffect(new List<BattleHeroEffectVO>() { enumerator.Current.Value });
 

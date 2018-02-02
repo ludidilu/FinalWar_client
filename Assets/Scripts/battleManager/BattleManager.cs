@@ -1423,22 +1423,12 @@ public class BattleManager : MonoBehaviour
 
     private void DoPrepareRush()
     {
-        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator = heroDic.Values.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            enumerator.Current.RefreshAttack();
-        }
+        
     }
 
     private void DoRushOver()
     {
-        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator = heroDic.Values.GetEnumerator();
-
-        while (enumerator.MoveNext())
-        {
-            enumerator.Current.RefreshAttackWithoutShield();
-        }
+        
     }
 
     private void DoAddCards(BattleAddCardsVO _vo)
@@ -1466,7 +1456,7 @@ public class BattleManager : MonoBehaviour
         {
             enumerator.Current.RefreshHpAndShield();
 
-            enumerator.Current.RefreshAttackWithoutShield();
+            enumerator.Current.RefreshAttack();
         }
     }
 

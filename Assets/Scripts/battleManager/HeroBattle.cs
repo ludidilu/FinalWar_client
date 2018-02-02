@@ -159,7 +159,7 @@ public class HeroBattle : HeroBase
 
         RefreshHpAndShield();
 
-        RefreshAttackWithoutShield();
+        RefreshAttack();
     }
 
     public void RefreshHpAndShield()
@@ -235,18 +235,9 @@ public class HeroBattle : HeroBase
         }
     }
 
-    public void RefreshAttackWithoutShield()
-    {
-        string text = hero.GetDamageWithoutShield().ToString();
-
-        attack.text = text;
-
-        attackOutline.SetText(text);
-    }
-
     public void RefreshAttack()
     {
-        string text = hero.GetDamage().ToString();
+        string text = hero.GetAttack().ToString();
 
         attack.text = text;
 
