@@ -54,6 +54,15 @@ public class BattleControl : MonoBehaviour
     [SerializeField]
     public float moveAwayDistance;
 
+    [SerializeField]
+    private float mapTargetScale = 1.3f;
+
+    [SerializeField]
+    private float unitTargetScale = 0.5f;
+
+    [SerializeField]
+    private float bgAlpha = 0.3f;
+
     public IEnumerator Rush(int _index, int _lastIndex, BattleRushVO _vo)
     {
         HeroBattle attacker = battleManager.heroDic[_vo.attacker];
@@ -585,5 +594,128 @@ public class BattleControl : MonoBehaviour
         {
             SuperSequenceControl.MoveNext(_lastIndex);
         }
+    }
+
+    public void PrepareAttack(params int[] _posArr)
+    {
+        battleManager.battleContainer.localScale = new Vector3(mapTargetScale, mapTargetScale, 1);
+
+        Vector3 v = Vector3.zero;
+
+        for (int i = 0; i < _posArr.Length; i++)
+        {
+            MapUnit unit = battleManager.mapUnitDic[_posArr[i]];
+
+            v += unit.transform.position;
+        }
+
+        v = v / _posArr.Length;
+
+        battleManager.battleContainer.localScale = new Vector3(battleManager.defaultScale, battleManager.defaultScale, 1);
+
+        Action<float> dele = delegate (float _v)
+        {
+            float mapScale = battleManager.defaultScale + (mapTargetScale - battleManager.defaultScale) * _v;
+
+            battleManager.battleContainer.localScale = new Vector3(mapScale, mapScale, 1);
+
+            float unitScale = 1 + (unitTargetScale - 1) * _v;
+
+            Vector3 pos = Vector3.Lerp(Vector3.zero, v, _v);
+
+            battleManager.mainCamera.transform.position = new Vector3(pos.x, pos.y, battleManager.mainCamera.transform.position.z);
+
+            IEnumerator<MapUnit> enumerator = battleManager.mapUnitDic.Values.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                MapUnit unit = enumerator.Current;
+
+                if (Array.IndexOf(_posArr, unit.index) == -1)
+                {
+                    Color color = unit.GetMainColor();
+
+                    unit.SetMainColor(new Color(color.r, color.g, color.b, 1 - _v));
+                }
+
+                unit.transform.localScale = new Vector3(unitScale, unitScale, 1);
+            }
+
+            IEnumerator<HeroBattle> enumerator2 = battleManager.heroDic.Values.GetEnumerator();
+
+            while (enumerator2.MoveNext())
+            {
+                HeroBattle hero = enumerator2.Current;
+
+                if (Array.IndexOf(_posArr, hero.pos) == -1)
+                {
+                    hero.SetAlpha(1 - _v);
+                }
+
+                hero.transform.localScale = new Vector3(unitScale, unitScale, 1);
+            }
+
+            float c = bgAlpha + (1 - bgAlpha) * (1 - _v);
+
+            battleManager.bg.color = new Color(c, c, c, 1);
+        };
+
+        superTween.SuperTween.Instance.To(0, 1, 0.5f, dele, null);
+    }
+
+    public void AttackOver(params int[] _posArr)
+    {
+        battleManager.battleContainer.localScale = new Vector3(mapTargetScale, mapTargetScale, 1);
+
+        Vector3 v = battleManager.mainCamera.transform.position;
+
+        Action<float> dele = delegate (float _v)
+        {
+            float mapScale = battleManager.defaultScale + (mapTargetScale - battleManager.defaultScale) * _v;
+
+            battleManager.battleContainer.localScale = new Vector3(mapScale, mapScale, 1);
+
+            float unitScale = 1 + (unitTargetScale - 1) * _v;
+
+            Vector3 pos = Vector3.Lerp(Vector3.zero, v, _v);
+
+            battleManager.mainCamera.transform.position = new Vector3(pos.x, pos.y, battleManager.mainCamera.transform.position.z);
+
+            IEnumerator<MapUnit> enumerator = battleManager.mapUnitDic.Values.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                MapUnit unit = enumerator.Current;
+
+                if (Array.IndexOf(_posArr, unit.index) == -1)
+                {
+                    Color color = unit.GetMainColor();
+
+                    unit.SetMainColor(new Color(color.r, color.g, color.b, 1 - _v));
+                }
+
+                unit.transform.localScale = new Vector3(unitScale, unitScale, 1);
+            }
+
+            IEnumerator<HeroBattle> enumerator2 = battleManager.heroDic.Values.GetEnumerator();
+
+            while (enumerator2.MoveNext())
+            {
+                HeroBattle hero = enumerator2.Current;
+
+                if (Array.IndexOf(_posArr, hero.pos) == -1)
+                {
+                    hero.SetAlpha(1 - _v);
+                }
+
+                hero.transform.localScale = new Vector3(unitScale, unitScale, 1);
+            }
+
+            float c = bgAlpha + (1 - bgAlpha) * (1 - _v);
+
+            battleManager.bg.color = new Color(c, c, c, 1);
+        };
+
+        superTween.SuperTween.Instance.To(1, 0, 0.5f, dele, null);
     }
 }

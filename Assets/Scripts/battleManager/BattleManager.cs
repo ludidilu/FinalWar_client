@@ -12,6 +12,7 @@ using superEnumerator;
 using superSequenceControl;
 using System.Collections;
 using gameObjectFactory;
+using superTween;
 
 public class BattleManager : MonoBehaviour
 {
@@ -72,7 +73,7 @@ public class BattleManager : MonoBehaviour
     private float boundFix;
 
     [SerializeField]
-    private Camera mainCamera;
+    public Camera mainCamera;
 
     [SerializeField]
     private Canvas canvas;
@@ -96,7 +97,7 @@ public class BattleManager : MonoBehaviour
     private Color hillColor;
 
     [SerializeField]
-    private Transform battleContainer;
+    public Transform battleContainer;
 
     [SerializeField]
     private Transform battleContentContainer;
@@ -150,7 +151,10 @@ public class BattleManager : MonoBehaviour
     private AlertPanel alertPanel;
 
     [SerializeField]
-    private SpriteRenderer bg;
+    public SpriteRenderer bg;
+
+    [SerializeField]
+    private CanvasGroup cg;
 
     [SerializeField]
     private int auraDescID;
@@ -183,7 +187,7 @@ public class BattleManager : MonoBehaviour
 
     private Bounds viewport;
 
-    private float defaultScale;
+    public float defaultScale;
 
     private enum DownType
     {
@@ -462,6 +466,8 @@ public class BattleManager : MonoBehaviour
         isInit = false;
 
         RefreshTouchable(true);
+
+        SetUiAlpha(1);
 
         gameObject.SetActive(false);
 
@@ -1161,11 +1167,18 @@ public class BattleManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.F5))
         {
             RequestRefreshData();
-
         }
         else if (Input.GetKeyUp(KeyCode.A))
         {
             CreateAiAction();
+        }
+        else if (Input.GetKeyUp(KeyCode.T))
+        {
+            battleControl.PrepareAttack(2, 5, 8);
+        }
+        else if (Input.GetKeyUp(KeyCode.O))
+        {
+            battleControl.AttackOver(2, 5, 8);
         }
 
         //		if (actionBt.activeSelf) {
@@ -1230,11 +1243,21 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private void SetUiAlpha(float _v)
+    {
+        cg.alpha = _v;
+    }
+
     private void DoAction(SuperEnumerator<ValueType> _step)
     {
         RefreshTouchable(false);
 
-        SuperSequenceControl.Start(DoActionReal, _step);
+        Action dele = delegate ()
+        {
+            SuperSequenceControl.Start(DoActionReal, _step);
+        };
+
+        SuperTween.Instance.To(1, 0, 0.5f, SetUiAlpha, dele);
     }
 
     private IEnumerator DoActionReal(int _index, SuperEnumerator<ValueType> _step)
@@ -1347,7 +1370,7 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        RefreshData();
+        //RefreshData();
 
         SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_ROUND_OVER);
 
@@ -1356,6 +1379,10 @@ public class BattleManager : MonoBehaviour
         if (battleResult != Battle.BattleResult.NOT_OVER)
         {
             BattleOver(battleResult);
+        }
+        else
+        {
+            SuperTween.Instance.To(0, 1, 0.5f, SetUiAlpha, RefreshData);
         }
     }
 
@@ -1423,12 +1450,12 @@ public class BattleManager : MonoBehaviour
 
     private void DoPrepareRush()
     {
-        
+
     }
 
     private void DoRushOver()
     {
-        
+
     }
 
     private void DoAddCards(BattleAddCardsVO _vo)

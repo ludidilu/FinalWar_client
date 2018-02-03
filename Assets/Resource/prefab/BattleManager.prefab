@@ -28,6 +28,7 @@ GameObject:
   - component: {fileID: 22384122}
   - component: {fileID: 11465504}
   - component: {fileID: 11489952}
+  - component: {fileID: 225669718846853326}
   m_Layer: 8
   m_Name: Canvas
   m_TagString: Untagged
@@ -645,11 +646,13 @@ MonoBehaviour:
   descPanel: {fileID: 11459578}
   alertPanel: {fileID: 114767490472349022}
   bg: {fileID: 212832140466329472}
+  cg: {fileID: 225669718846853326}
   auraDescID: 100
   shootDescID: 101
   supportDescID: 102
   eventGo: {fileID: 0}
   cardList: []
+  defaultScale: 0
   auraDescFix: 
   shootDescFix: 
   supportDescFix: 
@@ -2198,6 +2201,9 @@ MonoBehaviour:
   frameChoose: {fileID: 21300000, guid: 79bc8edb62628c645b1bd74f8ef38d26, type: 3}
   zFixStep: 1
   moveAwayDistance: 0.7
+  mapTargetScale: 1.3
+  unitTargetScale: 0.5
+  bgAlpha: 0.3
 --- !u!114 &114078907227263200
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3502,6 +3508,17 @@ CanvasGroup:
   m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
+--- !u!225 &225669718846853326
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 116862}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!225 &225812114943003978
 CanvasGroup:

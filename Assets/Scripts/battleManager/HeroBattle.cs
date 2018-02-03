@@ -237,7 +237,9 @@ public class HeroBattle : HeroBase
 
     public void RefreshAttack()
     {
-        string text = hero.GetAttack().ToString();
+        //string text = hero.GetAttack().ToString();
+
+        string text = hero.sds.GetAttack().ToString();
 
         attack.text = text;
 
@@ -388,10 +390,10 @@ public class HeroBattle : HeroBase
             }
         };
 
-        SuperTween.Instance.To(1, 0, battleControl.dieTime, DieTo, dieOver);
+        SuperTween.Instance.To(1, 0, battleControl.dieTime, SetAlpha, dieOver);
     }
 
-    private void DieTo(float _v)
+    public void SetAlpha(float _v)
     {
         frame.color = new Color(1, 1, 1, _v);
 

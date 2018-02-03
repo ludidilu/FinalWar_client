@@ -22,6 +22,11 @@ public class MapUnit : MonoBehaviour
         meshColorControl.SetColor(_color);
     }
 
+    public Color GetMainColor()
+    {
+        return meshColorControl.GetColor();
+    }
+
     public void SetIconVisible(bool _visible)
     {
         sr.gameObject.SetActive(_visible);
