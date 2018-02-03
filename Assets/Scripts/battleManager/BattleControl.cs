@@ -55,6 +55,9 @@ public class BattleControl : MonoBehaviour
     public float moveAwayDistance;
 
     [SerializeField]
+    public float attackMoveDistance;
+
+    [SerializeField]
     private float mapTargetScale = 1.3f;
 
     [SerializeField]
@@ -75,9 +78,9 @@ public class BattleControl : MonoBehaviour
         {
             float value = attackCurve.Evaluate(obj);
 
-            Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, stander.transform.localPosition, value);
+            Vector2 v = Vector2.LerpUnclamped(attacker.transform.position, stander.transform.position, value);
 
-            attacker.moveTrans.localPosition = attacker.hudTrans.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
+            attacker.moveTrans.position = new Vector3(v.x, v.y, attacker.moveTrans.position.z);
 
             if (!getHit && obj > hitPercent)
             {
@@ -91,12 +94,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        //bool shock = stander.TakeEffect(new List<BattleHeroEffectVO>() { _vo.vo });
-
-        //if (shock)
-        //{
-        //    stander.Shock(attacker, shockCurve, shockDis);
-        //}
+        HeroBeDamaged(attacker, stander);
 
         yield return null;
 
@@ -109,7 +107,7 @@ public class BattleControl : MonoBehaviour
 
         HeroBattle stander = battleManager.heroDic[_vo.stander];
 
-        float angle = Mathf.Atan2(stander.transform.localPosition.y - shooter.transform.localPosition.y, stander.transform.localPosition.x - shooter.transform.localPosition.x);
+        float angle = Mathf.Atan2(stander.transform.position.y - shooter.transform.position.y, stander.transform.position.x - shooter.transform.position.x);
 
         angle += Mathf.PI * 0.5f;
 
@@ -117,7 +115,7 @@ public class BattleControl : MonoBehaviour
 
         arrow.transform.SetParent(battleManager.arrowContainer, false);
 
-        arrow.transform.localPosition = shooter.transform.localPosition;
+        arrow.transform.position = shooter.transform.position;
 
         arrow.SetActive(false);
 
@@ -130,13 +128,13 @@ public class BattleControl : MonoBehaviour
                 arrow.SetActive(true);
             }
 
-            Vector3 targetPos = Vector3.Lerp(shooter.transform.localPosition, stander.transform.localPosition, obj);
+            Vector3 targetPos = Vector3.Lerp(shooter.transform.position, stander.transform.position, obj);
 
             targetPos += new Vector3(Mathf.Cos(angle) * v * shootFix, Mathf.Sin(angle) * v * shootFix, 0);
 
-            arrow.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(targetPos.y - arrow.transform.localPosition.y, targetPos.x - arrow.transform.localPosition.x) * Mathf.Rad2Deg);
+            arrow.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(targetPos.y - arrow.transform.position.y, targetPos.x - arrow.transform.position.x) * Mathf.Rad2Deg);
 
-            arrow.transform.localPosition = targetPos;
+            arrow.transform.position = targetPos;
         };
 
         SuperSequenceControl.To(0f, 1f, 1f, shootToDel, _index);
@@ -157,17 +155,15 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Support(int _index, int _lastIndex, BattleSupportVO _vo)
     {
-        Vector3 targetPos = battleManager.mapUnitDic[_vo.stander].transform.localPosition;
-
         HeroBattle supporter = battleManager.heroDic[_vo.supporter];
 
         HeroBattle stander = battleManager.heroDic[_vo.stander];
 
         Action<float> supporterToDel = delegate (float _value)
         {
-            Vector3 v = Vector3.Lerp(supporter.transform.localPosition, targetPos, _value);
+            Vector2 v = Vector2.Lerp(supporter.transform.position, stander.transform.position, _value);
 
-            supporter.hudTrans.localPosition = supporter.transform.InverseTransformPoint(supporter.transform.parent.TransformPoint(v));
+            supporter.hudTrans.position = new Vector3(v.x, v.y, supporter.hudTrans.position.z);
         };
 
         SuperSequenceControl.To(0f, 0.5f, 0.5f, supporterToDel, _index);
@@ -190,8 +186,6 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator PrepareAttack(int _index, int _lastIndex, BattlePrepareAttackVO _vo)
     {
-        Vector3 targetPos = battleManager.mapUnitDic[_vo.pos].transform.localPosition;
-
         HeroBattle attacker = battleManager.heroDic[_vo.attacker];
 
         HeroBattle defenderReal;
@@ -200,24 +194,41 @@ public class BattleControl : MonoBehaviour
 
         HeroBattle supporter = null;
 
-        if (_vo.pos == _vo.defender)
+        if (_vo.attackType != AttackType.A_S)
         {
+            PrepareAttack(_index, _vo.attacker, _vo.defender);
+
             defenderReal = defender = battleManager.heroDic[_vo.defender];
         }
         else
         {
+            PrepareAttack(_index, _vo.attacker, _vo.defender, _vo.pos);
+
             defenderReal = supporter = battleManager.heroDic[_vo.defender];
 
             battleManager.heroDic.TryGetValue(_vo.pos, out defender);
         }
 
-        if (defenderReal == supporter)
+        yield return null;
+
+        Vector3 targetPos = battleManager.mapUnitDic[_vo.pos].transform.position;
+
+        Vector3 attackPos0 = Vector3.Lerp(attacker.transform.position, targetPos, attackMoveDistance);
+
+        Action<float> dele = delegate (float _value)
+        {
+            Vector2 v = Vector2.Lerp(attacker.transform.position, attackPos0, _value);
+
+            attacker.hudTrans.position = new Vector3(v.x, v.y, attacker.hudTrans.position.z);
+        };
+
+        if (_vo.attackType == AttackType.A_S)
         {
             if (defender != null)
             {
-                Vector3 v1 = (defender.transform.localPosition - attacker.transform.localPosition).normalized;
+                Vector3 v1 = (defender.transform.position - attacker.transform.position).normalized;
 
-                Vector3 v2 = (defender.transform.localPosition - supporter.transform.localPosition).normalized;
+                Vector3 v2 = (defender.transform.position - supporter.transform.position).normalized;
 
                 Vector3 v3 = v1 + v2;
 
@@ -226,29 +237,38 @@ public class BattleControl : MonoBehaviour
                     v3 = (Quaternion.AngleAxis(90, Vector3.forward) * v1);
                 }
 
-                Vector3 tmpPos = defender.transform.localPosition + v3.normalized * Vector3.Distance(defender.transform.localPosition, attacker.transform.localPosition) * moveAwayDistance;
+                Vector3 tmpPos = defender.transform.position + v3.normalized * Vector3.Distance(defender.transform.position, attacker.transform.position) * moveAwayDistance;
 
-                Action<float> defenderToDel = delegate (float _value)
+                dele += delegate (float _value)
                 {
-                    Vector3 v = Vector3.Lerp(defender.transform.localPosition, tmpPos, _value);
+                    Vector2 v = Vector2.Lerp(defender.transform.position, tmpPos, _value);
 
-                    defender.hudTrans.localPosition = defender.transform.InverseTransformPoint(defender.transform.parent.TransformPoint(v));
+                    defender.hudTrans.position = new Vector3(v.x, v.y, defender.hudTrans.position.z);
                 };
-
-                SuperSequenceControl.To(0f, 1f, 0.5f, defenderToDel, 0);
             }
 
-            Action<float> supporterToDel = delegate (float _value)
+            dele += delegate (float _value)
             {
-                Vector3 v = Vector3.Lerp(supporter.transform.localPosition, targetPos, _value);
+                Vector2 v = Vector2.Lerp(supporter.transform.position, targetPos, _value);
 
-                supporter.hudTrans.localPosition = supporter.transform.InverseTransformPoint(supporter.transform.parent.TransformPoint(v));
+                supporter.hudTrans.position = new Vector3(v.x, v.y, supporter.hudTrans.position.z);
             };
-
-            SuperSequenceControl.To(0f, 1f, 0.5f, supporterToDel, _index);
-
-            yield return null;
         }
+        else if (_vo.attackType == AttackType.A_A)
+        {
+            Vector2 attackPos1 = Vector2.Lerp(defenderReal.transform.position, attacker.transform.position, attackMoveDistance);
+
+            dele += delegate (float _value)
+            {
+                Vector2 v = Vector2.Lerp(defenderReal.transform.position, attackPos1, _value);
+
+                defenderReal.hudTrans.position = new Vector3(v.x, v.y, defenderReal.hudTrans.position.z);
+            };
+        }
+
+        SuperSequenceControl.To(0f, 1f, 0.5f, dele, _index);
+
+        yield return null;
 
         Action dele0 = delegate ()
         {
@@ -270,7 +290,9 @@ public class BattleControl : MonoBehaviour
 
         HeroBattle defender = battleManager.heroDic[_vo.defender];
 
-        Vector3 targetPos = battleManager.mapUnitDic[_vo.pos].transform.localPosition;
+        Vector3 startPos = attacker.hudTrans.position;
+
+        Vector3 targetPos = defender.hudTrans.position;
 
         bool getHit = false;
 
@@ -278,9 +300,9 @@ public class BattleControl : MonoBehaviour
         {
             float value = attackCurve.Evaluate(obj);
 
-            Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, targetPos, value);
+            Vector2 v = Vector3.LerpUnclamped(startPos, targetPos, value);
 
-            attacker.moveTrans.localPosition = attacker.hudTrans.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
+            attacker.moveTrans.position = new Vector3(v.x, v.y, attacker.moveTrans.position.z);
 
             if (!getHit && obj > hitPercent)
             {
@@ -294,19 +316,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        bool defenderShock = defender.TakeEffect(new List<BattleHeroEffectVO>() { _vo.attackVO });
-
-        if (defenderShock)
-        {
-            defender.Shock(attacker, shockCurve, shockDis);
-        }
-
-        bool attackerShock = attacker.TakeEffect(new List<BattleHeroEffectVO>() { _vo.defenseVO });
-
-        if (attackerShock)
-        {
-            attacker.Shock(defender, shockCurve, shockDis);
-        }
+        HeroBeDamaged(attacker, defender);
 
         yield return null;
 
@@ -323,11 +333,7 @@ public class BattleControl : MonoBehaviour
 
         HeroBattle defender = battleManager.heroDic[_vo.defender];
 
-        Vector3 attackPos = battleManager.mapUnitDic[_vo.defender].transform.localPosition;
-
-        Vector3 defensePos = battleManager.mapUnitDic[_vo.attacker].transform.localPosition;
-
-        Vector3 targetPos = Vector3.Lerp(attackPos, defensePos, 0.5f);
+        Vector3 targetPos = Vector3.Lerp(attacker.hudTrans.position, defender.hudTrans.position, 0.5f);
 
         bool getHit = false;
 
@@ -335,13 +341,13 @@ public class BattleControl : MonoBehaviour
         {
             float value = attackCurve.Evaluate(obj);
 
-            Vector3 vv = Vector3.LerpUnclamped(attacker.transform.localPosition, targetPos, value);
+            Vector2 v = Vector2.LerpUnclamped(attacker.hudTrans.transform.position, targetPos, value);
 
-            attacker.moveTrans.localPosition = attacker.hudTrans.InverseTransformPoint(attacker.transform.parent.TransformPoint(vv));
+            attacker.moveTrans.position = new Vector3(v.x, v.y, attacker.moveTrans.position.z);
 
-            vv = Vector3.LerpUnclamped(defender.transform.localPosition, targetPos, value);
+            v = Vector2.LerpUnclamped(defender.hudTrans.transform.position, targetPos, value);
 
-            defender.moveTrans.localPosition = defender.hudTrans.InverseTransformPoint(defender.transform.parent.TransformPoint(vv));
+            defender.moveTrans.position = new Vector3(v.x, v.y, defender.moveTrans.position.z);
 
             if (!getHit && obj > hitPercent)
             {
@@ -355,19 +361,9 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        bool defenderShock = defender.TakeEffect(new List<BattleHeroEffectVO>() { _vo.attackVO });
+        HeroBeDamaged(attacker, defender);
 
-        if (defenderShock)
-        {
-            defender.Shock(attacker, shockCurve, shockDis);
-        }
-
-        bool attackerShock = attacker.TakeEffect(new List<BattleHeroEffectVO>() { _vo.defenseVO });
-
-        if (attackerShock)
-        {
-            attacker.Shock(defender, shockCurve, shockDis);
-        }
+        HeroBeDamaged(defender, attacker);
 
         yield return null;
 
@@ -378,45 +374,119 @@ public class BattleControl : MonoBehaviour
         SuperSequenceControl.MoveNext(_lastIndex);
     }
 
+    private void HeroBeDamaged(HeroBattle _attacker, HeroBattle _hero)
+    {
+        int nowShield = _hero.hero.nowShield;
+
+        int nowHp = _hero.hero.nowHp;
+
+        int targetShield;
+
+        int targetHp;
+
+        _hero.hero.ProcessDamage(out targetShield, out targetHp);
+
+        List<BattleHeroEffectVO> list = null;
+
+        if (targetShield < nowShield)
+        {
+            if (list == null)
+            {
+                list = new List<BattleHeroEffectVO>();
+            }
+
+            list.Add(new BattleHeroEffectVO(Effect.SHIELD_CHANGE, targetShield - nowShield));
+        }
+
+        if (targetHp < nowHp)
+        {
+            if (list == null)
+            {
+                list = new List<BattleHeroEffectVO>();
+            }
+
+            list.Add(new BattleHeroEffectVO(Effect.HP_CHANGE, targetHp - nowHp));
+        }
+
+        if (list != null)
+        {
+            bool shock = _hero.TakeEffect(list);
+
+            if (shock)
+            {
+                _hero.Shock(_attacker, shockCurve, shockDis);
+            }
+        }
+    }
+
     public IEnumerator AttackOver(int _index, int _lastIndex, BattleAttackOverVO _vo)
     {
-        if (_vo.defender != _vo.pos)
+        HeroBattle attacker = battleManager.heroDic[_vo.attacker];
+
+        Vector3 attackerStartPos = attacker.hudTrans.localPosition;
+
+        Action<float> dele = delegate (float _value)
+        {
+            Vector2 v = Vector2.Lerp(attackerStartPos, Vector3.zero, _value);
+
+            attacker.hudTrans.localPosition = new Vector3(v.x, v.y, attacker.hudTrans.localPosition.z);
+        };
+
+        if (_vo.attackType == AttackType.A_S)
         {
             HeroBattle supporter = battleManager.heroDic[_vo.defender];
 
-            Vector3 startPos = supporter.hudTrans.localPosition;
+            Vector3 supporterStartPos = supporter.hudTrans.localPosition;
 
-            Action<float> dele = delegate (float _value)
+            dele += delegate (float _value)
             {
-                Vector3 v = Vector3.Lerp(startPos, Vector3.zero, _value);
+                Vector2 v = Vector2.Lerp(supporterStartPos, Vector3.zero, _value);
 
-                supporter.hudTrans.localPosition = v;
+                supporter.hudTrans.localPosition = new Vector3(v.x, v.y, supporter.hudTrans.localPosition.z);
             };
-
-            SuperSequenceControl.To(0f, 1f, 0.5f, dele, _index);
 
             HeroBattle defender;
 
             if (battleManager.heroDic.TryGetValue(_vo.pos, out defender))
             {
-                Vector3 startPos2 = defender.hudTrans.localPosition;
+                Vector3 defenderStartPos = defender.hudTrans.localPosition;
 
-                Action<float> dele2 = delegate (float _value)
+                dele += delegate (float _value)
                 {
-                    Vector3 v = Vector3.Lerp(startPos2, Vector3.zero, _value);
+                    Vector2 v = Vector2.Lerp(defenderStartPos, Vector3.zero, _value);
 
-                    defender.hudTrans.localPosition = v;
+                    defender.hudTrans.localPosition = new Vector3(v.x, v.y, defender.hudTrans.localPosition.z);
                 };
-
-                SuperSequenceControl.To(0f, 1f, 0.5f, dele2, 0);
             }
-
-            yield return null;
-
-            SuperSequenceControl.DelayCall(0.5f, _index);
-
-            yield return null;
         }
+        else if (_vo.attackType == AttackType.A_A)
+        {
+            HeroBattle defender = battleManager.heroDic[_vo.defender];
+
+            Vector3 defenderStartPos = defender.hudTrans.localPosition;
+
+            dele += delegate (float _value)
+            {
+                Vector2 v = Vector2.Lerp(defenderStartPos, Vector3.zero, _value);
+
+                defender.hudTrans.localPosition = new Vector3(v.x, v.y, defender.hudTrans.localPosition.z);
+            };
+        }
+
+        SuperSequenceControl.To(0f, 1f, 0.5f, dele, _index);
+
+        yield return null;
+
+        if (_vo.attackType == AttackType.A_S)
+        {
+            AttackOver(_index, _vo.attacker, _vo.defender, _vo.pos);
+        }
+        else
+        {
+            AttackOver(_index, _vo.attacker, _vo.defender);
+        }
+
+        yield return null;
 
         SuperSequenceControl.MoveNext(_lastIndex);
     }
@@ -572,7 +642,7 @@ public class BattleControl : MonoBehaviour
 
         if (_vo.data != null)
         {
-            Dictionary<int, BattleHeroEffectVO>.Enumerator enumerator = _vo.data.GetEnumerator();
+            Dictionary<int, List<BattleHeroEffectVO>>.Enumerator enumerator = _vo.data.GetEnumerator();
 
             while (enumerator.MoveNext())
             {
@@ -580,7 +650,7 @@ public class BattleControl : MonoBehaviour
 
                 targetHero.RefreshAttack();
 
-                bool shock = targetHero.TakeEffect(new List<BattleHeroEffectVO>() { enumerator.Current.Value });
+                bool shock = targetHero.TakeEffect(enumerator.Current.Value);
 
                 if (shock)
                 {
@@ -596,7 +666,7 @@ public class BattleControl : MonoBehaviour
         }
     }
 
-    public void PrepareAttack(params int[] _posArr)
+    public void PrepareAttack(int _index, params int[] _posArr)
     {
         battleManager.battleContainer.localScale = new Vector3(mapTargetScale, mapTargetScale, 1);
 
@@ -660,10 +730,10 @@ public class BattleControl : MonoBehaviour
             battleManager.bg.color = new Color(c, c, c, 1);
         };
 
-        superTween.SuperTween.Instance.To(0, 1, 0.5f, dele, null);
+        SuperSequenceControl.To(0, 1, 0.5f, dele, _index);
     }
 
-    public void AttackOver(params int[] _posArr)
+    public void AttackOver(int _index, params int[] _posArr)
     {
         battleManager.battleContainer.localScale = new Vector3(mapTargetScale, mapTargetScale, 1);
 
@@ -716,6 +786,6 @@ public class BattleControl : MonoBehaviour
             battleManager.bg.color = new Color(c, c, c, 1);
         };
 
-        superTween.SuperTween.Instance.To(1, 0, 0.5f, dele, null);
+        SuperSequenceControl.To(1, 0, 0.5f, dele, _index);
     }
 }

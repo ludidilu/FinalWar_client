@@ -1374,15 +1374,23 @@ public class BattleManager : MonoBehaviour
 
         SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_ROUND_OVER);
 
-        Battle.BattleResult battleResult = (Battle.BattleResult)_step.Current;
-
-        if (battleResult != Battle.BattleResult.NOT_OVER)
+        Action dele = delegate ()
         {
-            BattleOver(battleResult);
+            RoundOver((Battle.BattleResult)_step.Current);
+        };
+
+        SuperTween.Instance.To(0, 1, 0.5f, SetUiAlpha, dele);
+    }
+
+    private void RoundOver(Battle.BattleResult _battleResult)
+    {
+        if (_battleResult != Battle.BattleResult.NOT_OVER)
+        {
+            BattleOver(_battleResult);
         }
         else
         {
-            SuperTween.Instance.To(0, 1, 0.5f, SetUiAlpha, RefreshData);
+            RefreshData();
         }
     }
 

@@ -170,6 +170,20 @@ public class HeroBattle : HeroBase
 
         hero.ProcessDamage(out nowShield, out nowHp);
 
+        if (nowShield < 0)
+        {
+            nowShield = 0;
+        }
+
+        if (nowHp < 0)
+        {
+            nowHp = 0;
+        }
+        else if (nowHp > sds.GetHp())
+        {
+            nowHp = sds.GetHp();
+        }
+
         string text = nowHp.ToString();
 
         hp.text = text;
@@ -266,9 +280,11 @@ public class HeroBattle : HeroBase
 
         go.transform.SetParent(battleManager.arrowContainer, false);
 
-        Vector3 pos = transform.parent.InverseTransformPoint(transform.TransformPoint(hudTrans.localPosition));
+        float scale = go.transform.localScale.x / battleManager.arrowContainer.lossyScale.x;
 
-        go.transform.localPosition = new Vector3(pos.x, pos.y + _yFix, 0);
+        go.transform.localScale = new Vector3(scale, scale, 1);
+
+        go.transform.position = new Vector3(hudTrans.position.x, hudTrans.position.y + _yFix, 0);
 
         DamageNum damageNum = go.GetComponent<DamageNum>();
 
@@ -287,22 +303,9 @@ public class HeroBattle : HeroBase
 
                 switch (effectVO.effect)
                 {
-                    case Effect.DAMAGE:
-
-                        int data = effectVO.data;
-
-                        if (data > 0)
-                        {
-                            shock = true;
-                        }
-
-                        ShowHud((-data).ToString(), Color.red, Color.black, i * battleControl.hudHeight, null);
-
-                        break;
-
                     case Effect.SHIELD_CHANGE:
 
-                        data = effectVO.data;
+                        int data = effectVO.data;
 
                         if (data > 0)
                         {
