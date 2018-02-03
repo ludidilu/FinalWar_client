@@ -154,7 +154,10 @@ public class BattleManager : MonoBehaviour
     public SpriteRenderer bg;
 
     [SerializeField]
-    private CanvasGroup cg;
+    private CanvasGroup alphaCg;
+
+    [SerializeField]
+    private CanvasGroup clickCg;
 
     [SerializeField]
     private int auraDescID;
@@ -466,8 +469,6 @@ public class BattleManager : MonoBehaviour
         isInit = false;
 
         RefreshTouchable(true);
-
-        SetUiAlpha(1);
 
         gameObject.SetActive(false);
 
@@ -1222,9 +1223,9 @@ public class BattleManager : MonoBehaviour
     {
         if (canAction && !_canAction)
         {
-            SuperGraphicRaycast.SetIsOpen(false, "a");
-
             SuperRaycast.SetIsOpen(false, "a");
+
+            clickCg.blocksRaycasts = false;
 
             actionBt.SetActive(false);
 
@@ -1233,9 +1234,9 @@ public class BattleManager : MonoBehaviour
         }
         else if (!canAction && _canAction)
         {
-            SuperGraphicRaycast.SetIsOpen(true, "a");
-
             SuperRaycast.SetIsOpen(true, "a");
+
+            clickCg.blocksRaycasts = true;
 
             actionBt.SetActive(true);
 
@@ -1243,21 +1244,42 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private void ShowUi(Action _callBack)
+    {
+        Action dele = delegate ()
+        {
+            SuperRaycast.SetIsOpen(true, "ui");
+
+            SuperGraphicRaycast.SetIsOpen(true, "ui");
+
+            _callBack();
+        };
+
+        SuperTween.Instance.To(0, 1, 0.5f, SetUiAlpha, dele);
+    }
+
+    private void HideUi(Action _callBack)
+    {
+        SuperRaycast.SetIsOpen(false, "ui");
+
+        SuperGraphicRaycast.SetIsOpen(false, "ui");
+
+        SuperTween.Instance.To(1, 0, 0.5f, SetUiAlpha, _callBack);
+    }
+
     private void SetUiAlpha(float _v)
     {
-        cg.alpha = _v;
+        alphaCg.alpha = _v;
     }
 
     private void DoAction(SuperEnumerator<ValueType> _step)
     {
-        RefreshTouchable(false);
-
         Action dele = delegate ()
         {
             SuperSequenceControl.Start(DoActionReal, _step);
         };
 
-        SuperTween.Instance.To(1, 0, 0.5f, SetUiAlpha, dele);
+        HideUi(dele);
     }
 
     private IEnumerator DoActionReal(int _index, SuperEnumerator<ValueType> _step)
@@ -1370,7 +1392,7 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        //RefreshData();
+        RefreshData();
 
         SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_ROUND_OVER);
 
@@ -1379,7 +1401,7 @@ public class BattleManager : MonoBehaviour
             RoundOver((Battle.BattleResult)_step.Current);
         };
 
-        SuperTween.Instance.To(0, 1, 0.5f, SetUiAlpha, dele);
+        ShowUi(dele);
     }
 
     private void RoundOver(Battle.BattleResult _battleResult)
@@ -1387,10 +1409,6 @@ public class BattleManager : MonoBehaviour
         if (_battleResult != Battle.BattleResult.NOT_OVER)
         {
             BattleOver(_battleResult);
-        }
-        else
-        {
-            RefreshData();
         }
     }
 
