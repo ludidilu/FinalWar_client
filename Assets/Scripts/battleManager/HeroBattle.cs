@@ -251,9 +251,7 @@ public class HeroBattle : HeroBase
 
     public void RefreshAttack()
     {
-        //string text = hero.GetAttack().ToString();
-
-        string text = hero.sds.GetAttack().ToString();
+        string text = hero.GetAttack().ToString();
 
         attack.text = text;
 
