@@ -646,6 +646,7 @@ MonoBehaviour:
   descPanel: {fileID: 11459578}
   alertPanel: {fileID: 114767490472349022}
   bg: {fileID: 212832140466329472}
+  bgScaleFix: 1.5
   alphaCg: {fileID: 225669718846853326}
   clickCg: {fileID: 225815360593047076}
   auraDescID: 100

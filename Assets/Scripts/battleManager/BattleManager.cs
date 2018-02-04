@@ -154,6 +154,9 @@ public class BattleManager : MonoBehaviour
     public SpriteRenderer bg;
 
     [SerializeField]
+    private float bgScaleFix;
+
+    [SerializeField]
     private CanvasGroup alphaCg;
 
     [SerializeField]
@@ -654,7 +657,7 @@ public class BattleManager : MonoBehaviour
             scale = stepV.x / bg.sprite.rect.width / defaultScale * 2 * bg.sprite.pixelsPerUnit;
         }
 
-        bg.transform.localScale = new Vector3(scale, scale, 1);
+        bg.transform.localScale = new Vector3(scale * bgScaleFix, scale * bgScaleFix, 1);
 
         //bg.transform.localScale = new Vector3(stepV.x / bg.sprite.rect.width / defaultScale * 2 * bg.sprite.pixelsPerUnit, stepV.y / bg.sprite.rect.height / defaultScale * 2 * bg.sprite.pixelsPerUnit, 1);
 
