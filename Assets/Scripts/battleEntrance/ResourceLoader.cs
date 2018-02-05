@@ -20,6 +20,7 @@ public static class ResourceLoader
         "Assets/Resource/prefab/DamageNum.prefab",
         "Assets/Resource/prefab/HeroBattle.prefab",
         "Assets/Resource/prefab/HeroCard.prefab",
+        "Assets/Resource/prefab/OppHeroCard.prefab",
         "Assets/Resource/prefab/MapUnit.prefab",
         "Assets/Resource/prefab/ShootArrow.prefab",
         "Assets/Resource/prefab/BattleEntrance.prefab",

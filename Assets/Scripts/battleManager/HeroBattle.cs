@@ -138,7 +138,7 @@ public class HeroBattle : HeroBase
 
         attack.gameObject.SetActive(false);
 
-        shield.color = Color.red;
+        shield.color = Color.white;
 
         string text = heroSDS.cost.ToString();
 
@@ -160,8 +160,6 @@ public class HeroBattle : HeroBase
         zTrans.localPosition = new Vector3(0, 0, _heroUid * battleControl.zFixStep);
 
         RefreshAll();
-
-        frame.color = isMine ? myFrameColor : oppFrameColor;
     }
 
     public void RefreshAll()

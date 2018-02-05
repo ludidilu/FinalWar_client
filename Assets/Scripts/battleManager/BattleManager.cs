@@ -103,7 +103,10 @@ public class BattleManager : MonoBehaviour
     private Transform battleContentContainer;
 
     [SerializeField]
-    private RectTransform cardContainer;
+    private RectTransform myCardContainer;
+
+    [SerializeField]
+    private RectTransform oppCardContainer;
 
     [SerializeField]
     private Transform mapContainer;
@@ -127,7 +130,10 @@ public class BattleManager : MonoBehaviour
     private Text oScoreTf;
 
     [SerializeField]
-    private Text oCardNumTf;
+    private Text mCardsNumTf;
+
+    [SerializeField]
+    private Text oCardsNumTf;
 
     [SerializeField]
     private Text roundNumLeftTf;
@@ -180,6 +186,8 @@ public class BattleManager : MonoBehaviour
     public Dictionary<int, HeroBattle> heroDic = new Dictionary<int, HeroBattle>();
 
     public List<HeroCard> cardList = new List<HeroCard>();
+
+    public List<GameObject> oppCardList = new List<GameObject>();
 
     private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
 
@@ -506,6 +514,13 @@ public class BattleManager : MonoBehaviour
         }
 
         cardList.Clear();
+
+        for (int i = 0; i < oppCardList.Count; i++)
+        {
+            Destroy(oppCardList[i]);
+        }
+
+        oppCardList.Clear();
     }
 
     private void ClearSummonHeros()
@@ -670,17 +685,29 @@ public class BattleManager : MonoBehaviour
 
         List<int> oHandCards;
 
+        Queue<int> mCards;
+
+        Queue<int> oCards;
+
         if (battle.clientIsMine)
         {
             mHandCards = battle.mHandCards;
 
             oHandCards = battle.oHandCards;
+
+            mCards = battle.mCards;
+
+            oCards = battle.oCards;
         }
         else
         {
             mHandCards = battle.oHandCards;
 
             oHandCards = battle.mHandCards;
+
+            mCards = battle.oCards;
+
+            oCards = battle.mCards;
         }
 
         int index = 0;
@@ -708,19 +735,59 @@ public class BattleManager : MonoBehaviour
 
             cardList.Add(hero);
 
-            go.transform.SetParent(cardContainer, false);
+            go.transform.SetParent(myCardContainer, false);
 
             float cardWidth = (go.transform as RectTransform).sizeDelta.x;
             float cardHeight = (go.transform as RectTransform).sizeDelta.y;
 
-            float fixX = (cardContainer.rect.width - cardWidth * (mHandCards.Count - battle.GetSummonNum())) * 0.5f;
+            float fixX = (myCardContainer.rect.width - cardWidth * (mHandCards.Count - battle.GetSummonNum())) * 0.5f;
 
-            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * cardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * cardContainer.rect.height + cardHeight * 0.5f);
+            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * myCardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * myCardContainer.rect.height + cardHeight * 0.5f);
 
             index++;
         }
 
-        oCardNumTf.text = oHandCards.Count.ToString();
+        index = 0;
+
+        for (int i = 0; i < oHandCards.Count; i++)
+        {
+            GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/OppHeroCard.prefab", null);
+
+            oppCardList.Add(go);
+
+            go.transform.SetParent(oppCardContainer, false);
+
+            float cardWidth = (go.transform as RectTransform).sizeDelta.x;
+            float cardHeight = (go.transform as RectTransform).sizeDelta.y;
+
+            float fixX = (oppCardContainer.rect.width - cardWidth * (mHandCards.Count - battle.GetSummonNum())) * 0.5f;
+
+            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * oppCardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, 0.5f * oppCardContainer.rect.height);
+
+            index++;
+        }
+
+        mCardsNumTf.text = mCards.Count.ToString();
+
+        if (mCards.Count == 0)
+        {
+            mCardsNumTf.color = Color.red;
+        }
+        else
+        {
+            mCardsNumTf.color = Color.white;
+        }
+
+        oCardsNumTf.text = oCards.Count.ToString();
+
+        if (oCards.Count == 0)
+        {
+            oCardsNumTf.color = Color.red;
+        }
+        else
+        {
+            oCardsNumTf.color = Color.white;
+        }
     }
 
     private void CreateSummonHeros()
@@ -745,9 +812,45 @@ public class BattleManager : MonoBehaviour
 
     public void CreateMoneyTf()
     {
-        mMoneyTf.text = battle.GetNowMoney(battle.clientIsMine).ToString();
+        List<int> mHandCards;
+        List<int> oHandCards;
 
-        oMoneyTf.text = battle.GetNowMoney(!battle.clientIsMine).ToString();
+        if (battle.clientIsMine)
+        {
+            mHandCards = battle.mHandCards;
+            oHandCards = battle.oHandCards;
+        }
+        else
+        {
+            mHandCards = battle.oHandCards;
+            oHandCards = battle.mHandCards;
+        }
+
+        int mMoney = battle.GetNowMoney(battle.clientIsMine);
+
+        mMoneyTf.text = mMoney.ToString();
+
+        if (mMoney + BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && mHandCards.Count > 0)
+        {
+            mMoneyTf.color = Color.red;
+        }
+        else
+        {
+            mMoneyTf.color = Color.white;
+        }
+
+        int oMoney = battle.GetNowMoney(!battle.clientIsMine);
+
+        oMoneyTf.text = oMoney.ToString();
+
+        if (oMoney + BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && oHandCards.Count > 0)
+        {
+            oMoneyTf.color = Color.red;
+        }
+        else
+        {
+            oMoneyTf.color = Color.white;
+        }
     }
 
     private void CreateScoreTf()
@@ -756,17 +859,60 @@ public class BattleManager : MonoBehaviour
         {
             mScoreTf.text = battle.mScore.ToString();
             oScoreTf.text = battle.oScore.ToString();
+
+            if (battle.mScore > battle.oScore)
+            {
+                mScoreTf.color = Color.green;
+                oScoreTf.color = Color.red;
+            }
+            else if (battle.mScore < battle.oScore)
+            {
+                mScoreTf.color = Color.red;
+                oScoreTf.color = Color.green;
+            }
+            else
+            {
+                mScoreTf.color = Color.white;
+                oScoreTf.color = Color.white;
+            }
         }
         else
         {
             mScoreTf.text = battle.oScore.ToString();
             oScoreTf.text = battle.mScore.ToString();
+
+            if (battle.mScore > battle.oScore)
+            {
+                mScoreTf.color = Color.red;
+                oScoreTf.color = Color.green;
+            }
+            else if (battle.mScore < battle.oScore)
+            {
+                mScoreTf.color = Color.green;
+                oScoreTf.color = Color.red;
+            }
+            else
+            {
+                mScoreTf.color = Color.white;
+                oScoreTf.color = Color.white;
+            }
         }
     }
 
     private void CreateRoundNumLeftTf()
     {
-        roundNumLeftTf.text = (battle.maxRoundNum - battle.roundNum).ToString();
+        int leftRoundNum = battle.maxRoundNum - battle.roundNum;
+
+        roundNumLeftTf.text = leftRoundNum.ToString();
+
+        if (leftRoundNum == 1)
+        {
+            roundNumLeftTf.color = Color.red;
+        }
+        else
+        {
+            roundNumLeftTf.color = Color.white;
+        }
     }
 
     private void CreateMoves()
