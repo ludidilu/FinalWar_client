@@ -618,6 +618,10 @@ MonoBehaviour:
   auraDescID: 100
   shootDescID: 101
   supportDescID: 102
+  minDefaultScale: 0.4
+  maxDefaultScale: 0.8
+  minMapScale: 0.4
+  maxMapScale: 1.2
   eventGo: {fileID: 0}
   cardList: []
   oppCardList: []
@@ -2646,7 +2650,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114900602827577820}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11448894}
+        m_MethodName: ActionBtClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114382309040041472

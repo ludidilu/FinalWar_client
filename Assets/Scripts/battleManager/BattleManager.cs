@@ -177,9 +177,21 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private int supportDescID;
 
+    [SerializeField]
+    private float minDefaultScale;
+
+    [SerializeField]
+    private float maxDefaultScale;
+
+    [SerializeField]
+    private float minMapScale;
+
+    [SerializeField]
+    private float maxMapScale;
+
     public GameObject eventGo;
 
-    private Battle_client battle = new Battle_client();
+    public Battle_client battle = new Battle_client();
 
     public Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
 
@@ -657,6 +669,8 @@ public class BattleManager : MonoBehaviour
 
         defaultScale = Mathf.Min(viewport.extents.x / (bounds.extents.x + boundFix * 0.5f), viewport.extents.y / (bounds.extents.y + boundFix * 0.5f));
 
+        defaultScale = Mathf.Clamp(defaultScale, minDefaultScale, maxDefaultScale);
+
         battleContainer.localScale = new Vector3(defaultScale, defaultScale, 1);
 
         bg.transform.localPosition = new Vector3(-viewportXFix / defaultScale, -viewport.center.y / defaultScale, 0);
@@ -747,8 +761,6 @@ public class BattleManager : MonoBehaviour
             index++;
         }
 
-        index = 0;
-
         for (int i = 0; i < oHandCards.Count; i++)
         {
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/OppHeroCard.prefab", null);
@@ -760,11 +772,9 @@ public class BattleManager : MonoBehaviour
             float cardWidth = (go.transform as RectTransform).sizeDelta.x;
             float cardHeight = (go.transform as RectTransform).sizeDelta.y;
 
-            float fixX = (oppCardContainer.rect.width - cardWidth * (mHandCards.Count - battle.GetSummonNum())) * 0.5f;
+            float fixX = (oppCardContainer.rect.width - cardWidth * oHandCards.Count) * 0.5f;
 
-            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * oppCardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, 0.5f * oppCardContainer.rect.height);
-
-            index++;
+            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * oppCardContainer.rect.width + cardWidth * 0.5f + i * cardWidth, 0.5f * oppCardContainer.rect.height);
         }
 
         mCardsNumTf.text = mCards.Count.ToString();
@@ -1686,7 +1696,7 @@ public class BattleManager : MonoBehaviour
             scale = battleContainer.localScale.x * (1 / fixStep);
         }
 
-        scale = Mathf.Clamp(scale, defaultScale * minScale, defaultScale * maxScale);
+        scale = Mathf.Clamp(scale, minMapScale, maxMapScale);
 
         battleContainer.localScale = new Vector3(scale, scale, 1);
 

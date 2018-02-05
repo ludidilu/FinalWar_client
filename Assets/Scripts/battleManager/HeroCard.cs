@@ -33,6 +33,15 @@ public class HeroCard : HeroBase, IPointerClickHandler
         InitCard(heroSDS);
 
         cost.text = sds.cost.ToString();
+
+        if (sds.cost > battleManager.battle.GetNowMoney(battleManager.battle.clientIsMine))
+        {
+            cost.color = Color.red;
+        }
+        else
+        {
+            cost.color = Color.white;
+        }
     }
 
     public void OnPointerClick(PointerEventData _data)
