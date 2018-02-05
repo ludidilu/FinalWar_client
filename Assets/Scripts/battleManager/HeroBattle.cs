@@ -211,11 +211,14 @@ public class HeroBattle : HeroBase
         {
             text = "+" + speedFix;
 
-            speed.gameObject.SetActive(true);
+            if (!speed.gameObject.activeSelf)
+            {
+                speed.gameObject.SetActive(true);
+            }
 
             speed.text = text;
 
-            speed.color = Color.green;
+            speed.color = new Color(0, 1, 0, speed.color.a);
 
             speedOutline.SetText(text);
         }
@@ -223,81 +226,87 @@ public class HeroBattle : HeroBase
         {
             text = speedFix.ToString();
 
-            speed.gameObject.SetActive(true);
+            if (!speed.gameObject.activeSelf)
+            {
+                speed.gameObject.SetActive(true);
+            }
 
             speed.text = text;
 
-            speed.color = Color.red;
+            speed.color = new Color(1, 0, 0, speed.color.a);
 
             speedOutline.SetText(text);
         }
         else
         {
-            speed.gameObject.SetActive(false);
+            if (speed.gameObject.activeSelf)
+            {
+                speed.gameObject.SetActive(false);
+            }
         }
 
         if (hero.GetCanAction())
         {
-            body.color = Color.white;
+            body.color = new Color(1, 1, 1, body.color.a);
 
-            bg.color = Color.white;
+            bg.color = new Color(1, 1, 1, bg.color.a);
 
-            frame.color = isMine ? myFrameColor : oppFrameColor;
+            frame.color = isMine ? new Color(myFrameColor.r, myFrameColor.g, myFrameColor.b, frame.color.a) : new Color(oppFrameColor.r, oppFrameColor.g, oppFrameColor.b, frame.color.a);
 
-            heroType.color = Color.white;
+            heroType.color = new Color(1, 1, 1, heroType.color.a);
 
             if (nowHp < sds.hp)
             {
-                hp.color = Color.red;
+                hp.color = new Color(1, 0, 0, hp.color.a);
             }
             else
             {
-                hp.color = Color.white;
+                hp.color = new Color(1, 1, 1, hp.color.a);
             }
 
             if (nowShield < sds.shield)
             {
-                shield.color = Color.red;
+                shield.color = new Color(1, 0, 0, shield.color.a);
             }
             else if (nowShield > sds.shield)
             {
-                shield.color = Color.green;
+                shield.color = new Color(0, 1, 0, shield.color.a);
             }
             else
             {
-                shield.color = Color.white;
+                shield.color = new Color(1, 1, 1, shield.color.a);
             }
         }
         else
         {
-            body.color = new Color(colorFix, colorFix, colorFix, 1);
+            body.color = new Color(colorFix, colorFix, colorFix, body.color.a);
 
-            bg.color = new Color(colorFix, colorFix, colorFix, 1);
+            bg.color = new Color(colorFix, colorFix, colorFix, bg.color.a);
 
-            frame.color = isMine ? new Color(myFrameColor.r * colorFix, myFrameColor.g * colorFix, myFrameColor.b * colorFix, myFrameColor.a) : new Color(oppFrameColor.r * colorFix, oppFrameColor.g * colorFix, oppFrameColor.b * colorFix, oppFrameColor.a);
+            frame.color = isMine ? new Color(myFrameColor.r * colorFix, myFrameColor.g * colorFix, myFrameColor.b * colorFix, frame.color.a) : new Color(oppFrameColor.r * colorFix, oppFrameColor.g * colorFix, oppFrameColor.b * colorFix, frame.color.a);
 
-            heroType.color = new Color(colorFix, colorFix, colorFix, 1);
+            heroType.color = new Color(colorFix, colorFix, colorFix, heroType.color.a);
 
             if (nowHp < sds.hp)
             {
-                hp.color = new Color(colorFix, 0, 0, 1);
+                hp.color = new Color(colorFix, 0, 0, hp.color.a);
             }
             else
             {
-                hp.color = new Color(colorFix, colorFix, colorFix, 1);
+                hp.color = new Color(colorFix, colorFix, colorFix, hp.color.a);
             }
 
             if (nowShield < sds.shield)
             {
-                shield.color = new Color(colorFix, 0, 0, 1);
+                shield.color = new Color(colorFix, 0, 0, shield.color.a);
             }
             else if (nowShield > sds.shield)
             {
-                shield.color = new Color(0, colorFix, 0, 1);
+                shield.color = new Color(0, colorFix, 0, shield.color.a);
             }
             else
             {
-                shield.color = new Color(colorFix, colorFix, colorFix, 1);
+                shield.color = new Color(colorFix, colorFix, colorFix, shield.color.a);
             }
         }
     }
@@ -316,30 +325,30 @@ public class HeroBattle : HeroBase
         {
             if (atk < sds.attack)
             {
-                attack.color = Color.red;
+                attack.color = new Color(1, 0, 0, attack.color.a);
             }
             else if (atk > sds.attack)
             {
-                attack.color = Color.green;
+                attack.color = new Color(0, 1, 0, attack.color.a);
             }
             else
             {
-                attack.color = Color.white;
+                attack.color = new Color(1, 1, 1, attack.color.a);
             }
         }
         else
         {
             if (atk < sds.shield)
             {
-                attack.color = new Color(colorFix, 0, 0, 1);
+                attack.color = new Color(colorFix, 0, 0, attack.color.a);
             }
             else if (atk > sds.shield)
             {
-                attack.color = new Color(0, colorFix, 0, 1);
+                attack.color = new Color(0, colorFix, 0, attack.color.a);
             }
             else
             {
-                attack.color = new Color(colorFix, colorFix, colorFix, 1);
+                attack.color = new Color(colorFix, colorFix, colorFix, attack.color.a);
             }
         }
     }
