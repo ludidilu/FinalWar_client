@@ -1259,7 +1259,7 @@ public class BattleManager : MonoBehaviour
         battle.ClientRequestUnsummon(_cardUid);
     }
 
-    private HeroBattle AddHeroToMap(Hero _hero)
+    public HeroBattle AddHeroToMap(Hero _hero)
     {
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/HeroBattle.prefab", null);
 
@@ -1491,7 +1491,7 @@ public class BattleManager : MonoBehaviour
             }
             else if (vo is BattleSummonVO)
             {
-                SuperSequenceControl.Start(DoSummon, _index, (BattleSummonVO)vo);
+                SuperSequenceControl.Start(battleControl.Summon, _index, (BattleSummonVO)vo);
 
                 yield return null;
             }
@@ -1569,30 +1569,6 @@ public class BattleManager : MonoBehaviour
         {
             BattleOver(_battleResult);
         }
-    }
-
-    private IEnumerator DoSummon(int _index, int _lastIndex, BattleSummonVO _vo)
-    {
-        Hero hero = battle.heroMapDic[_vo.pos];
-
-        HeroBattle heroBattle = AddHeroToMap(hero);
-
-        heroBattle.transform.localScale = Vector3.zero;
-
-        Action<float> toDel = delegate (float obj)
-        {
-            float scale = obj;
-
-            heroBattle.transform.localScale = new Vector3(scale, scale, scale);
-
-            heroBattle.transform.localPosition = new Vector3(heroBattle.transform.localPosition.x, heroBattle.transform.localPosition.y, 100 * (1 - obj));
-        };
-
-        SuperSequenceControl.To(10f, 1f, 0.3f, toDel, _index);
-
-        yield return null;
-
-        SuperSequenceControl.DelayCall(0.8f, _lastIndex);
     }
 
     public void SetMapUnitColor(MapUnit _unit)

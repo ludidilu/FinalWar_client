@@ -627,6 +627,30 @@ public class BattleControl : MonoBehaviour
         SuperSequenceControl.MoveNext(_lastIndex);
     }
 
+    public IEnumerator Summon(int _index, int _lastIndex, BattleSummonVO _vo)
+    {
+        Hero hero = battleManager.battle.heroMapDic[_vo.pos];
+
+        HeroBattle heroBattle = battleManager.AddHeroToMap(hero);
+
+        heroBattle.transform.localScale = Vector3.zero;
+
+        Action<float> toDel = delegate (float obj)
+        {
+            float scale = obj;
+
+            heroBattle.transform.localScale = new Vector3(scale, scale, scale);
+
+            heroBattle.transform.localPosition = new Vector3(heroBattle.transform.localPosition.x, heroBattle.transform.localPosition.y, 100 * (1 - obj));
+        };
+
+        SuperSequenceControl.To(10f, 1f, 0.3f, toDel, _index);
+
+        yield return null;
+
+        SuperSequenceControl.DelayCall(0.8f, _lastIndex);
+    }
+
     public IEnumerator TriggerAura(int _index, int _lastIndex, BattleTriggerAuraVO _vo)
     {
         HeroBattle hero = battleManager.heroDic[_vo.pos];
