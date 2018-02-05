@@ -822,25 +822,25 @@ public class BattleManager : MonoBehaviour
 
     public void CreateMoneyTf()
     {
-        List<int> mHandCards;
-        List<int> oHandCards;
+        Queue<int> mCards;
+        Queue<int> oCards;
 
         if (battle.clientIsMine)
         {
-            mHandCards = battle.mHandCards;
-            oHandCards = battle.oHandCards;
+            mCards = battle.mCards;
+            oCards = battle.oCards;
         }
         else
         {
-            mHandCards = battle.oHandCards;
-            oHandCards = battle.mHandCards;
+            mCards = battle.oCards;
+            oCards = battle.mCards;
         }
 
         int mMoney = battle.GetNowMoney(battle.clientIsMine);
 
         mMoneyTf.text = mMoney.ToString();
 
-        if (mMoney + BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && mHandCards.Count > 0)
+        if (mMoney + BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && mCards.Count > 0)
         {
             mMoneyTf.color = Color.red;
         }
@@ -853,7 +853,7 @@ public class BattleManager : MonoBehaviour
 
         oMoneyTf.text = oMoney.ToString();
 
-        if (oMoney + BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && oHandCards.Count > 0)
+        if (oMoney + BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && oCards.Count > 0)
         {
             oMoneyTf.color = Color.red;
         }
