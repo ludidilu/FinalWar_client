@@ -58,6 +58,15 @@ public class HeroBattle : HeroBase
     [SerializeField]
     private GameObject chooseFrame;
 
+    [SerializeField]
+    private Color myFrameColor;
+
+    [SerializeField]
+    private Color oppFrameColor;
+
+    [SerializeField]
+    private float colorFix;
+
     private BattleManager battleManager;
 
     private BattleControl battleControl;
@@ -138,6 +147,7 @@ public class HeroBattle : HeroBase
         shieldOutline.SetText(text);
 
         speed.gameObject.SetActive(false);
+
     }
 
     public void Init(BattleManager _battleManager, BattleControl _battleControl, Hero _hero, int _heroUid)
@@ -151,6 +161,8 @@ public class HeroBattle : HeroBase
         zTrans.localPosition = new Vector3(0, 0, _heroUid * battleControl.zFixStep);
 
         RefreshAll();
+
+        frame.color = isMine ? myFrameColor : oppFrameColor;
     }
 
     public void RefreshAll()
@@ -229,33 +241,110 @@ public class HeroBattle : HeroBase
 
         if (hero.GetCanAction())
         {
-            body.material = battleControl.mat;
+            body.color = Color.white;
 
-            bg.material = battleControl.mat;
+            bg.color = Color.white;
 
-            frame.material = battleControl.mat;
+            frame.color = isMine ? myFrameColor : oppFrameColor;
 
-            heroType.material = battleControl.mat;
+            heroType.color = Color.white;
+
+            if (nowHp < sds.hp)
+            {
+                hp.color = Color.red;
+            }
+            else
+            {
+                hp.color = Color.white;
+            }
+
+            if (nowShield < sds.shield)
+            {
+                shield.color = Color.red;
+            }
+            else if (nowShield > sds.shield)
+            {
+                shield.color = Color.green;
+            }
+            else
+            {
+                shield.color = Color.white;
+            }
         }
         else
         {
-            body.material = battleControl.matGray;
+            body.color = new Color(colorFix, colorFix, colorFix, 1);
 
-            bg.material = battleControl.matGray;
+            bg.color = new Color(colorFix, colorFix, colorFix, 1);
 
-            frame.material = battleControl.matGray;
+            frame.color = isMine ? new Color(myFrameColor.r * colorFix, myFrameColor.g * colorFix, myFrameColor.b * colorFix, myFrameColor.a) : new Color(oppFrameColor.r * colorFix, oppFrameColor.g * colorFix, oppFrameColor.b * colorFix, oppFrameColor.a);
 
-            heroType.material = battleControl.matGray;
+            heroType.color = new Color(colorFix, colorFix, colorFix, 1);
+
+            if (nowHp < sds.hp)
+            {
+                hp.color = new Color(colorFix, 0, 0, 1);
+            }
+            else
+            {
+                hp.color = new Color(colorFix, colorFix, colorFix, 1);
+            }
+
+            if (nowShield < sds.shield)
+            {
+                shield.color = new Color(colorFix, 0, 0, 1);
+            }
+            else if (nowShield > sds.shield)
+            {
+                shield.color = new Color(0, colorFix, 0, 1);
+            }
+            else
+            {
+                shield.color = new Color(colorFix, colorFix, colorFix, 1);
+            }
         }
     }
 
     public void RefreshAttack()
     {
-        string text = hero.GetAttack().ToString();
+        int atk = hero.GetAttack();
+
+        string text = atk.ToString();
 
         attack.text = text;
 
         attackOutline.SetText(text);
+
+        if (hero.GetCanAction())
+        {
+            if (atk < sds.attack)
+            {
+                attack.color = Color.red;
+            }
+            else if (atk > sds.attack)
+            {
+                attack.color = Color.green;
+            }
+            else
+            {
+                attack.color = Color.white;
+            }
+        }
+        else
+        {
+            if (atk < sds.shield)
+            {
+                attack.color = new Color(colorFix, 0, 0, 1);
+            }
+            else if (atk > sds.shield)
+            {
+                attack.color = new Color(0, colorFix, 0, 1);
+            }
+            else
+            {
+                attack.color = new Color(colorFix, colorFix, colorFix, 1);
+            }
+        }
     }
 
     public void Shock(HeroBattle _hero, AnimationCurve _curve, float _shockDis)

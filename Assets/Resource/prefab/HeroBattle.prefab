@@ -748,6 +748,9 @@ MonoBehaviour:
   speedOutline: {fileID: 114320525227429352}
   heroType: {fileID: 212160963934307490}
   chooseFrame: {fileID: 1999943864110166}
+  myFrameColor: {r: 0.39215687, g: 1, b: 0.39215687, a: 1}
+  oppFrameColor: {r: 1, g: 0.39215687, b: 0.39215687, a: 1}
+  colorFix: 0.4
 --- !u!212 &212160963934307490
 SpriteRenderer:
   m_ObjectHideFlags: 1
