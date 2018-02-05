@@ -147,7 +147,6 @@ public class HeroBattle : HeroBase
         shieldOutline.SetText(text);
 
         speed.gameObject.SetActive(false);
-
     }
 
     public void Init(BattleManager _battleManager, BattleControl _battleControl, Hero _hero, int _heroUid)
@@ -485,11 +484,11 @@ public class HeroBattle : HeroBase
 
     public void SetAlpha(float _v)
     {
-        frame.color = new Color(1, 1, 1, _v);
+        frame.color = new Color(frame.color.r, frame.color.g, frame.color.b, _v);
 
-        body.color = new Color(1, 1, 1, _v);
+        body.color = new Color(body.color.r, body.color.g, body.color.b, _v);
 
-        bg.color = new Color(1, 1, 1, _v);
+        bg.color = new Color(bg.color.r, bg.color.g, bg.color.b, _v);
 
         shield.color = new Color(shield.color.r, shield.color.g, shield.color.b, _v);
 
@@ -497,7 +496,7 @@ public class HeroBattle : HeroBase
 
         hp.color = new Color(hp.color.r, hp.color.g, hp.color.b, _v);
 
-        heroType.color = new Color(1, 1, 1, _v);
+        heroType.color = new Color(heroType.color.r, heroType.color.g, heroType.color.b, _v);
 
         if (speed.gameObject.activeSelf)
         {
