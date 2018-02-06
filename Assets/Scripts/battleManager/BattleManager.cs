@@ -1336,6 +1336,10 @@ public class BattleManager : MonoBehaviour
         {
             CreateAiAction();
         }
+        else if (Input.GetKeyUp(KeyCode.T))
+        {
+            battleControl.MoveCameraA(53, 61);
+        }
     }
 
     public void RequestRefreshData()

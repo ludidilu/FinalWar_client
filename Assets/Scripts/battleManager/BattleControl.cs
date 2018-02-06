@@ -824,15 +824,57 @@ public class BattleControl : MonoBehaviour
 
     private void MoveCamera(int _index, params int[] _posArr)
     {
+        Vector3 nowPos = battleManager.battleContainer.position;
+
         Vector3 v = GetCenterPos(_posArr);
+
+        float dis = v.magnitude;
+
+        Vector2 targetPos = nowPos - v;
 
         Action<float> dele = delegate (float _v)
         {
-            Vector2 pos = Vector2.Lerp(Vector2.zero, v, _v);
+            Vector2 pos = Vector2.Lerp(nowPos, targetPos, _v);
 
-            battleManager.mainCamera.transform.position = new Vector3(pos.x, pos.y, battleManager.mainCamera.transform.position.z);
+            battleManager.battleContainer.position = new Vector3(pos.x, pos.y, battleManager.battleContainer.position.z);
         };
 
-        SuperSequenceControl.To(0, 1, 0.5f, dele, _index);
+        SuperSequenceControl.To(0, 1, dis * 0.2f, dele, _index);
+    }
+
+    public void MoveCameraA(params int[] _posArr)
+    {
+        Vector3 nowPos = battleManager.battleContainer.position;
+
+        Vector3 v = GetCenterPos(_posArr);
+
+        float dis = v.magnitude;
+
+        Vector2 targetPos = nowPos - v;
+
+        Action<float> dele = delegate (float _v)
+        {
+            Vector2 pos = Vector2.Lerp(nowPos, targetPos, _v);
+
+            battleManager.battleContainer.position = new Vector3(pos.x, pos.y, battleManager.battleContainer.position.z);
+        };
+
+        superTween.SuperTween.Instance.To(0, 1, dis * 0.2f, dele, AAAA);
+    }
+
+    private void AAAA()
+    {
+        float nowScale = battleManager.battleContainer.localScale.x;
+
+        float targetScale = mapTargetScale;
+
+        Action<float> dele = delegate (float _v)
+        {
+            float scale = nowScale + (targetScale - nowScale) * _v;
+
+            battleManager.SetBattleContainerScale(scale, Vector2.zero);
+        };
+
+        superTween.SuperTween.Instance.To(0, 1, 1f, dele, null);
     }
 }
