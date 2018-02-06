@@ -1336,21 +1336,6 @@ public class BattleManager : MonoBehaviour
         {
             CreateAiAction();
         }
-        else if (Input.GetKeyUp(KeyCode.T))
-        {
-            battleControl.PrepareAttack(2, 5, 8);
-        }
-        else if (Input.GetKeyUp(KeyCode.O))
-        {
-            battleControl.AttackOver(2, 5, 8);
-        }
-
-        //		if (actionBt.activeSelf) {
-        //
-        //			CreateAiAction();
-        //
-        //			ActionBtClick();
-        //		}
     }
 
     public void RequestRefreshData()

@@ -696,16 +696,7 @@ public class BattleControl : MonoBehaviour
     {
         battleManager.battleContainer.localScale = new Vector3(mapTargetScale, mapTargetScale, 1);
 
-        Vector3 v = Vector3.zero;
-
-        for (int i = 0; i < _posArr.Length; i++)
-        {
-            MapUnit unit = battleManager.mapUnitDic[_posArr[i]];
-
-            v += unit.transform.position;
-        }
-
-        v = v / _posArr.Length;
+        Vector3 v = GetCenterPos(_posArr);
 
         battleManager.battleContainer.localScale = new Vector3(battleManager.defaultScale, battleManager.defaultScale, 1);
 
@@ -815,7 +806,7 @@ public class BattleControl : MonoBehaviour
         SuperSequenceControl.To(1, 0, 0.5f, dele, _index);
     }
 
-    private void MoveCamera(int _index, params int[] _posArr)
+    private Vector2 GetCenterPos(params int[] _posArr)
     {
         Vector3 v = Vector3.zero;
 
@@ -827,6 +818,13 @@ public class BattleControl : MonoBehaviour
         }
 
         v = v / _posArr.Length;
+
+        return v;
+    }
+
+    private void MoveCamera(int _index, params int[] _posArr)
+    {
+        Vector3 v = GetCenterPos(_posArr);
 
         Action<float> dele = delegate (float _v)
         {
