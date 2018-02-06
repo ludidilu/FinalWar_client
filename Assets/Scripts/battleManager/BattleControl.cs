@@ -128,9 +128,9 @@ public class BattleControl : MonoBehaviour
                 arrow.SetActive(true);
             }
 
-            Vector3 targetPos = Vector3.Lerp(shooter.transform.position, stander.transform.position, obj);
+            Vector2 targetPos = Vector2.Lerp(shooter.transform.position, stander.transform.position, obj);
 
-            targetPos += new Vector3(Mathf.Cos(angle) * v * shootFix, Mathf.Sin(angle) * v * shootFix, 0);
+            targetPos += new Vector2(Mathf.Cos(angle) * v * shootFix, Mathf.Sin(angle) * v * shootFix);
 
             arrow.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(targetPos.y - arrow.transform.position.y, targetPos.x - arrow.transform.position.x) * Mathf.Rad2Deg);
 
@@ -213,7 +213,7 @@ public class BattleControl : MonoBehaviour
 
         Vector3 targetPos = battleManager.mapUnitDic[_vo.pos].transform.position;
 
-        Vector3 attackPos0 = Vector3.Lerp(attacker.transform.position, targetPos, attackMoveDistance);
+        Vector2 attackPos0 = Vector2.Lerp(attacker.transform.position, targetPos, attackMoveDistance);
 
         Action<float> dele = delegate (float _value)
         {
@@ -290,9 +290,9 @@ public class BattleControl : MonoBehaviour
 
         HeroBattle defender = battleManager.heroDic[_vo.defender];
 
-        Vector3 startPos = attacker.hudTrans.position;
+        Vector2 startPos = attacker.hudTrans.position;
 
-        Vector3 targetPos = defender.hudTrans.position;
+        Vector2 targetPos = defender.hudTrans.position;
 
         bool getHit = false;
 
@@ -300,7 +300,7 @@ public class BattleControl : MonoBehaviour
         {
             float value = attackCurve.Evaluate(obj);
 
-            Vector2 v = Vector3.LerpUnclamped(startPos, targetPos, value);
+            Vector2 v = Vector2.LerpUnclamped(startPos, targetPos, value);
 
             attacker.moveTrans.position = new Vector3(v.x, v.y, attacker.moveTrans.position.z);
 
@@ -333,7 +333,7 @@ public class BattleControl : MonoBehaviour
 
         HeroBattle defender = battleManager.heroDic[_vo.defender];
 
-        Vector3 targetPos = Vector3.Lerp(attacker.hudTrans.position, defender.hudTrans.position, 0.5f);
+        Vector2 targetPos = Vector2.Lerp(attacker.hudTrans.position, defender.hudTrans.position, 0.5f);
 
         bool getHit = false;
 
@@ -549,13 +549,15 @@ public class BattleControl : MonoBehaviour
 
                 battleManager.heroDic.Remove(pair.Key);
 
-                Vector3 startPos = battleManager.mapUnitDic[pair.Key].transform.localPosition;
+                Vector2 startPos = battleManager.mapUnitDic[pair.Key].transform.localPosition;
 
-                Vector3 endPos = battleManager.mapUnitDic[pair.Value].transform.localPosition;
+                Vector2 endPos = battleManager.mapUnitDic[pair.Value].transform.localPosition;
 
                 Action<float> toDel = delegate (float obj)
                 {
-                    hero.transform.localPosition = Vector3.Lerp(startPos, endPos, obj);
+                    Vector2 v = Vector2.Lerp(startPos, endPos, obj);
+
+                    hero.transform.localPosition = new Vector3(v.x, v.y, hero.transform.localPosition.z);
                 };
 
                 if (i == 0)
@@ -715,7 +717,7 @@ public class BattleControl : MonoBehaviour
 
             float unitScale = 1 + (unitTargetScale - 1) * _v;
 
-            Vector3 pos = Vector3.Lerp(Vector3.zero, v, _v);
+            Vector2 pos = Vector2.Lerp(Vector2.zero, v, _v);
 
             battleManager.mainCamera.transform.position = new Vector3(pos.x, pos.y, battleManager.mainCamera.transform.position.z);
 
@@ -761,7 +763,7 @@ public class BattleControl : MonoBehaviour
     {
         battleManager.battleContainer.localScale = new Vector3(mapTargetScale, mapTargetScale, 1);
 
-        Vector3 v = battleManager.mainCamera.transform.position;
+        Vector2 v = battleManager.mainCamera.transform.position;
 
         Action<float> dele = delegate (float _v)
         {
@@ -771,7 +773,7 @@ public class BattleControl : MonoBehaviour
 
             float unitScale = 1 + (unitTargetScale - 1) * _v;
 
-            Vector3 pos = Vector3.Lerp(Vector3.zero, v, _v);
+            Vector2 pos = Vector2.Lerp(Vector2.zero, v, _v);
 
             battleManager.mainCamera.transform.position = new Vector3(pos.x, pos.y, battleManager.mainCamera.transform.position.z);
 
@@ -811,5 +813,28 @@ public class BattleControl : MonoBehaviour
         };
 
         SuperSequenceControl.To(1, 0, 0.5f, dele, _index);
+    }
+
+    private void MoveCamera(int _index, params int[] _posArr)
+    {
+        Vector3 v = Vector3.zero;
+
+        for (int i = 0; i < _posArr.Length; i++)
+        {
+            MapUnit unit = battleManager.mapUnitDic[_posArr[i]];
+
+            v += unit.transform.position;
+        }
+
+        v = v / _posArr.Length;
+
+        Action<float> dele = delegate (float _v)
+        {
+            Vector2 pos = Vector2.Lerp(Vector2.zero, v, _v);
+
+            battleManager.mainCamera.transform.position = new Vector3(pos.x, pos.y, battleManager.mainCamera.transform.position.z);
+        };
+
+        SuperSequenceControl.To(0, 1, 0.5f, dele, _index);
     }
 }
