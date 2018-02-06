@@ -67,7 +67,7 @@ public class BattleManager : MonoBehaviour
     private float boundFix;
 
     [SerializeField]
-    public Camera mainCamera;
+    private Camera mainCamera;
 
     [SerializeField]
     private Canvas canvas;
@@ -211,7 +211,7 @@ public class BattleManager : MonoBehaviour
 
     private Bounds bounds;
 
-    private Bounds viewport;
+    public Bounds viewport;
 
     [HideInInspector]
     public float defaultScale;
@@ -1338,7 +1338,6 @@ public class BattleManager : MonoBehaviour
         }
         else if (Input.GetKeyUp(KeyCode.T))
         {
-            battleControl.MoveCameraA(53, 61);
         }
     }
 
@@ -1550,6 +1549,10 @@ public class BattleManager : MonoBehaviour
                 DoScoreChange((BattleScoreChangeVO)vo);
             }
         }
+
+        SuperSequenceControl.Start(battleControl.ResetCamera, _index);
+
+        yield return null;
 
         RefreshData();
 

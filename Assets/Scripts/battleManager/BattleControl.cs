@@ -34,6 +34,12 @@ public class BattleControl : MonoBehaviour
     private AnimationCurve shockCurve;
 
     [SerializeField]
+    private AnimationCurve cameraMoveCurve;
+
+    [SerializeField]
+    private float cameraMoveSpeedFix;
+
+    [SerializeField]
     public float hudHeight;
 
     [SerializeField]
@@ -68,6 +74,10 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Rush(int _index, int _lastIndex, BattleRushVO _vo)
     {
+        MoveCamera(_index, _vo.attacker, _vo.stander);
+
+        yield return null;
+
         HeroBattle attacker = battleManager.heroDic[_vo.attacker];
 
         HeroBattle stander = battleManager.heroDic[_vo.stander];
@@ -103,6 +113,10 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Shoot(int _index, int _lastIndex, BattleShootVO _vo)
     {
+        MoveCamera(_index, _vo.shooter, _vo.stander);
+
+        yield return null;
+
         HeroBattle shooter = battleManager.heroDic[_vo.shooter];
 
         HeroBattle stander = battleManager.heroDic[_vo.stander];
@@ -155,6 +169,10 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator Support(int _index, int _lastIndex, BattleSupportVO _vo)
     {
+        MoveCamera(_index, _vo.supporter, _vo.stander);
+
+        yield return null;
+
         HeroBattle supporter = battleManager.heroDic[_vo.supporter];
 
         HeroBattle stander = battleManager.heroDic[_vo.stander];
@@ -196,12 +214,20 @@ public class BattleControl : MonoBehaviour
 
         if (_vo.attackType != AttackType.A_S)
         {
+            MoveCamera(_index, _vo.attacker, _vo.defender);
+
+            yield return null;
+
             PrepareAttack(_index, _vo.attacker, _vo.defender);
 
             defenderReal = defender = battleManager.heroDic[_vo.defender];
         }
         else
         {
+            MoveCamera(_index, _vo.attacker, _vo.defender, _vo.pos);
+
+            yield return null;
+
             PrepareAttack(_index, _vo.attacker, _vo.defender, _vo.pos);
 
             defenderReal = supporter = battleManager.heroDic[_vo.defender];
@@ -539,6 +565,27 @@ public class BattleControl : MonoBehaviour
                 }
             }
 
+            List<int> ll = new List<int>();
+
+            for (int i = 0; i < tmpList2.Count; i++)
+            {
+                KeyValuePair<int, int> pair = tmpList2[i];
+
+                if (!ll.Contains(pair.Key))
+                {
+                    ll.Add(pair.Key);
+                }
+
+                if (!ll.Contains(pair.Value))
+                {
+                    ll.Add(pair.Value);
+                }
+            }
+
+            MoveCamera(_index, ll.ToArray());
+
+            yield return null;
+
             for (int i = 0; i < tmpList2.Count; i++)
             {
                 KeyValuePair<int, int> pair = tmpList2[i];
@@ -610,27 +657,28 @@ public class BattleControl : MonoBehaviour
         {
             int pos = _vo.deads[i];
 
+            MoveCamera(_index, pos);
+
+            yield return null;
+
             HeroBattle hero = battleManager.heroDic[pos];
 
             battleManager.heroDic.Remove(pos);
 
-            if (i == 0)
-            {
-                hero.Die(dele);
-            }
-            else
-            {
-                hero.Die(null);
-            }
-        }
+            hero.Die(dele);
 
-        yield return null;
+            yield return null;
+        }
 
         SuperSequenceControl.MoveNext(_lastIndex);
     }
 
     public IEnumerator Summon(int _index, int _lastIndex, BattleSummonVO _vo)
     {
+        MoveCamera(_index, _vo.pos);
+
+        yield return null;
+
         Hero hero = battleManager.battle.heroMapDic[_vo.pos];
 
         HeroBattle heroBattle = battleManager.AddHeroToMap(hero);
@@ -655,6 +703,10 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator TriggerAura(int _index, int _lastIndex, BattleTriggerAuraVO _vo)
     {
+        MoveCamera(_index, _vo.pos);
+
+        yield return null;
+
         HeroBattle hero = battleManager.heroDic[_vo.pos];
 
         Action<float> dele = delegate (float _value)
@@ -694,23 +746,13 @@ public class BattleControl : MonoBehaviour
 
     public void PrepareAttack(int _index, params int[] _posArr)
     {
-        battleManager.battleContainer.localScale = new Vector3(mapTargetScale, mapTargetScale, 1);
-
-        Vector3 v = GetCenterPos(_posArr);
-
-        battleManager.battleContainer.localScale = new Vector3(battleManager.defaultScale, battleManager.defaultScale, 1);
-
         Action<float> dele = delegate (float _v)
         {
             float mapScale = battleManager.defaultScale + (mapTargetScale - battleManager.defaultScale) * _v;
 
-            battleManager.battleContainer.localScale = new Vector3(mapScale, mapScale, 1);
+            battleManager.SetBattleContainerScale(mapScale, Vector2.zero);
 
             float unitScale = 1 + (unitTargetScale - 1) * _v;
-
-            Vector2 pos = Vector2.Lerp(Vector2.zero, v, _v);
-
-            battleManager.mainCamera.transform.position = new Vector3(pos.x, pos.y, battleManager.mainCamera.transform.position.z);
 
             IEnumerator<MapUnit> enumerator = battleManager.mapUnitDic.Values.GetEnumerator();
 
@@ -752,21 +794,13 @@ public class BattleControl : MonoBehaviour
 
     public void AttackOver(int _index, params int[] _posArr)
     {
-        battleManager.battleContainer.localScale = new Vector3(mapTargetScale, mapTargetScale, 1);
-
-        Vector2 v = battleManager.mainCamera.transform.position;
-
         Action<float> dele = delegate (float _v)
         {
             float mapScale = battleManager.defaultScale + (mapTargetScale - battleManager.defaultScale) * _v;
 
-            battleManager.battleContainer.localScale = new Vector3(mapScale, mapScale, 1);
+            battleManager.SetBattleContainerScale(mapScale, Vector2.zero);
 
             float unitScale = 1 + (unitTargetScale - 1) * _v;
-
-            Vector2 pos = Vector2.Lerp(Vector2.zero, v, _v);
-
-            battleManager.mainCamera.transform.position = new Vector3(pos.x, pos.y, battleManager.mainCamera.transform.position.z);
 
             IEnumerator<MapUnit> enumerator = battleManager.mapUnitDic.Values.GetEnumerator();
 
@@ -824,57 +858,47 @@ public class BattleControl : MonoBehaviour
 
     private void MoveCamera(int _index, params int[] _posArr)
     {
-        Vector3 nowPos = battleManager.battleContainer.position;
+        Vector2 nowPos = battleManager.battleContainer.position;
 
-        Vector3 v = GetCenterPos(_posArr);
-
-        float dis = v.magnitude;
+        Vector2 v = GetCenterPos(_posArr);
 
         Vector2 targetPos = nowPos - v;
 
+        float dis = v.magnitude;
+
         Action<float> dele = delegate (float _v)
         {
-            Vector2 pos = Vector2.Lerp(nowPos, targetPos, _v);
+            float value = cameraMoveCurve.Evaluate(_v);
+
+            Vector2 pos = Vector2.Lerp(nowPos, targetPos, value);
 
             battleManager.battleContainer.position = new Vector3(pos.x, pos.y, battleManager.battleContainer.position.z);
         };
 
-        SuperSequenceControl.To(0, 1, dis * 0.2f, dele, _index);
+        SuperSequenceControl.To(0, 1, dis * cameraMoveSpeedFix, dele, _index);
     }
 
-    public void MoveCameraA(params int[] _posArr)
+    public IEnumerator ResetCamera(int _index, int _lastIndex)
     {
-        Vector3 nowPos = battleManager.battleContainer.position;
+        Vector2 nowPos = battleManager.battleContainer.position;
 
-        Vector3 v = GetCenterPos(_posArr);
+        Vector2 targetPos = battleManager.viewport.center;
 
-        float dis = v.magnitude;
-
-        Vector2 targetPos = nowPos - v;
+        float dis = Vector2.Distance(nowPos, targetPos);
 
         Action<float> dele = delegate (float _v)
         {
-            Vector2 pos = Vector2.Lerp(nowPos, targetPos, _v);
+            float value = cameraMoveCurve.Evaluate(_v);
+
+            Vector2 pos = Vector2.Lerp(nowPos, targetPos, value);
 
             battleManager.battleContainer.position = new Vector3(pos.x, pos.y, battleManager.battleContainer.position.z);
         };
 
-        superTween.SuperTween.Instance.To(0, 1, dis * 0.2f, dele, AAAA);
-    }
+        SuperSequenceControl.To(0, 1, dis * cameraMoveSpeedFix, dele, _index);
 
-    private void AAAA()
-    {
-        float nowScale = battleManager.battleContainer.localScale.x;
+        yield return null;
 
-        float targetScale = mapTargetScale;
-
-        Action<float> dele = delegate (float _v)
-        {
-            float scale = nowScale + (targetScale - nowScale) * _v;
-
-            battleManager.SetBattleContainerScale(scale, Vector2.zero);
-        };
-
-        superTween.SuperTween.Instance.To(0, 1, 1f, dele, null);
+        SuperSequenceControl.MoveNext(_lastIndex);
     }
 }

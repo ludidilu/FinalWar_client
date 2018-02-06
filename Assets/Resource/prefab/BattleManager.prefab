@@ -624,6 +624,9 @@ MonoBehaviour:
   eventGo: {fileID: 0}
   cardList: []
   oppCardList: []
+  viewport:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
   defaultScale: 0
   auraDescFix: 
   shootDescFix: 
@@ -2241,6 +2244,25 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  cameraMoveCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 3.0979137
+      outSlope: 3.0979137
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  cameraMoveSpeedFix: 0.5
   hudHeight: 0.6
   mat: {fileID: 2100000, guid: 421c1aacc2f1d4b4e81355d8896c81f5, type: 2}
   matGray: {fileID: 2100000, guid: a39a31683b692cb4fa247d3f2022e450, type: 2}
