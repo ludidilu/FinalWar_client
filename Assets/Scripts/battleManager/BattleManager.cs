@@ -40,6 +40,8 @@ public class BattleManager : MonoBehaviour
 
     public const string BATTLE_ACTION = "battleAction";
 
+    private static readonly float sqrt3 = Mathf.Sqrt(3);
+
     [SerializeField]
     private BattleControl battleControl;
 
@@ -51,14 +53,6 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField]
     private float mapUnitScale = 55;
-
-    private static readonly float sqrt3 = Mathf.Sqrt(3);
-
-    [SerializeField]
-    private float minScale = 0.7f;
-
-    [SerializeField]
-    private float maxScale = 1.4f;
 
     [SerializeField]
     private float fixStep = 1.05f;
@@ -101,6 +95,12 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField]
     private Transform battleContentContainer;
+
+    [SerializeField]
+    private RectTransform uiContainer;
+
+    [SerializeField]
+    private Vector2 uiContainerFix;
 
     [SerializeField]
     private RectTransform myCardContainer;
@@ -166,9 +166,6 @@ public class BattleManager : MonoBehaviour
     private CanvasGroup alphaCg;
 
     [SerializeField]
-    private CanvasGroup clickCg;
-
-    [SerializeField]
     private int auraDescID;
 
     [SerializeField]
@@ -189,6 +186,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private float maxMapScale;
 
+    [HideInInspector]
     public GameObject eventGo;
 
     public Battle_client battle = new Battle_client();
@@ -197,8 +195,10 @@ public class BattleManager : MonoBehaviour
 
     public Dictionary<int, HeroBattle> heroDic = new Dictionary<int, HeroBattle>();
 
+    [HideInInspector]
     public List<HeroCard> cardList = new List<HeroCard>();
 
+    [HideInInspector]
     public List<GameObject> oppCardList = new List<GameObject>();
 
     private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
@@ -213,6 +213,7 @@ public class BattleManager : MonoBehaviour
 
     private Bounds viewport;
 
+    [HideInInspector]
     public float defaultScale;
 
     private enum DownType
@@ -290,10 +291,13 @@ public class BattleManager : MonoBehaviour
 
     private int heroUid;
 
+    [HideInInspector]
     public string auraDescFix;
 
+    [HideInInspector]
     public string shootDescFix;
 
+    [HideInInspector]
     public string supportDescFix;
 
     public int GetHeroUid()
@@ -756,7 +760,7 @@ public class BattleManager : MonoBehaviour
 
             float fixX = (myCardContainer.rect.width - cardWidth * (mHandCards.Count - battle.GetSummonNum())) * 0.5f;
 
-            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * myCardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, -0.5f * myCardContainer.rect.height + cardHeight * 0.5f);
+            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * myCardContainer.rect.width + cardWidth * 0.5f + index * cardWidth, 0);
 
             index++;
         }
@@ -774,7 +778,7 @@ public class BattleManager : MonoBehaviour
 
             float fixX = (oppCardContainer.rect.width - cardWidth * oHandCards.Count) * 0.5f;
 
-            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * oppCardContainer.rect.width + cardWidth * 0.5f + i * cardWidth, 0.5f * oppCardContainer.rect.height);
+            (go.transform as RectTransform).anchoredPosition = new Vector2(fixX - 0.5f * oppCardContainer.rect.width + cardWidth * 0.5f + i * cardWidth, 0);
         }
 
         mCardsNumTf.text = mCards.Count.ToString();
@@ -1382,9 +1386,9 @@ public class BattleManager : MonoBehaviour
     {
         if (canAction && !_canAction)
         {
-            SuperRaycast.SetIsOpen(false, "a");
+            //SuperRaycast.SetIsOpen(false, "a");
 
-            clickCg.blocksRaycasts = false;
+            //clickCg.blocksRaycasts = false;
 
             actionBt.SetActive(false);
 
@@ -1393,9 +1397,9 @@ public class BattleManager : MonoBehaviour
         }
         else if (!canAction && _canAction)
         {
-            SuperRaycast.SetIsOpen(true, "a");
+            //SuperRaycast.SetIsOpen(true, "a");
 
-            clickCg.blocksRaycasts = true;
+            //clickCg.blocksRaycasts = true;
 
             actionBt.SetActive(true);
 
@@ -1414,7 +1418,9 @@ public class BattleManager : MonoBehaviour
             _callBack();
         };
 
-        SuperTween.Instance.To(0, 1, 0.5f, SetUiAlpha, dele);
+        alphaCg.alpha = 1;
+
+        SuperTween.Instance.To(1, 0, 0.5f, SetUiContainerSize, dele);
     }
 
     private void HideUi(Action _callBack)
@@ -1423,12 +1429,17 @@ public class BattleManager : MonoBehaviour
 
         SuperGraphicRaycast.SetIsOpen(false, "ui");
 
-        SuperTween.Instance.To(1, 0, 0.5f, SetUiAlpha, _callBack);
+        Action dele = delegate ()
+        {
+            alphaCg.alpha = 0;
+        };
+
+        SuperTween.Instance.To(0, 1, 0.5f, SetUiContainerSize, _callBack);
     }
 
-    private void SetUiAlpha(float _v)
+    private void SetUiContainerSize(float _v)
     {
-        alphaCg.alpha = _v;
+        uiContainer.sizeDelta = Vector2.Lerp(Vector2.zero, uiContainerFix, _v);
     }
 
     private void DoAction(SuperEnumerator<ValueType> _step)
