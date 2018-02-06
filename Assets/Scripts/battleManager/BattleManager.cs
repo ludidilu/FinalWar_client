@@ -315,7 +315,7 @@ public class BattleManager : MonoBehaviour
 
         viewport.center = new Vector3(viewportXFix, viewportYFix, 0);
 
-        viewport.extents = new Vector3(viewport.extents.x - viewportXFix, viewport.extents.y - viewportYFix, viewport.extents.z);
+        viewport.extents = new Vector3(viewport.extents.x, viewport.extents.y, viewport.extents.z);
 
         SuperFunction.Instance.AddEventListener<int>(ClickText.eventGo, ClickText.EVENT_NAME, ClickDesc);
 
@@ -419,7 +419,7 @@ public class BattleManager : MonoBehaviour
 
         descPanel.Close();
 
-        ClearMapUnits();
+        //ClearMapUnits();
 
         ClearCards();
 
@@ -429,7 +429,7 @@ public class BattleManager : MonoBehaviour
 
         ClearMoves();
 
-        CreateMapUnits();
+        //CreateMapUnits();
 
         CreateCards();
 
