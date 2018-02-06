@@ -1651,12 +1651,6 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        Vector3 v = mainCamera.ScreenToWorldPoint(_pos);
-
-        Vector3 v2 = battleContainer.InverseTransformPoint(v);
-
-        battleContainer.localPosition = new Vector3(battleContainer.localPosition.x + v2.x, battleContainer.localPosition.y + v2.y, battleContainer.localPosition.z);
-
         float scale;
 
         if (_scrollValue > 1)
@@ -1670,13 +1664,24 @@ public class BattleManager : MonoBehaviour
 
         scale = Mathf.Clamp(scale, minMapScale, maxMapScale);
 
-        battleContainer.localScale = new Vector3(scale, scale, 1);
+        Vector3 v = mainCamera.ScreenToWorldPoint(_pos);
+
+        SetBattleContainerScale(scale, v);
+
+        FixBounds();
+    }
+
+    public void SetBattleContainerScale(float _scale, Vector2 _worldPos)
+    {
+        Vector3 v2 = battleContainer.InverseTransformPoint(_worldPos);
+
+        battleContainer.localPosition = new Vector3(battleContainer.localPosition.x + v2.x, battleContainer.localPosition.y + v2.y, battleContainer.localPosition.z);
+
+        battleContainer.localScale = new Vector3(_scale, _scale, 1);
 
         Vector3 v3 = battleContainer.TransformPoint(v2);
 
-        battleContainer.localPosition = new Vector3(battleContainer.localPosition.x - v3.x + v.x, battleContainer.localPosition.y - v3.y + v.y, battleContainer.localPosition.z);
-
-        FixBounds();
+        battleContainer.localPosition = new Vector3(battleContainer.localPosition.x - v3.x + _worldPos.x, battleContainer.localPosition.y - v3.y + _worldPos.y, battleContainer.localPosition.z);
     }
 
     private void FixBounds()
