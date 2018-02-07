@@ -189,6 +189,12 @@ public class BattleManager : MonoBehaviour
     [HideInInspector]
     public GameObject eventGo;
 
+    [SerializeField]
+    private float mapDragFix;
+
+    [SerializeField]
+    private float mapDragRevertFix;
+
     public Battle_client battle = new Battle_client();
 
     public Dictionary<int, MapUnit> mapUnitDic = new Dictionary<int, MapUnit>();
@@ -288,6 +294,8 @@ public class BattleManager : MonoBehaviour
     private bool isInit = false;
 
     private Vector2 stepV;
+
+    private bool isUiShow = true;
 
     private int heroUid;
 
@@ -1328,6 +1336,11 @@ public class BattleManager : MonoBehaviour
             GetMouseUp();
         }
 
+        if (isUiShow && !hasMove)
+        {
+            ResetBattleContainer();
+        }
+
         if (Input.GetKeyUp(KeyCode.F5))
         {
             RequestRefreshData();
@@ -1381,7 +1394,6 @@ public class BattleManager : MonoBehaviour
             actionBt.SetActive(false);
 
             canAction = _canAction;
-
         }
         else if (!canAction && _canAction)
         {
@@ -1403,6 +1415,8 @@ public class BattleManager : MonoBehaviour
 
             SuperGraphicRaycast.SetIsOpen(true, "ui");
 
+            isUiShow = true;
+
             _callBack();
         };
 
@@ -1413,6 +1427,8 @@ public class BattleManager : MonoBehaviour
 
     private void HideUi(Action _callBack)
     {
+        isUiShow = false;
+
         SuperRaycast.SetIsOpen(false, "ui");
 
         SuperGraphicRaycast.SetIsOpen(false, "ui");
@@ -1767,14 +1783,149 @@ public class BattleManager : MonoBehaviour
 
         if (!isDoingHeroAction && hasMove)
         {
-            Vector3 v2 = new Vector2(nowPos.x - lastPos.x, nowPos.y - lastPos.y);
-
-            battleContainer.localPosition = new Vector3(battleContainer.localPosition.x + v2.x, battleContainer.localPosition.y + v2.y, battleContainer.localPosition.z);
-
-            FixBounds();
+            MoveBattleContainer(lastPos, nowPos);
         }
 
         lastPos = nowPos;
+    }
+
+    private void MoveBattleContainer(Vector2 _lastPos, Vector2 _nowPos)
+    {
+        Bounds tmpBounds = bounds;
+
+        tmpBounds.Expand(boundFix);
+
+        tmpBounds.extents = new Vector3(tmpBounds.extents.x * battleContainer.transform.localScale.x, tmpBounds.extents.y * battleContainer.transform.localScale.y, tmpBounds.extents.z * battleContainer.transform.localScale.z);
+
+        float scale = 1;
+
+        if (tmpBounds.extents.x < viewport.extents.x)
+        {
+            if (battleContainer.transform.position.x < viewport.center.x == _nowPos.x < _lastPos.x)
+            {
+                float dis = Mathf.Abs(battleContainer.transform.position.x - viewport.center.x);
+
+                scale = Get(dis);
+            }
+        }
+        else if (battleContainer.localPosition.x - tmpBounds.extents.x > viewport.min.x)
+        {
+            if (_nowPos.x > _lastPos.x)
+            {
+                float dis = battleContainer.localPosition.x - tmpBounds.extents.x - viewport.min.x;
+
+                scale = Get(dis);
+            }
+        }
+        else if (battleContainer.localPosition.x + tmpBounds.extents.x < viewport.max.x)
+        {
+            if (_nowPos.x < _lastPos.x)
+            {
+                float dis = viewport.max.x - battleContainer.localPosition.x - tmpBounds.extents.x;
+
+                scale = Get(dis);
+            }
+        }
+
+        battleContainer.localPosition = new Vector3(battleContainer.localPosition.x + scale * (_nowPos.x - _lastPos.x), battleContainer.localPosition.y, battleContainer.localPosition.z);
+
+        scale = 1;
+
+        if (tmpBounds.extents.y < viewport.extents.y)
+        {
+            if (battleContainer.transform.position.y < viewport.center.y == _nowPos.y < _lastPos.y)
+            {
+                float dis = Mathf.Abs(battleContainer.transform.position.y - viewport.center.y);
+
+                scale = Get(dis);
+            }
+        }
+        else if (battleContainer.localPosition.y - tmpBounds.extents.y > viewport.min.y)
+        {
+            if (_nowPos.y > _lastPos.y)
+            {
+                float dis = battleContainer.localPosition.y - tmpBounds.extents.y - viewport.min.y;
+
+                scale = Get(dis);
+            }
+        }
+        else if (battleContainer.localPosition.y + tmpBounds.extents.y < viewport.max.y)
+        {
+            if (_nowPos.y < _lastPos.y)
+            {
+                float dis = viewport.max.y - battleContainer.localPosition.y - tmpBounds.extents.y;
+
+                scale = Get(dis);
+            }
+        }
+
+        battleContainer.localPosition = new Vector3(battleContainer.localPosition.x, battleContainer.localPosition.y + scale * (_nowPos.y - _lastPos.y), battleContainer.localPosition.z);
+    }
+
+    private void ResetBattleContainer()
+    {
+        Bounds tmpBounds = bounds;
+
+        tmpBounds.Expand(boundFix);
+
+        tmpBounds.extents = new Vector3(tmpBounds.extents.x * battleContainer.transform.localScale.x, tmpBounds.extents.y * battleContainer.transform.localScale.y, tmpBounds.extents.z * battleContainer.transform.localScale.z);
+
+        if (tmpBounds.extents.x < viewport.extents.x)
+        {
+            if (battleContainer.transform.position.x != viewport.center.x)
+            {
+                battleContainer.transform.position = new Vector3(FloatLerp(battleContainer.transform.position.x, viewport.center.x, mapDragRevertFix), battleContainer.transform.position.y, battleContainer.transform.position.z);
+            }
+        }
+        else if (battleContainer.localPosition.x - tmpBounds.extents.x > viewport.min.x)
+        {
+            float dis = battleContainer.localPosition.x - tmpBounds.extents.x - viewport.min.x;
+
+            battleContainer.transform.position = new Vector3(battleContainer.transform.position.x - dis * mapDragRevertFix, battleContainer.transform.position.y, battleContainer.transform.position.z);
+        }
+        else if (battleContainer.localPosition.x + tmpBounds.extents.x < viewport.max.x)
+        {
+            float dis = viewport.max.x - battleContainer.localPosition.x - tmpBounds.extents.x;
+
+            battleContainer.transform.position = new Vector3(battleContainer.transform.position.x + dis * mapDragRevertFix, battleContainer.transform.position.y, battleContainer.transform.position.z);
+        }
+
+        if (tmpBounds.extents.y < viewport.extents.y)
+        {
+            if (battleContainer.transform.position.y != viewport.center.y)
+            {
+                battleContainer.transform.position = new Vector3(battleContainer.transform.position.x, FloatLerp(battleContainer.transform.position.y, viewport.center.y, mapDragRevertFix), battleContainer.transform.position.z);
+            }
+        }
+        else if (battleContainer.localPosition.y - tmpBounds.extents.y > viewport.min.y)
+        {
+            float dis = battleContainer.localPosition.y - tmpBounds.extents.y - viewport.min.y;
+
+            battleContainer.transform.position = new Vector3(battleContainer.transform.position.x, battleContainer.transform.position.y - dis * mapDragRevertFix, battleContainer.transform.position.z);
+        }
+        else if (battleContainer.localPosition.y + tmpBounds.extents.y < viewport.max.y)
+        {
+            float dis = viewport.max.y - battleContainer.localPosition.y - tmpBounds.extents.y;
+
+            battleContainer.transform.position = new Vector3(battleContainer.transform.position.x, battleContainer.transform.position.y + dis * mapDragRevertFix, battleContainer.transform.position.z);
+        }
+    }
+
+    private float FloatLerp(float _a, float _b, float _v)
+    {
+        return _a + (_b - _a) * _v;
+    }
+
+    private float Get(float _v)
+    {
+        float result = 1 - _v / mapDragFix;
+
+        if (result < 0)
+        {
+            result = 0;
+        }
+
+        return result;
     }
 
     public void GetMouseUp()

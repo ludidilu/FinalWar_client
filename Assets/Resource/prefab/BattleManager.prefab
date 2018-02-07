@@ -622,6 +622,8 @@ MonoBehaviour:
   minMapScale: 0.4
   maxMapScale: 1
   eventGo: {fileID: 0}
+  mapDragFix: 0.5
+  mapDragRevertFix: 0.1
   cardList: []
   oppCardList: []
   viewport:
