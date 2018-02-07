@@ -1445,6 +1445,8 @@ public class BattleManager : MonoBehaviour
 
             SuperGraphicRaycast.SetIsOpen(true, "ui");
 
+            alphaCg.blocksRaycasts = true;
+
             isUiShow = true;
 
             _callBack();
@@ -1463,12 +1465,16 @@ public class BattleManager : MonoBehaviour
 
         SuperGraphicRaycast.SetIsOpen(false, "ui");
 
+        alphaCg.blocksRaycasts = false;
+
         Action dele = delegate ()
         {
             alphaCg.alpha = 0;
+
+            _callBack();
         };
 
-        SuperTween.Instance.To(0, 1, 0.5f, SetUiContainerSize, _callBack);
+        SuperTween.Instance.To(0, 1, 0.5f, SetUiContainerSize, dele);
     }
 
     private void SetUiContainerSize(float _v)
