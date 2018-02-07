@@ -1087,11 +1087,14 @@ public class BattleManager : MonoBehaviour
 
             if (targetPos == _mapUnit.index)
             {
-                HeroUnaction(GetNowChooseHero().pos);
+                bool b = HeroUnaction(GetNowChooseHero().pos);
 
-                ClearMoves();
+                if (b)
+                {
+                    ClearMoves();
 
-                CreateMoves();
+                    CreateMoves();
+                }
             }
         }
     }
@@ -1117,19 +1120,22 @@ public class BattleManager : MonoBehaviour
             {
                 if (GetNowChooseHero() == summonHero)
                 {
-                    ClearNowChooseHero();
+                    bool b = UnsummonHero(summonHero.cardUid);
 
-                    UnsummonHero(summonHero.cardUid);
+                    if (b)
+                    {
+                        ClearNowChooseHero();
 
-                    CreateMoneyTf();
+                        CreateMoneyTf();
 
-                    ClearCards();
+                        ClearCards();
 
-                    CreateCards();
+                        CreateCards();
 
-                    ClearSummonHeros();
+                        ClearSummonHeros();
 
-                    CreateSummonHeros();
+                        CreateSummonHeros();
+                    }
                 }
                 else
                 {
@@ -1235,6 +1241,11 @@ public class BattleManager : MonoBehaviour
 
     private bool HeroAction(int _pos, int _target)
     {
+        if (!canAction)
+        {
+            return false;
+        }
+
         bool b = battle.ClientRequestAction(_pos, _target);
 
         if (b)
@@ -1245,15 +1256,27 @@ public class BattleManager : MonoBehaviour
         return b;
     }
 
-    private void HeroUnaction(int _pos)
+    private bool HeroUnaction(int _pos)
     {
+        if (!canAction)
+        {
+            return false;
+        }
+
         SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_HERO_UNACTION);
 
         battle.ClientRequestUnaction(_pos);
+
+        return true;
     }
 
     private bool SummonHero(int _cardUid, int _pos)
     {
+        if (!canAction)
+        {
+            return false;
+        }
+
         bool b = battle.ClientRequestSummon(_cardUid, _pos);
 
         if (b)
@@ -1264,11 +1287,18 @@ public class BattleManager : MonoBehaviour
         return b;
     }
 
-    private void UnsummonHero(int _cardUid)
+    private bool UnsummonHero(int _cardUid)
     {
+        if (!canAction)
+        {
+            return false;
+        }
+
         SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_HERO_UNSUMMON);
 
         battle.ClientRequestUnsummon(_cardUid);
+
+        return true;
     }
 
     public HeroBattle AddHeroToMap(Hero _hero)
@@ -1805,7 +1835,7 @@ public class BattleManager : MonoBehaviour
             {
                 float dis = Mathf.Abs(battleContainer.transform.position.x - viewport.center.x);
 
-                scale = Get(dis);
+                scale = GetBattleContainerDragScale(dis);
             }
         }
         else if (battleContainer.localPosition.x - tmpBounds.extents.x > viewport.min.x)
@@ -1814,7 +1844,7 @@ public class BattleManager : MonoBehaviour
             {
                 float dis = battleContainer.localPosition.x - tmpBounds.extents.x - viewport.min.x;
 
-                scale = Get(dis);
+                scale = GetBattleContainerDragScale(dis);
             }
         }
         else if (battleContainer.localPosition.x + tmpBounds.extents.x < viewport.max.x)
@@ -1823,7 +1853,7 @@ public class BattleManager : MonoBehaviour
             {
                 float dis = viewport.max.x - battleContainer.localPosition.x - tmpBounds.extents.x;
 
-                scale = Get(dis);
+                scale = GetBattleContainerDragScale(dis);
             }
         }
 
@@ -1837,7 +1867,7 @@ public class BattleManager : MonoBehaviour
             {
                 float dis = Mathf.Abs(battleContainer.transform.position.y - viewport.center.y);
 
-                scale = Get(dis);
+                scale = GetBattleContainerDragScale(dis);
             }
         }
         else if (battleContainer.localPosition.y - tmpBounds.extents.y > viewport.min.y)
@@ -1846,7 +1876,7 @@ public class BattleManager : MonoBehaviour
             {
                 float dis = battleContainer.localPosition.y - tmpBounds.extents.y - viewport.min.y;
 
-                scale = Get(dis);
+                scale = GetBattleContainerDragScale(dis);
             }
         }
         else if (battleContainer.localPosition.y + tmpBounds.extents.y < viewport.max.y)
@@ -1855,7 +1885,7 @@ public class BattleManager : MonoBehaviour
             {
                 float dis = viewport.max.y - battleContainer.localPosition.y - tmpBounds.extents.y;
 
-                scale = Get(dis);
+                scale = GetBattleContainerDragScale(dis);
             }
         }
 
@@ -1916,7 +1946,7 @@ public class BattleManager : MonoBehaviour
         return _a + (_b - _a) * _v;
     }
 
-    private float Get(float _v)
+    private float GetBattleContainerDragScale(float _v)
     {
         float result = 1 - _v / mapDragFix;
 
@@ -1994,6 +2024,11 @@ public class BattleManager : MonoBehaviour
 
     public void ClickHeroBattleShowMapUnitIcon(HeroBattle _hero)
     {
+        if (!canAction)
+        {
+            return;
+        }
+
         ClearMapUnitIcon();
 
         if (_hero.isHero && _hero.canAction)
@@ -2053,6 +2088,11 @@ public class BattleManager : MonoBehaviour
 
     public void ClickHeroCardShowMapUnitIcon(HeroCard _hero)
     {
+        if (!canAction)
+        {
+            return;
+        }
+
         ClearMapUnitIcon();
 
         if (_hero.sds.cost <= battle.GetNowMoney(battle.clientIsMine))

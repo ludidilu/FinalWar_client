@@ -251,7 +251,7 @@ public class HeroBattle : HeroBase
 
             bg.color = new Color(1, 1, 1, bg.color.a);
 
-            frame.color = isMine ? new Color(myFrameColor.r, myFrameColor.g, myFrameColor.b, frame.color.a) : new Color(oppFrameColor.r, oppFrameColor.g, oppFrameColor.b, frame.color.a);
+            frame.color = isMine == battleManager.battle.clientIsMine ? new Color(myFrameColor.r, myFrameColor.g, myFrameColor.b, frame.color.a) : new Color(oppFrameColor.r, oppFrameColor.g, oppFrameColor.b, frame.color.a);
 
             heroType.color = new Color(1, 1, 1, heroType.color.a);
 
@@ -283,7 +283,7 @@ public class HeroBattle : HeroBase
 
             bg.color = new Color(colorFix, colorFix, colorFix, bg.color.a);
 
-            frame.color = isMine ? new Color(myFrameColor.r * colorFix, myFrameColor.g * colorFix, myFrameColor.b * colorFix, frame.color.a) : new Color(oppFrameColor.r * colorFix, oppFrameColor.g * colorFix, oppFrameColor.b * colorFix, frame.color.a);
+            frame.color = isMine == battleManager.battle.clientIsMine ? new Color(myFrameColor.r * colorFix, myFrameColor.g * colorFix, myFrameColor.b * colorFix, frame.color.a) : new Color(oppFrameColor.r * colorFix, oppFrameColor.g * colorFix, oppFrameColor.b * colorFix, frame.color.a);
 
             heroType.color = new Color(colorFix, colorFix, colorFix, heroType.color.a);
 

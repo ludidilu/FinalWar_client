@@ -748,6 +748,8 @@ public class BattleControl : MonoBehaviour
     {
         Action<float> dele = delegate (float _v)
         {
+            _v = cameraMoveCurve.Evaluate(_v);
+
             float mapScale = battleManager.defaultScale + (mapTargetScale - battleManager.defaultScale) * _v;
 
             battleManager.SetBattleContainerScale(mapScale, Vector2.zero);
@@ -789,13 +791,15 @@ public class BattleControl : MonoBehaviour
             battleManager.bg.color = new Color(c, c, c, 1);
         };
 
-        SuperSequenceControl.To(0, 1, 0.5f, dele, _index);
+        SuperSequenceControl.To(0, 1, 1f, dele, _index);
     }
 
     public void AttackOver(int _index, params int[] _posArr)
     {
         Action<float> dele = delegate (float _v)
         {
+            _v = 1 - cameraMoveCurve.Evaluate(_v);
+
             float mapScale = battleManager.defaultScale + (mapTargetScale - battleManager.defaultScale) * _v;
 
             battleManager.SetBattleContainerScale(mapScale, Vector2.zero);
@@ -837,7 +841,7 @@ public class BattleControl : MonoBehaviour
             battleManager.bg.color = new Color(c, c, c, 1);
         };
 
-        SuperSequenceControl.To(1, 0, 0.5f, dele, _index);
+        SuperSequenceControl.To(0, 1, 1f, dele, _index);
     }
 
     private Vector2 GetCenterPos(params int[] _posArr)
@@ -868,9 +872,9 @@ public class BattleControl : MonoBehaviour
 
         Action<float> dele = delegate (float _v)
         {
-            float value = cameraMoveCurve.Evaluate(_v);
+            _v = cameraMoveCurve.Evaluate(_v);
 
-            Vector2 pos = Vector2.Lerp(nowPos, targetPos, value);
+            Vector2 pos = Vector2.Lerp(nowPos, targetPos, _v);
 
             battleManager.battleContainer.position = new Vector3(pos.x, pos.y, battleManager.battleContainer.position.z);
         };
@@ -888,9 +892,9 @@ public class BattleControl : MonoBehaviour
 
         Action<float> dele = delegate (float _v)
         {
-            float value = cameraMoveCurve.Evaluate(_v);
+            _v = cameraMoveCurve.Evaluate(_v);
 
-            Vector2 pos = Vector2.Lerp(nowPos, targetPos, value);
+            Vector2 pos = Vector2.Lerp(nowPos, targetPos, _v);
 
             battleManager.battleContainer.position = new Vector3(pos.x, pos.y, battleManager.battleContainer.position.z);
         };
