@@ -67,7 +67,7 @@ public class BattleManager : MonoBehaviour
     private float boundFix;
 
     [SerializeField]
-    public Camera mainCamera;
+    private Camera mainCamera;
 
     [SerializeField]
     private Canvas canvas;
@@ -211,7 +211,7 @@ public class BattleManager : MonoBehaviour
 
     private Bounds bounds;
 
-    private Bounds viewport;
+    public Bounds viewport;
 
     [HideInInspector]
     public float defaultScale;
@@ -315,7 +315,7 @@ public class BattleManager : MonoBehaviour
 
         viewport.center = new Vector3(viewportXFix, viewportYFix, 0);
 
-        viewport.extents = new Vector3(viewport.extents.x - viewportXFix, viewport.extents.y - viewportYFix, viewport.extents.z);
+        viewport.extents = new Vector3(viewport.extents.x, viewport.extents.y, viewport.extents.z);
 
         SuperFunction.Instance.AddEventListener<int>(ClickText.eventGo, ClickText.EVENT_NAME, ClickDesc);
 
@@ -419,7 +419,7 @@ public class BattleManager : MonoBehaviour
 
         descPanel.Close();
 
-        ClearMapUnits();
+        //ClearMapUnits();
 
         ClearCards();
 
@@ -429,7 +429,7 @@ public class BattleManager : MonoBehaviour
 
         ClearMoves();
 
-        CreateMapUnits();
+        //CreateMapUnits();
 
         CreateCards();
 
@@ -1338,7 +1338,6 @@ public class BattleManager : MonoBehaviour
         }
         else if (Input.GetKeyUp(KeyCode.T))
         {
-            battleControl.MoveCameraA(53, 61);
         }
     }
 
@@ -1550,6 +1549,10 @@ public class BattleManager : MonoBehaviour
                 DoScoreChange((BattleScoreChangeVO)vo);
             }
         }
+
+        SuperSequenceControl.Start(battleControl.ResetCamera, _index);
+
+        yield return null;
 
         RefreshData();
 
