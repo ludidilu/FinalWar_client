@@ -73,22 +73,22 @@ public class BattleManager : MonoBehaviour
     private Canvas canvas;
 
     [SerializeField]
-    private Color myMapUnitColor;
+    public Color myMapUnitColor;
 
     [SerializeField]
-    private Color myBaseColor;
+    public Color myBaseColor;
 
     [SerializeField]
-    private Color oppMapUnitColor;
+    public Color oppMapUnitColor;
 
     [SerializeField]
-    private Color oppBaseColor;
+    public Color oppBaseColor;
 
     [SerializeField]
-    private Color riverColor;
+    public Color riverColor;
 
     [SerializeField]
-    private Color hillColor;
+    public Color hillColor;
 
     [SerializeField]
     public Transform battleContainer;

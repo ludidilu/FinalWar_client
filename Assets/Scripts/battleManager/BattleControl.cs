@@ -766,7 +766,7 @@ public class BattleControl : MonoBehaviour
                 {
                     Color color = unit.GetMainColor();
 
-                    unit.SetMainColor(new Color(color.r, color.g, color.b, 1 - _v));
+                    unit.SetMainColor(new Color(color.r, color.g, color.b, (1 - _v) * battleManager.myMapUnitColor.a));
                 }
 
                 unit.transform.localScale = new Vector3(unitScale, unitScale, 1);
@@ -788,7 +788,7 @@ public class BattleControl : MonoBehaviour
 
             float c = bgAlpha + (1 - bgAlpha) * (1 - _v);
 
-            battleManager.bg.color = new Color(c, c, c, 1);
+            battleManager.bg.color = new Color(c, c, c, battleManager.bg.color.a);
         };
 
         SuperSequenceControl.To(0, 1, 1f, dele, _index);
@@ -816,7 +816,7 @@ public class BattleControl : MonoBehaviour
                 {
                     Color color = unit.GetMainColor();
 
-                    unit.SetMainColor(new Color(color.r, color.g, color.b, 1 - _v));
+                    unit.SetMainColor(new Color(color.r, color.g, color.b, (1 - _v) * battleManager.myMapUnitColor.a));
                 }
 
                 unit.transform.localScale = new Vector3(unitScale, unitScale, 1);
@@ -838,7 +838,7 @@ public class BattleControl : MonoBehaviour
 
             float c = bgAlpha + (1 - bgAlpha) * (1 - _v);
 
-            battleManager.bg.color = new Color(c, c, c, 1);
+            battleManager.bg.color = new Color(c, c, c, battleManager.bg.color.a);
         };
 
         SuperSequenceControl.To(0, 1, 1f, dele, _index);
