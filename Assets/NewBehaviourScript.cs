@@ -28,6 +28,24 @@ public class NewBehaviourScript : MonoBehaviour
 
     public Dropdown auraTarget;
 
+    public AuraConditionComponent targetCondition;
+
+    public InputField targetNum;
+
+    public InputField castSkillEffect;
+
+    public Toggle auraBool;
+
+    public Dropdown auraIntDropdown;
+
+    public InputField auraIntInputField;
+
+    public Toggle removeWhenRoundOver;
+
+    public Toggle removeWhenDoDamage;
+
+    public Toggle removeWhenBeDamaged;
+
     private readonly AuraTarget[] triggerTargetArr = new AuraTarget[]
     {
         AuraTarget.OWNER,
@@ -91,6 +109,18 @@ public class NewBehaviourScript : MonoBehaviour
 
 
 
+        list = new List<Dropdown.OptionData>();
+
+        strArr = Enum.GetNames(typeof(Hero.HeroData));
+
+        for (int i = 0; i < strArr.Length; i++)
+        {
+            list.Add(new Dropdown.OptionData(strArr[i]));
+        }
+
+        auraIntDropdown.AddOptions(list);
+
+
 
     }
 
@@ -107,6 +137,39 @@ public class NewBehaviourScript : MonoBehaviour
             auraTarget.gameObject.SetActive(auraData.auraType == AuraType.CAST_SKILL);
 
             condition.RefreshAuraCompare();
+
+            RefreshTargetDropdown();
+
+            if (auraData.auraType == AuraType.CAST_SKILL)
+            {
+                castSkillEffect.gameObject.SetActive(true);
+
+                auraBool.gameObject.SetActive(false);
+
+                auraIntDropdown.gameObject.SetActive(false);
+
+                auraIntInputField.gameObject.SetActive(false);
+            }
+            else if (auraData.auraType == AuraType.FIX_BOOL)
+            {
+                castSkillEffect.gameObject.SetActive(false);
+
+                auraBool.gameObject.SetActive(true);
+
+                auraIntDropdown.gameObject.SetActive(false);
+
+                auraIntInputField.gameObject.SetActive(false);
+            }
+            else
+            {
+                castSkillEffect.gameObject.SetActive(false);
+
+                auraBool.gameObject.SetActive(false);
+
+                auraIntDropdown.gameObject.SetActive(true);
+
+                auraIntInputField.gameObject.SetActive(true);
+            }
         }
         else
         {
@@ -116,6 +179,36 @@ public class NewBehaviourScript : MonoBehaviour
 
     public void TargetDropdownValueChange(int _index)
     {
+        RefreshTargetDropdown();
+    }
 
+    private void RefreshTargetDropdown()
+    {
+        AuraTarget target = (AuraTarget)auraTarget.value;
+
+        switch (target)
+        {
+            case AuraTarget.OWNER_ALLY:
+            case AuraTarget.OWNER_ENEMY:
+            case AuraTarget.OWNER_NEIGHBOUR:
+            case AuraTarget.OWNER_NEIGHBOUR_ALLY:
+            case AuraTarget.OWNER_NEIGHBOUR_ENEMY:
+
+                targetCondition.gameObject.SetActive(true);
+
+                targetCondition.RefreshAuraCompare();
+
+                targetNum.gameObject.SetActive(true);
+
+                break;
+
+            default:
+
+                targetCondition.gameObject.SetActive(false);
+
+                targetNum.gameObject.SetActive(false);
+
+                break;
+        }
     }
 }
