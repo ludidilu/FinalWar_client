@@ -1,146 +1,121 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using FinalWar;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-
-    [SerializeField]
-    private Renderer go;
-
-    [SerializeField]
-    private Camera renderCamera;
-
-    [SerializeField]
-    private AnimationCurve curve;
-
-    private Vector2 downPos;
-
-    private bool hasDown;
-
-    private const float vv = 0.5f;
-
-    private Vector2 stepV;
-
-    private Bounds viewport;
-
-    private void Awake()
+    [Serializable]
+    public class AuraData
     {
-        stepV = new Vector2(renderCamera.aspect * renderCamera.orthographicSize, renderCamera.orthographicSize);
+        public string eventName;
 
-        viewport = new Bounds(Vector3.zero, stepV * 2);
+        public AuraType auraType;
     }
 
-    // Update is called once per frame
-    void Update()
+    public GameObject container;
+
+    public Dropdown eventNameDropdown;
+
+    public InputField priorityInputField;
+
+    public Dropdown triggerTargetDropdown;
+
+    public List<AuraData> auraDataList;
+
+    public AuraConditionComponent condition;
+
+    public Dropdown auraTarget;
+
+    private readonly AuraTarget[] triggerTargetArr = new AuraTarget[]
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            hasDown = true;
+        AuraTarget.OWNER,
+        AuraTarget.OWNER_ALLY,
+        AuraTarget.OWNER_ENEMY,
+        AuraTarget.OWNER_NEIGHBOUR,
+        AuraTarget.OWNER_NEIGHBOUR_ALLY,
+        AuraTarget.OWNER_NEIGHBOUR_ENEMY,
+    };
 
-            downPos = renderCamera.ScreenToWorldPoint(Input.mousePosition);
+
+
+    // Use this for initialization
+    void Start()
+    {
+        container.SetActive(false);
+
+
+
+
+
+        List<Dropdown.OptionData> list = new List<Dropdown.OptionData>();
+
+        list.Add(new Dropdown.OptionData("EventName"));
+
+        for (int i = 0; i < auraDataList.Count; i++)
+        {
+            list.Add(new Dropdown.OptionData(auraDataList[i].eventName));
         }
-        else if (Input.GetMouseButtonUp(0))
+
+        eventNameDropdown.AddOptions(list);
+
+
+
+
+        list = new List<Dropdown.OptionData>();
+
+        for (int i = 0; i < triggerTargetArr.Length; i++)
         {
-            hasDown = false;
+            list.Add(new Dropdown.OptionData(triggerTargetArr[i].ToString()));
         }
-        else if (hasDown)
+
+        triggerTargetDropdown.AddOptions(list);
+
+
+
+
+
+
+        list = new List<Dropdown.OptionData>();
+
+        string[] strArr = Enum.GetNames(typeof(AuraTarget));
+
+        for (int i = 0; i < strArr.Length; i++)
         {
-            Vector2 nowPos = renderCamera.ScreenToWorldPoint(Input.mousePosition);
+            list.Add(new Dropdown.OptionData(strArr[i]));
+        }
 
-            Vector2 v = nowPos - downPos;
+        auraTarget.AddOptions(list);
 
-            downPos = nowPos;
 
-            if (go.bounds.min.y < viewport.min.y && v.y < 0)
-            {
-                float dis = viewport.min.y - go.bounds.min.y;
 
-                float scale = Get(dis);
 
-                go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y + v.y * scale, go.transform.position.z);
-            }
-            else if (go.bounds.max.y > viewport.max.y && v.y > 0)
-            {
-                float dis = go.bounds.max.y - viewport.max.y;
 
-                float scale = Get(dis);
+    }
 
-                go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y + v.y * scale, go.transform.position.z);
-            }
-            else
-            {
-                go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y + v.y, go.transform.position.z);
-            }
+    public void EventNameDropdownValueChagne(int _index)
+    {
+        if (_index != 0)
+        {
+            container.SetActive(true);
 
-            if (go.bounds.min.x < viewport.min.x && v.x < 0)
-            {
-                float dis = viewport.min.x - go.bounds.min.x;
+            AuraData auraData = auraDataList[_index - 1];
 
-                float scale = Get(dis);
+            priorityInputField.gameObject.SetActive(auraData.auraType != AuraType.CAST_SKILL);
 
-                go.transform.position = new Vector3(go.transform.position.x + v.x * scale, go.transform.position.y, go.transform.position.z);
-            }
-            else if (go.bounds.max.x > viewport.max.x && v.x > 0)
-            {
-                float dis = go.bounds.max.x - viewport.max.x;
+            auraTarget.gameObject.SetActive(auraData.auraType == AuraType.CAST_SKILL);
 
-                float scale = Get(dis);
-
-                go.transform.position = new Vector3(go.transform.position.x + v.x * scale, go.transform.position.y, go.transform.position.z);
-            }
-            else
-            {
-                go.transform.position = new Vector3(go.transform.position.x + v.x, go.transform.position.y, go.transform.position.z);
-            }
+            condition.RefreshAuraCompare();
         }
         else
         {
-            if (go.bounds.min.y < viewport.min.y)
-            {
-                float dis = viewport.min.y - go.bounds.min.y;
-
-                dis = dis * 0.2f;
-
-                go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y + dis, go.transform.position.z);
-            }
-            else if (go.bounds.max.y > viewport.max.y)
-            {
-                float dis = go.bounds.max.y - viewport.max.y;
-
-                dis = dis * 0.2f;
-
-                go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y - dis, go.transform.position.z);
-            }
-
-            if (go.bounds.min.x < viewport.min.x)
-            {
-                float dis = viewport.min.x - go.bounds.min.x;
-
-                dis = dis * 0.2f;
-
-                go.transform.position = new Vector3(go.transform.position.x + dis, go.transform.position.y, go.transform.position.z);
-            }
-            else if (go.bounds.max.x > viewport.max.x)
-            {
-                float dis = go.bounds.max.x - viewport.max.x;
-
-                dis = dis * 0.2f;
-
-                go.transform.position = new Vector3(go.transform.position.x - dis, go.transform.position.y, go.transform.position.z);
-            }
+            container.SetActive(false);
         }
     }
 
-    private float Get(float _v)
+    public void TargetDropdownValueChange(int _index)
     {
-        float result = 1 - _v / vv;
 
-        if (result < 0)
-        {
-            result = 0;
-        }
-
-        return result;
     }
 }
