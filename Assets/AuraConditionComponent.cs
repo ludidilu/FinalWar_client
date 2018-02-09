@@ -22,7 +22,7 @@ public class AuraConditionComponent : MonoBehaviour
 
     public InputField compareData1;
 
-    private readonly AuraTarget[] auraConditionTarget = new AuraTarget[]
+    public static readonly AuraTarget[] auraConditionTarget = new AuraTarget[]
     {
         AuraTarget.OWNER,
         AuraTarget.TRIGGER,
