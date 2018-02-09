@@ -220,7 +220,7 @@ public class NewBehaviourScript : MonoBehaviour
 
         int priority;
 
-        AuraTarget effectTarget;
+        AuraTarget effectTarget = default(AuraTarget);
 
         AuraTarget triggerTarget;
 
@@ -238,7 +238,7 @@ public class NewBehaviourScript : MonoBehaviour
 
         int compareData1 = 0;
 
-        AuraConditionCompare targetCompare;
+        AuraConditionCompare targetCompare = default(AuraConditionCompare);
 
         Hero.HeroData targetCompareType0 = default(Hero.HeroData);
 
@@ -307,7 +307,21 @@ public class NewBehaviourScript : MonoBehaviour
                     }
                 }
 
-                targetNum = int.Parse(targetNumInputField.text);
+                if (string.IsNullOrEmpty(targetNumInputField.text))
+                {
+                    targetNum = 0;
+                }
+                else
+                {
+                    targetNum = int.Parse(targetNumInputField.text);
+                }
+            }
+
+            if (string.IsNullOrEmpty(castSkillEffect.text))
+            {
+                Debug.Log("error:castSkillEffect is empty!");
+
+                return;
             }
 
             effectData = new int[] { int.Parse(castSkillEffect.text) };
@@ -329,6 +343,13 @@ public class NewBehaviourScript : MonoBehaviour
             }
             else
             {
+                if (string.IsNullOrEmpty(auraIntInputField.text))
+                {
+                    Debug.Log("error:AuraInt is zero!");
+
+                    return;
+                }
+
                 effectData = new int[] { auraIntDropdown.value, int.Parse(auraIntInputField.text) };
             }
         }
@@ -383,12 +404,12 @@ public class NewBehaviourScript : MonoBehaviour
             list.Add(BattleConst.ROUND_OVER);
         }
 
-        if (removeWhenDoDamage)
+        if (removeWhenDoDamage.isOn)
         {
             list.Add(BattleConst.DO_DAMAGE);
         }
 
-        if (removeWhenBeDamaged)
+        if (removeWhenBeDamaged.isOn)
         {
             list.Add(BattleConst.BE_DAMAGED);
         }
@@ -447,5 +468,71 @@ public class NewBehaviourScript : MonoBehaviour
 
             result.Add(data0 + "$" + data1);
         }
+
+        result.Add(((int)auraType).ToString());
+
+        result.Add(((int)effectTarget).ToString());
+
+        result.Add(((int)targetCompare).ToString());
+
+        if (targetCompare == AuraConditionCompare.NULL)
+        {
+            result.Add(string.Empty);
+
+            result.Add(string.Empty);
+
+            result.Add(string.Empty);
+        }
+        else
+        {
+            result.Add(((int)targetCompareType0).ToString() + "$" + ((int)targetCompareType1).ToString());
+
+            string data0 = "0";
+
+            string data1 = "0";
+
+            string target0 = "0";
+
+            string target1 = "0";
+
+            if (targetCompareType0 == Hero.HeroData.DATA)
+            {
+                data0 = targetCompareData0.ToString();
+            }
+            else
+            {
+                target0 = ((int)targetCompareType0).ToString();
+            }
+
+            if (targetCompareType1 == Hero.HeroData.DATA)
+            {
+                data1 = targetCompareData1.ToString();
+            }
+            else
+            {
+                target1 = ((int)targetCompareType1).ToString();
+            }
+
+            result.Add(target0 + "$" + target1);
+
+            result.Add(data0 + "$" + data1);
+        }
+
+        result.Add(targetNum.ToString());
+
+        string[] strArr = new string[effectData.Length];
+
+        for (int i = 0; i < effectData.Length; i++)
+        {
+            strArr[i] = effectData[i].ToString();
+        }
+
+        result.Add(string.Join("$", strArr));
+
+        result.Add(string.Join("$", removeEventNames));
+
+        string resultStr = string.Join(",", result.ToArray());
+
+        Debug.Log(resultStr);
     }
 }
