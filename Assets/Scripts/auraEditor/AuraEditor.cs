@@ -42,6 +42,10 @@ public class AuraEditor : MonoBehaviour
 
     public Toggle removeWhenBeDamaged;
 
+    public InputField descInputField;
+
+    public InputField hudInputField;
+
     private readonly AuraTarget[] triggerTargetArr = new AuraTarget[]
     {
         AuraTarget.OWNER,
@@ -398,8 +402,6 @@ public class AuraEditor : MonoBehaviour
             result.Add(string.Empty);
 
             result.Add(string.Empty);
-
-            result.Add(string.Empty);
         }
         else
         {
@@ -409,17 +411,13 @@ public class AuraEditor : MonoBehaviour
 
             string data1 = "0";
 
-            string target0 = "0";
-
-            string target1 = "0";
-
             if (compareType0 == Hero.HeroData.DATA)
             {
                 data0 = compareData0.ToString();
             }
             else
             {
-                target0 = ((int)compareType0).ToString();
+                data0 = ((int)compareTarget0).ToString();
             }
 
             if (compareType1 == Hero.HeroData.DATA)
@@ -428,10 +426,8 @@ public class AuraEditor : MonoBehaviour
             }
             else
             {
-                target1 = ((int)compareType1).ToString();
+                data1 = ((int)compareTarget1).ToString();
             }
-
-            result.Add(target0 + "$" + target1);
 
             result.Add(data0 + "$" + data1);
         }
@@ -447,8 +443,6 @@ public class AuraEditor : MonoBehaviour
             result.Add(string.Empty);
 
             result.Add(string.Empty);
-
-            result.Add(string.Empty);
         }
         else
         {
@@ -458,17 +452,13 @@ public class AuraEditor : MonoBehaviour
 
             string data1 = "0";
 
-            string target0 = "0";
-
-            string target1 = "0";
-
             if (targetCompareType0 == Hero.HeroData.DATA)
             {
                 data0 = targetCompareData0.ToString();
             }
             else
             {
-                target0 = ((int)targetCompareType0).ToString();
+                data0 = ((int)targetCompareTarget0).ToString();
             }
 
             if (targetCompareType1 == Hero.HeroData.DATA)
@@ -477,10 +467,8 @@ public class AuraEditor : MonoBehaviour
             }
             else
             {
-                target1 = ((int)targetCompareType1).ToString();
+                data1 = ((int)targetCompareTarget1).ToString();
             }
-
-            result.Add(target0 + "$" + target1);
 
             result.Add(data0 + "$" + data1);
         }
@@ -497,6 +485,12 @@ public class AuraEditor : MonoBehaviour
         result.Add(string.Join("$", strArr));
 
         result.Add(string.Join("$", removeEventNames));
+
+        result.Add(descInputField.text);
+
+        result.Add(hudInputField.text);
+
+        result.Add(descInputField.text);
 
         string resultStr = string.Join(",", result.ToArray());
 

@@ -13,11 +13,6 @@ public class AuraSDS_c {
         for(int i = 0 ; i < lengthconditionData ; i++){
             _csv.conditionData[i] = _br.ReadInt32();
         }
-        int lengthconditionTarget = _br.ReadInt32();
-        _csv.conditionTarget = new int[lengthconditionTarget];
-        for(int i = 0 ; i < lengthconditionTarget ; i++){
-            _csv.conditionTarget[i] = _br.ReadInt32();
-        }
         int lengthconditionType = _br.ReadInt32();
         _csv.conditionType = new int[lengthconditionType];
         for(int i = 0 ; i < lengthconditionType ; i++){
@@ -32,11 +27,6 @@ public class AuraSDS_c {
         _csv.targetConditionData = new int[lengthtargetConditionData];
         for(int i = 0 ; i < lengthtargetConditionData ; i++){
             _csv.targetConditionData[i] = _br.ReadInt32();
-        }
-        int lengthtargetConditionTarget = _br.ReadInt32();
-        _csv.targetConditionTarget = new int[lengthtargetConditionTarget];
-        for(int i = 0 ; i < lengthtargetConditionTarget ; i++){
-            _csv.targetConditionTarget[i] = _br.ReadInt32();
         }
         int lengthtargetConditionType = _br.ReadInt32();
         _csv.targetConditionType = new int[lengthtargetConditionType];
