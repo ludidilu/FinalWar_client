@@ -34,8 +34,6 @@ public class AuraEditor : MonoBehaviour
 
     public InputField castSkillEffect;
 
-    public Toggle auraBool;
-
     public Dropdown auraIntDropdown;
 
     public InputField auraIntInputField;
@@ -142,18 +140,6 @@ public class AuraEditor : MonoBehaviour
             {
                 castSkillEffect.gameObject.SetActive(true);
 
-                auraBool.gameObject.SetActive(false);
-
-                auraIntDropdown.gameObject.SetActive(false);
-
-                auraIntInputField.gameObject.SetActive(false);
-            }
-            else if (auraData.auraType == AuraType.FIX_BOOL)
-            {
-                castSkillEffect.gameObject.SetActive(false);
-
-                auraBool.gameObject.SetActive(true);
-
                 auraIntDropdown.gameObject.SetActive(false);
 
                 auraIntInputField.gameObject.SetActive(false);
@@ -161,8 +147,6 @@ public class AuraEditor : MonoBehaviour
             else
             {
                 castSkillEffect.gameObject.SetActive(false);
-
-                auraBool.gameObject.SetActive(false);
 
                 auraIntDropdown.gameObject.SetActive(true);
 
@@ -346,21 +330,14 @@ public class AuraEditor : MonoBehaviour
                 priority = int.Parse(priorityInputField.text);
             }
 
-            if (auraType == AuraType.FIX_BOOL)
+            if (string.IsNullOrEmpty(auraIntInputField.text))
             {
-                effectData = new int[] { auraBool.isOn ? 1 : 0 };
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(auraIntInputField.text))
-                {
-                    Debug.Log("error:AuraInt is zero!");
+                Debug.Log("error:AuraInt is zero!");
 
-                    return;
-                }
-
-                effectData = new int[] { auraIntDropdown.value, int.Parse(auraIntInputField.text) };
+                return;
             }
+
+            effectData = new int[] { auraIntDropdown.value, int.Parse(auraIntInputField.text) };
         }
 
         triggerTarget = (AuraTarget)triggerTargetDropdown.value;
