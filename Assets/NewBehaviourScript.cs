@@ -182,6 +182,15 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void RefreshTargetDropdown()
     {
+        if (!auraTarget.gameObject.activeSelf)
+        {
+            targetCondition.gameObject.SetActive(false);
+
+            targetNumInputField.gameObject.SetActive(false);
+
+            return;
+        }
+
         AuraTarget target = (AuraTarget)auraTarget.value;
 
         switch (target)
