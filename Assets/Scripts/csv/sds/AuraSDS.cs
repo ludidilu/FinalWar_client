@@ -3,7 +3,6 @@
 public partial class AuraSDS : CsvBase, IAuraSDS
 {
     public string eventName;
-    public int priority;
     public int triggerTarget;
     public int conditionCompare;
     public int[] conditionType;
@@ -58,11 +57,6 @@ public partial class AuraSDS : CsvBase, IAuraSDS
     public string GetEventName()
     {
         return eventName;
-    }
-
-    public int GetPriority()
-    {
-        return priority;
     }
 
     public AuraTarget GetTriggerTarget()

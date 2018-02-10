@@ -6,7 +6,6 @@ public class AuraSDS_c {
         _csv.effectTargetNum = _br.ReadInt32();
         _csv.effectType = _br.ReadInt32();
         _csv.ID = _br.ReadInt32();
-        _csv.priority = _br.ReadInt32();
         _csv.targetConditionCompare = _br.ReadInt32();
         _csv.triggerTarget = _br.ReadInt32();
         int lengthconditionData = _br.ReadInt32();
