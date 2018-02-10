@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using FinalWar;
 
-public class NewBehaviourScript : MonoBehaviour
+public class AuraEditor : MonoBehaviour
 {
     [Serializable]
     public class AuraData
