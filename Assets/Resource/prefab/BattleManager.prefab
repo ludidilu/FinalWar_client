@@ -617,6 +617,7 @@ MonoBehaviour:
   auraDescID: 100
   shootDescID: 101
   supportDescID: 102
+  effectDescID: 103
   minDefaultScale: 0.5
   maxDefaultScale: 0.8
   minMapScale: 0.4
@@ -633,6 +634,7 @@ MonoBehaviour:
   auraDescFix: 
   shootDescFix: 
   supportDescFix: 
+  effectDescFix: 
 --- !u!114 &11455812
 MonoBehaviour:
   m_ObjectHideFlags: 1

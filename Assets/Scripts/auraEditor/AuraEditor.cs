@@ -327,7 +327,7 @@ public class AuraEditor : MonoBehaviour
             effectData = new int[] { auraIntDropdown.value, int.Parse(auraIntInputField.text) };
         }
 
-        triggerTarget = (AuraTarget)triggerTargetDropdown.value;
+        triggerTarget = triggerTargetArr[triggerTargetDropdown.value];
 
         compare = (AuraConditionCompare)condition.compareDropdown.value;
 

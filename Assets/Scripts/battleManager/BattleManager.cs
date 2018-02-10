@@ -175,6 +175,9 @@ public class BattleManager : MonoBehaviour
     private int supportDescID;
 
     [SerializeField]
+    private int effectDescID;
+
+    [SerializeField]
     private float minDefaultScale;
 
     [SerializeField]
@@ -308,6 +311,9 @@ public class BattleManager : MonoBehaviour
     [HideInInspector]
     public string supportDescFix;
 
+    [HideInInspector]
+    public string effectDescFix;
+
     public int GetHeroUid()
     {
         heroUid++;
@@ -365,6 +371,8 @@ public class BattleManager : MonoBehaviour
         shootDescFix = StaticData.GetData<DescSDS>(shootDescID).desc;
 
         supportDescFix = StaticData.GetData<DescSDS>(supportDescID).desc;
+
+        effectDescFix = StaticData.GetData<DescSDS>(effectDescID).desc;
     }
 
     private void SendData(MemoryStream _ms, Action<BinaryReader> _callBack)

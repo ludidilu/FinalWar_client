@@ -99,7 +99,7 @@ public class HeroDetail : MonoBehaviour
                     {
                         string desc = StaticData.GetData<AuraSDS>(list[i]).desc;
 
-                        AddCell(desc, ref height);
+                        AddCell(string.Format(battleManager.effectDescFix, desc), ref height);
                     }
                 }
             }
