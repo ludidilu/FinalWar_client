@@ -18,8 +18,6 @@ public class AuraEditor : MonoBehaviour
 
     public Dropdown eventNameDropdown;
 
-    public InputField priorityInputField;
-
     public Dropdown triggerTargetDropdown;
 
     public List<AuraData> auraDataList;
@@ -128,8 +126,6 @@ public class AuraEditor : MonoBehaviour
 
             AuraData auraData = auraDataList[_index - 1];
 
-            priorityInputField.gameObject.SetActive(auraData.auraType != AuraType.CAST_SKILL);
-
             auraTarget.gameObject.SetActive(auraData.auraType == AuraType.CAST_SKILL);
 
             condition.RefreshAuraCompare();
@@ -211,8 +207,6 @@ public class AuraEditor : MonoBehaviour
 
         AuraType auraType = data.auraType;
 
-        int priority;
-
         AuraTarget effectTarget = default(AuraTarget);
 
         AuraTarget triggerTarget;
@@ -253,8 +247,6 @@ public class AuraEditor : MonoBehaviour
 
         if (auraType == AuraType.CAST_SKILL)
         {
-            priority = 0;
-
             effectTarget = (AuraTarget)auraTarget.value;
 
             if (effectTarget == AuraTarget.OWNER_ALLY || effectTarget == AuraTarget.OWNER_ENEMY || effectTarget == AuraTarget.OWNER_NEIGHBOUR || effectTarget == AuraTarget.OWNER_NEIGHBOUR_ALLY || effectTarget == AuraTarget.OWNER_NEIGHBOUR_ENEMY)
@@ -321,15 +313,6 @@ public class AuraEditor : MonoBehaviour
         }
         else
         {
-            if (string.IsNullOrEmpty(priorityInputField.text))
-            {
-                priority = 0;
-            }
-            else
-            {
-                priority = int.Parse(priorityInputField.text);
-            }
-
             if (string.IsNullOrEmpty(auraIntInputField.text))
             {
                 Debug.Log("error:AuraInt is zero!");
@@ -405,8 +388,6 @@ public class AuraEditor : MonoBehaviour
         List<string> result = new List<string>();
 
         result.Add(eventName);
-
-        result.Add(priority.ToString());
 
         result.Add(((int)triggerTarget).ToString());
 
