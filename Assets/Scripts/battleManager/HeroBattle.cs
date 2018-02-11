@@ -338,11 +338,11 @@ public class HeroBattle : HeroBase
         }
         else
         {
-            if (atk < sds.shield)
+            if (atk < sds.attack)
             {
                 attack.color = new Color(colorFix, 0, 0, attack.color.a);
             }
-            else if (atk > sds.shield)
+            else if (atk > sds.attack)
             {
                 attack.color = new Color(0, colorFix, 0, attack.color.a);
             }

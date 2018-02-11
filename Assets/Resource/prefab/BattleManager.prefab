@@ -614,10 +614,10 @@ MonoBehaviour:
   bg: {fileID: 212832140466329472}
   bgScaleFix: 1.5
   alphaCg: {fileID: 225669718846853326}
-  auraDescID: 100
-  shootDescID: 101
-  supportDescID: 102
-  effectDescID: 103
+  auraDescID: 10000
+  shootDescID: 10001
+  supportDescID: 10002
+  effectDescID: 10003
   minDefaultScale: 0.5
   maxDefaultScale: 0.8
   minMapScale: 0.4
