@@ -1494,10 +1494,32 @@ public class BattleManager : MonoBehaviour
     {
         Action dele = delegate ()
         {
-            SuperSequenceControl.Start(DoActionReal, _step);
+            if (summonHeroDic.Count > 0)
+            {
+                Action dele2 = delegate ()
+                {
+                    SuperSequenceControl.Start(DoActionReal, _step);
+                };
+
+                SuperTween.Instance.To(1, 0, 0.5f, AlphaOutSummonHero, dele2);
+            }
+            else
+            {
+                SuperSequenceControl.Start(DoActionReal, _step);
+            }
         };
 
         HideUi(dele);
+    }
+
+    private void AlphaOutSummonHero(float _v)
+    {
+        IEnumerator<HeroBattle> enumerator = summonHeroDic.Values.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            enumerator.Current.SetAlpha(_v);
+        }
     }
 
     private IEnumerator DoActionReal(int _index, SuperEnumerator<ValueType> _step)
