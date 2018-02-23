@@ -704,7 +704,21 @@ public class BattleControl : MonoBehaviour
 
     public IEnumerator TriggerAura(int _index, int _lastIndex, BattleTriggerAuraVO _vo)
     {
-        MoveCamera(_index, _vo.pos);
+        List<int> tmpList = new List<int>();
+
+        tmpList.Add(_vo.pos);
+
+        IEnumerator<int> enumerator2 = _vo.data.Keys.GetEnumerator();
+
+        while (enumerator2.MoveNext())
+        {
+            if (!tmpList.Contains(enumerator2.Current))
+            {
+                tmpList.Add(enumerator2.Current);
+            }
+        }
+
+        MoveCamera(_index, tmpList.ToArray());
 
         yield return null;
 
