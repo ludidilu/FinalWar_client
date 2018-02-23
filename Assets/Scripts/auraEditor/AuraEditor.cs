@@ -44,6 +44,10 @@ public class AuraEditor : MonoBehaviour
 
     public InputField hudInputField;
 
+    public GameObject resultGo;
+
+    public InputField resultInputField;
+
     private readonly AuraTarget[] triggerTargetArr = new AuraTarget[]
     {
         AuraTarget.OWNER,
@@ -59,7 +63,7 @@ public class AuraEditor : MonoBehaviour
     {
         container.SetActive(false);
 
-
+        resultGo.SetActive(false);
 
 
 
@@ -328,6 +332,8 @@ public class AuraEditor : MonoBehaviour
 
         result.Add(eventName);
 
+        result.Add(((int)auraType).ToString());
+
         result.Add(((int)triggerTarget).ToString());
 
         result.Add(((int)compare).ToString());
@@ -367,8 +373,6 @@ public class AuraEditor : MonoBehaviour
             result.Add(data0 + "$" + data1);
         }
 
-        result.Add(((int)auraType).ToString());
-
         result.Add(((int)effectTarget).ToString());
 
         result.Add(targetNum.ToString());
@@ -392,6 +396,15 @@ public class AuraEditor : MonoBehaviour
 
         string resultStr = string.Join(",", result.ToArray());
 
+        resultGo.SetActive(true);
+
+        resultInputField.text = resultStr;
+
         Debug.Log(resultStr);
+    }
+
+    public void ClickBg()
+    {
+        resultGo.SetActive(false);
     }
 }
