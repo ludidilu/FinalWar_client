@@ -596,15 +596,15 @@ public class BattleControl : MonoBehaviour
 
                 battleManager.heroDic.Remove(pair.Key);
 
-                Vector2 startPos = battleManager.mapUnitDic[pair.Key].transform.localPosition;
+                Vector2 startPos = battleManager.mapUnitDic[pair.Key].transform.position;
 
-                Vector2 endPos = battleManager.mapUnitDic[pair.Value].transform.localPosition;
+                Vector2 endPos = battleManager.mapUnitDic[pair.Value].transform.position;
 
                 Action<float> toDel = delegate (float obj)
                 {
                     Vector2 v = Vector2.Lerp(startPos, endPos, obj);
 
-                    hero.transform.localPosition = new Vector3(v.x, v.y, hero.transform.localPosition.z);
+                    hero.transform.position = new Vector3(v.x, v.y, hero.transform.position.z);
                 };
 
                 if (i == 0)

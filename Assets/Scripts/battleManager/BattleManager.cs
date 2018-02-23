@@ -996,9 +996,11 @@ public class BattleManager : MonoBehaviour
 
         MapUnit end = mapUnitDic[_end];
 
-        go.transform.localPosition = (start.transform.localPosition + end.transform.localPosition) * 0.5f;
+        Vector3 tmpPos = (start.transform.position + end.transform.position) * 0.5f;
 
-        float angle = Mathf.Atan2(end.transform.localPosition.y - start.transform.localPosition.y, end.transform.localPosition.x - start.transform.localPosition.x);
+        go.transform.position = new Vector3(tmpPos.x, tmpPos.y, go.transform.position.z);
+
+        float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y, end.transform.position.x - start.transform.position.x);
 
         Quaternion q = new Quaternion();
 
@@ -1025,9 +1027,11 @@ public class BattleManager : MonoBehaviour
 
         MapUnit end = mapUnitDic[_end];
 
-        go.transform.localPosition = (start.transform.localPosition + end.transform.localPosition) * 0.5f;
+        Vector3 tmpPos = (start.transform.position + end.transform.position) * 0.5f;
 
-        float angle = Mathf.Atan2(end.transform.localPosition.y - start.transform.localPosition.y, end.transform.localPosition.x - start.transform.localPosition.x);
+        go.transform.position = new Vector3(tmpPos.x, tmpPos.y, go.transform.position.z);
+
+        float angle = Mathf.Atan2(end.transform.position.y - start.transform.position.y, end.transform.position.x - start.transform.position.x);
 
         Quaternion q = new Quaternion();
 
@@ -1349,7 +1353,7 @@ public class BattleManager : MonoBehaviour
 
         _heroCard.transform.SetParent(heroContainer, false);
 
-        _heroCard.transform.localPosition = mapUnit.transform.localPosition;
+        _heroCard.transform.position = new Vector3(mapUnit.transform.position.x, mapUnit.transform.position.y, _heroCard.transform.position.z);
     }
 
 
