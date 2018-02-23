@@ -38,6 +38,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afb4178c1e129c947b54365c7c5d9b76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  layerIndex: 0
+  uid: 0
+  parent: {fileID: 0}
+  children: []
 --- !u!224 &224646596872246974
 RectTransform:
   m_ObjectHideFlags: 1

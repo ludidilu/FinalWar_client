@@ -305,6 +305,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b77def02f649d824b8647146dcf7dd08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  layerIndex: 0
+  uid: 0
+  parent: {fileID: 0}
+  children: []
 --- !u!114 &114909554759181128
 MonoBehaviour:
   m_ObjectHideFlags: 1

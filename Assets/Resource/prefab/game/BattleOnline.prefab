@@ -298,6 +298,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6c43f1a11a26e429a88cc53a0d3820, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  layerIndex: 0
+  uid: 0
+  parent: {fileID: 0}
+  children: []
   btPVP: {fileID: 1999687685412856}
   btPVE: {fileID: 1242088533439350}
   btCancel: {fileID: 1163181860043040}

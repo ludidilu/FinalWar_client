@@ -14,19 +14,19 @@ using gameObjectFactory;
 public static class ResourceLoader
 {
     private static readonly string[] preloadPrefabs = new string[] {
-        "Assets/Resource/prefab/BattleManager.prefab",
-        "Assets/Resource/prefab/Arrow.prefab",
-        "Assets/Resource/prefab/DamageArrow.prefab",
-        "Assets/Resource/prefab/DamageNum.prefab",
-        "Assets/Resource/prefab/HeroBattle.prefab",
-        "Assets/Resource/prefab/HeroCard.prefab",
-        "Assets/Resource/prefab/OppHeroCard.prefab",
-        "Assets/Resource/prefab/MapUnit.prefab",
-        "Assets/Resource/prefab/ShootArrow.prefab",
-        "Assets/Resource/prefab/BattleEntrance.prefab",
-        "Assets/Resource/prefab/BattleOnline.prefab",
-        "Assets/Resource/prefab/BattleView.prefab",
-        "Assets/Resource/prefab/BattleChoose.prefab",
+        "Assets/Resource/prefab/battle/BattleManager.prefab",
+        "Assets/Resource/prefab/battle/Arrow.prefab",
+        "Assets/Resource/prefab/battle/DamageArrow.prefab",
+        "Assets/Resource/prefab/battle/DamageNum.prefab",
+        "Assets/Resource/prefab/battle/HeroBattle.prefab",
+        "Assets/Resource/prefab/battle/HeroCard.prefab",
+        "Assets/Resource/prefab/battle/OppHeroCard.prefab",
+        "Assets/Resource/prefab/battle/MapUnit.prefab",
+        "Assets/Resource/prefab/battle/ShootArrow.prefab",
+        "Assets/Resource/prefab/game/BattleEntrance.prefab",
+        "Assets/Resource/prefab/game/BattleOnline.prefab",
+        "Assets/Resource/prefab/game/BattleView.prefab",
+        "Assets/Resource/prefab/game/BattleChoose.prefab",
     };
 
     private static Action callBack;

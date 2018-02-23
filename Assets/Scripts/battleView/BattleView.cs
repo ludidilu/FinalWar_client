@@ -33,7 +33,7 @@ public class BattleView : UIPanel
 
         if (battleManager == null)
         {
-            GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/BattleManager.prefab", null);
+            GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/battle/BattleManager.prefab", null);
 
             battleManager = go.GetComponent<BattleManager>();
 

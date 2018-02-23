@@ -126,7 +126,7 @@ public class BattleControl : MonoBehaviour
 
         angle += Mathf.PI * 0.5f;
 
-        GameObject arrow = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/DamageArrow.prefab", null);
+        GameObject arrow = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/battle/DamageArrow.prefab", null);
 
         arrow.transform.SetParent(battleManager.arrowContainer, false);
 

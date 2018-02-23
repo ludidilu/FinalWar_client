@@ -10,7 +10,7 @@ public class Main : MonoBehaviour
     [SerializeField]
     private Transform mask;
 
-    private const string PATH_FIX = "Assets/Resource/prefab/{0}.prefab";
+    private const string PATH_FIX = "Assets/Resource/prefab/game/{0}.prefab";
 
     public const int layerIndex = 100;
 

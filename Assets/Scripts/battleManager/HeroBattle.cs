@@ -369,7 +369,7 @@ public class HeroBattle : HeroBase
 
     public void ShowHud(string _str, Color _color, Color _outlineColor, float _yFix, Action _callBack)
     {
-        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/DamageNum.prefab", null);
+        GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/battle/DamageNum.prefab", null);
 
         go.transform.SetParent(battleManager.arrowContainer, false);
 

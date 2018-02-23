@@ -95,7 +95,7 @@ public class TestAStar : MonoBehaviour
                     continue;
                 }
 
-                GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resource/prefab/MapUnit.prefab"));
+                GameObject go = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resource/prefab/battle/MapUnit.prefab"));
 
                 go.transform.SetParent(transform, false);
 
