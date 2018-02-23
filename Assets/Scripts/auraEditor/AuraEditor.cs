@@ -26,8 +26,6 @@ public class AuraEditor : MonoBehaviour
 
     public Dropdown auraTarget;
 
-    public AuraConditionComponent targetCondition;
-
     public InputField targetNumInputField;
 
     public InputField castSkillEffect;
@@ -168,8 +166,6 @@ public class AuraEditor : MonoBehaviour
     {
         if (!auraTarget.gameObject.activeSelf)
         {
-            targetCondition.gameObject.SetActive(false);
-
             targetNumInputField.gameObject.SetActive(false);
 
             return;
@@ -185,17 +181,11 @@ public class AuraEditor : MonoBehaviour
             case AuraTarget.OWNER_NEIGHBOUR_ALLY:
             case AuraTarget.OWNER_NEIGHBOUR_ENEMY:
 
-                targetCondition.gameObject.SetActive(true);
-
-                targetCondition.RefreshAuraCompare();
-
                 targetNumInputField.gameObject.SetActive(true);
 
                 break;
 
             default:
-
-                targetCondition.gameObject.SetActive(false);
 
                 targetNumInputField.gameObject.SetActive(false);
 
@@ -229,20 +219,6 @@ public class AuraEditor : MonoBehaviour
 
         int compareData1 = 0;
 
-        AuraConditionCompare targetCompare = default(AuraConditionCompare);
-
-        Hero.HeroData targetCompareType0 = default(Hero.HeroData);
-
-        Hero.HeroData targetCompareType1 = default(Hero.HeroData);
-
-        AuraTarget targetCompareTarget0 = default(AuraTarget);
-
-        AuraTarget targetCompareTarget1 = default(AuraTarget);
-
-        int targetCompareData0 = 0;
-
-        int targetCompareData1 = 0;
-
         int targetNum = 0;
 
         int[] effectData;
@@ -255,47 +231,6 @@ public class AuraEditor : MonoBehaviour
 
             if (effectTarget == AuraTarget.OWNER_ALLY || effectTarget == AuraTarget.OWNER_ENEMY || effectTarget == AuraTarget.OWNER_NEIGHBOUR || effectTarget == AuraTarget.OWNER_NEIGHBOUR_ALLY || effectTarget == AuraTarget.OWNER_NEIGHBOUR_ENEMY)
             {
-                targetCompare = (AuraConditionCompare)targetCondition.compareDropdown.value;
-
-                if (targetCompare != AuraConditionCompare.NULL)
-                {
-                    targetCompareType0 = (Hero.HeroData)targetCondition.compareType0.value;
-
-                    targetCompareType1 = (Hero.HeroData)targetCondition.compareType1.value;
-
-                    if (targetCompareType0 == Hero.HeroData.DATA)
-                    {
-                        if (string.IsNullOrEmpty(targetCondition.compareData0.text))
-                        {
-                            targetCompareData0 = 0;
-                        }
-                        else
-                        {
-                            targetCompareData0 = int.Parse(targetCondition.compareData0.text);
-                        }
-                    }
-                    else
-                    {
-                        targetCompareTarget0 = AuraConditionComponent.auraConditionTarget[targetCondition.compareTarget0.value];
-                    }
-
-                    if (targetCompareType1 == Hero.HeroData.DATA)
-                    {
-                        if (string.IsNullOrEmpty(targetCondition.compareData1.text))
-                        {
-                            targetCompareData1 = 0;
-                        }
-                        else
-                        {
-                            targetCompareData1 = int.Parse(targetCondition.compareData1.text);
-                        }
-                    }
-                    else
-                    {
-                        targetCompareTarget1 = AuraConditionComponent.auraConditionTarget[targetCondition.compareTarget1.value];
-                    }
-                }
-
                 if (string.IsNullOrEmpty(targetNumInputField.text))
                 {
                     targetNum = 0;
@@ -435,43 +370,6 @@ public class AuraEditor : MonoBehaviour
         result.Add(((int)auraType).ToString());
 
         result.Add(((int)effectTarget).ToString());
-
-        result.Add(((int)targetCompare).ToString());
-
-        if (targetCompare == AuraConditionCompare.NULL)
-        {
-            result.Add(string.Empty);
-
-            result.Add(string.Empty);
-        }
-        else
-        {
-            result.Add(((int)targetCompareType0).ToString() + "$" + ((int)targetCompareType1).ToString());
-
-            string data0 = "0";
-
-            string data1 = "0";
-
-            if (targetCompareType0 == Hero.HeroData.DATA)
-            {
-                data0 = targetCompareData0.ToString();
-            }
-            else
-            {
-                data0 = ((int)targetCompareTarget0).ToString();
-            }
-
-            if (targetCompareType1 == Hero.HeroData.DATA)
-            {
-                data1 = targetCompareData1.ToString();
-            }
-            else
-            {
-                data1 = ((int)targetCompareTarget1).ToString();
-            }
-
-            result.Add(data0 + "$" + data1);
-        }
 
         result.Add(targetNum.ToString());
 
