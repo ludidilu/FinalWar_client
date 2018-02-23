@@ -13,6 +13,7 @@ using superSequenceControl;
 using System.Collections;
 using gameObjectFactory;
 using superTween;
+using publicTools;
 
 public class BattleManager : MonoBehaviour
 {
@@ -1479,6 +1480,23 @@ public class BattleManager : MonoBehaviour
 
         alphaCg.blocksRaycasts = false;
 
+        Vector2 startPos = battleContainer.position;
+
+        float startScale = battleContainer.localScale.x;
+
+        Action<float> toDele = delegate (float _v)
+        {
+            Vector2 nowPos = Vector2.Lerp(startPos, Vector2.zero, _v);
+
+            float nowScale = PublicTools.FloatLerp(startScale, defaultScale, _v);
+
+            battleContainer.position = new Vector3(nowPos.x, nowPos.y, battleContainer.position.z);
+
+            battleContainer.localScale = new Vector3(nowScale, nowScale, battleContainer.localScale.z);
+
+            SetUiContainerSize(_v);
+        };
+
         Action dele = delegate ()
         {
             alphaCg.alpha = 0;
@@ -1486,7 +1504,7 @@ public class BattleManager : MonoBehaviour
             _callBack();
         };
 
-        SuperTween.Instance.To(0, 1, 0.5f, SetUiContainerSize, dele);
+        SuperTween.Instance.To(0, 1, 0.5f, toDele, dele);
     }
 
     private void SetUiContainerSize(float _v)
@@ -1944,7 +1962,7 @@ public class BattleManager : MonoBehaviour
         {
             if (battleContainer.transform.position.x != viewport.center.x)
             {
-                battleContainer.transform.position = new Vector3(FloatLerp(battleContainer.transform.position.x, viewport.center.x, mapDragRevertFix), battleContainer.transform.position.y, battleContainer.transform.position.z);
+                battleContainer.transform.position = new Vector3(PublicTools.FloatLerp(battleContainer.transform.position.x, viewport.center.x, mapDragRevertFix), battleContainer.transform.position.y, battleContainer.transform.position.z);
             }
         }
         else if (battleContainer.localPosition.x - tmpBounds.extents.x > viewport.min.x)
@@ -1964,7 +1982,7 @@ public class BattleManager : MonoBehaviour
         {
             if (battleContainer.transform.position.y != viewport.center.y)
             {
-                battleContainer.transform.position = new Vector3(battleContainer.transform.position.x, FloatLerp(battleContainer.transform.position.y, viewport.center.y, mapDragRevertFix), battleContainer.transform.position.z);
+                battleContainer.transform.position = new Vector3(battleContainer.transform.position.x, PublicTools.FloatLerp(battleContainer.transform.position.y, viewport.center.y, mapDragRevertFix), battleContainer.transform.position.z);
             }
         }
         else if (battleContainer.localPosition.y - tmpBounds.extents.y > viewport.min.y)
@@ -1979,11 +1997,6 @@ public class BattleManager : MonoBehaviour
 
             battleContainer.transform.position = new Vector3(battleContainer.transform.position.x, battleContainer.transform.position.y + dis * mapDragRevertFix, battleContainer.transform.position.z);
         }
-    }
-
-    private float FloatLerp(float _a, float _b, float _v)
-    {
-        return _a + (_b - _a) * _v;
     }
 
     private float GetBattleContainerDragScale(float _v)

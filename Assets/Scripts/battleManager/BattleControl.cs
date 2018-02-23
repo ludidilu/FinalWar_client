@@ -6,6 +6,7 @@ using superSequenceControl;
 using FinalWar;
 using System.Linq;
 using gameObjectFactory;
+using publicTools;
 
 public class BattleControl : MonoBehaviour
 {
@@ -750,11 +751,11 @@ public class BattleControl : MonoBehaviour
         {
             _v = cameraMoveCurve.Evaluate(_v);
 
-            float mapScale = battleManager.defaultScale + (mapTargetScale - battleManager.defaultScale) * _v;
+            float mapScale = PublicTools.FloatLerp(battleManager.defaultScale, mapTargetScale, _v);
 
             battleManager.SetBattleContainerScale(mapScale, Vector2.zero);
 
-            float unitScale = 1 + (unitTargetScale - 1) * _v;
+            float unitScale = PublicTools.FloatLerp(1, unitTargetScale, _v);
 
             IEnumerator<MapUnit> enumerator = battleManager.mapUnitDic.Values.GetEnumerator();
 
@@ -786,7 +787,7 @@ public class BattleControl : MonoBehaviour
                 hero.transform.localScale = new Vector3(unitScale, unitScale, 1);
             }
 
-            float c = bgAlpha + (1 - bgAlpha) * (1 - _v);
+            float c = PublicTools.FloatLerp(1, bgAlpha, _v);
 
             battleManager.bg.color = new Color(c, c, c, battleManager.bg.color.a);
         };
@@ -800,11 +801,11 @@ public class BattleControl : MonoBehaviour
         {
             _v = 1 - cameraMoveCurve.Evaluate(_v);
 
-            float mapScale = battleManager.defaultScale + (mapTargetScale - battleManager.defaultScale) * _v;
+            float mapScale = PublicTools.FloatLerp(battleManager.defaultScale, mapTargetScale, _v);
 
             battleManager.SetBattleContainerScale(mapScale, Vector2.zero);
 
-            float unitScale = 1 + (unitTargetScale - 1) * _v;
+            float unitScale = PublicTools.FloatLerp(1, unitTargetScale, _v);
 
             IEnumerator<MapUnit> enumerator = battleManager.mapUnitDic.Values.GetEnumerator();
 
@@ -836,7 +837,7 @@ public class BattleControl : MonoBehaviour
                 hero.transform.localScale = new Vector3(unitScale, unitScale, 1);
             }
 
-            float c = bgAlpha + (1 - bgAlpha) * (1 - _v);
+            float c = PublicTools.FloatLerp(1, bgAlpha, _v);
 
             battleManager.bg.color = new Color(c, c, c, battleManager.bg.color.a);
         };
