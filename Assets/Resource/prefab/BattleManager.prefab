@@ -1402,7 +1402,7 @@ GameObject:
   - component: {fileID: 114900602827577820}
   - component: {fileID: 114341967326552646}
   m_Layer: 8
-  m_Name: Button
+  m_Name: btConfirm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
