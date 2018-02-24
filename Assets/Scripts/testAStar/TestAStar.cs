@@ -79,11 +79,11 @@ public class TestAStar : MonoBehaviour
     {
         int index = 0;
 
-        for (int i = 0; i < mapData.mapHeight; i++)
+        for (int i = 0; i < mapData.mapWidth; i++)
         {
-            for (int m = 0; m < mapData.mapWidth; m++)
+            for (int m = 0; m < mapData.mapHeight; m++)
             {
-                if (i % 2 == 1 && m == mapData.mapWidth - 1)
+                if (i % 2 == 1 && m == mapData.mapHeight - 1)
                 {
                     continue;
                 }
@@ -99,7 +99,7 @@ public class TestAStar : MonoBehaviour
 
                 go.transform.SetParent(transform, false);
 
-                go.transform.localPosition = new Vector3(m * mapUnitWidth * sqrt3 * 2 + ((i % 2 == 1) ? mapUnitWidth * Mathf.Sqrt(3) : 0), -i * mapUnitWidth * 3, 0);
+                go.transform.localPosition = new Vector3(i * mapUnitWidth * 3, (-m * mapUnitWidth * sqrt3 * 2 - ((i % 2 == 1) ? mapUnitWidth * sqrt3 : 0)), 0);
 
                 go.transform.localScale = new Vector3(mapUnitScale, mapUnitScale, mapUnitScale);
 
