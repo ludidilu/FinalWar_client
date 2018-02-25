@@ -94,6 +94,10 @@ public class EffectEditor : MonoBehaviour
         {
             priority = "0";
         }
+        else if ((Effect)effectDataDropdown.value == Effect.CHANGE_HERO)
+        {
+            priority = "2";
+        }
         else
         {
             priority = "1";
