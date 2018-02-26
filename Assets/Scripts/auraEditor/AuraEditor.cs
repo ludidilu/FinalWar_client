@@ -313,7 +313,7 @@ public class AuraEditor : MonoBehaviour
 
         if (removeWhenRoundOver.isOn)
         {
-            list.Add(BattleConst.ROUND_OVER);
+            list.Add(BattleConst.RECOVER);
         }
 
         if (removeWhenDoDamage.isOn)
