@@ -11392,9 +11392,9 @@ MonoBehaviour:
     auraType: 1
   - eventName: fixFear
     auraType: 0
-  - eventName: recover
-    auraType: 1
   - eventName: roundStart
+    auraType: 1
+  - eventName: roundOver
     auraType: 1
   - eventName: die
     auraType: 1
