@@ -1,6 +1,7 @@
 using System.IO;
 public class HeroTypeSDS_c {
     public static void Init(HeroTypeSDS _csv, BinaryReader _br){
+        _csv.canAttack = _br.ReadBoolean();
         _csv.attackSpeed = _br.ReadInt32();
         _csv.attackTimes = _br.ReadInt32();
         _csv.defenseSpeed = _br.ReadInt32();
