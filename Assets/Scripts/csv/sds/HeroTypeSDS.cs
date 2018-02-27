@@ -2,6 +2,8 @@
 
 public partial class HeroTypeSDS : CsvBase, IHeroTypeSDS
 {
+    public bool canAttack;
+
     public int attackSpeed;
     public int defenseSpeed;
     public int supportSpeed;
@@ -18,6 +20,11 @@ public partial class HeroTypeSDS : CsvBase, IHeroTypeSDS
     public int GetID()
     {
         return ID;
+    }
+
+    public bool GetCanAttack()
+    {
+        return canAttack;
     }
 
     public int GetAttackSpeed()
