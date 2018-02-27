@@ -90,11 +90,11 @@ public class EffectEditor : MonoBehaviour
 
         string priority;
 
-        if ((Effect)effectDropdown.value == Effect.BE_CLEANED)
+        if (effect == Effect.BE_CLEANED)
         {
             priority = "0";
         }
-        else if ((Effect)effectDataDropdown.value == Effect.CHANGE_HERO)
+        else if (effect == Effect.CHANGE_HERO)
         {
             priority = "2";
         }
