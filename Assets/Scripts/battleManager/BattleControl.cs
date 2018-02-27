@@ -708,13 +708,16 @@ public class BattleControl : MonoBehaviour
 
         tmpList.Add(_vo.pos);
 
-        IEnumerator<int> enumerator2 = _vo.data.Keys.GetEnumerator();
-
-        while (enumerator2.MoveNext())
+        if (_vo.data != null)
         {
-            if (!tmpList.Contains(enumerator2.Current))
+            IEnumerator<int> enumerator2 = _vo.data.Keys.GetEnumerator();
+
+            while (enumerator2.MoveNext())
             {
-                tmpList.Add(enumerator2.Current);
+                if (!tmpList.Contains(enumerator2.Current))
+                {
+                    tmpList.Add(enumerator2.Current);
+                }
             }
         }
 
