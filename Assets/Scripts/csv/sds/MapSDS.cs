@@ -63,7 +63,7 @@ public class MapSDS : CsvBase, IMapSDS
 
         Dictionary<int, MapSDS> dic = StaticData.GetDic<MapSDS>();
 
-        Dictionary<int, MapSDS>.ValueCollection.Enumerator enumerator = dic.Values.GetEnumerator();
+        IEnumerator<MapSDS> enumerator = dic.Values.GetEnumerator();
 
 #if USE_ASSETBUNDLE
 

@@ -551,7 +551,7 @@ public class BattleControl : MonoBehaviour
                     moves.Remove(pair.Value);
                 }
 
-                Dictionary<int, int>.Enumerator enumerator = moves.GetEnumerator();
+                IEnumerator<KeyValuePair<int, int>> enumerator = moves.GetEnumerator();
 
                 while (enumerator.MoveNext())
                 {
@@ -680,7 +680,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        Hero hero = battleManager.battle.heroMapDic[_vo.pos];
+        Hero hero = battleManager.battle.GetHero(_vo.pos);
 
         HeroBattle heroBattle = battleManager.AddHeroToMap(hero);
 
@@ -738,7 +738,7 @@ public class BattleControl : MonoBehaviour
 
         if (_vo.data != null)
         {
-            Dictionary<int, List<BattleHeroEffectVO>>.Enumerator enumerator = _vo.data.GetEnumerator();
+            IEnumerator<KeyValuePair<int, List<BattleHeroEffectVO>>> enumerator = _vo.data.GetEnumerator();
 
             while (enumerator.MoveNext())
             {

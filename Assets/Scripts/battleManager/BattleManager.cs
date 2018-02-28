@@ -521,7 +521,7 @@ public class BattleManager : MonoBehaviour
 
     private void ClearMapUnits()
     {
-        Dictionary<int, MapUnit>.ValueCollection.Enumerator enumerator = mapUnitDic.Values.GetEnumerator();
+        IEnumerator<MapUnit> enumerator = mapUnitDic.Values.GetEnumerator();
 
         while (enumerator.MoveNext())
         {
@@ -558,7 +558,7 @@ public class BattleManager : MonoBehaviour
 
     private void ClearSummonHeros()
     {
-        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator2 = summonHeroDic.Values.GetEnumerator();
+        IEnumerator<HeroBattle> enumerator2 = summonHeroDic.Values.GetEnumerator();
 
         while (enumerator2.MoveNext())
         {
@@ -572,7 +572,7 @@ public class BattleManager : MonoBehaviour
     {
         heroUid = 0;
 
-        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator2 = heroDic.Values.GetEnumerator();
+        IEnumerator<HeroBattle> enumerator2 = heroDic.Values.GetEnumerator();
 
         while (enumerator2.MoveNext())
         {
@@ -833,7 +833,7 @@ public class BattleManager : MonoBehaviour
 
     public void CreateHeros()
     {
-        Dictionary<int, Hero>.ValueCollection.Enumerator enumerator = battle.heroMapDic.Values.GetEnumerator();
+        IEnumerator<Hero> enumerator = battle.GetHeroEnumerator();
 
         while (enumerator.MoveNext())
         {
@@ -950,7 +950,7 @@ public class BattleManager : MonoBehaviour
     {
         BattleData battleData = battle.GetBattleData();
 
-        Dictionary<int, BattleCellData>.Enumerator enumerator2 = battleData.actionDic.GetEnumerator();
+        IEnumerator<KeyValuePair<int, BattleCellData>> enumerator2 = battleData.actionDic.GetEnumerator();
 
         while (enumerator2.MoveNext())
         {
@@ -1160,7 +1160,7 @@ public class BattleManager : MonoBehaviour
                 }
             }
         }
-        else if (battle.heroMapDic.ContainsKey(_mapUnit.index))
+        else if (battle.GetHeroMapContainsKey(_mapUnit.index))
         {
             HeroBattle nowHero = heroDic[_mapUnit.index];
 
@@ -1745,7 +1745,7 @@ public class BattleManager : MonoBehaviour
 
     public void DoRecover()
     {
-        Dictionary<int, HeroBattle>.ValueCollection.Enumerator enumerator = heroDic.Values.GetEnumerator();
+        IEnumerator<HeroBattle> enumerator = heroDic.Values.GetEnumerator();
 
         while (enumerator.MoveNext())
         {
