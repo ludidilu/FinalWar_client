@@ -8,6 +8,7 @@ public partial class HeroTypeSDS : CsvBase, IHeroTypeSDS
     public int defenseSpeed;
     public int supportSpeed;
 
+    public int recoverShield;
     public int attackTimes;
     public int thread;
     public int fearValue;
@@ -40,6 +41,11 @@ public partial class HeroTypeSDS : CsvBase, IHeroTypeSDS
     public int GetSupportSpeed()
     {
         return supportSpeed;
+    }
+
+    public int GetRecoverShield()
+    {
+        return recoverShield;
     }
 
     public int GetAttackTimes()
