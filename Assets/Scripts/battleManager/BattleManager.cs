@@ -213,7 +213,7 @@ public class BattleManager : MonoBehaviour
 
     private Dictionary<int, HeroBattle> summonHeroDic = new Dictionary<int, HeroBattle>();
 
-    private List<GameObject> arrowList = new List<GameObject>();
+    private List<ShootArrow> arrowList = new List<ShootArrow>();
 
     private Vector2 downPos;
 
@@ -430,31 +430,6 @@ public class BattleManager : MonoBehaviour
         RefreshTouchable(battle.GetClientCanAction());
     }
 
-    private void RefreshDataBeforeBattle()
-    {
-        heroDetail.Hide();
-
-        descPanel.Close();
-
-        //ClearMapUnits();
-
-        ClearCards();
-
-        ClearSummonHeros();
-
-        ClearHeros();
-
-        ClearMoves();
-
-        //CreateMapUnits();
-
-        CreateCards();
-
-        CreateHeros();
-
-        CreateMoneyTf();
-    }
-
     public void QuitBattle()
     {
         battle.ClientRequestQuitBattle();
@@ -586,7 +561,7 @@ public class BattleManager : MonoBehaviour
     {
         for (int i = 0; i < arrowList.Count; i++)
         {
-            Destroy(arrowList[i]);
+            Destroy(arrowList[i].gameObject);
         }
 
         arrowList.Clear();
@@ -962,30 +937,30 @@ public class BattleManager : MonoBehaviour
             {
                 int index = cellData.attackers.Count > 1 ? i : -1;
 
-                GameObject go = CreateArrow(cellData.attackers[i].pos, pos, new Color(1, 0, 0, 0.7f), index);
+                ShootArrow arrow = CreateArrow(cellData.attackers[i].pos, pos, new Color(1, 0, 0, 0.7f), index);
 
-                arrowList.Add(go);
+                arrowList.Add(arrow);
             }
 
             for (int i = 0; i < cellData.supporters.Count; i++)
             {
                 int index = cellData.supporters.Count > 1 ? i : -1;
 
-                GameObject go = CreateArrow(cellData.supporters[i].pos, pos, new Color(0, 1, 0, 0.7f), index);
+                ShootArrow arrow = CreateArrow(cellData.supporters[i].pos, pos, new Color(0, 1, 0, 0.7f), index);
 
-                arrowList.Add(go);
+                arrowList.Add(arrow);
             }
 
             for (int i = 0; i < cellData.shooters.Count; i++)
             {
-                GameObject go = CreateShootArrow(cellData.shooters[i].pos, pos, new Color(1, 1, 0, 0.7f), i);
+                ShootArrow arrow = CreateShootArrow(cellData.shooters[i].pos, pos, new Color(1, 1, 0, 0.7f), i);
 
-                arrowList.Add(go);
+                arrowList.Add(arrow);
             }
         }
     }
 
-    private GameObject CreateArrow(int _start, int _end, Color _color, int _index)
+    private ShootArrow CreateArrow(int _start, int _end, Color _color, int _index)
     {
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/battle/Arrow.prefab", null);
 
@@ -1013,10 +988,10 @@ public class BattleManager : MonoBehaviour
 
         arrow.SetIndex(_index);
 
-        return go;
+        return arrow;
     }
 
-    private GameObject CreateShootArrow(int _start, int _end, Color _color, int _index)
+    private ShootArrow CreateShootArrow(int _start, int _end, Color _color, int _index)
     {
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/battle/ShootArrow.prefab", null);
 
@@ -1046,7 +1021,7 @@ public class BattleManager : MonoBehaviour
 
         arrow.SetColor(_color);
 
-        return go;
+        return arrow;
     }
 
     private void MapUnitDown(MapUnit _mapUnit)
@@ -1450,8 +1425,20 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void ShowUi(Action _callBack)
+    private void ExitBattle(Action _callBack)
     {
+        ClearCards();
+
+        CreateCards();
+
+        CreateMoneyTf();
+
+        CreateScoreTf();
+
+        CreateRoundNumLeftTf();
+
+        RefreshTouchable(true);
+
         Action dele = delegate ()
         {
             SuperRaycast.SetIsOpen(true, "ui");
@@ -1470,8 +1457,12 @@ public class BattleManager : MonoBehaviour
         SuperTween.Instance.To(1, 0, 0.5f, SetUiContainerSize, dele);
     }
 
-    private void HideUi(Action _callBack)
+    private void EnterBattle(Action _callBack)
     {
+        heroDetail.Hide();
+
+        descPanel.Close();
+
         isUiShow = false;
 
         SuperRaycast.SetIsOpen(false, "ui");
@@ -1495,11 +1486,31 @@ public class BattleManager : MonoBehaviour
             battleContainer.localScale = new Vector3(nowScale, nowScale, battleContainer.localScale.z);
 
             SetUiContainerSize(_v);
+
+            AlphaOutSummonHero(1 - _v);
+
+            AlphaOutMove(1 - _v);
+
+            IEnumerator<HeroBattle> enumerator = heroDic.Values.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                HeroBattle hero = enumerator.Current;
+
+                if (!hero.canAction)
+                {
+                    hero.SetColorFix(PublicTools.FloatLerp(hero.colorFix, 1, _v));
+                }
+            }
         };
 
         Action dele = delegate ()
         {
             alphaCg.alpha = 0;
+
+            ClearSummonHeros();
+
+            ClearMoves();
 
             _callBack();
         };
@@ -1516,22 +1527,10 @@ public class BattleManager : MonoBehaviour
     {
         Action dele = delegate ()
         {
-            if (summonHeroDic.Count > 0)
-            {
-                Action dele2 = delegate ()
-                {
-                    SuperSequenceControl.Start(DoActionReal, _step);
-                };
-
-                SuperTween.Instance.To(1, 0, 0.5f, AlphaOutSummonHero, dele2);
-            }
-            else
-            {
-                SuperSequenceControl.Start(DoActionReal, _step);
-            }
+            SuperSequenceControl.Start(DoActionReal, _step);
         };
 
-        HideUi(dele);
+        EnterBattle(dele);
     }
 
     private void AlphaOutSummonHero(float _v)
@@ -1541,6 +1540,16 @@ public class BattleManager : MonoBehaviour
         while (enumerator.MoveNext())
         {
             enumerator.Current.SetAlpha(_v);
+        }
+    }
+
+    private void AlphaOutMove(float _v)
+    {
+        for (int i = 0; i < arrowList.Count; i++)
+        {
+            ShootArrow arrow = arrowList[i];
+
+            arrow.SetColor(new Color(arrow.GetColor().r, arrow.GetColor().g, arrow.GetColor().b, _v));
         }
     }
 
@@ -1614,23 +1623,21 @@ public class BattleManager : MonoBehaviour
             }
             else if (vo is BattlePrepareRushVO)
             {
-                DoPrepareRush();
             }
             else if (vo is BattleRushOverVO)
             {
-                DoRushOver();
             }
             else if (vo is BattleRecoverVO)
             {
-                DoRecover();
+                DoRecover(_index);
+
+                yield return null;
             }
             else if (vo is BattleRoundStartVO)
             {
-                DoRecover();
             }
             else if (vo is BattleRoundOverVO)
             {
-                DoRecover();
             }
             else if (vo is BattleTriggerAuraVO)
             {
@@ -1638,9 +1645,11 @@ public class BattleManager : MonoBehaviour
 
                 yield return null;
             }
+            else if (vo is BattleStartVO)
+            {
+            }
             else if (vo is BattleRefreshVO)
             {
-                RefreshDataBeforeBattle();
             }
             else if (vo is BattleSupportVO)
             {
@@ -1658,7 +1667,7 @@ public class BattleManager : MonoBehaviour
 
         yield return null;
 
-        RefreshData();
+        //RefreshData();
 
         SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_ROUND_OVER);
 
@@ -1667,7 +1676,7 @@ public class BattleManager : MonoBehaviour
             RoundOver((Battle.BattleResult)_step.Current);
         };
 
-        ShowUi(dele);
+        ExitBattle(dele);
     }
 
     private void RoundOver(Battle.BattleResult _battleResult)
@@ -1716,16 +1725,6 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void DoPrepareRush()
-    {
-
-    }
-
-    private void DoRushOver()
-    {
-
-    }
-
     private void DoAddCards(BattleAddCardsVO _vo)
     {
         ClearCards();
@@ -1743,15 +1742,33 @@ public class BattleManager : MonoBehaviour
         CreateScoreTf();
     }
 
-    public void DoRecover()
+    private void DoRecover(int _index)
+    {
+        SuperSequenceControl.To(0, 1, 0.5f, RefresFearHero, _index);
+    }
+
+    private void RefresFearHero(float _v)
     {
         IEnumerator<HeroBattle> enumerator = heroDic.Values.GetEnumerator();
 
         while (enumerator.MoveNext())
         {
-            enumerator.Current.RefreshHpAndShield();
+            HeroBattle hero = enumerator.Current;
 
-            enumerator.Current.RefreshAttack();
+            if (!hero.canAction)
+            {
+                hero.SetColorFix(PublicTools.FloatLerp(1, hero.colorFix, _v));
+            }
+        }
+    }
+
+    public void RefreshHeroState()
+    {
+        IEnumerator<HeroBattle> enumerator = heroDic.Values.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            enumerator.Current.Refresh();
         }
     }
 

@@ -65,13 +65,29 @@ public class HeroBattle : HeroBase
     private Color oppFrameColor;
 
     [SerializeField]
-    private float colorFix;
+    public float colorFix;
 
     private BattleManager battleManager;
 
     private BattleControl battleControl;
 
     public Hero hero;
+
+    private Color frameColor;
+
+    private Color bodyColor;
+
+    private Color bgColor;
+
+    private Color shieldColor;
+
+    private Color attackColor;
+
+    private Color hpColor;
+
+    private Color heroTypeColor;
+
+    private Color speedColor;
 
     public bool isHero
     {
@@ -162,16 +178,14 @@ public class HeroBattle : HeroBase
         RefreshAll();
     }
 
-    public void RefreshAll()
+    private void RefreshAll()
     {
         InitCard(hero.sds as HeroSDS);
 
-        RefreshHpAndShield();
-
-        RefreshAttack();
+        Refresh();
     }
 
-    public void RefreshHpAndShield()
+    public void Refresh()
     {
         int nowShield;
 
@@ -218,7 +232,7 @@ public class HeroBattle : HeroBase
 
             speed.text = text;
 
-            speed.color = new Color(0, 1, 0, speed.color.a);
+            speedColor = new Color(0, 1, 0, speed.color.a);
 
             speedOutline.SetText(text);
         }
@@ -233,7 +247,7 @@ public class HeroBattle : HeroBase
 
             speed.text = text;
 
-            speed.color = new Color(1, 0, 0, speed.color.a);
+            speedColor = new Color(1, 0, 0, speed.color.a);
 
             speedOutline.SetText(text);
         }
@@ -245,111 +259,64 @@ public class HeroBattle : HeroBase
             }
         }
 
-        if (hero.GetCanAction())
-        {
-            body.color = new Color(1, 1, 1, body.color.a);
-
-            bg.color = new Color(1, 1, 1, bg.color.a);
-
-            frame.color = isMine == battleManager.battle.clientIsMine ? new Color(myFrameColor.r, myFrameColor.g, myFrameColor.b, frame.color.a) : new Color(oppFrameColor.r, oppFrameColor.g, oppFrameColor.b, frame.color.a);
-
-            heroType.color = new Color(1, 1, 1, heroType.color.a);
-
-            if (nowHp < sds.hp)
-            {
-                hp.color = new Color(1, 0, 0, hp.color.a);
-            }
-            else
-            {
-                hp.color = new Color(1, 1, 1, hp.color.a);
-            }
-
-            if (nowShield < sds.shield)
-            {
-                shield.color = new Color(1, 0, 0, shield.color.a);
-            }
-            else if (nowShield > sds.shield)
-            {
-                shield.color = new Color(0, 1, 0, shield.color.a);
-            }
-            else
-            {
-                shield.color = new Color(1, 1, 1, shield.color.a);
-            }
-        }
-        else
-        {
-            body.color = new Color(colorFix, colorFix, colorFix, body.color.a);
-
-            bg.color = new Color(colorFix, colorFix, colorFix, bg.color.a);
-
-            frame.color = isMine == battleManager.battle.clientIsMine ? new Color(myFrameColor.r * colorFix, myFrameColor.g * colorFix, myFrameColor.b * colorFix, frame.color.a) : new Color(oppFrameColor.r * colorFix, oppFrameColor.g * colorFix, oppFrameColor.b * colorFix, frame.color.a);
-
-            heroType.color = new Color(colorFix, colorFix, colorFix, heroType.color.a);
-
-            if (nowHp < sds.hp)
-            {
-                hp.color = new Color(colorFix, 0, 0, hp.color.a);
-            }
-            else
-            {
-                hp.color = new Color(colorFix, colorFix, colorFix, hp.color.a);
-            }
-
-            if (nowShield < sds.shield)
-            {
-                shield.color = new Color(colorFix, 0, 0, shield.color.a);
-            }
-            else if (nowShield > sds.shield)
-            {
-                shield.color = new Color(0, colorFix, 0, shield.color.a);
-            }
-            else
-            {
-                shield.color = new Color(colorFix, colorFix, colorFix, shield.color.a);
-            }
-        }
-    }
-
-    public void RefreshAttack()
-    {
         int atk = hero.GetAttack();
 
-        string text = atk.ToString();
+        text = atk.ToString();
 
         attack.text = text;
 
         attackOutline.SetText(text);
 
-        if (hero.GetCanAction())
+        if (atk < sds.attack)
         {
-            if (atk < sds.attack)
-            {
-                attack.color = new Color(1, 0, 0, attack.color.a);
-            }
-            else if (atk > sds.attack)
-            {
-                attack.color = new Color(0, 1, 0, attack.color.a);
-            }
-            else
-            {
-                attack.color = new Color(1, 1, 1, attack.color.a);
-            }
+            attackColor = new Color(1, 0, 0, attack.color.a);
+        }
+        else if (atk > sds.attack)
+        {
+            attackColor = new Color(0, 1, 0, attack.color.a);
         }
         else
         {
-            if (atk < sds.attack)
-            {
-                attack.color = new Color(colorFix, 0, 0, attack.color.a);
-            }
-            else if (atk > sds.attack)
-            {
-                attack.color = new Color(0, colorFix, 0, attack.color.a);
-            }
-            else
-            {
-                attack.color = new Color(colorFix, colorFix, colorFix, attack.color.a);
-            }
+            attackColor = new Color(1, 1, 1, attack.color.a);
+        }
+
+        bodyColor = new Color(1, 1, 1, body.color.a);
+
+        bgColor = new Color(1, 1, 1, bg.color.a);
+
+        frameColor = isMine == battleManager.battle.clientIsMine ? new Color(myFrameColor.r, myFrameColor.g, myFrameColor.b, frame.color.a) : new Color(oppFrameColor.r, oppFrameColor.g, oppFrameColor.b, frame.color.a);
+
+        heroTypeColor = new Color(1, 1, 1, heroType.color.a);
+
+        if (nowHp < sds.hp)
+        {
+            hpColor = new Color(1, 0, 0, hp.color.a);
+        }
+        else
+        {
+            hpColor = new Color(1, 1, 1, hp.color.a);
+        }
+
+        if (nowShield < sds.shield)
+        {
+            shieldColor = new Color(1, 0, 0, shield.color.a);
+        }
+        else if (nowShield > sds.shield)
+        {
+            shieldColor = new Color(0, 1, 0, shield.color.a);
+        }
+        else
+        {
+            shieldColor = new Color(1, 1, 1, shield.color.a);
+        }
+
+        if (canAction)
+        {
+            SetColorFix(1);
+        }
+        else
+        {
+            SetColorFix(colorFix);
         }
     }
 
@@ -460,15 +427,11 @@ public class HeroBattle : HeroBase
 
                     case Effect.CHANGE_HERO:
 
-                        battleManager.ClearHeros();
-
-                        battleManager.CreateHeros();
+                        RefreshAll();
 
                         break;
                 }
             }
-
-            battleManager.DoRecover();
         }
 
         return shock;
@@ -489,6 +452,28 @@ public class HeroBattle : HeroBase
         SuperTween.Instance.To(1, 0, battleControl.dieTime, SetAlpha, dieOver);
     }
 
+    public void SetColorFix(float _fix)
+    {
+        frame.color = new Color(frameColor.r * _fix, frameColor.g * _fix, frameColor.b * _fix, frame.color.a);
+
+        body.color = new Color(bodyColor.r * _fix, bodyColor.g * _fix, bodyColor.b * _fix, body.color.a);
+
+        bg.color = new Color(bgColor.r * _fix, bgColor.g * _fix, bgColor.b * _fix, bg.color.a);
+
+        shield.color = new Color(shieldColor.r * _fix, shieldColor.g * _fix, shieldColor.b * _fix, shield.color.a);
+
+        attack.color = new Color(attackColor.r * _fix, attackColor.g * _fix, attackColor.b * _fix, attack.color.a);
+
+        hp.color = new Color(hpColor.r * _fix, hpColor.g * _fix, hpColor.b * _fix, hp.color.a);
+
+        heroType.color = new Color(heroTypeColor.r * _fix, heroTypeColor.g * _fix, heroTypeColor.b * _fix, heroType.color.a);
+
+        if (speed.gameObject.activeSelf)
+        {
+            speed.color = new Color(speedColor.r * _fix, speedColor.g * _fix, speedColor.b * _fix, speed.color.a);
+        }
+    }
+
     public void SetAlpha(float _v)
     {
         frame.color = new Color(frame.color.r, frame.color.g, frame.color.b, _v);
@@ -507,7 +492,7 @@ public class HeroBattle : HeroBase
 
         if (speed.gameObject.activeSelf)
         {
-            speed.color = new Color(speed.color.a, speed.color.g, speed.color.b, _v);
+            speed.color = new Color(speed.color.r, speed.color.g, speed.color.b, _v);
         }
     }
 

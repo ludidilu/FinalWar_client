@@ -27,4 +27,11 @@ public class Arrow : ShootArrow
             tm.transform.rotation = Quaternion.identity;
         }
     }
+
+    public override void SetColor(Color _color)
+    {
+        base.SetColor(_color);
+
+        tm.color = new Color(tm.color.r, tm.color.g, tm.color.b, _color.a);
+    }
 }

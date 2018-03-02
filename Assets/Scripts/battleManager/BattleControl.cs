@@ -107,6 +107,8 @@ public class BattleControl : MonoBehaviour
 
         HeroBeDamaged(attacker, stander);
 
+        stander.Refresh();
+
         yield return null;
 
         SuperSequenceControl.DelayCall(2.0f, _lastIndex);
@@ -165,6 +167,8 @@ public class BattleControl : MonoBehaviour
             stander.Shock(shooter, shockCurve, shockDis);
         }
 
+        battleManager.RefreshHeroState();
+
         SuperSequenceControl.DelayCall(2.0f, _lastIndex);
     }
 
@@ -195,6 +199,8 @@ public class BattleControl : MonoBehaviour
         {
             stander.Shock(supporter, shockCurve, shockDis);
         }
+
+        battleManager.RefreshHeroState();
 
         SuperSequenceControl.DelayCall(0.5f, _index);
 
@@ -345,6 +351,8 @@ public class BattleControl : MonoBehaviour
 
         HeroBeDamaged(attacker, defender);
 
+        defender.Refresh();
+
         yield return null;
 
         SuperSequenceControl.DelayCall(2.0f, _index);
@@ -391,6 +399,10 @@ public class BattleControl : MonoBehaviour
         HeroBeDamaged(attacker, defender);
 
         HeroBeDamaged(defender, attacker);
+
+        attacker.Refresh();
+
+        defender.Refresh();
 
         yield return null;
 
@@ -628,8 +640,6 @@ public class BattleControl : MonoBehaviour
 
                 battleManager.heroDic.Add(pair.Value, hero);
 
-                hero.RefreshAttack();
-
                 int index = pair.Value;
 
                 MapUnit unit = battleManager.mapUnitDic[index];
@@ -642,6 +652,8 @@ public class BattleControl : MonoBehaviour
             tmpList2.Clear();
 
             tmpDic.Clear();
+
+            battleManager.RefreshHeroState();
         }
 
         SuperSequenceControl.MoveNext(_lastIndex);
@@ -699,6 +711,8 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
+        battleManager.RefreshHeroState();
+
         SuperSequenceControl.DelayCall(0.8f, _lastIndex);
     }
 
@@ -744,8 +758,6 @@ public class BattleControl : MonoBehaviour
             {
                 HeroBattle targetHero = battleManager.heroDic[enumerator.Current.Key];
 
-                targetHero.RefreshAttack();
-
                 bool shock = targetHero.TakeEffect(enumerator.Current.Value);
 
                 if (shock)
@@ -753,6 +765,8 @@ public class BattleControl : MonoBehaviour
                     targetHero.Shock(hero, shockCurve, shockDis);
                 }
             }
+
+            battleManager.RefreshHeroState();
 
             SuperSequenceControl.DelayCall(2.0f, _lastIndex);
         }
