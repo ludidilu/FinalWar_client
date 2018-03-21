@@ -107,7 +107,7 @@ public class BattleControl : MonoBehaviour
 
         HeroBeDamaged(attacker, stander);
 
-        stander.Refresh();
+        stander.Refresh(false);
 
         yield return null;
 
@@ -167,7 +167,7 @@ public class BattleControl : MonoBehaviour
             stander.Shock(shooter, shockCurve, shockDis);
         }
 
-        battleManager.RefreshHeroState();
+        battleManager.RefreshHeroState(false);
 
         SuperSequenceControl.DelayCall(2.0f, _lastIndex);
     }
@@ -200,7 +200,7 @@ public class BattleControl : MonoBehaviour
             stander.Shock(supporter, shockCurve, shockDis);
         }
 
-        battleManager.RefreshHeroState();
+        battleManager.RefreshHeroState(false);
 
         SuperSequenceControl.DelayCall(0.5f, _index);
 
@@ -351,7 +351,7 @@ public class BattleControl : MonoBehaviour
 
         HeroBeDamaged(attacker, defender);
 
-        defender.Refresh();
+        defender.Refresh(false);
 
         yield return null;
 
@@ -400,9 +400,9 @@ public class BattleControl : MonoBehaviour
 
         HeroBeDamaged(defender, attacker);
 
-        attacker.Refresh();
+        attacker.Refresh(false);
 
-        defender.Refresh();
+        defender.Refresh(false);
 
         yield return null;
 
@@ -653,7 +653,7 @@ public class BattleControl : MonoBehaviour
 
             tmpDic.Clear();
 
-            battleManager.RefreshHeroState();
+            battleManager.RefreshHeroState(false);
         }
 
         SuperSequenceControl.MoveNext(_lastIndex);
@@ -711,7 +711,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        battleManager.RefreshHeroState();
+        battleManager.RefreshHeroState(true);
 
         SuperSequenceControl.DelayCall(0.8f, _lastIndex);
     }
@@ -766,7 +766,7 @@ public class BattleControl : MonoBehaviour
                 }
             }
 
-            battleManager.RefreshHeroState();
+            battleManager.RefreshHeroState(false);
 
             SuperSequenceControl.DelayCall(2.0f, _lastIndex);
         }

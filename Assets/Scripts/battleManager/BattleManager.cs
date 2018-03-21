@@ -1744,6 +1744,8 @@ public class BattleManager : MonoBehaviour
 
     private void DoRecover(int _index)
     {
+        RefreshHeroState(false);
+
         SuperSequenceControl.To(0, 1, 0.5f, RefresFearHero, _index);
     }
 
@@ -1762,13 +1764,13 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void RefreshHeroState()
+    public void RefreshHeroState(bool _checkCanAction)
     {
         IEnumerator<HeroBattle> enumerator = heroDic.Values.GetEnumerator();
 
         while (enumerator.MoveNext())
         {
-            enumerator.Current.Refresh();
+            enumerator.Current.Refresh(_checkCanAction);
         }
     }
 

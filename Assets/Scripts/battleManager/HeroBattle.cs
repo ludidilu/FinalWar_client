@@ -182,10 +182,10 @@ public class HeroBattle : HeroBase
     {
         InitCard(hero.sds as HeroSDS);
 
-        Refresh();
+        Refresh(true);
     }
 
-    public void Refresh()
+    public void Refresh(bool _checkCanAction)
     {
         int nowShield;
 
@@ -310,13 +310,20 @@ public class HeroBattle : HeroBase
             shieldColor = new Color(1, 1, 1, shield.color.a);
         }
 
-        if (canAction)
+        if (_checkCanAction)
         {
-            SetColorFix(1);
+            if (canAction)
+            {
+                SetColorFix(1);
+            }
+            else
+            {
+                SetColorFix(colorFix);
+            }
         }
         else
         {
-            SetColorFix(colorFix);
+            SetColorFix(1);
         }
     }
 
