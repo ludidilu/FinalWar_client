@@ -41,7 +41,7 @@ public class BattleOnline : UIPanel
 
         client = new Client();
 
-        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ConfigDictionary.Instance.uid, ReceivePushData, Disconnect);
+        client.Init(ConfigDictionary.Instance.ip, ConfigDictionary.Instance.port, ReceivePushData, Disconnect);
     }
 
     private void ReceivePushData(BinaryReader _br)
@@ -195,12 +195,27 @@ public class BattleOnline : UIPanel
 
         btQuit.SetActive(false);
 
-        client.Connect(ReceiveReplyData, ConnectFail);
+        client.Connect(ConnectOver);
     }
 
-    private void ConnectFail()
+    private void ConnectOver(bool _b)
     {
-        UIManager.Instance.Hide(uid);
+        if (_b)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (BinaryWriter bw = new BinaryWriter(ms))
+                {
+                    bw.Write(ConfigDictionary.Instance.uid);
+
+                    client.Send(ms, ReceiveReplyData);
+                }
+            }
+        }
+        else
+        {
+            UIManager.Instance.Hide(uid);
+        }
     }
 
     private void Disconnect()
