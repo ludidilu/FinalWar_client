@@ -11,6 +11,7 @@ public partial class HeroSDS : CsvBase, IHeroSDS
     public int[] shootSkills;
     public int[] supportSkills;
     public int[] auras;
+    public int[] features;
 
     private HeroTypeSDS m_heroTypeFix;
 
@@ -70,6 +71,11 @@ public partial class HeroSDS : CsvBase, IHeroSDS
     public int[] GetAuras()
     {
         return auras;
+    }
+
+    public int[] GetFeatures()
+    {
+        return features;
     }
 }
 
