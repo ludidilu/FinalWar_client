@@ -4,6 +4,7 @@ public partial class AuraSDS : CsvBase, IAuraSDS
 {
     public string eventName;
     public int effectType;
+    public int priority;
     public int triggerTarget;
     public int conditionCompare;
     public int[] conditionType;
@@ -35,6 +36,16 @@ public partial class AuraSDS : CsvBase, IAuraSDS
         return eventName;
     }
 
+    public AuraType GetEffectType()
+    {
+        return (AuraType)effectType;
+    }
+
+    public int GetPriority()
+    {
+        return priority;
+    }
+
     public AuraTarget GetTriggerTarget()
     {
         return (AuraTarget)triggerTarget;
@@ -53,11 +64,6 @@ public partial class AuraSDS : CsvBase, IAuraSDS
     public int[] GetConditionData()
     {
         return conditionData;
-    }
-
-    public AuraType GetEffectType()
-    {
-        return (AuraType)effectType;
     }
 
     public AuraTarget GetEffectTarget()
