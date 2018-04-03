@@ -18,6 +18,10 @@ public class AuraEditor : MonoBehaviour
 
     public Dropdown eventNameDropdown;
 
+    public InputField priorityInputField;
+
+    public Toggle isSetIntToggle;
+
     public Dropdown triggerTargetDropdown;
 
     public List<AuraData> auraDataList;
@@ -140,6 +144,10 @@ public class AuraEditor : MonoBehaviour
 
             if (auraData.auraType == AuraType.CAST_SKILL)
             {
+                priorityInputField.gameObject.SetActive(false);
+
+                isSetIntToggle.gameObject.SetActive(false);
+
                 castSkillEffect.gameObject.SetActive(true);
 
                 auraIntDropdown.gameObject.SetActive(false);
@@ -148,6 +156,10 @@ public class AuraEditor : MonoBehaviour
             }
             else
             {
+                priorityInputField.gameObject.SetActive(true);
+
+                isSetIntToggle.gameObject.SetActive(true);
+
                 castSkillEffect.gameObject.SetActive(false);
 
                 auraIntDropdown.gameObject.SetActive(true);
@@ -204,6 +216,8 @@ public class AuraEditor : MonoBehaviour
         string eventName = data.eventName;
 
         AuraType auraType = data.auraType;
+
+        int priority = 0;
 
         AuraTarget effectTarget = default(AuraTarget);
 
@@ -264,6 +278,11 @@ public class AuraEditor : MonoBehaviour
             }
 
             effectData = new int[] { auraIntDropdown.value, int.Parse(auraIntInputField.text) };
+
+            if (!string.IsNullOrEmpty(priorityInputField.text))
+            {
+                priority = int.Parse(priorityInputField.text);
+            }
         }
 
         triggerTarget = triggerTargetArr[triggerTargetDropdown.value];
@@ -332,7 +351,23 @@ public class AuraEditor : MonoBehaviour
 
         result.Add(eventName);
 
-        result.Add(((int)auraType).ToString());
+        if (auraType == AuraType.CAST_SKILL)
+        {
+            result.Add(((int)auraType).ToString());
+        }
+        else
+        {
+            if (isSetIntToggle.isOn)
+            {
+                result.Add(((int)AuraType.SET_INT).ToString());
+            }
+            else
+            {
+                result.Add(((int)AuraType.FIX_INT).ToString());
+            }
+        }
+
+        result.Add(priority.ToString());
 
         result.Add(((int)triggerTarget).ToString());
 
