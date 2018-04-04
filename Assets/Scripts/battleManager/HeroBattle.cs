@@ -259,7 +259,7 @@ public class HeroBattle : HeroBase
             }
         }
 
-        int atk = hero.GetAttack();
+        int atk = hero.GetAttackByClient();
 
         text = atk.ToString();
 
