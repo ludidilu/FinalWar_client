@@ -618,6 +618,7 @@ MonoBehaviour:
   shootDescID: 10001
   supportDescID: 10002
   effectDescID: 10003
+  featureDescID: 10004
   minDefaultScale: 0.5
   maxDefaultScale: 0.8
   minMapScale: 0.4

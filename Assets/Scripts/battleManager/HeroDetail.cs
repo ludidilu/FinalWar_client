@@ -68,6 +68,11 @@ public class HeroDetail : MonoBehaviour
 
         float height = defaultHeight;
 
+        for (int i = 0; i < hero.sds.features.Length; i++)
+        {
+            AddCell(string.Format(battleManager.featureDescFix, StaticData.GetData<AuraSDS>(hero.sds.features[i]).desc), ref height);
+        }
+
         for (int i = 0; i < hero.sds.auras.Length; i++)
         {
             AddCell(string.Format(battleManager.auraDescFix, StaticData.GetData<AuraSDS>(hero.sds.auras[i]).desc), ref height);
