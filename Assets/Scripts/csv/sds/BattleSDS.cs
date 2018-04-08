@@ -4,4 +4,6 @@
     public int[] oCards;
     public int mapID;
     public int maxRoundNum;
+    public int deckCardsNum;
+    public int addCardsNum;
 }
