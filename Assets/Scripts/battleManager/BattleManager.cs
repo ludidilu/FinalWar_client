@@ -14,9 +14,12 @@ using System.Collections;
 using gameObjectFactory;
 using superTween;
 using publicTools;
+using System.Reflection;
 
 public class BattleManager : MonoBehaviour
 {
+    private static BattleManager Instance;
+
     public const string BATTLE_START = "battleStart";
 
     public const string BATTLE_QUIT = "battleQuit";
@@ -330,6 +333,8 @@ public class BattleManager : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
+
         stepV = new Vector2(mainCamera.aspect * mainCamera.orthographicSize, mainCamera.orthographicSize);
 
         viewport = new Bounds(Vector3.zero, stepV * 2);
@@ -707,6 +712,8 @@ public class BattleManager : MonoBehaviour
 
         Queue<int> oCards;
 
+        int mHandCardsNum = 0;
+
         if (battle.clientIsMine)
         {
             mHandCards = battle.mHandCards;
@@ -738,6 +745,8 @@ public class BattleManager : MonoBehaviour
             {
                 continue;
             }
+
+            mHandCardsNum++;
 
             int id = battle.GetCard(uid);
 
@@ -783,7 +792,9 @@ public class BattleManager : MonoBehaviour
 
         mCardsNumTf.text = mCards.Count.ToString();
 
-        if (mCards.Count == 0)
+        int addCardsNum = mCards.Count > battle.addCardsNum ? battle.addCardsNum : mCards.Count;
+
+        if (mHandCardsNum + addCardsNum > BattleConst.MAX_HAND_CARD_NUM)
         {
             mCardsNumTf.color = Color.red;
         }
@@ -792,9 +803,9 @@ public class BattleManager : MonoBehaviour
             mCardsNumTf.color = Color.white;
         }
 
-        oCardsNumTf.text = oCards.Count.ToString();
+        addCardsNum = oCards.Count > battle.addCardsNum ? battle.addCardsNum : oCards.Count;
 
-        if (oCards.Count == 0)
+        if (oHandCards.Count + addCardsNum > BattleConst.MAX_HAND_CARD_NUM)
         {
             oCardsNumTf.color = Color.red;
         }
@@ -844,7 +855,9 @@ public class BattleManager : MonoBehaviour
 
         mMoneyTf.text = mMoney.ToString();
 
-        if (mMoney + BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && mCards.Count > 0)
+        int addCardsNum = mCards.Count > battle.addCardsNum ? battle.addCardsNum : mCards.Count;
+
+        if (mMoney + addCardsNum * BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && mCards.Count > 0)
         {
             mMoneyTf.color = Color.red;
         }
@@ -857,7 +870,9 @@ public class BattleManager : MonoBehaviour
 
         oMoneyTf.text = oMoney.ToString();
 
-        if (oMoney + BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && oCards.Count > 0)
+        addCardsNum = oCards.Count > battle.addCardsNum ? battle.addCardsNum : oCards.Count;
+
+        if (oMoney + addCardsNum * BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && oCards.Count > 0)
         {
             oMoneyTf.color = Color.red;
         }
@@ -2088,7 +2103,65 @@ public class BattleManager : MonoBehaviour
         {
             DescSDS sds = StaticData.GetData<DescSDS>(_id);
 
-            ShowDesc(sds.desc, null);
+            string result = sds.desc;
+
+            int index = result.IndexOf("@");
+
+            while (index != -1)
+            {
+                int index2 = result.IndexOf("@", index + 1);
+
+                if (index2 == -1)
+                {
+                    throw new Exception("desc error:" + sds.ID);
+                }
+
+                string str = result.Substring(index + 1, index2 - index - 1);
+
+                string str2 = GetStrFix(str);
+
+                result = result.Replace("@" + str + "@", str2);
+
+                index = result.IndexOf("@");
+            }
+
+            ShowDesc(result, null);
+        }
+    }
+
+    private string GetStrFix(string _str)
+    {
+        string[] strArr = _str.Split('.');
+
+        switch (strArr[0])
+        {
+            case "BattleConst":
+
+                Type t = battle.GetType().Assembly.GetType("FinalWar.BattleConst");
+
+                FieldInfo fi = t.GetField(strArr[1]);
+
+                return fi.GetValue(null).ToString();
+
+            case "battle":
+
+                t = battle.GetType();
+
+                PropertyInfo pi = t.GetProperty(strArr[1]);
+
+                return pi.GetValue(battle, null).ToString();
+
+            case "this":
+
+                t = GetType();
+
+                fi = t.GetField(strArr[1]);
+
+                return fi.GetValue(this).ToString();
+
+            default:
+
+                throw new Exception("error GetStrFix:" + _str);
         }
     }
 
