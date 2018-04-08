@@ -12,6 +12,7 @@ public partial class HeroSDS : CsvBase, IHeroSDS
     public int[] supportSkills;
     public int[] auras;
     public int[] features;
+    public int[] effects;
 
     private HeroTypeSDS m_heroTypeFix;
 
@@ -76,6 +77,11 @@ public partial class HeroSDS : CsvBase, IHeroSDS
     public int[] GetFeatures()
     {
         return features;
+    }
+
+    public int[] GetEffects()
+    {
+        return effects;
     }
 }
 
