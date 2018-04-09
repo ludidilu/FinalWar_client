@@ -712,8 +712,6 @@ public class BattleManager : MonoBehaviour
 
         Queue<int> oCards;
 
-        int mHandCardsNum = 0;
-
         if (battle.clientIsMine)
         {
             mHandCards = battle.mHandCards;
@@ -745,8 +743,6 @@ public class BattleManager : MonoBehaviour
             {
                 continue;
             }
-
-            mHandCardsNum++;
 
             int id = battle.GetCard(uid);
 
@@ -792,9 +788,7 @@ public class BattleManager : MonoBehaviour
 
         mCardsNumTf.text = mCards.Count.ToString();
 
-        int addCardsNum = mCards.Count > battle.addCardsNum ? battle.addCardsNum : mCards.Count;
-
-        if (mHandCardsNum + addCardsNum > BattleConst.MAX_HAND_CARD_NUM)
+        if (mCards.Count == 0)
         {
             mCardsNumTf.color = Color.red;
         }
@@ -803,9 +797,9 @@ public class BattleManager : MonoBehaviour
             mCardsNumTf.color = Color.white;
         }
 
-        addCardsNum = oCards.Count > battle.addCardsNum ? battle.addCardsNum : oCards.Count;
+        oCardsNumTf.text = oCards.Count.ToString();
 
-        if (oHandCards.Count + addCardsNum > BattleConst.MAX_HAND_CARD_NUM)
+        if (oCards.Count == 0)
         {
             oCardsNumTf.color = Color.red;
         }
@@ -857,7 +851,7 @@ public class BattleManager : MonoBehaviour
 
         int addCardsNum = mCards.Count > battle.addCardsNum ? battle.addCardsNum : mCards.Count;
 
-        if (mMoney + addCardsNum * BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && mCards.Count > 0)
+        if (mMoney + battle.addMoney > BattleConst.MAX_MONEY && mCards.Count > 0)
         {
             mMoneyTf.color = Color.red;
         }
@@ -872,7 +866,7 @@ public class BattleManager : MonoBehaviour
 
         addCardsNum = oCards.Count > battle.addCardsNum ? battle.addCardsNum : oCards.Count;
 
-        if (oMoney + addCardsNum * BattleConst.ADD_MONEY > BattleConst.MAX_MONEY && oCards.Count > 0)
+        if (oMoney + battle.addMoney > BattleConst.MAX_MONEY && oCards.Count > 0)
         {
             oMoneyTf.color = Color.red;
         }

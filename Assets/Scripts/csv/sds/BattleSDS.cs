@@ -6,4 +6,5 @@
     public int maxRoundNum;
     public int deckCardsNum;
     public int addCardsNum;
+    public int addMoney;
 }
