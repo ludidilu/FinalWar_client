@@ -849,9 +849,7 @@ public class BattleManager : MonoBehaviour
 
         mMoneyTf.text = mMoney.ToString();
 
-        int addCardsNum = mCards.Count > battle.addCardsNum ? battle.addCardsNum : mCards.Count;
-
-        if (mMoney + battle.addMoney > BattleConst.MAX_MONEY && mCards.Count > 0)
+        if (mMoney + battle.addMoney > BattleConst.MAX_MONEY)
         {
             mMoneyTf.color = Color.red;
         }
@@ -864,9 +862,7 @@ public class BattleManager : MonoBehaviour
 
         oMoneyTf.text = oMoney.ToString();
 
-        addCardsNum = oCards.Count > battle.addCardsNum ? battle.addCardsNum : oCards.Count;
-
-        if (oMoney + battle.addMoney > BattleConst.MAX_MONEY && oCards.Count > 0)
+        if (oMoney + battle.addMoney > BattleConst.MAX_MONEY)
         {
             oMoneyTf.color = Color.red;
         }
