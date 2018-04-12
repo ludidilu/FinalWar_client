@@ -219,7 +219,7 @@ public class HeroBattle : HeroBase
 
         shieldOutline.SetText(text);
 
-        int speedFix = hero.GetSpeedFix();
+        int speedFix = hero.GetSpeedFixByClient();
 
         if (speedFix > 0)
         {
