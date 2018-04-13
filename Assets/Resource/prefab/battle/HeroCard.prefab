@@ -83,6 +83,7 @@ MonoBehaviour:
   frame: {fileID: 11484672}
   body: {fileID: 11458900}
   heroType: {fileID: 114383285007260834}
+  showHeroDetailHoldTime: 0.5
 --- !u!114 &11428402
 MonoBehaviour:
   m_ObjectHideFlags: 1

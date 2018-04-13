@@ -636,6 +636,8 @@ MonoBehaviour:
   shootDescFix: 
   supportDescFix: 
   effectDescFix: 
+  featureDescFix: 
+  showHeroDetailHoldTime: 0.5
 --- !u!114 &11455812
 MonoBehaviour:
   m_ObjectHideFlags: 1

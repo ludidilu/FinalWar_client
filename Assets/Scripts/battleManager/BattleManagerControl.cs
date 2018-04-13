@@ -51,7 +51,7 @@ public partial class BattleManager : MonoBehaviour
         {
             SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_CHOOSE_CARD);
 
-            heroDetail.Show(_value);
+            //heroDetail.Show(_value);
 
             ClickHeroCardShowMapUnitIcon(_value);
         }

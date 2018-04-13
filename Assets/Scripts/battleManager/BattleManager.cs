@@ -676,7 +676,7 @@ public partial class BattleManager : MonoBehaviour
 
             HeroCard hero = go.GetComponent<HeroCard>();
 
-            hero.Init(this, battleControl, uid, id);
+            hero.Init(this, battleControl, heroDetail, uid, id);
 
             hero.SetFrameVisible(false);
 
@@ -1173,6 +1173,8 @@ public partial class BattleManager : MonoBehaviour
 
         RemoveShowHeroDetailTween();
 
+        HeroCard.RemoveShowHeroDetailTween();
+
         isUiShow = false;
 
         SuperRaycast.SetIsOpen(false, "ui");
@@ -1486,6 +1488,11 @@ public partial class BattleManager : MonoBehaviour
 
     private void ScaleChange(int _index, float _scrollValue, Vector2 _pos)
     {
+        if (SuperGraphicRaycast.GetFilter())
+        {
+            return;
+        }
+
         if (!canAction)
         {
             return;
