@@ -13,6 +13,16 @@ public class HeroSDS_c {
         for(int i = 0 ; i < lengthauras ; i++){
             _csv.auras[i] = _br.ReadInt32();
         }
+        int lengtheffects = _br.ReadInt32();
+        _csv.effects = new int[lengtheffects];
+        for(int i = 0 ; i < lengtheffects ; i++){
+            _csv.effects[i] = _br.ReadInt32();
+        }
+        int lengthfeatures = _br.ReadInt32();
+        _csv.features = new int[lengthfeatures];
+        for(int i = 0 ; i < lengthfeatures ; i++){
+            _csv.features[i] = _br.ReadInt32();
+        }
         int lengthshootSkills = _br.ReadInt32();
         _csv.shootSkills = new int[lengthshootSkills];
         for(int i = 0 ; i < lengthshootSkills ; i++){

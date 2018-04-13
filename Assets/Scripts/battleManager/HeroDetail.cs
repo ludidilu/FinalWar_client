@@ -70,22 +70,22 @@ public class HeroDetail : MonoBehaviour
 
         for (int i = 0; i < hero.sds.features.Length; i++)
         {
-            AddCell(string.Format(battleManager.featureDescFix, StaticData.GetData<AuraSDS>(hero.sds.features[i]).desc), ref height);
+            AddCell(string.Format(battleManager.featureDescFix, StaticData.GetData<AuraSDS>(hero.sds.features[i]).GetDesc()), ref height);
         }
 
         for (int i = 0; i < hero.sds.auras.Length; i++)
         {
-            AddCell(string.Format(battleManager.auraDescFix, StaticData.GetData<AuraSDS>(hero.sds.auras[i]).desc), ref height);
+            AddCell(string.Format(battleManager.auraDescFix, StaticData.GetData<AuraSDS>(hero.sds.auras[i]).GetDesc()), ref height);
         }
 
         for (int i = 0; i < hero.sds.shootSkills.Length; i++)
         {
-            AddCell(string.Format(battleManager.shootDescFix, StaticData.GetData<EffectSDS>(hero.sds.shootSkills[i]).desc), ref height);
+            AddCell(string.Format(battleManager.shootDescFix, StaticData.GetData<EffectSDS>(hero.sds.shootSkills[i]).GetDesc()), ref height);
         }
 
         for (int i = 0; i < hero.sds.supportSkills.Length; i++)
         {
-            AddCell(string.Format(battleManager.supportDescFix, StaticData.GetData<EffectSDS>(hero.sds.supportSkills[i]).desc), ref height);
+            AddCell(string.Format(battleManager.supportDescFix, StaticData.GetData<EffectSDS>(hero.sds.supportSkills[i]).GetDesc()), ref height);
         }
 
         if (_hero is HeroBattle)
@@ -102,7 +102,7 @@ public class HeroDetail : MonoBehaviour
                 {
                     for (int i = 0; i < list.Count; i++)
                     {
-                        string desc = StaticData.GetData<AuraSDS>(list[i]).desc;
+                        string desc = StaticData.GetData<AuraSDS>(list[i]).GetDesc();
 
                         AddCell(string.Format(battleManager.effectDescFix, desc), ref height);
                     }

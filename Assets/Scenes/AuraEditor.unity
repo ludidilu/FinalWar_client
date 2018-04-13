@@ -11913,7 +11913,7 @@ MonoBehaviour:
     auraType: 0
   - eventName: fixCanCounterWhenDead
     auraType: 0
-  - eventName: fixEqualSpeed
+  - eventName: fixEqualOppSpeed
     auraType: 0
   condition: {fileID: 117425021}
   auraTarget: {fileID: 2058479319}

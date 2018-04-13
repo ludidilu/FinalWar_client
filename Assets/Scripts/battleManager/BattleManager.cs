@@ -18,8 +18,6 @@ using System.Reflection;
 
 public class BattleManager : MonoBehaviour
 {
-    private static BattleManager Instance;
-
     public const string BATTLE_START = "battleStart";
 
     public const string BATTLE_QUIT = "battleQuit";
@@ -333,8 +331,6 @@ public class BattleManager : MonoBehaviour
 
     void Awake()
     {
-        Instance = this;
-
         stepV = new Vector2(mainCamera.aspect * mainCamera.orthographicSize, mainCamera.orthographicSize);
 
         viewport = new Bounds(Vector3.zero, stepV * 2);
@@ -2093,30 +2089,37 @@ public class BattleManager : MonoBehaviour
         {
             DescSDS sds = StaticData.GetData<DescSDS>(_id);
 
-            string result = sds.desc;
-
-            int index = result.IndexOf("@");
-
-            while (index != -1)
-            {
-                int index2 = result.IndexOf("@", index + 1);
-
-                if (index2 == -1)
-                {
-                    throw new Exception("desc error:" + sds.ID);
-                }
-
-                string str = result.Substring(index + 1, index2 - index - 1);
-
-                string str2 = GetStrFix(str);
-
-                result = result.Replace("@" + str + "@", str2);
-
-                index = result.IndexOf("@");
-            }
+            string result = FixStr(sds.desc, GetStrFix);
 
             ShowDesc(result, null);
         }
+    }
+
+    public static string FixStr(string _str, Func<string, string> _fixFunc)
+    {
+        string result = _str;
+
+        int index = result.IndexOf("@");
+
+        while (index != -1)
+        {
+            int index2 = result.IndexOf("@", index + 1);
+
+            if (index2 == -1)
+            {
+                throw new Exception("FixStr error:" + _str);
+            }
+
+            string str = result.Substring(index + 1, index2 - index - 1);
+
+            string str2 = _fixFunc(str);
+
+            result = result.Replace("@" + str + "@", str2);
+
+            index = result.IndexOf("@");
+        }
+
+        return result;
     }
 
     private string GetStrFix(string _str)
@@ -2140,14 +2143,6 @@ public class BattleManager : MonoBehaviour
                 PropertyInfo pi = t.GetProperty(strArr[1]);
 
                 return pi.GetValue(battle, null).ToString();
-
-            case "this":
-
-                t = GetType();
-
-                fi = t.GetField(strArr[1]);
-
-                return fi.GetValue(this).ToString();
 
             default:
 
