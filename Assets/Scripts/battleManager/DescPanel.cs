@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 public class DescPanel : MonoBehaviour
 {
@@ -10,9 +9,7 @@ public class DescPanel : MonoBehaviour
     [SerializeField]
     private CanvasGroup cg;
 
-    private Action callBack;
-
-    public void Show(string _str, Action _callBack)
+    public void Show(string _str)
     {
         if (!cg.blocksRaycasts)
         {
@@ -20,8 +17,6 @@ public class DescPanel : MonoBehaviour
 
             cg.blocksRaycasts = true;
         }
-
-        callBack = _callBack;
 
         alertText.text = _str;
     }
@@ -41,11 +36,6 @@ public class DescPanel : MonoBehaviour
             cg.alpha = 0;
 
             cg.blocksRaycasts = false;
-
-            if (callBack != null)
-            {
-                callBack();
-            }
         }
     }
 }
