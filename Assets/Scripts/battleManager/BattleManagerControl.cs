@@ -45,7 +45,9 @@ public partial class BattleManager : MonoBehaviour
     {
         if (_value == null)
         {
-            heroDetail.Hide(m_nowChooseCard);
+            heroDetail.Hide();
+
+            ClearMapUnitIcon();
         }
         else
         {
@@ -70,7 +72,9 @@ public partial class BattleManager : MonoBehaviour
     {
         if (_value == null)
         {
-            heroDetail.Hide(m_nowChooseHero);
+            heroDetail.Hide();
+
+            ClearMapUnitIcon();
         }
         else
         {
@@ -268,6 +272,8 @@ public partial class BattleManager : MonoBehaviour
 
         if (battle.GetSummonContainsValue(_mapUnit.index))
         {
+            ClearNowChooseCard();
+
             HeroBattle summonHero = summonHeroDic[_mapUnit.index];
 
             if (GetNowChooseHero() == null)
@@ -309,6 +315,8 @@ public partial class BattleManager : MonoBehaviour
         }
         else if (battle.GetHeroMapContainsKey(_mapUnit.index))
         {
+            ClearNowChooseCard();
+
             HeroBattle nowHero = heroDic[_mapUnit.index];
 
             if (GetNowChooseHero() == null)
@@ -349,13 +357,15 @@ public partial class BattleManager : MonoBehaviour
             {
                 ClearNowChooseHero();
             }
+
+            ClearNowChooseCard();
         }
         else
         {
             ClearNowChooseHero();
-        }
 
-        ClearNowChooseCard();
+            ClearNowChooseCard();
+        }
     }
 
     public void BackgroundClick()

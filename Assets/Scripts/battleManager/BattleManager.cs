@@ -1094,7 +1094,69 @@ public partial class BattleManager : MonoBehaviour
 
     private void CreateAiAction()
     {
-        BattleAi.Start(battle, battle.clientIsMine, GetRandomValue);
+        List<int> list = null;
+
+        IEnumerator<KeyValuePair<int, int>> enumerator = battle.GetActionEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            if (list == null)
+            {
+                list = new List<int>();
+            }
+
+            list.Add(enumerator.Current.Key);
+        }
+
+        if (list != null)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                battle.ClientRequestUnaction(list[i]);
+            }
+
+            list.Clear();
+        }
+
+        enumerator = battle.GetSummonEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            if (list == null)
+            {
+                list = new List<int>();
+            }
+
+            list.Add(enumerator.Current.Key);
+        }
+
+        if (list != null)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                battle.ClientRequestUnsummon(list[i]);
+            }
+        }
+
+        Dictionary<int, int> action = new Dictionary<int, int>();
+
+        Dictionary<int, int> summon = new Dictionary<int, int>();
+
+        BattleAi.Start(battle, battle.clientIsMine, GetRandomValue, action, summon);
+
+        enumerator = action.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            battle.ClientRequestAction(enumerator.Current.Key, enumerator.Current.Value);
+        }
+
+        enumerator = summon.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            battle.ClientRequestSummon(enumerator.Current.Key, enumerator.Current.Value);
+        }
 
         ClearMoves();
 

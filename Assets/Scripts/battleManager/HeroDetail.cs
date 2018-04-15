@@ -168,23 +168,6 @@ public class HeroDetail : MonoBehaviour
         _height += height;
     }
 
-    public void Hide(HeroBase _hero)
-    {
-        if (hero == _hero)
-        {
-            hero = null;
-
-            if (cg.blocksRaycasts)
-            {
-                cg.alpha = 0;
-
-                cg.blocksRaycasts = false;
-            }
-
-            battleManager.ClearMapUnitIcon();
-        }
-    }
-
     public void Hide()
     {
         hero = null;
@@ -196,6 +179,6 @@ public class HeroDetail : MonoBehaviour
             cg.blocksRaycasts = false;
         }
 
-        battleManager.ClearMapUnitIcon();
+        
     }
 }
