@@ -1555,7 +1555,7 @@ public partial class BattleManager : MonoBehaviour
             return;
         }
 
-        if (!canAction)
+        if (!isUiShow)
         {
             return;
         }
