@@ -9,14 +9,17 @@ public class HeroCard : HeroBase, IPointerDownHandler, IPointerExitHandler, IPoi
     [SerializeField]
     protected Text cost;
 
-    [SerializeField]
-    private Image frame;
+    //[SerializeField]
+    //private Image frame;
 
     [SerializeField]
     private Image body;
 
     [SerializeField]
     private Image heroType;
+
+    [SerializeField]
+    private GameObject frame;
 
     [SerializeField]
     private float showHeroDetailHoldTime;
@@ -70,9 +73,9 @@ public class HeroCard : HeroBase, IPointerDownHandler, IPointerExitHandler, IPoi
         {
             showHeroDetailTweenID = -1;
 
-            heroDetail.Show(this);
-
             battleManager.HeroClick(this);
+
+            heroDetail.Show(this);
         };
 
         showHeroDetailTweenID = SuperTween.Instance.DelayCall(showHeroDetailHoldTime, dele);
@@ -119,6 +122,8 @@ public class HeroCard : HeroBase, IPointerDownHandler, IPointerExitHandler, IPoi
 
     public void SetFrameVisible(bool _visible)
     {
-        frame.sprite = _visible ? battleControl.frameChoose : battleControl.frame;
+        frame.SetActive(_visible);
+
+        //frame.sprite = _visible ? battleControl.frameChoose : battleControl.frame;
     }
 }

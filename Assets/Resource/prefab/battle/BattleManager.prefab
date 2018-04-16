@@ -592,7 +592,7 @@ MonoBehaviour:
   battleContainer: {fileID: 4632905672447622}
   battleContentContainer: {fileID: 4251921428894876}
   uiContainer: {fileID: 224503287549552554}
-  uiContainerFix: {x: 120, y: 240}
+  uiContainerFix: {x: 120, y: 280}
   myCardContainer: {fileID: 224267190180824348}
   oppCardContainer: {fileID: 22475072}
   mapContainer: {fileID: 4038964733749042}
@@ -3635,7 +3635,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 120}
+  m_SizeDelta: {x: 0, y: 130}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224310932072728868
 RectTransform:

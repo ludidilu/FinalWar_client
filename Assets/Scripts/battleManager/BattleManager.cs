@@ -685,7 +685,7 @@ public partial class BattleManager : MonoBehaviour
             go.transform.SetParent(myCardContainer, false);
 
             float cardWidth = (go.transform as RectTransform).sizeDelta.x;
-            float cardHeight = (go.transform as RectTransform).sizeDelta.y;
+            //float cardHeight = (go.transform as RectTransform).sizeDelta.y;
 
             float fixX = (myCardContainer.rect.width - cardWidth * (mHandCards.Count - battle.GetSummonNum())) * 0.5f;
 
@@ -703,7 +703,7 @@ public partial class BattleManager : MonoBehaviour
             go.transform.SetParent(oppCardContainer, false);
 
             float cardWidth = (go.transform as RectTransform).sizeDelta.x;
-            float cardHeight = (go.transform as RectTransform).sizeDelta.y;
+            //float cardHeight = (go.transform as RectTransform).sizeDelta.y;
 
             float fixX = (oppCardContainer.rect.width - cardWidth * oHandCards.Count) * 0.5f;
 

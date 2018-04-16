@@ -428,9 +428,9 @@ public partial class BattleManager : MonoBehaviour
             {
                 showHeroDetailTweenID = -1;
 
-                heroDetail.Show(hero);
-
                 GetMouseUp();
+
+                heroDetail.Show(hero);
             };
 
             showHeroDetailTweenID = SuperTween.Instance.DelayCall(showHeroDetailHoldTime, dele);
