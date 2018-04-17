@@ -1095,11 +1095,6 @@ public partial class BattleManager : MonoBehaviour
 
     private System.Random random = new System.Random();
 
-    private int GetRandomValue(int _max)
-    {
-        return random.Next(_max);
-    }
-
     private void CreateAiAction()
     {
         List<int> list = null;
@@ -1150,20 +1145,30 @@ public partial class BattleManager : MonoBehaviour
 
         Dictionary<int, int> summon = new Dictionary<int, int>();
 
-        BattleAi.Start(battle, battle.clientIsMine, GetRandomValue, action, summon);
+        BattleAi.Start(battle, battle.clientIsMine, random.Next, action, summon);
 
         enumerator = action.GetEnumerator();
 
         while (enumerator.MoveNext())
         {
-            battle.ClientRequestAction(enumerator.Current.Key, enumerator.Current.Value);
+            int result = battle.ClientRequestAction(enumerator.Current.Key, enumerator.Current.Value);
+
+            if (result != -1)
+            {
+                Debug.Log("ai action error:" + result);
+            }
         }
 
         enumerator = summon.GetEnumerator();
 
         while (enumerator.MoveNext())
         {
-            battle.ClientRequestSummon(enumerator.Current.Key, enumerator.Current.Value);
+            int result = battle.ClientRequestSummon(enumerator.Current.Key, enumerator.Current.Value);
+
+            if (result != -1)
+            {
+                Debug.Log("ai summon error:" + result);
+            }
         }
 
         ClearMoves();
