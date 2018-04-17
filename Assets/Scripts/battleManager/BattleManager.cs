@@ -968,14 +968,18 @@ public partial class BattleManager : MonoBehaviour
             return false;
         }
 
-        bool b = battle.ClientRequestAction(_pos, _target);
+        int result = battle.ClientRequestAction(_pos, _target);
 
-        if (b)
+        if (result == -1)
         {
             SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_HERO_ACTION);
-        }
 
-        return b;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private bool HeroUnaction(int _pos)
@@ -999,14 +1003,18 @@ public partial class BattleManager : MonoBehaviour
             return false;
         }
 
-        bool b = battle.ClientRequestSummon(_cardUid, _pos);
+        int result = battle.ClientRequestSummon(_cardUid, _pos);
 
-        if (b)
+        if (result == -1)
         {
             SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_HERO_SUMMON);
-        }
 
-        return b;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private bool UnsummonHero(int _cardUid)
@@ -1860,7 +1868,7 @@ public partial class BattleManager : MonoBehaviour
 
                 int pos = pair.Key;
 
-                if (battle.CheckPosCanSummon(battle.clientIsMine, pos))
+                if (battle.CheckPosCanSummon(battle.clientIsMine, pos) == -1)
                 {
                     MapUnit unit = pair.Value;
 
