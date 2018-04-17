@@ -2,6 +2,7 @@
 using gameObjectFactory;
 using superFunction;
 using publicTools;
+using tuple;
 
 public class BattleView : UIPanel
 {
@@ -24,13 +25,6 @@ public class BattleView : UIPanel
 
     public override void OnEnter()
     {
-        int guideID = (int)data;
-
-        if (guideID != 0)
-        {
-            SuperFunction.Instance.AddOnceEventListener(battleManagerEventGo, BattleManager.BATTLE_START, StartGuide);
-        }
-
         if (battleManager == null)
         {
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/battle/BattleManager.prefab", null);
@@ -42,6 +36,24 @@ public class BattleView : UIPanel
             battleManager.Init(battleManagerEventGo);
 
             SuperFunction.Instance.AddEventListener(battleManagerEventGo, BattleManager.BATTLE_QUIT, BattleQuit);
+        }
+
+        Tuple<bool, int> tuple = (Tuple<bool, int>)data;
+
+        battleManager.isPlayingRecord = tuple.first;
+
+        if (!tuple.first)
+        {
+            int guideID = tuple.second;
+
+            if (guideID != 0)
+            {
+                SuperFunction.Instance.AddOnceEventListener(battleManagerEventGo, BattleManager.BATTLE_START, StartGuide);
+            }
+        }
+        else
+        {
+            battleManager.HideUi();
         }
 
         battleManager.RequestRefreshData();
@@ -56,7 +68,9 @@ public class BattleView : UIPanel
 
     private void BattleQuit(int _index)
     {
-        int guideID = (int)data;
+        Tuple<bool, int> tuple = (Tuple<bool, int>)data;
+
+        int guideID = tuple.second;
 
         if (guideID != 0)
         {

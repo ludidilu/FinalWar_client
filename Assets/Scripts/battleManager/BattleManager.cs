@@ -250,6 +250,8 @@ public partial class BattleManager : MonoBehaviour
     [HideInInspector]
     public string featureDescFix;
 
+    public bool isPlayingRecord;
+
     public int GetHeroUid()
     {
         heroUid++;
@@ -325,15 +327,6 @@ public partial class BattleManager : MonoBehaviour
 
     private void RefreshData()
     {
-        if (!isInit)
-        {
-            isInit = true;
-
-            gameObject.SetActive(true);
-
-            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_START);
-        }
-
         heroDetail.Hide();
 
         descPanel.Close();
@@ -365,6 +358,15 @@ public partial class BattleManager : MonoBehaviour
         CreateRoundNumLeftTf();
 
         RefreshTouchable(battle.GetClientCanAction());
+
+        if (!isInit)
+        {
+            isInit = true;
+
+            gameObject.SetActive(true);
+
+            SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_START);
+        }
     }
 
     public void QuitBattle()
@@ -1228,8 +1230,6 @@ public partial class BattleManager : MonoBehaviour
 
             SuperGraphicRaycast.SetIsOpen(true, "ui");
 
-            alphaCg.blocksRaycasts = true;
-
             isUiShow = true;
 
             _callBack();
@@ -1255,8 +1255,6 @@ public partial class BattleManager : MonoBehaviour
         SuperRaycast.SetIsOpen(false, "ui");
 
         SuperGraphicRaycast.SetIsOpen(false, "ui");
-
-        alphaCg.blocksRaycasts = false;
 
         Vector2 startPos = battleContainer.position;
 
@@ -1305,6 +1303,17 @@ public partial class BattleManager : MonoBehaviour
         SuperTween.Instance.To(0, 1, 0.5f, toDele, dele);
     }
 
+    public void HideUi()
+    {
+        isUiShow = false;
+
+        SuperRaycast.SetIsOpen(false, "ui");
+
+        SuperGraphicRaycast.SetIsOpen(false, "ui");
+
+        alphaCg.alpha = 0;
+    }
+
     private void SetUiContainerSize(float _v)
     {
         uiContainer.sizeDelta = Vector2.Lerp(Vector2.zero, uiContainerFix, _v);
@@ -1312,12 +1321,29 @@ public partial class BattleManager : MonoBehaviour
 
     private void DoAction(SuperEnumerator<ValueType> _step)
     {
+        if (!isPlayingRecord)
+        {
+            Action dele = delegate ()
+            {
+                SuperSequenceControl.Start<SuperEnumerator<ValueType>, Action<Battle.BattleResult>>(DoActionReal, _step, EndBattle);
+            };
+
+            EnterBattle(dele);
+        }
+        else
+        {
+            SuperSequenceControl.Start<SuperEnumerator<ValueType>, Action<Battle.BattleResult>>(DoActionReal, _step, null);
+        }
+    }
+
+    private void EndBattle(Battle.BattleResult _result)
+    {
         Action dele = delegate ()
         {
-            SuperSequenceControl.Start(DoActionReal, _step);
+            RoundOver(_result);
         };
 
-        EnterBattle(dele);
+        ExitBattle(dele);
     }
 
     private void AlphaOutSummonHero(float _v)
@@ -1340,7 +1366,7 @@ public partial class BattleManager : MonoBehaviour
         }
     }
 
-    private IEnumerator DoActionReal(int _index, SuperEnumerator<ValueType> _step)
+    private IEnumerator DoActionReal(int _index, SuperEnumerator<ValueType> _step, Action<Battle.BattleResult> _callBack)
     {
         while (_step.MoveNext())
         {
@@ -1458,12 +1484,17 @@ public partial class BattleManager : MonoBehaviour
 
         SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_ROUND_OVER);
 
-        Action dele = delegate ()
+        if (_callBack != null)
         {
-            RoundOver((Battle.BattleResult)_step.Current);
-        };
+            _callBack((Battle.BattleResult)_step.Current);
+        }
 
-        ExitBattle(dele);
+        //Action dele = delegate ()
+        //{
+        //    RoundOver((Battle.BattleResult)_step.Current);
+        //};
+
+        //ExitBattle(dele);
     }
 
     private void RoundOver(Battle.BattleResult _battleResult)

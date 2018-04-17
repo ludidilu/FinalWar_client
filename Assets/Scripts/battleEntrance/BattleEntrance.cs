@@ -23,4 +23,9 @@
     {
         return true;
     }
+
+    public void PlayRecord()
+    {
+        battleLocal.PlayerRecord();
+    }
 }

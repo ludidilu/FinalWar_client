@@ -5,6 +5,7 @@ using FinalWar;
 using System.IO;
 using System.Collections.Generic;
 using tuple;
+using System.Collections;
 
 public class BattleLocal
 {
@@ -54,6 +55,33 @@ public class BattleLocal
         else
         {
             UIManager.Instance.ShowInParent<BattleChoose>(new Tuple<Action<BattleSDS>>(new Action<BattleSDS>(Choose)), parentUid);
+        }
+    }
+
+    public void PlayerRecord()
+    {
+        if (PlayerPrefs.HasKey(saveKey))
+        {
+            string str = PlayerPrefs.GetString(saveKey);
+
+            byte[] bytes = Convert.FromBase64String(str);
+
+            IEnumerator enumerator = battleServer.FromBytesAndReplay(bytes);
+
+            enumerator.MoveNext();
+
+            SuperFunction.SuperFunctionCallBack0 dele = delegate (int _index)
+            {
+                enumerator.MoveNext();
+            };
+
+            SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, ClientSendData);
+
+            SuperFunction.Instance.AddOnceEventListener(BattleView.battleManagerEventGo, BattleManager.BATTLE_START, dele);
+
+            SuperFunction.Instance.AddEventListener(BattleView.battleManagerEventGo, BattleManager.BATTLE_ROUND_OVER, dele);
+
+            UIManager.Instance.ShowInParent<BattleView>(new Tuple<bool, int>(true, 0), parentUid);
         }
     }
 
@@ -139,7 +167,7 @@ public class BattleLocal
 
         SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, ClientSendData);
 
-        UIManager.Instance.ShowInParent<BattleView>(_guideID, parentUid);
+        UIManager.Instance.ShowInParent<BattleView>(new Tuple<bool, int>(false, _guideID), parentUid);
     }
 
     private void ClientSendData(int _index, MemoryStream _ms, Action<BinaryReader> _callBack)

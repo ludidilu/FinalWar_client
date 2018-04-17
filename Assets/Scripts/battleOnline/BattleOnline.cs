@@ -83,7 +83,7 @@ public class BattleOnline : UIPanel
 
                 SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, SendBattleAction);
 
-                UIManager.Instance.ShowInParent<BattleView>(0, uid);
+                UIManager.Instance.ShowInParent<BattleView>(new Tuple<bool, int>(false, 0), uid);
 
                 break;
 
