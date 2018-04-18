@@ -250,7 +250,7 @@ public partial class BattleManager : MonoBehaviour
     [HideInInspector]
     public string featureDescFix;
 
-    public bool isPlayingRecord;
+    private bool isPlayingRecord = false;
 
     public int GetHeroUid()
     {
@@ -1275,18 +1275,6 @@ public partial class BattleManager : MonoBehaviour
             AlphaOutSummonHero(1 - _v);
 
             AlphaOutMove(1 - _v);
-
-            IEnumerator<HeroBattle> enumerator = heroDic.Values.GetEnumerator();
-
-            while (enumerator.MoveNext())
-            {
-                HeroBattle hero = enumerator.Current;
-
-                if (!hero.canAction)
-                {
-                    hero.SetColorFix(PublicTools.FloatLerp(hero.colorFix, 1, _v));
-                }
-            }
         };
 
         Action dele = delegate ()
@@ -1303,8 +1291,10 @@ public partial class BattleManager : MonoBehaviour
         SuperTween.Instance.To(0, 1, 0.5f, toDele, dele);
     }
 
-    public void HideUi()
+    public void EnterReplay()
     {
+        isPlayingRecord = true;
+
         isUiShow = false;
 
         SuperRaycast.SetIsOpen(false, "ui");
@@ -1312,6 +1302,26 @@ public partial class BattleManager : MonoBehaviour
         SuperGraphicRaycast.SetIsOpen(false, "ui");
 
         alphaCg.alpha = 0;
+    }
+
+    public void ExitReplay()
+    {
+        Alert("Replay Over!", ExitReplayReal);
+    }
+
+    private void ExitReplayReal()
+    {
+        isPlayingRecord = false;
+
+        isUiShow = true;
+
+        SuperRaycast.SetIsOpen(true, "ui");
+
+        SuperGraphicRaycast.SetIsOpen(true, "ui");
+
+        alphaCg.alpha = 1;
+
+        BattleQuit();
     }
 
     private void SetUiContainerSize(float _v)
@@ -1460,6 +1470,9 @@ public partial class BattleManager : MonoBehaviour
             }
             else if (vo is BattleStartVO)
             {
+                DoStart(_index);
+
+                yield return null;
             }
             else if (vo is BattleRefreshVO)
             {
@@ -1495,6 +1508,11 @@ public partial class BattleManager : MonoBehaviour
         //};
 
         //ExitBattle(dele);
+    }
+
+    private void DoStart(int _index)
+    {
+        SuperSequenceControl.To(1, 0, 0.5f, RefresFearHero, _index);
     }
 
     private void RoundOver(Battle.BattleResult _battleResult)

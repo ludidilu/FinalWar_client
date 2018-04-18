@@ -28,7 +28,6 @@ GameObject:
   - component: {fileID: 22384122}
   - component: {fileID: 11465504}
   - component: {fileID: 11489952}
-  - component: {fileID: 225669718846853326}
   m_Layer: 8
   m_Name: Canvas
   m_TagString: Untagged
@@ -613,7 +612,7 @@ MonoBehaviour:
   alertPanel: {fileID: 114767490472349022}
   bg: {fileID: 212832140466329472}
   bgScaleFix: 1.5
-  alphaCg: {fileID: 225669718846853326}
+  alphaCg: {fileID: 225685793662082628}
   auraDescID: 10000
   shootDescID: 10001
   supportDescID: 10002
@@ -958,11 +957,11 @@ RectTransform:
   m_GameObject: {fileID: 186808}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.99968, y: 0.99968, z: 0.99968}
+  m_LocalScale: {x: 0.9996799, y: 0.9996799, z: 0.9996799}
   m_Children:
   - {fileID: 22470196}
-  m_Father: {fileID: 224503287549552554}
-  m_RootOrder: 6
+  m_Father: {fileID: 22438908}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1016,6 +1015,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 224503287549552554}
+  - {fileID: 224005364453335964}
+  - {fileID: 22421786}
   m_Father: {fileID: 497894}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1748,6 +1749,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224503287549552554}
+  - component: {fileID: 225685793662082628}
   m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
@@ -3443,8 +3445,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224883130308051598}
-  m_Father: {fileID: 224503287549552554}
-  m_RootOrder: 5
+  m_Father: {fileID: 22438908}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3748,8 +3750,6 @@ RectTransform:
   - {fileID: 22475072}
   - {fileID: 224595701274184760}
   - {fileID: 22405076}
-  - {fileID: 224005364453335964}
-  - {fileID: 22421786}
   m_Father: {fileID: 22438908}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4007,12 +4007,12 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
---- !u!225 &225669718846853326
+--- !u!225 &225685793662082628
 CanvasGroup:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 116862}
+  m_GameObject: {fileID: 1849520396836818}
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1

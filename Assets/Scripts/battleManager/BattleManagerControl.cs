@@ -182,6 +182,8 @@ public partial class BattleManager : MonoBehaviour
         if (!hasMove && Vector2.Distance(nowPos, downPos) > moveThreshold)
         {
             hasMove = true;
+
+            RemoveShowHeroDetailTween();
         }
 
         if (!isDoingHeroAction && hasMove)

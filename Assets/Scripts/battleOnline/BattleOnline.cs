@@ -4,6 +4,7 @@ using superFunction;
 using Connection;
 using System;
 using tuple;
+using System.Collections;
 
 public class BattleOnline : UIPanel
 {
@@ -83,7 +84,7 @@ public class BattleOnline : UIPanel
 
                 SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, SendBattleAction);
 
-                UIManager.Instance.ShowInParent<BattleView>(new Tuple<bool, int>(false, 0), uid);
+                UIManager.Instance.ShowInParent<BattleView>(new Tuple<bool, int, IEnumerator>(false, 0, null), uid);
 
                 break;
 

@@ -68,20 +68,11 @@ public class BattleLocal
 
             IEnumerator enumerator = battleServer.FromBytesAndReplay(bytes);
 
-            enumerator.MoveNext();
-
-            SuperFunction.SuperFunctionCallBack0 dele = delegate (int _index)
-            {
-                enumerator.MoveNext();
-            };
+            SuperFunction.Instance.AddOnceEventListener(BattleView.battleManagerEventGo, BattleManager.BATTLE_QUIT, BattleOver);
 
             SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, ClientSendData);
 
-            SuperFunction.Instance.AddOnceEventListener(BattleView.battleManagerEventGo, BattleManager.BATTLE_START, dele);
-
-            SuperFunction.Instance.AddEventListener(BattleView.battleManagerEventGo, BattleManager.BATTLE_ROUND_OVER, dele);
-
-            UIManager.Instance.ShowInParent<BattleView>(new Tuple<bool, int>(true, 0), parentUid);
+            UIManager.Instance.ShowInParent<BattleView>(new Tuple<bool, int, IEnumerator>(true, 0, enumerator), parentUid);
         }
     }
 
@@ -167,7 +158,7 @@ public class BattleLocal
 
         SuperFunction.Instance.AddEventListener<MemoryStream, Action<BinaryReader>>(BattleView.battleManagerEventGo, BattleManager.BATTLE_SEND_DATA, ClientSendData);
 
-        UIManager.Instance.ShowInParent<BattleView>(new Tuple<bool, int>(false, _guideID), parentUid);
+        UIManager.Instance.ShowInParent<BattleView>(new Tuple<bool, int, IEnumerator>(false, _guideID, null), parentUid);
     }
 
     private void ClientSendData(int _index, MemoryStream _ms, Action<BinaryReader> _callBack)

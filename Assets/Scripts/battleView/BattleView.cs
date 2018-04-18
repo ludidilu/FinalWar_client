@@ -3,6 +3,7 @@ using gameObjectFactory;
 using superFunction;
 using publicTools;
 using tuple;
+using System.Collections;
 
 public class BattleView : UIPanel
 {
@@ -38,9 +39,7 @@ public class BattleView : UIPanel
             SuperFunction.Instance.AddEventListener(battleManagerEventGo, BattleManager.BATTLE_QUIT, BattleQuit);
         }
 
-        Tuple<bool, int> tuple = (Tuple<bool, int>)data;
-
-        battleManager.isPlayingRecord = tuple.first;
+        Tuple<bool, int, IEnumerator> tuple = (Tuple<bool, int, IEnumerator>)data;
 
         if (!tuple.first)
         {
@@ -53,7 +52,25 @@ public class BattleView : UIPanel
         }
         else
         {
-            battleManager.HideUi();
+            battleManager.EnterReplay();
+
+            IEnumerator enumerator = ((Tuple<bool, int, IEnumerator>)data).third;
+
+            int id = -1;
+
+            SuperFunction.SuperFunctionCallBack0 dele = delegate (int _index)
+            {
+                if (!enumerator.MoveNext())
+                {
+                    SuperFunction.Instance.RemoveEventListener(id);
+
+                    battleManager.ExitReplay();
+                }
+            };
+
+            SuperFunction.Instance.AddOnceEventListener(battleManagerEventGo, BattleManager.BATTLE_START, dele);
+
+            id = SuperFunction.Instance.AddEventListener(battleManagerEventGo, BattleManager.BATTLE_ROUND_OVER, dele);
         }
 
         battleManager.RequestRefreshData();
@@ -68,7 +85,7 @@ public class BattleView : UIPanel
 
     private void BattleQuit(int _index)
     {
-        Tuple<bool, int> tuple = (Tuple<bool, int>)data;
+        Tuple<bool, int, IEnumerator> tuple = (Tuple<bool, int, IEnumerator>)data;
 
         int guideID = tuple.second;
 
@@ -92,6 +109,4 @@ public class BattleView : UIPanel
     {
         BattleGuide.Start(battleManager, 1);
     }
-
-
 }
