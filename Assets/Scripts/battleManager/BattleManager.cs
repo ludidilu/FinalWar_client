@@ -263,8 +263,6 @@ public partial class BattleManager : MonoBehaviour
 
     void Awake()
     {
-        Time.timeScale = 2.0f;
-
         stepV = new Vector2(mainCamera.aspect * mainCamera.orthographicSize, mainCamera.orthographicSize);
 
         viewport = new Bounds(Vector3.zero, stepV * 2);
