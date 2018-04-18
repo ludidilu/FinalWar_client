@@ -101,7 +101,7 @@ public class BattleControl : MonoBehaviour
             }
         };
 
-        SuperSequenceControl.To(0f, 1f, 1f, moveToDel, _index);
+        SuperSequenceControl.To(0f, 1f, 1f, moveToDel, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -111,7 +111,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        SuperSequenceControl.DelayCall(2.0f, _lastIndex);
+        SuperSequenceControl.DelayCall(2.0f, _lastIndex, BattleManager.BATTLE_TWEEN_TAG);
     }
 
     public IEnumerator Shoot(int _index, int _lastIndex, BattleShootVO _vo)
@@ -154,7 +154,7 @@ public class BattleControl : MonoBehaviour
             arrow.transform.position = targetPos;
         };
 
-        SuperSequenceControl.To(0f, 1f, 1f, shootToDel, _index);
+        SuperSequenceControl.To(0f, 1f, 1f, shootToDel, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -169,7 +169,7 @@ public class BattleControl : MonoBehaviour
 
         battleManager.RefreshHeroState(false);
 
-        SuperSequenceControl.DelayCall(2.0f, _lastIndex);
+        SuperSequenceControl.DelayCall(2.0f, _lastIndex, BattleManager.BATTLE_TWEEN_TAG);
     }
 
     public IEnumerator Support(int _index, int _lastIndex, BattleSupportVO _vo)
@@ -189,7 +189,7 @@ public class BattleControl : MonoBehaviour
             supporter.hudTrans.position = new Vector3(v.x, v.y, supporter.hudTrans.position.z);
         };
 
-        SuperSequenceControl.To(0f, 0.5f, 0.5f, supporterToDel, _index);
+        SuperSequenceControl.To(0f, 0.5f, 0.5f, supporterToDel, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -202,11 +202,11 @@ public class BattleControl : MonoBehaviour
 
         battleManager.RefreshHeroState(false);
 
-        SuperSequenceControl.DelayCall(0.5f, _index);
+        SuperSequenceControl.DelayCall(0.5f, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
-        SuperSequenceControl.To(0.5f, 0f, 0.5f, supporterToDel, _lastIndex);
+        SuperSequenceControl.To(0.5f, 0f, 0.5f, supporterToDel, _lastIndex, BattleManager.BATTLE_TWEEN_TAG);
     }
 
     public IEnumerator PrepareAttack(int _index, int _lastIndex, BattlePrepareAttackVO _vo)
@@ -299,7 +299,7 @@ public class BattleControl : MonoBehaviour
             };
         }
 
-        SuperSequenceControl.To(0f, 1f, 0.5f, dele, _index);
+        SuperSequenceControl.To(0f, 1f, 0.5f, dele, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -345,7 +345,7 @@ public class BattleControl : MonoBehaviour
             }
         };
 
-        SuperSequenceControl.To(0f, 1f, 1f, attackerToDel, _index);
+        SuperSequenceControl.To(0f, 1f, 1f, attackerToDel, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -355,7 +355,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        SuperSequenceControl.DelayCall(2.0f, _index);
+        SuperSequenceControl.DelayCall(2.0f, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -392,7 +392,7 @@ public class BattleControl : MonoBehaviour
             }
         };
 
-        SuperSequenceControl.To(0f, 1f, 1f, attackerToDel, _index);
+        SuperSequenceControl.To(0f, 1f, 1f, attackerToDel, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -406,7 +406,7 @@ public class BattleControl : MonoBehaviour
 
         yield return null;
 
-        SuperSequenceControl.DelayCall(2.0f, _index);
+        SuperSequenceControl.DelayCall(2.0f, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -512,7 +512,7 @@ public class BattleControl : MonoBehaviour
             };
         }
 
-        SuperSequenceControl.To(0f, 1f, 0.5f, dele, _index);
+        SuperSequenceControl.To(0f, 1f, 0.5f, dele, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -622,11 +622,11 @@ public class BattleControl : MonoBehaviour
 
                 if (i == 0)
                 {
-                    SuperSequenceControl.To(0f, 1f, 1f, toDel, _index);
+                    SuperSequenceControl.To(0f, 1f, 1f, toDel, _index, BattleManager.BATTLE_TWEEN_TAG);
                 }
                 else
                 {
-                    SuperSequenceControl.To(0f, 1f, 1f, toDel, 0);
+                    SuperSequenceControl.To(0f, 1f, 1f, toDel, 0, BattleManager.BATTLE_TWEEN_TAG);
                 }
             }
 
@@ -707,13 +707,13 @@ public class BattleControl : MonoBehaviour
             heroBattle.transform.localPosition = new Vector3(heroBattle.transform.localPosition.x, heroBattle.transform.localPosition.y, 100 * (1 - obj));
         };
 
-        SuperSequenceControl.To(10f, 1f, 0.3f, toDel, _index);
+        SuperSequenceControl.To(10f, 1f, 0.3f, toDel, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
         battleManager.RefreshHeroState(true);
 
-        SuperSequenceControl.DelayCall(0.8f, _lastIndex);
+        SuperSequenceControl.DelayCall(0.8f, _lastIndex, BattleManager.BATTLE_TWEEN_TAG);
     }
 
     public IEnumerator TriggerAura(int _index, int _lastIndex, BattleTriggerAuraVO _vo)
@@ -746,7 +746,7 @@ public class BattleControl : MonoBehaviour
             hero.moveTrans.localRotation = Quaternion.Euler(0, 0, _value);
         };
 
-        SuperSequenceControl.To(0, 720, 0.5f, dele, _index);
+        SuperSequenceControl.To(0, 720, 0.5f, dele, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 
@@ -768,7 +768,7 @@ public class BattleControl : MonoBehaviour
 
             battleManager.RefreshHeroState(false);
 
-            SuperSequenceControl.DelayCall(2.0f, _lastIndex);
+            SuperSequenceControl.DelayCall(2.0f, _lastIndex, BattleManager.BATTLE_TWEEN_TAG);
         }
         else
         {
@@ -823,7 +823,7 @@ public class BattleControl : MonoBehaviour
             battleManager.bg.color = new Color(c, c, c, battleManager.bg.color.a);
         };
 
-        SuperSequenceControl.To(0, 1, 1f, dele, _index);
+        SuperSequenceControl.To(0, 1, 1f, dele, _index, BattleManager.BATTLE_TWEEN_TAG);
     }
 
     public void AttackOver(int _index, params int[] _posArr)
@@ -873,7 +873,7 @@ public class BattleControl : MonoBehaviour
             battleManager.bg.color = new Color(c, c, c, battleManager.bg.color.a);
         };
 
-        SuperSequenceControl.To(0, 1, 1f, dele, _index);
+        SuperSequenceControl.To(0, 1, 1f, dele, _index, BattleManager.BATTLE_TWEEN_TAG);
     }
 
     private Vector2 GetCenterPos(params int[] _posArr)
@@ -911,7 +911,7 @@ public class BattleControl : MonoBehaviour
             battleManager.battleContainer.position = new Vector3(pos.x, pos.y, battleManager.battleContainer.position.z);
         };
 
-        SuperSequenceControl.To(0, 1, dis * cameraMoveSpeedFix, dele, _index);
+        SuperSequenceControl.To(0, 1, dis * cameraMoveSpeedFix, dele, _index, BattleManager.BATTLE_TWEEN_TAG);
     }
 
     public IEnumerator ResetCamera(int _index, int _lastIndex)
@@ -931,7 +931,7 @@ public class BattleControl : MonoBehaviour
             battleManager.battleContainer.position = new Vector3(pos.x, pos.y, battleManager.battleContainer.position.z);
         };
 
-        SuperSequenceControl.To(0, 1, dis * cameraMoveSpeedFix, dele, _index);
+        SuperSequenceControl.To(0, 1, dis * cameraMoveSpeedFix, dele, _index, BattleManager.BATTLE_TWEEN_TAG);
 
         yield return null;
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using FinalWar;
-using superTween;
 using gameObjectFactory;
 
 public class HeroBattle : HeroBase
@@ -338,7 +337,7 @@ public class HeroBattle : HeroBase
             shockTrans.localPosition = shockVector * value;
         };
 
-        SuperTween.Instance.To(0, 1, 1, shockToDel, null);
+        BattleManager.To(0, 1, 1, shockToDel, null);
     }
 
     public void ShowHud(string _str, Color _color, Color _outlineColor, float _yFix, Action _callBack)
@@ -456,7 +455,7 @@ public class HeroBattle : HeroBase
             }
         };
 
-        SuperTween.Instance.To(1, 0, battleControl.dieTime, SetAlpha, dieOver);
+        BattleManager.To(1, 0, battleControl.dieTime, SetAlpha, dieOver);
     }
 
     public void SetColorFix(float _fix)

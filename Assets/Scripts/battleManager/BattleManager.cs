@@ -17,6 +17,8 @@ using publicTools;
 
 public partial class BattleManager : MonoBehaviour
 {
+    public const string BATTLE_TWEEN_TAG = "battleTweenTag";
+
     public const string BATTLE_START = "battleStart";
 
     public const string BATTLE_QUIT = "battleQuit";
@@ -261,6 +263,8 @@ public partial class BattleManager : MonoBehaviour
 
     void Awake()
     {
+        Time.timeScale = 2.0f;
+
         stepV = new Vector2(mainCamera.aspect * mainCamera.orthographicSize, mainCamera.orthographicSize);
 
         viewport = new Bounds(Vector3.zero, stepV * 2);
@@ -1237,7 +1241,7 @@ public partial class BattleManager : MonoBehaviour
 
         alphaCg.alpha = 1;
 
-        SuperTween.Instance.To(1, 0, 0.5f, SetUiContainerSize, dele);
+        To(1, 0, 0.5f, SetUiContainerSize, dele);
     }
 
     private void EnterBattle(Action _callBack)
@@ -1288,7 +1292,7 @@ public partial class BattleManager : MonoBehaviour
             _callBack();
         };
 
-        SuperTween.Instance.To(0, 1, 0.5f, toDele, dele);
+        To(0, 1, 0.5f, toDele, dele);
     }
 
     public void EnterReplay()
@@ -1335,14 +1339,14 @@ public partial class BattleManager : MonoBehaviour
         {
             Action dele = delegate ()
             {
-                SuperSequenceControl.Start<SuperEnumerator<ValueType>, Action<Battle.BattleResult>>(DoActionReal, _step, EndBattle);
+                SuperSequenceControl.Start<SuperEnumerator<ValueType>, Action<Battle.BattleResult>>(DoActionReal, BATTLE_TWEEN_TAG, _step, EndBattle);
             };
 
             EnterBattle(dele);
         }
         else
         {
-            SuperSequenceControl.Start<SuperEnumerator<ValueType>, Action<Battle.BattleResult>>(DoActionReal, _step, null);
+            SuperSequenceControl.Start<SuperEnumerator<ValueType>, Action<Battle.BattleResult>>(DoActionReal, BATTLE_TWEEN_TAG, _step, null);
         }
     }
 
@@ -1384,55 +1388,55 @@ public partial class BattleManager : MonoBehaviour
 
             if (vo is BattleShootVO)
             {
-                SuperSequenceControl.Start(battleControl.Shoot, _index, (BattleShootVO)vo);
+                SuperSequenceControl.Start(battleControl.Shoot, BATTLE_TWEEN_TAG, _index, (BattleShootVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleMoveVO)
             {
-                SuperSequenceControl.Start(battleControl.Move, _index, (BattleMoveVO)vo);
+                SuperSequenceControl.Start(battleControl.Move, BATTLE_TWEEN_TAG, _index, (BattleMoveVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleRushVO)
             {
-                SuperSequenceControl.Start(battleControl.Rush, _index, (BattleRushVO)vo);
+                SuperSequenceControl.Start(battleControl.Rush, BATTLE_TWEEN_TAG, _index, (BattleRushVO)vo);
 
                 yield return null;
             }
             else if (vo is BattlePrepareAttackVO)
             {
-                SuperSequenceControl.Start(battleControl.PrepareAttack, _index, (BattlePrepareAttackVO)vo);
+                SuperSequenceControl.Start(battleControl.PrepareAttack, BATTLE_TWEEN_TAG, _index, (BattlePrepareAttackVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleAttackAndCounterVO)
             {
-                SuperSequenceControl.Start(battleControl.AttackAndCounter, _index, (BattleAttackAndCounterVO)vo);
+                SuperSequenceControl.Start(battleControl.AttackAndCounter, BATTLE_TWEEN_TAG, _index, (BattleAttackAndCounterVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleAttackBothVO)
             {
-                SuperSequenceControl.Start(battleControl.AttackBoth, _index, (BattleAttackBothVO)vo);
+                SuperSequenceControl.Start(battleControl.AttackBoth, BATTLE_TWEEN_TAG, _index, (BattleAttackBothVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleDeathVO)
             {
-                SuperSequenceControl.Start(battleControl.Die, _index, (BattleDeathVO)vo);
+                SuperSequenceControl.Start(battleControl.Die, BATTLE_TWEEN_TAG, _index, (BattleDeathVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleSummonVO)
             {
-                SuperSequenceControl.Start(battleControl.Summon, _index, (BattleSummonVO)vo);
+                SuperSequenceControl.Start(battleControl.Summon, BATTLE_TWEEN_TAG, _index, (BattleSummonVO)vo);
 
                 yield return null;
             }
             else if (vo is BattleAttackOverVO)
             {
-                SuperSequenceControl.Start(battleControl.AttackOver, _index, (BattleAttackOverVO)vo);
+                SuperSequenceControl.Start(battleControl.AttackOver, BATTLE_TWEEN_TAG, _index, (BattleAttackOverVO)vo);
 
                 yield return null;
             }
@@ -1464,7 +1468,7 @@ public partial class BattleManager : MonoBehaviour
             }
             else if (vo is BattleTriggerAuraVO)
             {
-                SuperSequenceControl.Start(battleControl.TriggerAura, _index, (BattleTriggerAuraVO)vo);
+                SuperSequenceControl.Start(battleControl.TriggerAura, BATTLE_TWEEN_TAG, _index, (BattleTriggerAuraVO)vo);
 
                 yield return null;
             }
@@ -1479,7 +1483,7 @@ public partial class BattleManager : MonoBehaviour
             }
             else if (vo is BattleSupportVO)
             {
-                SuperSequenceControl.Start(battleControl.Support, _index, (BattleSupportVO)vo);
+                SuperSequenceControl.Start(battleControl.Support, BATTLE_TWEEN_TAG, _index, (BattleSupportVO)vo);
 
                 yield return null;
             }
@@ -1489,7 +1493,7 @@ public partial class BattleManager : MonoBehaviour
             }
         }
 
-        SuperSequenceControl.Start(battleControl.ResetCamera, _index);
+        SuperSequenceControl.Start(battleControl.ResetCamera, BATTLE_TWEEN_TAG, _index);
 
         yield return null;
 
@@ -1512,7 +1516,7 @@ public partial class BattleManager : MonoBehaviour
 
     private void DoStart(int _index)
     {
-        SuperSequenceControl.To(1, 0, 0.5f, RefresFearHero, _index);
+        SuperSequenceControl.To(1, 0, 0.5f, RefresFearHero, _index, BattleManager.BATTLE_TWEEN_TAG);
     }
 
     private void RoundOver(Battle.BattleResult _battleResult)
@@ -1582,7 +1586,7 @@ public partial class BattleManager : MonoBehaviour
     {
         RefreshHeroState(false);
 
-        SuperSequenceControl.To(0, 1, 0.5f, RefresFearHero, _index);
+        SuperSequenceControl.To(0, 1, 0.5f, RefresFearHero, _index, BattleManager.BATTLE_TWEEN_TAG);
     }
 
     private void RefresFearHero(float _v)
@@ -1932,5 +1936,23 @@ public partial class BattleManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public static int To(float _startValue, float _endValue, float _time, Action<float> _delegate, Action _endCallBack)
+    {
+        int id = SuperTween.Instance.To(_startValue, _endValue, _time, _delegate, _endCallBack);
+
+        SuperTween.Instance.SetTag(id, BATTLE_TWEEN_TAG);
+
+        return id;
+    }
+
+    public static int DelayCall(float _time, Action _endCallBack)
+    {
+        int id = SuperTween.Instance.DelayCall(_time, _endCallBack, false);
+
+        SuperTween.Instance.SetTag(id, BATTLE_TWEEN_TAG);
+
+        return id;
     }
 }

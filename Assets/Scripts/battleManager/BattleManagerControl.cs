@@ -115,6 +115,7 @@ public partial class BattleManager : MonoBehaviour
         }
         else if (Input.GetKeyUp(KeyCode.T))
         {
+            SuperTween.Instance.RemoveWithTag(BATTLE_TWEEN_TAG, false);
         }
     }
 
@@ -435,7 +436,7 @@ public partial class BattleManager : MonoBehaviour
                 heroDetail.Show(hero);
             };
 
-            showHeroDetailTweenID = SuperTween.Instance.DelayCall(showHeroDetailHoldTime, dele);
+            showHeroDetailTweenID = DelayCall(showHeroDetailHoldTime, dele);
         }
     }
 

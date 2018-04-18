@@ -78,7 +78,7 @@ public class HeroCard : HeroBase, IPointerDownHandler, IPointerExitHandler, IPoi
             heroDetail.Show(this);
         };
 
-        showHeroDetailTweenID = SuperTween.Instance.DelayCall(showHeroDetailHoldTime, dele);
+        showHeroDetailTweenID = BattleManager.DelayCall(showHeroDetailHoldTime, dele);
     }
 
     public void OnPointerExit(PointerEventData _data)
