@@ -46,6 +46,9 @@ public partial class BattleManager : MonoBehaviour
     private static readonly float sqrt3 = Mathf.Sqrt(3);
 
     [SerializeField]
+    private float timeScale;
+
+    [SerializeField]
     private BattleControl battleControl;
 
     [SerializeField]
@@ -254,6 +257,8 @@ public partial class BattleManager : MonoBehaviour
 
     private bool isPlayingRecord = false;
 
+    private float recTimeScale;
+
     public int GetHeroUid()
     {
         heroUid++;
@@ -263,8 +268,6 @@ public partial class BattleManager : MonoBehaviour
 
     void Awake()
     {
-        Time.timeScale = 2;
-
         stepV = new Vector2(mainCamera.aspect * mainCamera.orthographicSize, mainCamera.orthographicSize);
 
         viewport = new Bounds(Vector3.zero, stepV * 2);
@@ -369,6 +372,10 @@ public partial class BattleManager : MonoBehaviour
 
             gameObject.SetActive(true);
 
+            recTimeScale = Time.timeScale;
+
+            Time.timeScale = timeScale;
+
             SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_START);
         }
     }
@@ -433,6 +440,8 @@ public partial class BattleManager : MonoBehaviour
         RefreshTouchable(true);
 
         gameObject.SetActive(false);
+
+        Time.timeScale = recTimeScale;
 
         SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_QUIT);
     }
