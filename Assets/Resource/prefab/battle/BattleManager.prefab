@@ -580,7 +580,7 @@ MonoBehaviour:
   fixStep: 1.05
   viewportXFix: 0
   viewportYFix: 0.5
-  boundFix: 3
+  boundFix: 2
   mainCamera: {fileID: 20032680661428138}
   canvas: {fileID: 22384122}
   myMapUnitColor: {r: 0.5769896, g: 0.85294116, b: 0.69307953, a: 0.78431374}
