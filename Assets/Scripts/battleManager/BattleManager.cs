@@ -1197,6 +1197,8 @@ public partial class BattleManager : MonoBehaviour
         ClearCards();
 
         CreateCards();
+
+        CreateMoneyTf();
     }
 
     private void RefreshTouchable(bool _canAction)
