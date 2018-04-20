@@ -52,6 +52,18 @@ public class HeroBattle : HeroBase
     private TextMeshOutline speedOutline;
 
     [SerializeField]
+    private TextMesh recoverShield;
+
+    [SerializeField]
+    private TextMeshOutline recoverShieldOutline;
+
+    [SerializeField]
+    private TextMesh fearValue;
+
+    [SerializeField]
+    private TextMeshOutline fearValueOutline;
+
+    [SerializeField]
     private SpriteRenderer heroType;
 
     [SerializeField]
@@ -87,6 +99,10 @@ public class HeroBattle : HeroBase
     private Color heroTypeColor;
 
     private Color speedColor;
+
+    private Color recoverShieldColor;
+
+    private Color fearValueColor;
 
     public bool isHero
     {
@@ -162,6 +178,10 @@ public class HeroBattle : HeroBase
         shieldOutline.SetText(text);
 
         speed.gameObject.SetActive(false);
+
+        recoverShield.gameObject.SetActive(false);
+
+        fearValue.gameObject.SetActive(false);
     }
 
     public void Init(BattleManager _battleManager, BattleControl _battleControl, Hero _hero, int _heroUid)
@@ -220,9 +240,16 @@ public class HeroBattle : HeroBase
 
         int speedFix = hero.GetSpeedFixByClient();
 
-        if (speedFix > 0)
+        if (speedFix != 0)
         {
-            text = "+" + speedFix;
+            if (speedFix > 0)
+            {
+                text = "+" + speedFix;
+            }
+            else
+            {
+                text = speedFix.ToString();
+            }
 
             if (!speed.gameObject.activeSelf)
             {
@@ -235,26 +262,75 @@ public class HeroBattle : HeroBase
 
             speedOutline.SetText(text);
         }
-        else if (speedFix < 0)
-        {
-            text = speedFix.ToString();
-
-            if (!speed.gameObject.activeSelf)
-            {
-                speed.gameObject.SetActive(true);
-            }
-
-            speed.text = text;
-
-            speedColor = new Color(1, 0, 0, speed.color.a);
-
-            speedOutline.SetText(text);
-        }
         else
         {
             if (speed.gameObject.activeSelf)
             {
                 speed.gameObject.SetActive(false);
+            }
+        }
+
+        int recoverShieldFix = hero.GetRecoverShieldValueFix();
+
+        if (recoverShieldFix != 0)
+        {
+            if (recoverShieldFix > 0)
+            {
+                text = "+" + recoverShieldFix;
+            }
+            else
+            {
+                text = recoverShieldFix.ToString();
+            }
+
+            if (!recoverShield.gameObject.activeSelf)
+            {
+                recoverShield.gameObject.SetActive(true);
+            }
+
+            recoverShield.text = text;
+
+            recoverShieldColor = new Color(0, 1, 0, recoverShield.color.a);
+
+            recoverShieldOutline.SetText(text);
+        }
+        else
+        {
+            if (recoverShield.gameObject.activeSelf)
+            {
+                recoverShield.gameObject.SetActive(false);
+            }
+        }
+
+        int fearValueFix = hero.GetFearValueFix();
+
+        if (fearValueFix != 0)
+        {
+            if (fearValueFix > 0)
+            {
+                text = "+" + fearValueFix;
+            }
+            else
+            {
+                text = fearValueFix.ToString();
+            }
+
+            if (!fearValue.gameObject.activeSelf)
+            {
+                fearValue.gameObject.SetActive(true);
+            }
+
+            fearValue.text = text;
+
+            fearValueColor = new Color(0, 1, 0, fearValue.color.a);
+
+            fearValueOutline.SetText(text);
+        }
+        else
+        {
+            if (fearValue.gameObject.activeSelf)
+            {
+                fearValue.gameObject.SetActive(false);
             }
         }
 
@@ -478,6 +554,16 @@ public class HeroBattle : HeroBase
         {
             speed.color = new Color(speedColor.r * _fix, speedColor.g * _fix, speedColor.b * _fix, speed.color.a);
         }
+
+        if (recoverShield.gameObject.activeSelf)
+        {
+            recoverShield.color = new Color(recoverShieldColor.r * _fix, recoverShieldColor.g * _fix, recoverShieldColor.b * _fix, recoverShield.color.a);
+        }
+
+        if (fearValue.gameObject.activeSelf)
+        {
+            fearValue.color = new Color(fearValueColor.r * _fix, fearValueColor.g * _fix, fearValueColor.b * _fix, fearValue.color.a);
+        }
     }
 
     public void SetAlpha(float _v)
@@ -499,6 +585,16 @@ public class HeroBattle : HeroBase
         if (speed.gameObject.activeSelf)
         {
             speed.color = new Color(speed.color.r, speed.color.g, speed.color.b, _v);
+        }
+
+        if (recoverShield.gameObject.activeSelf)
+        {
+            recoverShield.color = new Color(recoverShield.color.r, recoverShield.color.g, recoverShield.color.b, _v);
+        }
+
+        if (fearValue.gameObject.activeSelf)
+        {
+            fearValue.color = new Color(fearValue.color.r, fearValue.color.g, fearValue.color.b, _v);
         }
     }
 
