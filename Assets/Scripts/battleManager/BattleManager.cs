@@ -1389,7 +1389,7 @@ public partial class BattleManager : MonoBehaviour
         {
             ShootArrow arrow = arrowList[i];
 
-            arrow.SetColor(new Color(arrow.GetColor().r, arrow.GetColor().g, arrow.GetColor().b, _v));
+            arrow.SetAlpha(_v);
         }
     }
 

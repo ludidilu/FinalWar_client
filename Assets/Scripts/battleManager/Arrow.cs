@@ -8,6 +8,13 @@ public class Arrow : ShootArrow
     [SerializeField]
     private TextMeshOutline tmo;
 
+    private float tmAlpha;
+
+    private void Awake()
+    {
+        tmAlpha = tm.color.a;
+    }
+
     public void SetIndex(int _index)
     {
         if (_index < 0)
@@ -28,10 +35,10 @@ public class Arrow : ShootArrow
         }
     }
 
-    public override void SetColor(Color _color)
+    public override void SetAlpha(float _alphaFix)
     {
-        base.SetColor(_color);
+        base.SetAlpha(_alphaFix);
 
-        tm.color = new Color(tm.color.r, tm.color.g, tm.color.b, _color.a);
+        tm.color = new Color(tm.color.r, tm.color.g, tm.color.b, tmAlpha * alphaFix);
     }
 }
