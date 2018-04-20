@@ -19,11 +19,6 @@
         battleLocal.Start(uid);
     }
 
-    public override bool IsFullScreen()
-    {
-        return true;
-    }
-
     public void PlayRecord()
     {
         battleLocal.PlayerRecord();

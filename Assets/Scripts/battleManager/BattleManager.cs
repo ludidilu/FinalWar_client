@@ -1529,7 +1529,7 @@ public partial class BattleManager : MonoBehaviour
 
     private void DoStart(int _index)
     {
-        SuperSequenceControl.To(1, 0, 0.5f, RefresFearHero, _index, BattleManager.BATTLE_TWEEN_TAG);
+        SuperSequenceControl.To(1, 0, 0.5f, RefresFearHero, _index, BATTLE_TWEEN_TAG);
     }
 
     private void RoundOver(Battle.BattleResult _battleResult)
@@ -1599,7 +1599,7 @@ public partial class BattleManager : MonoBehaviour
     {
         RefreshHeroState(false);
 
-        SuperSequenceControl.To(0, 1, 0.5f, RefresFearHero, _index, BattleManager.BATTLE_TWEEN_TAG);
+        SuperSequenceControl.To(0, 1, 0.5f, RefresFearHero, _index, BATTLE_TWEEN_TAG);
     }
 
     private void RefresFearHero(float _v)

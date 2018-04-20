@@ -181,11 +181,6 @@ public class BattleOnline : UIPanel
         }
     }
 
-    public override bool IsFullScreen()
-    {
-        return true;
-    }
-
     public override void OnEnter()
     {
         btPVP.SetActive(false);
