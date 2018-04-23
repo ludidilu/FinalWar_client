@@ -5,6 +5,8 @@ public class BattleSDS_c {
         _csv.addCardsNum = _br.ReadInt32();
         _csv.addMoney = _br.ReadInt32();
         _csv.deckCardsNum = _br.ReadInt32();
+        _csv.defaultHandCardsNum = _br.ReadInt32();
+        _csv.defaultMoney = _br.ReadInt32();
         _csv.guideID = _br.ReadInt32();
         _csv.ID = _br.ReadInt32();
         _csv.mapID = _br.ReadInt32();
