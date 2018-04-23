@@ -65,5 +65,12 @@ Assets/Scripts/csharpLib.meta
 /UnityVS.tstd_client.CSharp.Editor.csproj
 /UnityVS.tstd_client.sln
 /UnityVS.tstd_client.CSharp.csproj
-Assets/Plugins/*
+#Assets/Plugins/*
 .vs/*
+
+
+Assets/Plugins/Connection/*
+Assets/Plugins/Connection.meta
+Assets/Plugins/FinalWar_lib/*
+Assets/Plugins/FinalWar_lib.meta
+
