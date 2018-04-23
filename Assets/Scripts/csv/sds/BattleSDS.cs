@@ -7,4 +7,6 @@
     public int deckCardsNum;
     public int addCardsNum;
     public int addMoney;
+    public int defaultHandCardsNum;
+    public int defaultMoney;
 }

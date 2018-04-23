@@ -145,7 +145,7 @@ public class BattleLocal
 
     private void StartBattle(BattleSDS _battleSDS)
     {
-        battleServer.ServerStart(_battleSDS.mapID, _battleSDS.maxRoundNum, _battleSDS.deckCardsNum, _battleSDS.addCardsNum, _battleSDS.addMoney, _battleSDS.mCards, _battleSDS.oCards, true);
+        battleServer.ServerStart(_battleSDS.mapID, _battleSDS.maxRoundNum, _battleSDS.deckCardsNum, _battleSDS.addCardsNum, _battleSDS.addMoney, _battleSDS.defaultHandCardsNum, _battleSDS.defaultMoney, _battleSDS.mCards, _battleSDS.oCards, true);
 
         StartBattle(_battleSDS.guideID);
     }
