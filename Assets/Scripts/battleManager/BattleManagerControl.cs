@@ -117,6 +117,13 @@ public partial class BattleManager : MonoBehaviour
         {
             SuperTween.Instance.RemoveWithTag(BATTLE_TWEEN_TAG, false);
         }
+        else if (Input.GetKeyUp(KeyCode.F))
+        {
+            foreach (HeroBattle hero in heroDic.Values)
+            {
+                hero.ShowFearValue();
+            }
+        }
     }
 
     private void GetMouseDown(int _index, bool _blockByUI, RaycastHit _hit, int _hitIndex)

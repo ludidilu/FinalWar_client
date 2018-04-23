@@ -607,4 +607,17 @@ public class HeroBattle : HeroBase
     {
         return hero.GetCanAttackPos();
     }
+
+    public void ShowFearValue()
+    {
+        if (isHero)
+        {
+            int v = hero.GetFearNumDiff();
+
+            if (v > 0)
+            {
+                ShowHud(v.ToString(), Color.red, Color.black, 0, null);
+            }
+        }
+    }
 }
