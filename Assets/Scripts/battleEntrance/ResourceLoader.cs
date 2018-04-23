@@ -91,8 +91,14 @@ public static class ResourceLoader
 
         LoadMap();
 #else
-        StaticData.LoadCsvDataFromFile(LoadMap, LoadCsv.Init);
+
+        WWWManager.Instance.Load(StaticData.datName, GetCsvBytes);
 #endif
+    }
+
+    private static void GetCsvBytes(WWW _www)
+    {
+        StaticData.LoadCsvDataFromFile(_www.bytes, LoadMap, LoadCsv.Init);
     }
 
     public static void LoadTablesLocal()
