@@ -9,8 +9,6 @@ using System.Collections;
 
 public class BattleLocal
 {
-    public const string SAVE_DATA_CHANGE = "saveDataChange";
-
     private string saveKey;
 
     private Battle_server battleServer;
