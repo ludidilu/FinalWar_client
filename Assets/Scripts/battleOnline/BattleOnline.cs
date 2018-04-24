@@ -202,8 +202,6 @@ public class BattleOnline : UIPanel
 
             loginMessage.Name = ConfigDictionary.Instance.uid.ToString();
 
-            byte[] bytes = loginMessage.ToByteArray();
-
             SendAction<PlayerStateMessage>(CsPackageTag.Login, loginMessage.ToByteArray(), ReceiveReplyData);
         }
         else
