@@ -7,7 +7,6 @@ using tuple;
 using System.Collections;
 using FinalWar_proto;
 using Google.Protobuf;
-using System.Collections.Generic;
 
 public class BattleOnline : UIPanel
 {
