@@ -5,23 +5,12 @@ using Connection;
 using System;
 using tuple;
 using System.Collections;
+using FinalWar_proto;
+using Google.Protobuf;
+using System.Collections.Generic;
 
 public class BattleOnline : UIPanel
 {
-    private enum PlayerState
-    {
-        FREE,
-        SEARCHING,
-        BATTLE
-    }
-
-    private enum PackageData
-    {
-        PVP,
-        PVE,
-        CANCEL_SEARCH
-    }
-
     [SerializeField]
     private GameObject btPVP;
 
@@ -47,30 +36,36 @@ public class BattleOnline : UIPanel
 
     private void ReceivePushData(BinaryReader _br)
     {
-        bool isBattle = _br.ReadBoolean();
+        ScPackageTag tag = (ScPackageTag)_br.ReadInt32();
 
-        if (isBattle)
+        switch (tag)
         {
-            SuperFunction.Instance.DispatchEvent(BattleView.battleManagerEventGo, BattleManager.BATTLE_RECEIVE_DATA, _br);
-        }
-        else
-        {
-            ReceiveReplyData(_br);
+            case ScPackageTag.BattleData:
+
+                SuperFunction.Instance.DispatchEvent(BattleView.battleManagerEventGo, BattleManager.BATTLE_RECEIVE_DATA, _br);
+
+                break;
+
+            case ScPackageTag.PlayerState:
+
+                PlayerStateMessage message = PlayerStateMessage.Parser.ParseFrom(_br.BaseStream);
+
+                ReceiveReplyData(message);
+
+                break;
         }
     }
 
-    private void ReceiveReplyData(BinaryReader _br)
+    private void ReceiveReplyData(PlayerStateMessage _message)
     {
-        PlayerState playerState = (PlayerState)_br.ReadInt16();
-
-        SetState(playerState);
+        SetState(_message.PlayerState);
     }
 
-    private void SetState(PlayerState _state)
+    private void SetState(PlayerStateEnum _state)
     {
         switch (_state)
         {
-            case PlayerState.BATTLE:
+            case PlayerStateEnum.Battle:
 
                 btPVP.SetActive(true);
 
@@ -88,7 +83,7 @@ public class BattleOnline : UIPanel
 
                 break;
 
-            case PlayerState.FREE:
+            case PlayerStateEnum.Free:
 
                 btPVP.SetActive(true);
 
@@ -100,7 +95,7 @@ public class BattleOnline : UIPanel
 
                 break;
 
-            case PlayerState.SEARCHING:
+            case PlayerStateEnum.Searching:
 
                 btPVP.SetActive(false);
 
@@ -116,17 +111,11 @@ public class BattleOnline : UIPanel
 
     public void EnterPVP()
     {
-        using (MemoryStream ms = new MemoryStream())
-        {
-            using (BinaryWriter bw = new BinaryWriter(ms))
-            {
-                bw.Write(false);
+        BattleManagerActionMessage message = new BattleManagerActionMessage();
 
-                bw.Write((short)PackageData.PVP);
+        message.BattleManagerAction = BattleManagerActionEnum.Pvp;
 
-                client.Send(ms, ReceiveReplyData);
-            }
-        }
+        SendAction<PlayerStateMessage>(CsPackageTag.BattleManagerAction, message.ToByteArray(), ReceiveReplyData);
     }
 
     public void EnterPVE()
@@ -136,32 +125,44 @@ public class BattleOnline : UIPanel
 
     private void ChooseBattle(BattleSDS _battleSDS)
     {
-        using (MemoryStream ms = new MemoryStream())
-        {
-            using (BinaryWriter bw = new BinaryWriter(ms))
-            {
-                bw.Write(false);
+        BattleManagerActionMessage message = new BattleManagerActionMessage();
 
-                bw.Write((short)PackageData.PVE);
+        message.BattleManagerAction = BattleManagerActionEnum.Pve;
 
-                bw.Write(_battleSDS.ID);
+        message.BattleId = _battleSDS.ID;
 
-                client.Send(ms, ReceiveReplyData);
-            }
-        }
+        SendAction<PlayerStateMessage>(CsPackageTag.BattleManagerAction, message.ToByteArray(), ReceiveReplyData);
     }
 
     public void CancelPVP()
     {
+        BattleManagerActionMessage message = new BattleManagerActionMessage();
+
+        message.BattleManagerAction = BattleManagerActionEnum.CancelSearching;
+
+        SendAction<PlayerStateMessage>(CsPackageTag.BattleManagerAction, message.ToByteArray(), ReceiveReplyData);
+    }
+
+    private void SendAction<T>(CsPackageTag _tag, byte[] _bytes, Action<T> _callBack) where T : IMessage<T>, new()
+    {
+        Action<BinaryReader> dele = delegate (BinaryReader _br)
+        {
+            MessageParser<T> parser = new MessageParser<T>(() => new T());
+
+            T result = parser.ParseFrom(_br.BaseStream);
+
+            _callBack(result);
+        };
+
         using (MemoryStream ms = new MemoryStream())
         {
             using (BinaryWriter bw = new BinaryWriter(ms))
             {
-                bw.Write(false);
+                bw.Write((int)_tag);
 
-                bw.Write((short)PackageData.CANCEL_SEARCH);
+                bw.Write(_bytes);
 
-                client.Send(ms, ReceiveReplyData);
+                client.Send(ms, dele);
             }
         }
     }
@@ -172,7 +173,7 @@ public class BattleOnline : UIPanel
         {
             using (BinaryWriter bw = new BinaryWriter(ms))
             {
-                bw.Write(true);
+                bw.Write((int)CsPackageTag.BattleData);
 
                 bw.Write(_ms.GetBuffer(), 0, (int)_ms.Length);
 
@@ -198,15 +199,13 @@ public class BattleOnline : UIPanel
     {
         if (_b)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (BinaryWriter bw = new BinaryWriter(ms))
-                {
-                    bw.Write(ConfigDictionary.Instance.uid);
+            LoginMessage loginMessage = new LoginMessage();
 
-                    client.Send(ms, ReceiveReplyData);
-                }
-            }
+            loginMessage.Name = ConfigDictionary.Instance.uid.ToString();
+
+            byte[] bytes = loginMessage.ToByteArray();
+
+            SendAction<PlayerStateMessage>(CsPackageTag.Login, loginMessage.ToByteArray(), ReceiveReplyData);
         }
         else
         {
