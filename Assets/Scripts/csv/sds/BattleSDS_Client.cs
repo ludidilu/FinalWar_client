@@ -1,4 +1,4 @@
-﻿public partial class BattleSDS : CsvBase
+﻿public partial class BattleSDS : BattleInitDataSDS
 {
     public string name;
     public bool isPve;

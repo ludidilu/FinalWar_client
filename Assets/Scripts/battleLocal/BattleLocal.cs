@@ -35,7 +35,9 @@ public class BattleLocal
 
         Dictionary<int, EffectSDS> effectDic = StaticData.GetDic<EffectSDS>();
 
-        Battle.Init(mapDic, heroDic, auraDic, effectDic);
+        Dictionary<int, BattleSDS> battleDic = StaticData.GetDic<BattleSDS>();
+
+        Battle.Init(mapDic, heroDic, auraDic, effectDic, battleDic);
     }
 
     public void Start(int _parentUid)
@@ -143,7 +145,7 @@ public class BattleLocal
 
     private void StartBattle(BattleSDS _battleSDS)
     {
-        battleServer.ServerStart(_battleSDS.mapID, _battleSDS.maxRoundNum, _battleSDS.deckCardsNum, _battleSDS.addCardsNum, _battleSDS.addMoney, _battleSDS.defaultHandCardsNum, _battleSDS.defaultMoney, _battleSDS.mCards, _battleSDS.oCards, true);
+        battleServer.ServerStart(_battleSDS.ID, _battleSDS.mCards, _battleSDS.oCards, true);
 
         StartBattle(_battleSDS.guideID);
     }

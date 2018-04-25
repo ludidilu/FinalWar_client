@@ -122,6 +122,8 @@ public static class ResourceLoader
         StaticData.Load<BattleSDS>("battle");
 
         StaticData.Load<GuideSDS>("guide");
+
+        StaticData.Load<PlayerInitDataSDS>("playerInitData");
     }
 
     private static void LoadMap()

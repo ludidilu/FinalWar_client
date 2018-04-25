@@ -299,7 +299,9 @@ public partial class BattleManager : MonoBehaviour
 
         Dictionary<int, EffectSDS> effectDic = StaticData.GetDic<EffectSDS>();
 
-        Battle.Init(mapDic, heroDic, auraDic, effectDic);
+        Dictionary<int, BattleSDS> battleDic = StaticData.GetDic<BattleSDS>();
+
+        Battle.Init(mapDic, heroDic, auraDic, effectDic, battleDic);
 
         battle.ClientSetCallBack(SendData, RefreshData, DoAction, BattleOver);
 
@@ -788,7 +790,7 @@ public partial class BattleManager : MonoBehaviour
 
         mMoneyTf.text = mMoney.ToString();
 
-        if (mMoney + battle.addMoney > BattleConst.MAX_MONEY)
+        if (mMoney + battle.mAddMoney > BattleConst.MAX_MONEY)
         {
             mMoneyTf.color = Color.red;
         }
@@ -801,7 +803,7 @@ public partial class BattleManager : MonoBehaviour
 
         oMoneyTf.text = oMoney.ToString();
 
-        if (oMoney + battle.addMoney > BattleConst.MAX_MONEY)
+        if (oMoney + battle.oAddMoney > BattleConst.MAX_MONEY)
         {
             oMoneyTf.color = Color.red;
         }
