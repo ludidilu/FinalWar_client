@@ -79,6 +79,15 @@ public class LoadCsv {
             MapSDSDic.Add(unit.ID,unit);
         }
         dic.Add(typeof(MapSDS),MapSDSDic);
+        Dictionary<int,PlayerInitDataSDS> PlayerInitDataSDSDic = new Dictionary<int,PlayerInitDataSDS>();
+        int lengthPlayerInitDataSDS = br.ReadInt32();
+        for(int i = 0 ; i < lengthPlayerInitDataSDS ; i++){
+            PlayerInitDataSDS unit = new PlayerInitDataSDS();
+            PlayerInitDataSDS_c.Init(unit,br);
+            unit.Fix();
+            PlayerInitDataSDSDic.Add(unit.ID,unit);
+        }
+        dic.Add(typeof(PlayerInitDataSDS),PlayerInitDataSDSDic);
         br.Close();
         ms.Close();
         ms.Dispose();
