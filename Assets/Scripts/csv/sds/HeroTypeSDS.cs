@@ -12,8 +12,6 @@ public partial class HeroTypeSDS : CsvBase, IHeroTypeSDS
     public int thread;
     public int fearValue;
 
-    public int fearType;
-
     public int fearAttackWeight;
     public int fearDefenseWeight;
 
@@ -60,11 +58,6 @@ public partial class HeroTypeSDS : CsvBase, IHeroTypeSDS
     public int GetFearValue()
     {
         return fearValue;
-    }
-
-    public FearType GetFearType()
-    {
-        return (FearType)fearType;
     }
 
     public int GetFearAttackWeight()
