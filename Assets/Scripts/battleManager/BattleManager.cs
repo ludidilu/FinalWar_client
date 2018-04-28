@@ -1243,6 +1243,15 @@ public partial class BattleManager : MonoBehaviour
 
         RefreshTouchable(true);
 
+        AlphaOutMove(0);
+
+        Action<float> toDele = delegate (float _v)
+        {
+            AlphaOutMove(1 - _v);
+
+            SetUiContainerSize(_v);
+        };
+
         Action dele = delegate ()
         {
             SuperRaycast.SetIsOpen(true, "ui");
@@ -1256,7 +1265,7 @@ public partial class BattleManager : MonoBehaviour
 
         alphaCg.alpha = 1;
 
-        To(1, 0, 0.5f, SetUiContainerSize, dele);
+        To(1, 0, 0.5f, toDele, dele);
     }
 
     private void EnterBattle(Action _callBack)
