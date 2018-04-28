@@ -245,10 +245,14 @@ public class HeroBattle : HeroBase
             if (speedFix > 0)
             {
                 text = "+" + speedFix;
+
+                speedColor = Color.green;
             }
             else
             {
                 text = speedFix.ToString();
+
+                speedColor = Color.red;
             }
 
             if (!speed.gameObject.activeSelf)
@@ -257,8 +261,6 @@ public class HeroBattle : HeroBase
             }
 
             speed.text = text;
-
-            speedColor = new Color(0, 1, 0, speed.color.a);
 
             speedOutline.SetText(text);
         }
@@ -277,10 +279,14 @@ public class HeroBattle : HeroBase
             if (recoverShieldFix > 0)
             {
                 text = "+" + recoverShieldFix;
+
+                recoverShieldColor = Color.green;
             }
             else
             {
                 text = recoverShieldFix.ToString();
+
+                recoverShieldColor = Color.red;
             }
 
             if (!recoverShield.gameObject.activeSelf)
@@ -289,8 +295,6 @@ public class HeroBattle : HeroBase
             }
 
             recoverShield.text = text;
-
-            recoverShieldColor = new Color(0, 1, 0, recoverShield.color.a);
 
             recoverShieldOutline.SetText(text);
         }
@@ -309,10 +313,14 @@ public class HeroBattle : HeroBase
             if (fearValueFix > 0)
             {
                 text = "+" + fearValueFix;
+
+                fearValueColor = Color.green;
             }
             else
             {
                 text = fearValueFix.ToString();
+
+                fearValueColor = Color.red;
             }
 
             if (!fearValue.gameObject.activeSelf)
@@ -321,8 +329,6 @@ public class HeroBattle : HeroBase
             }
 
             fearValue.text = text;
-
-            fearValueColor = new Color(0, 1, 0, fearValue.color.a);
 
             fearValueOutline.SetText(text);
         }
