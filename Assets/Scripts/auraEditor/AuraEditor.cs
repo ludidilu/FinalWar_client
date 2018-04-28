@@ -44,6 +44,8 @@ public class AuraEditor : MonoBehaviour
 
     public Toggle removeWhenBeDamaged;
 
+    public Toggle isShow;
+
     public InputField descInputField;
 
     public InputField hudInputField;
@@ -422,6 +424,8 @@ public class AuraEditor : MonoBehaviour
         result.Add(string.Join("$", strArr));
 
         result.Add(string.Join("$", removeEventNames));
+
+        result.Add(isShow.isOn ? "1" : "0");
 
         result.Add(descInputField.text);
 

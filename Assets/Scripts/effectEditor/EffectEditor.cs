@@ -64,7 +64,7 @@ public class EffectEditor : MonoBehaviour
     {
         Effect effect = (Effect)_index;
 
-        if (effect == Effect.ADD_AURA || effect == Effect.CHANGE_HERO)
+        if (effect == Effect.ADD_AURA || effect == Effect.CHANGE_HERO || effect == Effect.FORCE_FEAR)
         {
             effectDataDropdown.gameObject.SetActive(false);
 
@@ -160,7 +160,7 @@ public class EffectEditor : MonoBehaviour
             }
         }
 
-        if (effect == Effect.ADD_AURA || effect == Effect.CHANGE_HERO)
+        if (effect == Effect.ADD_AURA || effect == Effect.CHANGE_HERO || effect == Effect.FORCE_FEAR)
         {
             if (string.IsNullOrEmpty(effectDataInputField.text))
             {

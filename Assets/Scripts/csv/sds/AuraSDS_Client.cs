@@ -4,6 +4,7 @@ public partial class AuraSDS : CsvBase, IAuraSDS
 {
     public string desc;
     public string hud;
+    public bool isShow;
 
     private string descFix;
 

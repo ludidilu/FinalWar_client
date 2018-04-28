@@ -70,22 +70,36 @@ public class HeroDetail : MonoBehaviour
 
         for (int i = 0; i < hero.sds.features.Length; i++)
         {
-            AddCell(string.Format(battleManager.featureDescFix, StaticData.GetData<AuraSDS>(hero.sds.features[i]).GetDesc()), ref height);
+            AuraSDS auraSDS = StaticData.GetData<AuraSDS>(hero.sds.features[i]);
+
+            if (auraSDS.isShow)
+            {
+                AddCell(string.Format(battleManager.featureDescFix, auraSDS.GetDesc()), ref height);
+            }
         }
 
         for (int i = 0; i < hero.sds.auras.Length; i++)
         {
-            AddCell(string.Format(battleManager.auraDescFix, StaticData.GetData<AuraSDS>(hero.sds.auras[i]).GetDesc()), ref height);
+            AuraSDS auraSDS = StaticData.GetData<AuraSDS>(hero.sds.auras[i]);
+
+            if (auraSDS.isShow)
+            {
+                AddCell(string.Format(battleManager.auraDescFix, auraSDS.GetDesc()), ref height);
+            }
         }
 
         for (int i = 0; i < hero.sds.shootSkills.Length; i++)
         {
-            AddCell(string.Format(battleManager.shootDescFix, StaticData.GetData<EffectSDS>(hero.sds.shootSkills[i]).GetDesc()), ref height);
+            EffectSDS effectSDS = StaticData.GetData<EffectSDS>(hero.sds.shootSkills[i]);
+
+            AddCell(string.Format(battleManager.shootDescFix, effectSDS.GetDesc()), ref height);
         }
 
         for (int i = 0; i < hero.sds.supportSkills.Length; i++)
         {
-            AddCell(string.Format(battleManager.supportDescFix, StaticData.GetData<EffectSDS>(hero.sds.supportSkills[i]).GetDesc()), ref height);
+            EffectSDS effectSDS = StaticData.GetData<EffectSDS>(hero.sds.supportSkills[i]);
+
+            AddCell(string.Format(battleManager.supportDescFix, effectSDS.GetDesc()), ref height);
         }
 
         if (_hero is HeroBattle)
@@ -102,21 +116,18 @@ public class HeroDetail : MonoBehaviour
                 {
                     for (int i = 0; i < list.Count; i++)
                     {
-                        string desc = StaticData.GetData<AuraSDS>(list[i]).GetDesc();
+                        AuraSDS auraSDS = StaticData.GetData<AuraSDS>(list[i]);
 
-                        AddCell(string.Format(battleManager.effectDescFix, desc), ref height);
+                        if (auraSDS.isShow)
+                        {
+                            string desc = auraSDS.GetDesc();
+
+                            AddCell(string.Format(battleManager.effectDescFix, desc), ref height);
+                        }
                     }
                 }
             }
-
-            //battleManager.ClickHeroBattleShowMapUnitIcon(hero);
         }
-        //else
-        //{
-        //    HeroCard hero = _hero as HeroCard;
-
-        //    battleManager.ClickHeroCardShowMapUnitIcon(hero);
-        //}
 
         container.sizeDelta = new Vector2(container.sizeDelta.x, height);
 
@@ -178,7 +189,5 @@ public class HeroDetail : MonoBehaviour
 
             cg.blocksRaycasts = false;
         }
-
-        
     }
 }

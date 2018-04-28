@@ -19,8 +19,6 @@ public class MapSDS : CsvBase, IMapSDS
 
     private KeyValuePair<int, int>[] heroReal;
 
-    private KeyValuePair<int, int>[] fearActionReal;
-
     public MapData GetMapData()
     {
         return mapData;
@@ -29,11 +27,6 @@ public class MapSDS : CsvBase, IMapSDS
     public KeyValuePair<int, int>[] GetHero()
     {
         return heroReal;
-    }
-
-    public KeyValuePair<int, int>[] GetFearAction()
-    {
-        return fearActionReal;
     }
 
     public override void Fix()
@@ -45,15 +38,6 @@ public class MapSDS : CsvBase, IMapSDS
             string[] strArr = hero[i].Split('&');
 
             heroReal[i] = new KeyValuePair<int, int>(int.Parse(strArr[0]), int.Parse(strArr[1]));
-        }
-
-        fearActionReal = new KeyValuePair<int, int>[fearAction.Length];
-
-        for (int i = 0; i < fearAction.Length; i++)
-        {
-            string[] strArr = fearAction[i].Split('&');
-
-            fearActionReal[i] = new KeyValuePair<int, int>(int.Parse(strArr[0]), int.Parse(strArr[1]));
         }
     }
 
