@@ -487,7 +487,7 @@ public class HeroBattle : HeroBase
 
                     case Effect.BE_CLEANED:
 
-                        ShowHud("Clean", Color.black, Color.red, i * battleControl.hudHeight, null);
+                        ShowHud("CLEAN", Color.black, Color.red, i * battleControl.hudHeight, null);
 
                         break;
 
@@ -495,7 +495,14 @@ public class HeroBattle : HeroBase
 
                         AuraSDS sds = StaticData.GetData<AuraSDS>(effectVO.data);
 
-                        ShowHud(sds.hud, Color.black, Color.red, i * battleControl.hudHeight, null);
+                        if (string.IsNullOrEmpty(sds.hud))
+                        {
+                            ShowHud("EFFECT", Color.black, Color.red, i * battleControl.hudHeight, null);
+                        }
+                        else
+                        {
+                            ShowHud(sds.hud, Color.black, Color.red, i * battleControl.hudHeight, null);
+                        }
 
                         break;
 
@@ -503,7 +510,7 @@ public class HeroBattle : HeroBase
 
                         shock = true;
 
-                        ShowHud("Die", Color.black, Color.red, i * battleControl.hudHeight, null);
+                        ShowHud("DIE", Color.black, Color.red, i * battleControl.hudHeight, null);
 
                         break;
 
