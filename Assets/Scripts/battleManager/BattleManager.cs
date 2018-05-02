@@ -1924,7 +1924,7 @@ public partial class BattleManager : MonoBehaviour
 
                         unit.SetIconVisible(true);
 
-                        unit.SetIconColor(new Color(1, 0, 0, 0.8f));
+                        unit.SetIconColor(new Color(1, 1, 0, 0.8f));
                     }
                 }
             }

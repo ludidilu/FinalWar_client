@@ -583,11 +583,11 @@ MonoBehaviour:
   boundFix: 2
   mainCamera: {fileID: 20032680661428138}
   canvas: {fileID: 22384122}
-  myMapUnitColor: {r: 0.5769896, g: 0.85294116, b: 0.69307953, a: 0.78431374}
-  myBaseColor: {r: 0, g: 1, b: 0.4620688, a: 0.78431374}
-  oppMapUnitColor: {r: 0.8897059, g: 0.5953179, b: 0.62577176, a: 0.78431374}
-  oppBaseColor: {r: 0.7794118, g: 0.1146194, b: 0.1146194, a: 0.78431374}
-  riverColor: {r: 0.15035684, g: 0.15454298, b: 0.75735295, a: 0.78431374}
+  myMapUnitColor: {r: 0.7058824, g: 1, b: 0.7058824, a: 0.78431374}
+  myBaseColor: {r: 0.39215687, g: 1, b: 0.39215687, a: 0.78431374}
+  oppMapUnitColor: {r: 1, g: 0.7058824, b: 0.7058824, a: 0.78431374}
+  oppBaseColor: {r: 1, g: 0.39215687, b: 0.39215687, a: 0.78431374}
+  riverColor: {r: 0.39215687, g: 0.39215687, b: 0.78431374, a: 0.78431374}
   hillColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0.78431374}
   battleContainer: {fileID: 4632905672447622}
   battleContentContainer: {fileID: 4251921428894876}
