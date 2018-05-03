@@ -212,20 +212,6 @@ public class HeroBattle : HeroBase
 
         hero.ProcessDamage(out nowShield, out nowHp);
 
-        if (nowShield < 0)
-        {
-            nowShield = 0;
-        }
-
-        if (nowHp < 0)
-        {
-            nowHp = 0;
-        }
-        else if (nowHp > sds.GetHp())
-        {
-            nowHp = sds.GetHp();
-        }
-
         string text = nowHp.ToString();
 
         hp.text = text;

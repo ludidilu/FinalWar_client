@@ -427,16 +427,6 @@ public class BattleControl : MonoBehaviour
 
         List<BattleHeroEffectVO> list = null;
 
-        if (targetShield < nowShield)
-        {
-            if (list == null)
-            {
-                list = new List<BattleHeroEffectVO>();
-            }
-
-            list.Add(new BattleHeroEffectVO(Effect.SHIELD_CHANGE, targetShield - nowShield));
-        }
-
         if (targetHp < nowHp)
         {
             if (list == null)
@@ -445,6 +435,16 @@ public class BattleControl : MonoBehaviour
             }
 
             list.Add(new BattleHeroEffectVO(Effect.HP_CHANGE, targetHp - nowHp));
+        }
+
+        if (targetShield < nowShield)
+        {
+            if (list == null)
+            {
+                list = new List<BattleHeroEffectVO>();
+            }
+
+            list.Add(new BattleHeroEffectVO(Effect.SHIELD_CHANGE, targetShield - nowShield));
         }
 
         if (list != null)
