@@ -474,8 +474,6 @@ public partial class BattleManager : MonoBehaviour
 
     public static string FixDesc(string _str, Func<string, string> _fixFunc)
     {
-        Debug.Log("str:" + _str);
-
         MatchEvaluator me = delegate (Match _match)
         {
             string idStr = _match.Value.Substring(1, _match.Value.Length - 2);
