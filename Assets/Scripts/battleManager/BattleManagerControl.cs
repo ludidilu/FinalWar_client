@@ -3,6 +3,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using superTween;
+using System.Text.RegularExpressions;
 
 public partial class BattleManager : MonoBehaviour
 {
@@ -463,37 +464,28 @@ public partial class BattleManager : MonoBehaviour
         {
             DescSDS sds = StaticData.GetData<DescSDS>(_id);
 
-            string result = FixStr(sds.desc, GetStrFix);
+            string result = FixDesc(sds.desc, GetStrFix);
 
             descPanel.Show(result);
         }
     }
 
-    public static string FixStr(string _str, Func<string, string> _fixFunc)
+    private static readonly Regex reg = new Regex("@.*?@");
+
+    public static string FixDesc(string _str, Func<string, string> _fixFunc)
     {
-        string result = _str;
+        Debug.Log("str:" + _str);
 
-        int index = result.IndexOf("@");
-
-        while (index != -1)
+        MatchEvaluator me = delegate (Match _match)
         {
-            int index2 = result.IndexOf("@", index + 1);
+            string idStr = _match.Value.Substring(1, _match.Value.Length - 2);
 
-            if (index2 == -1)
-            {
-                throw new Exception("FixStr error:" + _str);
-            }
+            return _fixFunc(idStr);
+        };
 
-            string str = result.Substring(index + 1, index2 - index - 1);
+        string strFix = reg.Replace(_str, me);
 
-            string str2 = _fixFunc(str);
-
-            result = result.Replace("@" + str + "@", str2);
-
-            index = result.IndexOf("@");
-        }
-
-        return result;
+        return strFix;
     }
 
     private string GetStrFix(string _str)

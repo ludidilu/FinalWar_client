@@ -10,7 +10,7 @@ public partial class EffectSDS : CsvBase, IEffectSDS
     {
         if (string.IsNullOrEmpty(descFix))
         {
-            descFix = BattleManager.FixStr(desc, AuraSDS.GetDescFix);
+            descFix = BattleManager.FixDesc(desc, AuraSDS.GetDescFix);
         }
 
         return descFix;

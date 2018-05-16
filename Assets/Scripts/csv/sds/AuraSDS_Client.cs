@@ -12,7 +12,7 @@ public partial class AuraSDS : CsvBase, IAuraSDS
     {
         if (string.IsNullOrEmpty(descFix))
         {
-            descFix = BattleManager.FixStr(desc, GetDescFix);
+            descFix = BattleManager.FixDesc(desc, GetDescFix);
         }
 
         return descFix;
