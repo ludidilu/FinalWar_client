@@ -1,6 +1,7 @@
 using System.IO;
 public class AuraSDS_c {
     public static void Init(AuraSDS _csv, BinaryReader _br){
+        _csv.isShow = _br.ReadBoolean();
         _csv.conditionCompare = _br.ReadInt32();
         _csv.effectTarget = _br.ReadInt32();
         _csv.effectTargetNum = _br.ReadInt32();

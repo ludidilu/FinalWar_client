@@ -9,6 +9,6 @@ public static class CreateCsvDatTool
 
         ResourceLoader.LoadTablesLocal();
 
-        CreateCsvDat.Start("/Scripts/csv/sds/fix/");
+        CreateCsvDat.Start("/Scripts/csv/fix/");
     }
 }
