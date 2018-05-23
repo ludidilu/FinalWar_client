@@ -281,7 +281,7 @@ public partial class BattleManager : MonoBehaviour
             return;
         }
 
-        if (battle.GetSummonContainsValue(_mapUnit.index))
+        if (battle.GetSummonContainsKey(_mapUnit.index))
         {
             ClearNowChooseCard();
 
@@ -297,7 +297,7 @@ public partial class BattleManager : MonoBehaviour
             {
                 if (GetNowChooseHero() == summonHero)
                 {
-                    bool b = UnsummonHero(summonHero.cardUid);
+                    bool b = UnsummonHero(_mapUnit.index);
 
                     if (b)
                     {
@@ -350,7 +350,7 @@ public partial class BattleManager : MonoBehaviour
         }
         else if (GetNowChooseCard() != null)
         {
-            bool b = SummonHero(GetNowChooseCard().cardUid, _mapUnit.index);
+            bool b = SummonHero(_mapUnit.index, GetNowChooseCard().cardUid);
 
             if (b)
             {
@@ -424,7 +424,7 @@ public partial class BattleManager : MonoBehaviour
     {
         HeroBattle hero = null;
 
-        if (battle.GetSummonContainsValue(_mapUnitIndex))
+        if (battle.GetSummonContainsKey(_mapUnitIndex))
         {
             hero = summonHeroDic[_mapUnitIndex];
         }

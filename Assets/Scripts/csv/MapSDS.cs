@@ -107,8 +107,6 @@ public class MapSDS : CsvBase, IMapSDS
                 mapData.GetData(br);
 
                 br.Close();
-
-                br.BaseStream.Dispose();
             };
 
             Action<WWW> dele = delegate (WWW _www)

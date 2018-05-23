@@ -680,12 +680,12 @@ public partial class BattleManager : MonoBehaviour
         {
             int uid = mHandCards[i];
 
-            if (battle.GetSummonContainsKey(uid))
+            if (battle.GetSummonContainsValue(uid))
             {
                 continue;
             }
 
-            int id = battle.GetCard(uid);
+            int id = battle.GetCard(battle.clientIsMine, uid);
 
             GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/battle/HeroCard.prefab", null);
 
@@ -1013,14 +1013,14 @@ public partial class BattleManager : MonoBehaviour
         return true;
     }
 
-    private bool SummonHero(int _cardUid, int _pos)
+    private bool SummonHero(int _pos, int _uid)
     {
         if (!canAction)
         {
             return false;
         }
 
-        int result = battle.ClientRequestSummon(_cardUid, _pos);
+        int result = battle.ClientRequestSummon(_pos, _uid);
 
         if (result == -1)
         {
@@ -1034,7 +1034,7 @@ public partial class BattleManager : MonoBehaviour
         }
     }
 
-    private bool UnsummonHero(int _cardUid)
+    private bool UnsummonHero(int _pos)
     {
         if (!canAction)
         {
@@ -1043,7 +1043,7 @@ public partial class BattleManager : MonoBehaviour
 
         SuperFunction.Instance.DispatchEvent(eventGo, BATTLE_HERO_UNSUMMON);
 
-        battle.ClientRequestUnsummon(_cardUid);
+        battle.ClientRequestUnsummon(_pos);
 
         return true;
     }
@@ -1063,9 +1063,9 @@ public partial class BattleManager : MonoBehaviour
         return hero;
     }
 
-    private HeroBattle AddCardToMap(int _cardUid, int _pos)
+    private HeroBattle AddCardToMap(int _pos, int _cardUid)
     {
-        int cardID = battle.GetCard(_cardUid);
+        int cardID = battle.GetCard(battle.clientIsMine, _cardUid);
 
         GameObject go = GameObjectFactory.Instance.GetGameObject("Assets/Resource/prefab/battle/HeroBattle.prefab", null);
 
@@ -1229,9 +1229,9 @@ public partial class BattleManager : MonoBehaviour
 
     private void ExitBattle(Action _callBack)
     {
-        ClearCards();
+        //ClearCards();
 
-        CreateCards();
+        //CreateCards();
 
         CreateMoneyTf();
 
@@ -1884,7 +1884,7 @@ public partial class BattleManager : MonoBehaviour
             {
                 int pos = list[i];
 
-                if (battle.GetPosIsMine(pos) == _hero.isMine && !battle.GetSummonContainsValue(pos))
+                if (battle.GetPosIsMine(pos) == _hero.isMine && !battle.GetSummonContainsKey(pos))
                 {
                     MapUnit unit = mapUnitDic[pos];
 
